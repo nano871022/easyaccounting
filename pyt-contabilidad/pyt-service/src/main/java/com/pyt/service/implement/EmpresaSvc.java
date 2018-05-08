@@ -15,8 +15,7 @@ public class EmpresaSvc implements IEmpresasSvc {
 
 	private IQuerySvc querySvc;
 
-	public List<EmpresaDTO> getEmpresas(EmpresaDTO dto, Integer init, Integer end)
-			throws EmpresasException {
+	public List<EmpresaDTO> getEmpresas(EmpresaDTO dto, Integer init, Integer end) throws EmpresasException {
 		List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
 		if (dto == null)
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
@@ -85,6 +84,17 @@ public class EmpresaSvc implements IEmpresasSvc {
 			throw new EmpresasException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public Integer getTotalRows(EmpresaDTO dto) throws EmpresasException {
+		if (dto == null)
+			throw new EmpresasException("El objeto empresa se encuentra vacio.");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new EmpresasException(e.getMensage(), e);
+		}
 	}
 
 }

@@ -72,4 +72,11 @@ public interface IQuerySvc {
 	 *             QueryException}
 	 */
 	public <T extends ADto> void del(T obj,UsuarioDTO user) throws QueryException;
+	/**
+	 * Se encargad e obtener todos los registros del dto
+	 * @param obj extrends {@link ADto}
+	 * @return {@link Integer}
+	 * @throws {@link QueryException}
+	 */
+	public <T extends ADto> Integer countRow(T obj)throws QueryException;
 }

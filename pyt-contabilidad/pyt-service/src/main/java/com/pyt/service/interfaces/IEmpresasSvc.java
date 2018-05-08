@@ -28,6 +28,13 @@ public interface IEmpresasSvc {
 	 */
 	public List<EmpresaDTO> getEmpresas(EmpresaDTO dto,Integer init,Integer end)throws EmpresasException;
 	/**
+	 * Se encarga de obtener todos los registros segun el dto suminsitrado
+	 * @param dto {@link EmpresaDTO}
+	 * @return {@link Integer}
+	 * @throws {@link EmpresasException}
+	 */
+	public Integer getTotalRows(EmpresaDTO dto)throws EmpresasException;
+	/**
 	 * Se encarga de obtner un registro de empresa
 	 * @param dto {@link EmpresaDTO}
 	 * @return {@link EmpresaDTO}
