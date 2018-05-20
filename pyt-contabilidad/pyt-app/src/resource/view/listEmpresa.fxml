@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+	xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.EmpresaBean">
+	<!-- TODO Add Nodes -->
+	<children>
+		<AnchorPane prefHeight="536.0" prefWidth="538.0">
+			<children>
+				<BorderPane layoutX="0.0" layoutY="0.0"
+					prefHeight="536.0" prefWidth="538.0">
+					<center>
+						<TableView fx:id="lsEmpresa"
+							editable="false" prefHeight="200.0" prefWidth="200.0"
+							tableMenuButtonVisible="false">
+							<columns>
+								<TableColumn prefWidth="75.0" text="#" > 
+									<cellValueFactory>
+										<PropertyValueFactory property="codigo"/>
+									</cellValueFactory>
+								</TableColumn>
+								<TableColumn prefWidth="75.0" text="Nombre" >
+									<cellValueFactory>
+										<PropertyValueFactory property="nombre"/>
+									</cellValueFactory>
+								</TableColumn>
+								<TableColumn prefWidth="75.0" text="Digito" >
+									<cellValueFactory>
+										<PropertyValueFactory property="digitoVerificacion"/>
+									</cellValueFactory>
+								</TableColumn>
+								<TableColumn prefWidth="75.0" text="Email" >
+									<cellValueFactory>
+										<PropertyValueFactory property="nit"/>
+									</cellValueFactory>
+								</TableColumn>
+								<TableColumn prefWidth="75.0" text="Telefono">
+									<cellValueFactory>
+										<PropertyValueFactory property="telefono"/>
+									</cellValueFactory>
+								</TableColumn>
+								<TableColumn prefWidth="75.0" text="Direccion" > 
+									<cellValueFactory>
+										<PropertyValueFactory property="direccion"/>
+									</cellValueFactory>
+								</TableColumn>
+								
+							</columns>
+						</TableView>
+					</center>
+					<top>
+						<TitledPane animated="false" prefHeight="63.0"
+							prefWidth="538.0" text="Emprpesa" textAlignment="RIGHT">
+							<content>
+								<AnchorPane id="Content" minHeight="0.0"
+									minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+									<children>
+										<Label layoutX="14.0" layoutY="11.0"
+											text="Listado de Empresas">
+											<font>
+												<Font size="20.0" />
+											</font>
+										</Label>
+									</children>
+								</AnchorPane>
+							</content>
+						</TitledPane>
+					</top>
+				</BorderPane>
+			</children>
+		</AnchorPane>
+	</children>
+</VBox>

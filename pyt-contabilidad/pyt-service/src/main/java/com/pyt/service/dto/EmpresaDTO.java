@@ -17,6 +17,26 @@ public class EmpresaDTO extends ADto{
 	private String nombreRepresentante;
 	private String nombreContador;
 	private String tarjetaProfeccionalContador;
+	
+	public EmpresaDTO() {}
+	
+	public EmpresaDTO(String codigo, String nombre, String nit, String digitoVerificacion, String direccion,
+			String correoElectronico, String telefono, String pais, ParametroDTO monedaDefecto,
+			String nombreRepresentante, String nombreContador, String tarjetaProfeccionalContador) {
+		super();
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.nit = nit;
+		this.digitoVerificacion = digitoVerificacion;
+		this.direccion = direccion;
+		this.correoElectronico = correoElectronico;
+		this.telefono = telefono;
+		this.pais = pais;
+		this.monedaDefecto = monedaDefecto;
+		this.nombreRepresentante = nombreRepresentante;
+		this.nombreContador = nombreContador;
+		this.tarjetaProfeccionalContador = tarjetaProfeccionalContador;
+	}
 	public String getCodigo() {
 		return codigo;
 	}

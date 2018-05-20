@@ -13,6 +13,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.compile.version>1.8</project.build.compile.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -27,4 +28,17 @@
 		<module>pyt-app</module>
 		<module>pyt-service</module>
 	</modules>
+		<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>${project.build.compile.version}</source>
+					<target>${project.build.compile.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

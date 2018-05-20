@@ -19,11 +19,17 @@ public class EmpresaSvc implements IEmpresasSvc {
 		List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
 		if (dto == null)
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
-		try {
-			lista = querySvc.gets(dto, init, end);
-		} catch (QueryException e) {
-			throw new EmpresasException(e.getMensage(), e);
-		}
+		//try {
+			lista.add(new EmpresaDTO("001", "emp 1", "8032654", "1", "kr 19 164 65", "as1@as.co", "7894561", "col", null,
+					"name1", "contador", "45689"));
+			lista.add(new EmpresaDTO("002", "emp 2", "8032654", "2", "kr 19 164 57", "as2@as.co", "7894562", "col", null,
+					"name2", "contador", "45689"));
+			lista.add(new EmpresaDTO("003", "emp 3", "8032654", "3", "kr 19 161 65", "as3@as.co", "7894563", "col", null,
+					"name3", "contador", "45689"));
+			//lista = querySvc.gets(dto, init, end);
+		//} catch (QueryException e) {
+			//throw new EmpresasException(e.getMensage(), e);
+		//}
 		return lista;
 	}
 
