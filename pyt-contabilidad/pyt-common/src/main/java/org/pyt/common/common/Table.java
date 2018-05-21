@@ -23,6 +23,7 @@ public final class Table {
 	 *            {@link List}
 	 */
 	public final static <T extends Object> void put(TableView<T> table, List<T> lista) {
+		table.getItems().clear();
 		ObservableList<T> observable = table.getItems();
 		observable.addAll(lista);
 		table.setItems(observable);

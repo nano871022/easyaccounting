@@ -96,11 +96,11 @@ public class EmpresaSvc implements IEmpresasSvc {
 	public Integer getTotalRows(EmpresaDTO dto) throws EmpresasException {
 		if (dto == null)
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
-		try {
-			return querySvc.countRow(dto);
-		} catch (QueryException e) {
+		//try {
+			return 3;//querySvc.countRow(dto);
+		/*} catch (QueryException e) {
 			throw new EmpresasException(e.getMensage(), e);
-		}
+		}*/
 	}
 
 }

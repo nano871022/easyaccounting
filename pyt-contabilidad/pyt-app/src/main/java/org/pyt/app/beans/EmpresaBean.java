@@ -51,16 +51,16 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		}
 	}
 
-	public void edit() {
-
+	public void add() {
+		System.out.println("agregando registro");
 	}
 
-	public void save() {
-
+	public void del() {
+		System.out.println("eliminar registro ");
 	}
 
-	public void cancel() {
-
+	public void set() {
+		System.out.println("editandor registro");
 	}
 
 	public TableView<EmpresaDTO> getLsEmpresa() {
