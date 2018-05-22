@@ -1,4 +1,7 @@
 package com.pyt.service.dto;
+
+import org.pyt.common.common.ADto;
+
 /**
  * Nombre de los servicios que ofrece la empresa
  * @author alejandro parra 

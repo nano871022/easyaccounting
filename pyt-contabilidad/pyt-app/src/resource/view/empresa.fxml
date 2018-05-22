@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import org.pyt.app.beans.EmpresaCRUBean?>
+
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="org.pyt.app.beans.EmpresaCRUBean">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <bottom>
+            <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button mnemonicParsing="false" text="Guardar" onAction="#add" />
+                  <Button mnemonicParsing="false" text="Cancelar" onAction="#cancel"/>
+               </children>
+            </FlowPane>
+         </bottom>
+         <center>
+            <FlowPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label prefWidth="50.0" text="Codigo" />
+                  <TextField fx:id="codigo"/>
+                  <Label prefWidth="50.0" text="Nombre" />
+                  <TextField />
+                  <Label prefWidth="50.0" text="Nit" />
+                  <TextField />
+                  <Label prefWidth="50.0" text="Digito" />
+                  <TextField />
+                  <Label prefWidth="50.0" text="Direccion" />
+                  <TextField />
+                  <Label prefWidth="50.0" text="Email" />
+                  <TextField />
+                  <Label prefWidth="50.0" text="Telefono" />
+                  <TextField />
+                  <Label prefWidth="50.0" text="Pais" />
+                  <TextField />
+                  <Label prefWidth="50.0" text="Moneda" />
+                  <TextField />
+                  <Label text="Representante" />
+                  <TextField prefWidth="200.0" />
+                  <Label prefWidth="50.0" text="Contador" />
+                  <TextField />
+                  <Label prefHeight="47.0" prefWidth="56.0" text="Codigo Contador" wrapText="true" />
+                  <TextField prefHeight="25.0" prefWidth="142.0" />
+               </children>
+            </FlowPane>
+         </center>
+      </BorderPane>
+   </children>
+</VBox>

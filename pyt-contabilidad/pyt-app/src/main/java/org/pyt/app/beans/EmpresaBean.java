@@ -2,8 +2,11 @@ package org.pyt.app.beans;
 
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Table;
 import org.pyt.common.exceptions.EmpresasException;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
@@ -17,7 +20,7 @@ import javafx.scene.control.TableView;
  * @author alejandro parra
  * @since 07/05/2018
  */
-@FXMLFile(path = "/view", file = "listEmpresa.fxml")
+@FXMLFile(path = "view", file = "listEmpresa.fxml")
 public class EmpresaBean extends ABean<EmpresaDTO> {
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
 	private IEmpresasSvc empresaSvc;
@@ -52,7 +55,12 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	}
 
 	public void add() {
-		System.out.println("agregando registro");
+		try {
+			System.out.println("agregando registro");
+			LoadAppFxml.loadBeanFxml(null, EmpresaCRUBean.class, "Agregar Empresa");
+		} catch (LoadAppFxmlException e) {
+			System.err.println(e);
+		}
 	}
 
 	public void del() {

@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.common.ADto;
+
 /**
  * Son los bancos que la empresa usa para mover el dinero
  * 

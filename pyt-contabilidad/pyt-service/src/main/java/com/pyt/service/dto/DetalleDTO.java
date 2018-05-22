@@ -2,6 +2,8 @@ package com.pyt.service.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import org.pyt.common.common.ADto;
 /**
  * Contiene el detalle de la factura
  * @author alejandro parra

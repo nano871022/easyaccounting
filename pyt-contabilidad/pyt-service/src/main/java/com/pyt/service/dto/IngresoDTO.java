@@ -3,6 +3,8 @@ package com.pyt.service.dto;
 import java.util.Date;
 import java.util.List;
 
+import org.pyt.common.common.ADto;
+
 /**
  * Se encarga de tener en almacenamiento del ingreso de un vehiculo, en el cual se
  * realiza lo que se pretende realizar sobre el vehiculo 

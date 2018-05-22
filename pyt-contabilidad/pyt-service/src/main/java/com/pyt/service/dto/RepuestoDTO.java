@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.common.ADto;
+
 /**
  * Nombre de los repuestos que se usaran para resolver problemas de los
  * vehiculos

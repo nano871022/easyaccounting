@@ -1,6 +1,8 @@
 package com.pyt.service.dto;
 
 import java.util.Date;
+
+import org.pyt.common.common.ADto;
 /**
  * Se encarga de indicar las personas que trabajan en los servicios
  * @author alejandro parra

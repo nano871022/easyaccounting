@@ -3,6 +3,8 @@ package com.pyt.service.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import org.pyt.common.common.ADto;
 /**
  * Es el documento que se encarga de realizar una nota credito,debito y otros tipo de documentos
  * @author alejandro parra

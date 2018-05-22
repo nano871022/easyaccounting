@@ -1,4 +1,4 @@
-package com.pyt.service.dto;
+package org.pyt.common.common;
 
 import java.util.Date;
 /**
@@ -7,13 +7,13 @@ import java.util.Date;
  * @since 06/05/2018
  */
 public abstract class ADto {
-	private String codigo;
-	private Date fechaCreacion;
-	private Date fechaActualizacion;
-	private Date fechaEliminacion;
-	private String creador;
-	private String actualizador;
-	private String eliminador;
+	protected String codigo;
+	protected Date fechaCreacion;
+	protected Date fechaActualizacion;
+	protected Date fechaEliminacion;
+	protected String creador;
+	protected String actualizador;
+	protected String eliminador;
 	public String getCodigo() {
 		return codigo;
 	}

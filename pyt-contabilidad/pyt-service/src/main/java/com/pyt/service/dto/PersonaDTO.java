@@ -1,6 +1,8 @@
 package com.pyt.service.dto;
 
 import java.util.Date;
+
+import org.pyt.common.common.ADto;
 /**
  * Datos basicos de una persona
  * @author alejandro parra

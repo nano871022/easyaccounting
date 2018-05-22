@@ -1,4 +1,7 @@
 package com.pyt.service.dto;
+
+import org.pyt.common.common.ADto;
+
 /**
  * areas para contabilizar los costos
  * 

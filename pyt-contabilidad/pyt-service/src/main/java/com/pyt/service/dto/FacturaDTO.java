@@ -2,6 +2,8 @@ package com.pyt.service.dto;
 
 import java.util.Date;
 import java.util.List;
+
+import org.pyt.common.common.ADto;
 /**
  * Se encarga de almacenar la factura que se genera por uno o varios trabajos realizados
  * @author alejandro parra

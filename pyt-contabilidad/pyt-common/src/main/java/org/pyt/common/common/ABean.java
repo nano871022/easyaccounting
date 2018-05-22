@@ -1,11 +1,9 @@
-package org.pyt.app.beans;
+package org.pyt.common.common;
 
 import java.util.List;
 
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
-
-import com.pyt.service.dto.ADto;
 
 public abstract class ABean<T extends ADto> extends Reflection {
 	protected Integer page;

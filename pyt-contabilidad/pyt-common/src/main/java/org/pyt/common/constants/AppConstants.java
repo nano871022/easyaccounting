@@ -6,4 +6,5 @@ package org.pyt.common.constants;
  */
 public final class AppConstants {
 	public final static String TITTLE_APP = "Contabilidad to (PYT)";
+	public final static String SLASH = "/";
 }

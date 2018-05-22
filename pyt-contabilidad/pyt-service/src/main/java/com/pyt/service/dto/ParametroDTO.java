@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.common.ADto;
+
 /**
  * Se almacenan todos los parametros que se van a utilizar en la aplicacion y se
  * separan por grupos.
