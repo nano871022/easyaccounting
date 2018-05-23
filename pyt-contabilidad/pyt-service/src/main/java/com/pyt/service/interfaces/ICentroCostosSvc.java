@@ -7,10 +7,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CentroCostosException;
 
 import com.pyt.service.dto.CentroCostoDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre los registros de centro de costos

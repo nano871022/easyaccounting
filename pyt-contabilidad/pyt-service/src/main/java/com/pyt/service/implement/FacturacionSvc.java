@@ -3,12 +3,12 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.FacturacionException;
 import org.pyt.common.exceptions.QueryException;
 
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.FacturaDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.IFacturacionSvc;
 import com.pyt.service.interfaces.IQuerySvc;
 

@@ -33,7 +33,7 @@ public abstract class Reflection {
 			for (Field field : fields) {
 				Inject inject = field.getAnnotation(Inject.class);
 				if (inject != null && inject.resource() != null) {
-					T obj = (T) Class.forName(inject.resource()).newInstance();
+					T obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
 					put(clase, field, obj);
 				}
 			}
@@ -42,6 +42,14 @@ public abstract class Reflection {
 		} catch (IllegalAccessException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		} catch (NoSuchMethodException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		} catch (SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		}
 	}

@@ -30,6 +30,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	@FXML
 	public void initialize() {
 		try {
+			NombreVentana = "Lista Empresas";
 			filtro = new EmpresaDTO();
 			registro = new EmpresaDTO();
 			page = 1;
@@ -37,7 +38,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 			lista = empresaSvc.getEmpresas(new EmpresaDTO(), page, rows);
 			Table.put(lsEmpresa, lista);
 		} catch (EmpresasException e) {
-			System.err.println(e);
+			error(e);
 		}
 	}
 
@@ -56,10 +57,9 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 
 	public void add() {
 		try {
-			System.out.println("agregando registro");
-			LoadAppFxml.loadBeanFxml(null, EmpresaCRUBean.class, "Agregar Empresa");
+			LoadAppFxml.loadBeanFxml(EmpresaCRUBean.class);
 		} catch (LoadAppFxmlException e) {
-			System.err.println(e);
+			error(e);
 		}
 	}
 
@@ -68,7 +68,12 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	}
 
 	public void set() {
-		System.out.println("editandor registro");
+		try {
+			registro = lsEmpresa.getSelectionModel().getSelectedItem();
+			LoadAppFxml.loadBeanFxml(EmpresaCRUBean.class).load(registro);
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
 	}
 
 	public TableView<EmpresaDTO> getLsEmpresa() {

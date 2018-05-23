@@ -7,10 +7,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 public interface IEmpresasSvc {
 	/**

@@ -1,8 +1,6 @@
-package com.pyt.service.dto;
+package org.pyt.common.common;
 
 import java.util.Date;
-
-import org.pyt.common.common.ADto;
 /**
  * Se encarga de almacena rel suaurio que se encuentra en sesion en la aplicacion
  * @author alejandro parra

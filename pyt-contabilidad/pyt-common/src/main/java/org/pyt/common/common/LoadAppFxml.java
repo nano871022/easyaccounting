@@ -54,17 +54,19 @@ public final class LoadAppFxml {
 	 * @throws {@link
 	 *             LoadAppFxmlException}
 	 */
-	public final static <S extends ADto, T extends ABean<S>> void loadBeanFxml(Stage primaryStage, Class<T> bean,
-			String title) throws LoadAppFxmlException {
-		String file;
+	public final static <S extends ADto, T extends ABean<S>> T loadBeanFxml(Stage primaryStage, Class<T> bean)
+			throws LoadAppFxmlException {
+		String file, title;
 		setStage(primaryStage);
 		if (!isStage()) {
 			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
 		}
 		try {
-			file = bean.getDeclaredConstructor().newInstance().pathFileFxml();
-			if(file.substring(0, 1).compareTo(AppConstants.SLASH)!=0) {
-				file = AppConstants.SLASH+file;
+			T lbean = bean.getDeclaredConstructor().newInstance();
+			file = lbean.pathFileFxml();
+			title = lbean.getNombreVentana();
+			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
+				file = AppConstants.SLASH + file;
 			}
 			URL url = bean.getResource(file);
 			Parent root = FXMLLoader.load(url);
@@ -72,6 +74,7 @@ public final class LoadAppFxml {
 			stage.setTitle(title);
 			stage.setScene(scene);
 			stage.show();
+			return lbean;
 		} catch (InstantiationException e) {
 			throw new LoadAppFxmlException("Problema en instanciacion.", e);
 		} catch (IllegalAccessException e) {
@@ -87,5 +90,20 @@ public final class LoadAppFxml {
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}
+	}
+
+	/**
+	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
+	 * anotada el file fxml y el titulo de la ventana.
+	 * 
+	 * @param bean
+	 *            extended of {@link ABean}
+	 * @param title
+	 *            {@link String} nombre de la ventana
+	 * @throws {@link
+	 *             LoadAppFxmlException}
+	 */
+	public final static <S extends ADto, T extends ABean<S>> T loadBeanFxml(Class<T> bean) throws LoadAppFxmlException {
+		return loadBeanFxml(null, bean);
 	}
 }

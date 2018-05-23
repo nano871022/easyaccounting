@@ -4,17 +4,15 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
-<?import org.pyt.app.beans.EmpresaCRUBean?>
 
-
-<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="org.pyt.app.beans.EmpresaCRUBean">
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.beans.EmpresaCRUBean">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <bottom>
             <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" text="Guardar" onAction="#add" />
-                  <Button mnemonicParsing="false" text="Cancelar" onAction="#cancel"/>
+                  <Button mnemonicParsing="false" onAction="#add" text="Guardar" />
+                  <Button mnemonicParsing="false" onAction="#cancel" text="Cancelar" />
                </children>
             </FlowPane>
          </bottom>
@@ -22,29 +20,29 @@
             <FlowPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
                   <Label prefWidth="50.0" text="Codigo" />
-                  <TextField fx:id="codigo"/>
+                  <TextField fx:id="codigo" />
                   <Label prefWidth="50.0" text="Nombre" />
-                  <TextField />
+                  <TextField fx:id="nombre" />
                   <Label prefWidth="50.0" text="Nit" />
-                  <TextField />
+                  <TextField fx:id="nit" />
                   <Label prefWidth="50.0" text="Digito" />
-                  <TextField />
+                  <TextField fx:id="digito" />
                   <Label prefWidth="50.0" text="Direccion" />
-                  <TextField />
+                  <TextField fx:id="direccion" />
                   <Label prefWidth="50.0" text="Email" />
-                  <TextField />
+                  <TextField fx:id="email" />
                   <Label prefWidth="50.0" text="Telefono" />
-                  <TextField />
+                  <TextField fx:id="telefono" />
                   <Label prefWidth="50.0" text="Pais" />
-                  <TextField />
+                  <TextField fx:id="pais" />
                   <Label prefWidth="50.0" text="Moneda" />
-                  <TextField />
+                  <ChoiceBox  fx:id="moneda" prefWidth="150.0" />
                   <Label text="Representante" />
-                  <TextField prefWidth="200.0" />
+                  <TextField fx:id="representante" prefWidth="200.0" />
                   <Label prefWidth="50.0" text="Contador" />
-                  <TextField />
+                  <TextField fx:id="contador" />
                   <Label prefHeight="47.0" prefWidth="56.0" text="Codigo Contador" wrapText="true" />
-                  <TextField prefHeight="25.0" prefWidth="142.0" />
+                  <TextField fx:id="nContador" prefHeight="25.0" prefWidth="142.0" />
                </children>
             </FlowPane>
          </center>

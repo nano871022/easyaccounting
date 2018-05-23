@@ -3,20 +3,19 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 import com.pyt.service.interfaces.IQuerySvc;
 
-public class ParametrosSvc implements IParametrosSvc{
-
+public class ParametrosSvc implements IParametrosSvc {
 	private IQuerySvc querySvc;
 
-	public List<ParametroDTO> getParametros(ParametroDTO dto, Integer init, Integer end)
-			throws ParametroException {
+	public List<ParametroDTO> getParametros(ParametroDTO dto, Integer init, Integer end) throws ParametroException {
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 		if (dto == null)
 			throw new ParametroException("El objeto empresa se encuentra vacio.");
@@ -32,12 +31,19 @@ public class ParametrosSvc implements IParametrosSvc{
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 		if (dto == null)
 			throw new ParametroException("El objeto empresa se encuentra vacio.");
-		try {
-			lista = querySvc.gets(dto);
-		} catch (QueryException e) {
-			throw new ParametroException(e.getMensage(), e);
+		// try {
+		// lista = querySvc.gets(dto);
+		ParametroDTO para1 = new ParametroDTO();
+		if (ParametroConstants.GRUPO_MONEDA.contains(dto.getGrupo())) {
+			para1.setCodigo("1");
+			para1.setDescripcion("COL");
+			para1.setGrupo(ParametroConstants.GRUPO_MONEDA);
+			lista.add(para1);
 		}
-		return lista;
+		/*
+		 * } catch (QueryException e) { throw new ParametroException(e.getMensage(), e);
+		 * }
+		 */return lista;
 	}
 
 	public ParametroDTO getParametro(ParametroDTO dto) throws ParametroException {

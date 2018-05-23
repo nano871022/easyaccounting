@@ -3,11 +3,11 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ServiciosException;
 
 import com.pyt.service.dto.ServicioDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.IQuerySvc;
 import com.pyt.service.interfaces.IServiciosSvc;
 

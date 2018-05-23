@@ -3,11 +3,11 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.QueryException;
 
 import com.pyt.service.dto.CentroCostoDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
 import com.pyt.service.interfaces.IQuerySvc;
 

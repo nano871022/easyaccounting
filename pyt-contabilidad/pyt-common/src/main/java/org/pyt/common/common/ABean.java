@@ -5,6 +5,14 @@ import java.util.List;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
 
+/**
+ * bstracto bean para heredar todos los bean y tener objetos pre creados y
+ * metodos que ayudan a trabajar con los controladores de fxml
+ * 
+ * @author Alejandro Parra
+ * @since 2018-05-23
+ * @param <T>
+ */
 public abstract class ABean<T extends ADto> extends Reflection {
 	protected Integer page;
 	protected Integer rows;
@@ -12,6 +20,8 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	protected List<T> lista;
 	protected T filtro;
 	protected T registro;
+	protected UsuarioDTO userLogin;
+	protected String NombreVentana;
 
 	public ABean() {
 		try {
@@ -19,6 +29,15 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		} catch (ReflectionException e) {
 			System.err.println(e);
 		}
+	}
+
+	public void notificar(String msn) {
+		System.out.println(msn);
+	}
+
+	@SuppressWarnings("hiding")
+	public <T extends Exception> void error(T error) {
+		System.err.println(error);
 	}
 
 	public Integer getPage() {
@@ -80,4 +99,13 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	public void setTotalRows(Integer totalRows) {
 		this.totalRows = totalRows;
 	}
+
+	public String getNombreVentana() {
+		return NombreVentana;
+	}
+
+	public void setNombreVentana(String nombreVentana) {
+		NombreVentana = nombreVentana;
+	}
+
 }
