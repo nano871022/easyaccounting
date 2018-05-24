@@ -2,6 +2,7 @@ package org.pyt.common.common;
 
 import java.util.List;
 
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
 
@@ -31,13 +32,29 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		}
 	}
 
+	public <L extends ADto, S extends ABean<L>> S getController(Class<S> classOfBean) {
+		try {
+			return LoadAppFxml.BeanFxml(null,classOfBean);
+		} catch (LoadAppFxmlException e) {
+			Log.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
+			error(e);
+		}
+		return null;
+	}
+
 	public void notificar(String msn) {
 		System.out.println(msn);
 	}
 
 	@SuppressWarnings("hiding")
 	public <T extends Exception> void error(T error) {
+		Log.logger(error);
 		System.err.println(error);
+	}
+
+	public void error(String msn) {
+		Log.logger(msn);
+		System.err.println(msn);
 	}
 
 	public Integer getPage() {
@@ -49,14 +66,6 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	}
 
 	public void error(Throwable e) {
-
-	}
-
-	public void error(String mensaje) {
-
-	}
-
-	public void info(String mensaje) {
 
 	}
 

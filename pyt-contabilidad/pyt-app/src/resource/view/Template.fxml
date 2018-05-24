@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.load.Template">
+	<top>
+		<MenuBar fx:id="menu" BorderPane.alignment="CENTER" />
+	</top>
+	<bottom>
+		<GridPane BorderPane.alignment="CENTER">
+			<columnConstraints>
+				<ColumnConstraints hgrow="always" />
+				<ColumnConstraints hgrow="always" />
+				<ColumnConstraints hgrow="always" />
+				<ColumnConstraints hgrow="always" />
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints vgrow="always" />
+			</rowConstraints>
+			<children>
+				<Label fx:id="leftMessage" text="Mensaje Inzquierdo" GridPane.hgrow="always" />
+				<Label fx:id="centerMessage" text="Mensaje Central" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.hgrow="always" />
+				<Label fx:id="rightMessage" text="Mensaje Derecho" GridPane.columnIndex="2" GridPane.hgrow="always" />
+				<ProgressBar fx:id="progressBar" progress="0.0" GridPane.columnIndex="3" GridPane.fillWidth="true" GridPane.hgrow="always" />
+			</children>
+		</GridPane>
+	</bottom>
+	<right>
+		<VBox fx:id="notificacion" BorderPane.alignment="CENTER" />
+	</right>
+	<center>
+		<ScrollPane  prefHeight="100" prefWidth="100" BorderPane.alignment="CENTER">
+			<content>
+				<AnchorPane fx:id="principal" />
+			</content>
+		</ScrollPane>
+	</center>
+</BorderPane>

@@ -5,12 +5,10 @@ import java.util.List;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpresasException;
-import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.EmpresaDTO;
@@ -114,9 +112,14 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	}
 
 	public void load(EmpresaDTO dto) {
-		registro = dto;
-		loadFxml();
-		notificar(registro.getCodigo());
+		if (dto != null && dto.getCodigo() != null) {
+			registro = dto;
+			loadFxml();
+			notificar(registro.getCodigo());
+		}else {
+			error("La empresa es invalida para editar.");
+			cancel();
+		}
 	}
 
 	public void add() {
@@ -135,11 +138,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	}
 
 	public void cancel() {
-		try {
-			LoadAppFxml.loadBeanFxml(EmpresaBean.class);
-		} catch (LoadAppFxmlException e) {
-			error(e);
-		}
+		getController(EmpresaBean.class);
 	}
 
 }

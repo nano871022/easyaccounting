@@ -37,7 +37,7 @@ public final class SelectList {
 				observable.add(obj.get(campoDto));
 			}
 		} catch (ReflectionException e) {
-			System.err.println(e);
+			Log.logger(e);
 		}
 	}
 
@@ -61,21 +61,33 @@ public final class SelectList {
 				}
 			}
 		} catch (ReflectionException e) {
-			System.err.println(e);
+			Log.logger(e);
 		}
 		return null;
 	}
 
+	/**
+	 * Se encarga de buscar un valor en la lista y seleccionarlo por defecto
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param obj
+	 *            {@link ADto} extends
+	 * @param nombreCampoDto
+	 *            {@link String}
+	 */
 	public final static <S extends Object, T extends ADto> void selectItem(ChoiceBox<S> choiceBox, T obj,
 			String nombreCampoDto) {
 		try {
-			for (S obs : choiceBox.getItems()) {
-				if (obj.get(nombreCampoDto) == obs) {
-					choiceBox.getSelectionModel().select(obs);
+			if (obj != null) {
+				for (S obs : choiceBox.getItems()) {
+					if (obj.get(nombreCampoDto) == obs) {
+						choiceBox.getSelectionModel().select(obs);
+					}
 				}
 			}
 		} catch (ReflectionException e) {
-			System.err.println(e);
+			Log.logger(e);
 		}
 	}
 }

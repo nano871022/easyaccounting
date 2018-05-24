@@ -3,16 +3,15 @@ package org.pyt.app.beans;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Table;
 import org.pyt.common.exceptions.EmpresasException;
-import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 /**
  * Bean encargado de crear las empresas
@@ -26,20 +25,30 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	private IEmpresasSvc empresaSvc;
 	@FXML
 	private TableView<EmpresaDTO> lsEmpresa;
+	@FXML
+	private TextField codigo;
+	@FXML
+	private TextField nombre;
+	@FXML
+	private TextField email;
 
 	@FXML
 	public void initialize() {
-		try {
-			NombreVentana = "Lista Empresas";
-			filtro = new EmpresaDTO();
-			registro = new EmpresaDTO();
-			page = 1;
-			rows = 10;
-			lista = empresaSvc.getEmpresas(new EmpresaDTO(), page, rows);
-			Table.put(lsEmpresa, lista);
-		} catch (EmpresasException e) {
-			error(e);
-		}
+		NombreVentana = "Lista Empresas";
+		filtro = new EmpresaDTO();
+		registro = new EmpresaDTO();
+		page = 1;
+		rows = 10;
+		search();
+	}
+
+	/**
+	 * Carga la informacion de los campos en el filtro
+	 */
+	private void loadFiltro() {
+		filtro.setCodigo(codigo.getText());
+		filtro.setNombre(codigo.getText());
+		filtro.setCorreoElectronico(email.getText());
 	}
 
 	/**
@@ -47,6 +56,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	 */
 	public void search() {
 		try {
+			loadFiltro();
 			lista = empresaSvc.getEmpresas(filtro, page, rows);
 			totalRows = empresaSvc.getTotalRows(filtro);
 			Table.put(lsEmpresa, lista);
@@ -56,23 +66,28 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	}
 
 	public void add() {
+		getController(EmpresaCRUBean.class);
+	}
+
+	public void del() {
 		try {
-			LoadAppFxml.loadBeanFxml(EmpresaCRUBean.class);
-		} catch (LoadAppFxmlException e) {
+			registro = lsEmpresa.getSelectionModel().getSelectedItem();
+			if (registro != null) {
+				empresaSvc.delete(registro, userLogin);
+			} else {
+				notificar("No se ha seleccionado una empresa.");
+			}
+		} catch (EmpresasException e) {
 			error(e);
 		}
 	}
 
-	public void del() {
-		System.out.println("eliminar registro ");
-	}
-
 	public void set() {
-		try {
-			registro = lsEmpresa.getSelectionModel().getSelectedItem();
-			LoadAppFxml.loadBeanFxml(EmpresaCRUBean.class).load(registro);
-		} catch (LoadAppFxmlException e) {
-			error(e);
+		registro = lsEmpresa.getSelectionModel().getSelectedItem();
+		if (registro != null) {
+			getController(EmpresaCRUBean.class).load(registro);
+		} else {
+			notificar("No se ha seleccionado una empresa.");
 		}
 	}
 

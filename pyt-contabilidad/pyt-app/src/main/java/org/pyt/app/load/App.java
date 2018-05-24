@@ -1,6 +1,5 @@
 package org.pyt.app.load;
 
-import org.pyt.app.beans.EmpresaBean;
 import org.pyt.common.common.LoadAppFxml;
 
 import javafx.application.Application;
@@ -10,7 +9,7 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		LoadAppFxml.loadBeanFxml(primaryStage, EmpresaBean.class);
+		LoadAppFxml.loadFxml(primaryStage, Template.class);
 	}
 
 	public final static void main(String... args) {
