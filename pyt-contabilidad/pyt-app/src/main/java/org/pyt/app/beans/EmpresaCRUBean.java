@@ -18,7 +18,9 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -33,7 +35,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
 	private IEmpresasSvc empresaSvc;
 	@FXML
-	private TextField codigo;
+	private Label codigo;
 	@FXML
 	private TextField nombre;
 	@FXML
@@ -56,12 +58,18 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	private TextField contador;
 	@FXML
 	private TextField nContador;
+	@FXML
+	private Label titulo;
+	@FXML
+	private BorderPane pane;
 	private List<ParametroDTO> lMoneda;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Empresa";
+		NombreVentana = "Agregando Nueva Empresa";
+		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
+		
 		try {
 			ParametroDTO moneda = new ParametroDTO();
 			moneda.setGrupo(ParametroConstants.GRUPO_MONEDA);
@@ -115,8 +123,8 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
 			loadFxml();
-			notificar(registro.getCodigo());
-		}else {
+			titulo.setText("Modificando Empresa");
+		} else {
 			error("La empresa es invalida para editar.");
 			cancel();
 		}

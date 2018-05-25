@@ -16,8 +16,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -41,10 +41,11 @@ public class Template {
 	@FXML
 	private VBox notificacion;
 	@FXML
-	private AnchorPane principal;
+	private Pane principal;
 	@FXML
 	private BorderPane panel;
-
+	@FXML
+	private ScrollPane scroller;
 	@FXML
 	public void initialize() {
 		menu.getMenus().clear();
@@ -57,7 +58,8 @@ public class Template {
 			@Override
 			public void handle(ActionEvent event) {
 				try {
-					LoadAppFxml.BeanFxml(principal, EmpresaBean.class);
+					//LoadAppFxml.BeanFxml(principal, EmpresaBean.class);
+					LoadAppFxml.BeanFxmlScroller(scroller, EmpresaBean.class);
 				} catch (LoadAppFxmlException e) {
 					Log.logger(e);
 				}

@@ -34,7 +34,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 
 	public <L extends ADto, S extends ABean<L>> S getController(Class<S> classOfBean) {
 		try {
-			return LoadAppFxml.BeanFxml(null,classOfBean);
+			return LoadAppFxml.BeanFxmlScroller(null,classOfBean);
 		} catch (LoadAppFxmlException e) {
 			Log.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
 			error(e);

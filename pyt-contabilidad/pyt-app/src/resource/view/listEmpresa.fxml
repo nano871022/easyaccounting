@@ -1,117 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
-	xmlns="http://javafx.com/javafx/2.2"
-	fx:controller="org.pyt.app.beans.EmpresaBean">
-	<!-- TODO Add Nodes -->
-	<children>
-		<AnchorPane prefHeight="536.0" prefWidth="538.0">
+<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.beans.EmpresaBean">
+	<bottom>
+		<FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
 			<children>
-				<BorderPane layoutX="0.0" layoutY="0.0"
-					prefHeight="536.0" prefWidth="538.0">
-					<bottom>
-						<FlowPane alignment="CENTER" prefHeight="37.0"
-							prefWidth="538.0">
-							<children>
-								<Button mnemonicParsing="false" text="Agregar"
-									onAction="#add" />
-								<Button mnemonicParsing="false" text="Modificar"
-									onAction="#set" />
-								<Button mnemonicParsing="false" text="Eliminar"
-									onAction="#del" />
-							</children>
-						</FlowPane>
-					</bottom>
-					<center>
-						<TableView fx:id="lsEmpresa" editable="false"
-							prefHeight="200.0" prefWidth="200.0"
-							tableMenuButtonVisible="false">
-							<columns>
-								<TableColumn prefWidth="75.0" text="#">
-									<cellValueFactory>
-										<PropertyValueFactory property="codigo" />
-									</cellValueFactory>
-								</TableColumn>
-								<TableColumn prefWidth="75.0" text="Nombre">
-									<cellValueFactory>
-										<PropertyValueFactory property="nombre" />
-									</cellValueFactory>
-								</TableColumn>
-								<TableColumn prefWidth="75.0" text="Digito">
-									<cellValueFactory>
-										<PropertyValueFactory
-											property="digitoVerificacion" />
-									</cellValueFactory>
-								</TableColumn>
-								<TableColumn prefWidth="75.0" text="Email">
-									<cellValueFactory>
-										<PropertyValueFactory property="nit" />
-									</cellValueFactory>
-								</TableColumn>
-								<TableColumn prefWidth="75.0" text="Telefono">
-									<cellValueFactory>
-										<PropertyValueFactory property="telefono" />
-									</cellValueFactory>
-								</TableColumn>
-								<TableColumn prefWidth="75.0" text="Direccion">
-									<cellValueFactory>
-										<PropertyValueFactory
-											property="direccion" />
-									</cellValueFactory>
-								</TableColumn>
-							</columns>
-						</TableView>
-					</center>
-					<top>
-						<GridPane cache="false" depthTest="INHERIT"
-							mouseTransparent="false" pickOnBounds="true" prefWidth="512.0">
-							<children>
-								<Label alignment="CENTER_LEFT" prefHeight="22.0"
-									prefWidth="121.0" text="Código" textAlignment="LEFT"
-									wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-								<Label prefHeight="27.0" prefWidth="96.0" text="Nombre"
-									wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-								<Label prefHeight="23.0" text="Correo Electrónico"
-									wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-								<TextField fx:id="codigo" prefWidth="200.0"
-									GridPane.columnIndex="1" GridPane.rowIndex="0" />
-								<TextField fx:id="nombre" prefWidth="200.0"
-									GridPane.columnIndex="3" GridPane.rowIndex="0" />
-								<TextField fx:id="email" prefWidth="200.0"
-									GridPane.columnIndex="1" GridPane.rowIndex="1" />
-								<Button mnemonicParsing="false" text="Buscar"
-									GridPane.columnIndex="2" GridPane.rowIndex="1"
-									onAction="#search" />
-							</children>
-							<columnConstraints>
-								<ColumnConstraints hgrow="SOMETIMES"
-									maxWidth="135.0" minWidth="10.0" prefWidth="129.0" />
-								<ColumnConstraints hgrow="SOMETIMES"
-									maxWidth="150.0" minWidth="10.0" prefWidth="141.0" />
-								<ColumnConstraints hgrow="SOMETIMES"
-									maxWidth="131.0" minWidth="10.0" prefWidth="96.0" />
-								<ColumnConstraints hgrow="SOMETIMES"
-									maxWidth="205.0" minWidth="10.0" prefWidth="172.0" />
-							</columnConstraints>
-							<rowConstraints>
-								<RowConstraints maxHeight="30.0" minHeight="10.0"
-									prefHeight="30.0" vgrow="SOMETIMES" />
-								<RowConstraints maxHeight="30.0" minHeight="10.0"
-									prefHeight="30.0" vgrow="SOMETIMES" />
-							</rowConstraints>
-						</GridPane>
-					</top>
-				</BorderPane>
+				<Button mnemonicParsing="false" onAction="#add" text="Agregar" />
+				<Button mnemonicParsing="false" onAction="#set" text="Modificar">
+               <FlowPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </FlowPane.margin></Button>
+				<Button mnemonicParsing="false" onAction="#del" text="Eliminar" />
 			</children>
-		</AnchorPane>
-	</children>
-</VBox>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding>
+		</FlowPane>
+	</bottom>
+	<center>
+		<TableView fx:id="lsEmpresa" editable="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" tableMenuButtonVisible="false" BorderPane.alignment="CENTER">
+			<columns>
+				<TableColumn prefWidth="75.0" text="#">
+					<cellValueFactory>
+						<PropertyValueFactory property="codigo" />
+					</cellValueFactory>
+				</TableColumn>
+				<TableColumn prefWidth="75.0" text="Nombre">
+					<cellValueFactory>
+						<PropertyValueFactory property="nombre" />
+					</cellValueFactory>
+				</TableColumn>
+				<TableColumn prefWidth="75.0" text="Digito">
+					<cellValueFactory>
+						<PropertyValueFactory property="digitoVerificacion" />
+					</cellValueFactory>
+				</TableColumn>
+				<TableColumn prefWidth="75.0" text="Email">
+					<cellValueFactory>
+						<PropertyValueFactory property="nit" />
+					</cellValueFactory>
+				</TableColumn>
+				<TableColumn prefWidth="75.0" text="Telefono">
+					<cellValueFactory>
+						<PropertyValueFactory property="telefono" />
+					</cellValueFactory>
+				</TableColumn>
+				<TableColumn prefWidth="75.0" text="Direccion">
+					<cellValueFactory>
+						<PropertyValueFactory property="direccion" />
+					</cellValueFactory>
+				</TableColumn>
+			</columns>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+		</TableView>
+	</center>
+	<top>
+		<GridPane cache="false" depthTest="INHERIT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefWidth="512.0" BorderPane.alignment="CENTER">
+			<children>
+				<Label alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="121.0" text="Código" textAlignment="LEFT" wrapText="true" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </GridPane.margin></Label>
+				<Label prefHeight="27.0" prefWidth="96.0" text="Nombre" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="10.0" top="5.0" />
+               </GridPane.margin></Label>
+				<Label prefHeight="23.0" text="Correo Electrónico" wrapText="true" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </GridPane.margin></Label>
+				<TextField fx:id="codigo" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </GridPane.margin></TextField>
+				<TextField fx:id="nombre" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" right="5.0" top="5.0" />
+               </GridPane.margin></TextField>
+				<TextField fx:id="email" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </GridPane.margin></TextField>
+				<Button mnemonicParsing="false" onAction="#search" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="10.0" top="5.0" />
+               </GridPane.margin></Button>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Listado de Empresas" textAlignment="CENTER" GridPane.columnSpan="4">
+               <font>
+                  <Font name="System Bold Italic" size="18.0" />
+               </font>
+            </Label>
+			</children>
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="129.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="141.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="131.0" minWidth="10.0" prefWidth="96.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="205.0" minWidth="10.0" prefWidth="172.0" />
+			</columnConstraints>
+			<rowConstraints>
+            <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+			</rowConstraints>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+         </BorderPane.margin>
+		</GridPane>
+	</top>
+</BorderPane>
