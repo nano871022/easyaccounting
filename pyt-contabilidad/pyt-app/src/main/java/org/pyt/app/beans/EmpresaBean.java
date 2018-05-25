@@ -10,7 +10,7 @@ import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 /**
@@ -24,13 +24,15 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
 	private IEmpresasSvc empresaSvc;
 	@FXML
-	private TableView<EmpresaDTO> lsEmpresa;
+	private javafx.scene.control.TableView<EmpresaDTO> lsEmpresa;
 	@FXML
 	private TextField codigo;
 	@FXML
 	private TextField nombre;
 	@FXML
 	private TextField email;
+	@FXML
+	private Button btnMod;
 
 	@FXML
 	public void initialize() {
@@ -40,6 +42,10 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		page = 1;
 		rows = 10;
 		search();
+	}
+
+	public void clickTable() {
+		btnMod.setVisible(isSelected());
 	}
 
 	/**
@@ -91,8 +97,11 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		}
 	}
 
-	public TableView<EmpresaDTO> getLsEmpresa() {
+	public javafx.scene.control.TableView<EmpresaDTO> getLsEmpresa() {
 		return lsEmpresa;
 	}
 
+	public Boolean isSelected() {
+		return lsEmpresa.getSelectionModel().getSelectedItems().size() > 0;
+	}
 }

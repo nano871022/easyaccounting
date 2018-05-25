@@ -17,9 +17,7 @@ import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -37,27 +35,27 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@FXML
 	private Label codigo;
 	@FXML
-	private TextField nombre;
+	private javafx.scene.control.TextField nombre;
 	@FXML
-	private TextField nit;
+	private javafx.scene.control.TextField nit;
 	@FXML
-	private TextField digito;
+	private javafx.scene.control.TextField digito;
 	@FXML
-	private TextField direccion;
+	private javafx.scene.control.TextField direccion;
 	@FXML
-	private TextField email;
+	private javafx.scene.control.TextField email;
 	@FXML
-	private TextField telefono;
+	private javafx.scene.control.TextField telefono;
 	@FXML
-	private TextField pais;
+	private javafx.scene.control.TextField pais;
 	@FXML
-	private ChoiceBox<String> moneda;
+	private javafx.scene.control.ChoiceBox<String> moneda;
 	@FXML
-	private TextField representante;
+	private javafx.scene.control.TextField representante;
 	@FXML
-	private TextField contador;
+	private javafx.scene.control.TextField contador;
 	@FXML
-	private TextField nContador;
+	private javafx.scene.control.TextField nContador;
 	@FXML
 	private Label titulo;
 	@FXML

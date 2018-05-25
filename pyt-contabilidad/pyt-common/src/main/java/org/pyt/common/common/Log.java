@@ -29,6 +29,16 @@ public final class Log {
 	}
 
 	/**
+	 * Se encarga de cargar un error en el log
+	 * 
+	 * @param error
+	 *            {@link Exception}
+	 */
+	public final static <T extends Exception> void error(String error) {
+		System.err.println(error);
+	}
+
+	/**
 	 * Se encarga de cargar un error en el log con mensaje adicional
 	 * 
 	 * @param mensaje
