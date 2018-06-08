@@ -1,5 +1,6 @@
 package org.pyt.common.common;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,8 @@ import org.pyt.common.interfaces.IComunicacion;
  * @since 2018-05-24
  */
 @Singleton
-public class Comunicacion implements Runnable {
-	private Map<String, IComunicacion[]> suscriptores;
+public class Comunicacion <IC extends IComunicacion> implements Runnable {
+	private Map<String, IC[]> suscriptores;
 	private Map<String, Object[]> comandoValor;
 	private static Comunicacion comunicacion;
 	private Thread hilo;
@@ -125,13 +126,14 @@ public class Comunicacion implements Runnable {
 			for (String comando : comandos) {
 				T[] subscribers = (T[]) suscriptores.get(comando);
 				if (subscribers == null || subscribers.length == 0) {
-					List<T> lSubscribers = new ArrayList<>();
+					List<IComunicacion> lSubscribers = new ArrayList<IComunicacion>();
 					lSubscribers.add(subscriber);
-					suscriptores.put(comando, (IComunicacion[]) lSubscribers.toArray());
+					T[] ss = (T[]) lSubscribers.toArray(new IComunicacion[0]);
+					suscriptores.put(comando, (IC[]) ss);
 				} else if (subscribers != null || subscribers.length > 0) {
 					List<T> lSubscribers = List.of(subscribers);
 					lSubscribers.add(subscriber);
-					suscriptores.put(comando, (IComunicacion[]) lSubscribers.toArray());
+					suscriptores.put(comando, (IC[]) lSubscribers.toArray(new IComunicacion[0]));
 				}
 			}
 		}

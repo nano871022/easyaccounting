@@ -8,6 +8,7 @@ package org.pyt.common.common;
  * @since 2018-05-24
  */
 public final class Log {
+
 	/**
 	 * Se encaga de cargar un mensaje en el log
 	 * 

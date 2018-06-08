@@ -8,6 +8,7 @@ import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -133,6 +134,11 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				loadApp().getStage().setScene(scene);
 				loadApp().getStage().sizeToScene();
 				loadApp().getStage().show();
+				System.out.println("java");
+				loadApp().getStage().setOnCloseRequest(e -> {
+					Platform.exit();
+					System.exit(0);
+				});
 				return loader.getController();
 			} else {
 				throw new LoadAppFxmlException("El " + controller.getName() + " no se encuentra anotado con @FXML");
@@ -198,8 +204,8 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		}
 	}
 
-	public final static <L extends ScrollPane, S extends ADto, T extends ABean<S>> T BeanFxmlScroller(L layout, Class<T> bean)
-			throws LoadAppFxmlException {
+	public final static <L extends ScrollPane, S extends ADto, T extends ABean<S>> T BeanFxmlScroller(L layout,
+			Class<T> bean) throws LoadAppFxmlException {
 		String file;
 
 		if (!loadApp().isLastContro()) {
@@ -217,7 +223,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			URL url = bean.getResource(file);
 			FXMLLoader loader = new FXMLLoader(url);
 			Parent root = loader.load();
-			((ScrollPane)loadApp().getLastContro()).setContent(root);
+			((ScrollPane) loadApp().getLastContro()).setContent(root);
 			return loader.getController();
 		} catch (InstantiationException e) {
 			throw new LoadAppFxmlException("Problema en instanciacion.", e);

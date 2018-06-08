@@ -23,14 +23,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jre1.8.0_73/lib/ext/jfxrt.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.oracle"/>
-			<attribute name="maven.artifactId" value="javafx"/>
-			<attribute name="maven.version" value="2.2"/>
-			<attribute name="maven.scope" value="system"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

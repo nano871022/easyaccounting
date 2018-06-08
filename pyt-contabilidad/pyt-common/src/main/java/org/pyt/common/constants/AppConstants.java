@@ -12,4 +12,10 @@ public final class AppConstants {
 	public final static String SELECCIONE = "Seleccione";
 	public final static String DEFAULT_PAIS_COL = "Colombia";
 	public final static String ANNOT_SINGLETON = "singleton";
+	
+	public final static String COMMAND_PROGRESS = "progress";
+	public final static String COMMAND_MSN_IZQ = "MensajeIzquierdo";
+	public final static String COMMAND_MSN_DER = "MensajeDerecho";
+	public final static String COMMAND_MSN_CTR = "MensajeCentro";
+	
 }

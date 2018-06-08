@@ -1,5 +1,7 @@
 package org.pyt.app.beans;
 
+import java.util.Iterator;
+
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
@@ -10,8 +12,13 @@ import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 
 /**
  * Bean encargado de crear las empresas
@@ -33,6 +40,21 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	private TextField email;
 	@FXML
 	private Button btnMod;
+	@FXML
+	private Button btnPrimer;
+	@FXML
+	private Button btnUltimo;
+	@FXML
+	private Button btnSiguiente;
+	@FXML
+	private Button btnAtras;
+	@FXML
+	private HBox paginas;
+	@FXML
+	private HBox nPages;
+	private Integer currentPage;
+	private Integer total;
+	private Integer rows;
 
 	@FXML
 	public void initialize() {
@@ -41,7 +63,10 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		registro = new EmpresaDTO();
 		page = 1;
 		rows = 10;
+		total = 5;
+		currentPage = 1;
 		search();
+		loadPages();
 	}
 
 	public void clickTable() {
@@ -55,6 +80,29 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		filtro.setCodigo(codigo.getText());
 		filtro.setNombre(codigo.getText());
 		filtro.setCorreoElectronico(email.getText());
+	}
+
+	private void loadPages() {
+		for (int i = 0; i < 5; i++) {
+			Label page = new Label(String.valueOf(i + 1));
+			page.setPadding(new Insets(5));
+			page.setStyle("-fx-cursor:hand");
+			if (i == 0) {
+				page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
+			}
+			page.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+				Iterator<Node> ite = nPages.getChildren().iterator();
+				while (ite.hasNext()) {
+					Node node = ite.next();
+					((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
+				}
+				page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
+				currentPage = Integer.valueOf(page.getText());
+			});
+			nPages.getChildren().add(page);
+			btnAtras.setVisible(false);
+			btnPrimer.setVisible(false);
+		}
 	}
 
 	/**
@@ -86,6 +134,65 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		} catch (EmpresasException e) {
 			error(e);
 		}
+	}
+
+	private final void reloadPages() {
+		Iterator<Node> ite = nPages.getChildren().iterator();
+		while (ite.hasNext()) {
+			Node node = ite.next();
+			if (((Label) node).getText().contentEquals(String.valueOf(currentPage))) {
+				((Label) node).setStyle("-fx-text-fill:blue;-fx-underline:true;");
+			} else {
+				((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
+			}
+		}
+	}
+
+	public void first() {
+		currentPage = 1;
+		reloadPages();
+		btnSiguiente.setVisible(true);
+		btnUltimo.setVisible(true);
+		btnAtras.setVisible(false);
+		btnPrimer.setVisible(false);
+	}
+
+	public void before() {
+		currentPage--;
+		reloadPages();
+		if (currentPage == 1) {
+			btnAtras.setVisible(false);
+			btnPrimer.setVisible(false);
+		} else {
+			btnAtras.setVisible(true);
+			btnPrimer.setVisible(true);
+		}
+		btnSiguiente.setVisible(true);
+		btnUltimo.setVisible(true);
+	}
+
+	public void next() {
+		currentPage++;
+		reloadPages();
+		if (currentPage == total) {
+			btnSiguiente.setVisible(false);
+			btnUltimo.setVisible(false);
+		} else {
+			btnSiguiente.setVisible(true);
+			btnUltimo.setVisible(true);
+		}
+		btnAtras.setVisible(true);
+		btnPrimer.setVisible(true);
+		
+	}
+
+	public void last() {
+		currentPage = total;
+		reloadPages();
+		btnSiguiente.setVisible(false);
+		btnUltimo.setVisible(false);
+		btnAtras.setVisible(true);
+		btnPrimer.setVisible(true);
 	}
 
 	public void set() {

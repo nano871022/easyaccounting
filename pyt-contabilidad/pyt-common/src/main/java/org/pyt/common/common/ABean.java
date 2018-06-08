@@ -2,6 +2,8 @@ package org.pyt.common.common;
 
 import java.util.List;
 
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
@@ -23,6 +25,8 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	protected T registro;
 	protected UsuarioDTO userLogin;
 	protected String NombreVentana;
+	@Inject
+	private Comunicacion comunicacion;
 
 	public ABean() {
 		try {
@@ -34,7 +38,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 
 	public <L extends ADto, S extends ABean<L>> S getController(Class<S> classOfBean) {
 		try {
-			return LoadAppFxml.BeanFxmlScroller(null,classOfBean);
+			return LoadAppFxml.BeanFxmlScroller(null, classOfBean);
 		} catch (LoadAppFxmlException e) {
 			Log.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
 			error(e);
@@ -44,6 +48,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 
 	public void notificar(String msn) {
 		System.out.println(msn);
+		comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, msn);
 	}
 
 	@SuppressWarnings("hiding")
@@ -55,6 +60,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	public void error(String msn) {
 		Log.logger(msn);
 		System.err.println(msn);
+		comunicacion.setComando(AppConstants.COMMAND_MSN_CTR, msn);
 	}
 
 	public Integer getPage() {
