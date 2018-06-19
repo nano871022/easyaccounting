@@ -12,7 +12,7 @@ import javafx.scene.control.TableView;
  * @since 2018-05-19
  *
  */
-public final class Table {
+public class Table {
 	/**
 	 * Este metodos e encarga de coger una lista y ponerla dentro de
 	 * {@link TableView}

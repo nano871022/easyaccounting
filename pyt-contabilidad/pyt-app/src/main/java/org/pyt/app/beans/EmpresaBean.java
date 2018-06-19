@@ -1,23 +1,20 @@
 package org.pyt.app.beans;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.Table;
 import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 /**
@@ -31,7 +28,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
 	private IEmpresasSvc empresaSvc;
 	@FXML
-	private javafx.scene.control.TableView<EmpresaDTO> lsEmpresa;
+	private javafx.scene.control.TableView<EmpresaDTO> tabla;
 	@FXML
 	private TextField codigo;
 	@FXML
@@ -41,91 +38,69 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	@FXML
 	private Button btnMod;
 	@FXML
-	private Button btnPrimer;
-	@FXML
-	private Button btnUltimo;
-	@FXML
-	private Button btnSiguiente;
-	@FXML
-	private Button btnAtras;
-	@FXML
-	private HBox paginas;
-	@FXML
-	private HBox nPages;
-	private Integer currentPage;
-	private Integer total;
-	private Integer rows;
+	private HBox paginador;
+	private DataTableFXML<EmpresaDTO, EmpresaDTO> dt;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Lista Empresas";
-		filtro = new EmpresaDTO();
 		registro = new EmpresaDTO();
-		page = 1;
-		rows = 10;
-		total = 5;
-		currentPage = 1;
-		search();
-		loadPages();
+		lazy();
+	}
+
+	/**
+	 * encargada de crear el objeto que va controlar la tabla
+	 */
+	public void lazy() {
+		dt = new DataTableFXML<EmpresaDTO, EmpresaDTO>(paginador, tabla) {
+			@Override
+			public List<EmpresaDTO> getList(EmpresaDTO filter, Integer page, Integer rows) {
+				List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
+				try {
+					lista = empresaSvc.getEmpresas(filter, page, rows);
+				} catch (EmpresasException e) {
+					error(e);
+				}
+				return lista;
+			}
+
+			@Override
+			public Integer getTotalRows(EmpresaDTO filter) {
+				Integer count = 0;
+				try {
+					count = empresaSvc.getTotalRows(filter);
+				} catch (EmpresasException e) {
+					error(e);
+				}
+				return count;
+			}
+
+			@Override
+			public EmpresaDTO getFilter() {
+				EmpresaDTO filtro = new EmpresaDTO();
+				filtro.setCodigo(codigo.getText());
+				filtro.setNombre(codigo.getText());
+				filtro.setCorreoElectronico(email.getText());
+				return filtro;
+			}
+		};
 	}
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
 	}
 
-	/**
-	 * Carga la informacion de los campos en el filtro
-	 */
-	private void loadFiltro() {
-		filtro.setCodigo(codigo.getText());
-		filtro.setNombre(codigo.getText());
-		filtro.setCorreoElectronico(email.getText());
-	}
-
-	private void loadPages() {
-		for (int i = 0; i < 5; i++) {
-			Label page = new Label(String.valueOf(i + 1));
-			page.setPadding(new Insets(5));
-			page.setStyle("-fx-cursor:hand");
-			if (i == 0) {
-				page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
-			}
-			page.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-				Iterator<Node> ite = nPages.getChildren().iterator();
-				while (ite.hasNext()) {
-					Node node = ite.next();
-					((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
-				}
-				page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
-				currentPage = Integer.valueOf(page.getText());
-			});
-			nPages.getChildren().add(page);
-			btnAtras.setVisible(false);
-			btnPrimer.setVisible(false);
-		}
-	}
-
-	/**
-	 * Se encarga de obtener todos los registros
-	 */
-	public void search() {
-		try {
-			loadFiltro();
-			lista = empresaSvc.getEmpresas(filtro, page, rows);
-			totalRows = empresaSvc.getTotalRows(filtro);
-			Table.put(lsEmpresa, lista);
-		} catch (EmpresasException e) {
-			error(e);
-		}
-	}
-
 	public void add() {
 		getController(EmpresaCRUBean.class);
 	}
 
+	public void search() {
+		dt.search();
+	}
+
 	public void del() {
 		try {
-			registro = lsEmpresa.getSelectionModel().getSelectedItem();
+			registro = dt.getSelectedRow();
 			if (registro != null) {
 				empresaSvc.delete(registro, userLogin);
 			} else {
@@ -136,67 +111,8 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		}
 	}
 
-	private final void reloadPages() {
-		Iterator<Node> ite = nPages.getChildren().iterator();
-		while (ite.hasNext()) {
-			Node node = ite.next();
-			if (((Label) node).getText().contentEquals(String.valueOf(currentPage))) {
-				((Label) node).setStyle("-fx-text-fill:blue;-fx-underline:true;");
-			} else {
-				((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
-			}
-		}
-	}
-
-	public void first() {
-		currentPage = 1;
-		reloadPages();
-		btnSiguiente.setVisible(true);
-		btnUltimo.setVisible(true);
-		btnAtras.setVisible(false);
-		btnPrimer.setVisible(false);
-	}
-
-	public void before() {
-		currentPage--;
-		reloadPages();
-		if (currentPage == 1) {
-			btnAtras.setVisible(false);
-			btnPrimer.setVisible(false);
-		} else {
-			btnAtras.setVisible(true);
-			btnPrimer.setVisible(true);
-		}
-		btnSiguiente.setVisible(true);
-		btnUltimo.setVisible(true);
-	}
-
-	public void next() {
-		currentPage++;
-		reloadPages();
-		if (currentPage == total) {
-			btnSiguiente.setVisible(false);
-			btnUltimo.setVisible(false);
-		} else {
-			btnSiguiente.setVisible(true);
-			btnUltimo.setVisible(true);
-		}
-		btnAtras.setVisible(true);
-		btnPrimer.setVisible(true);
-		
-	}
-
-	public void last() {
-		currentPage = total;
-		reloadPages();
-		btnSiguiente.setVisible(false);
-		btnUltimo.setVisible(false);
-		btnAtras.setVisible(true);
-		btnPrimer.setVisible(true);
-	}
-
 	public void set() {
-		registro = lsEmpresa.getSelectionModel().getSelectedItem();
+		registro = dt.getSelectedRow();
 		if (registro != null) {
 			getController(EmpresaCRUBean.class).load(registro);
 		} else {
@@ -204,11 +120,11 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		}
 	}
 
-	public javafx.scene.control.TableView<EmpresaDTO> getLsEmpresa() {
-		return lsEmpresa;
+	public Boolean isSelected() {
+		return dt.isSelected();
 	}
 
-	public Boolean isSelected() {
-		return lsEmpresa.getSelectionModel().getSelectedItems().size() > 0;
+	public DataTableFXML<EmpresaDTO, EmpresaDTO> getDt() {
+		return dt;
 	}
 }

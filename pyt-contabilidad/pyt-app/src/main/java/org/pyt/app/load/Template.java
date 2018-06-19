@@ -15,8 +15,6 @@ import org.pyt.common.reflection.Reflection;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -52,6 +50,7 @@ public class Template extends Reflection implements IComunicacion {
 	private BorderPane panel;
 	@FXML
 	private javafx.scene.control.ScrollPane scroller;
+	@SuppressWarnings("rawtypes")
 	@Inject
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_PROGRESS)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_MSN_IZQ)

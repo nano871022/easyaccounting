@@ -32,47 +32,46 @@ public abstract class Reflection {
 	 * 
 	 * @return {@link Object}
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected <L extends Comunicacion, N, T, S extends Object, M extends IComunicacion> void inject()
 			throws ReflectionException {
 		try {
 			Class<S> clase = (Class<S>) this.getClass();
 			Field[] fields = clase.getDeclaredFields();
+			inject((S) this, fields, clase);
+			subscriberInject(this, fields, clase);
+		} catch (IllegalArgumentException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		} catch (SecurityException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private final <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase)
+			throws ReflectionException {
+		if (fields == null || fields.length == 0)
+			return;
+		try {
 			for (Field field : fields) {
 				Inject inject = field.getAnnotation(Inject.class);
 				if (inject != null && inject.resource() != null && inject.resource().length() > 0) {
 					T obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
-					put(this, field, obj);
+					put(object, field, obj);
 				} else if (inject != null && (inject.resource() == null || inject.resource().length() == 0)) {
 					Class<T> classe = (Class<T>) field.getType();
 					Singleton singleton = classe.getAnnotation(Singleton.class);
 					if (singleton != null) {
 						Method method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
 						T obj = (T) method.invoke(classe);
-						put(this, field, obj);
+						put(object, field, obj);
 					} else {
 						T obj = (T) field.getType().getConstructor().newInstance();
-						put(this, field, obj);
+						put(object, field, obj);
 					}
 				}
-			}
-			// procesado despues de injecciones
-			for (Field field : fields) {
-				SubcribcionesToComunicacion subs = field.getAnnotation(SubcribcionesToComunicacion.class);
-				if (subs != null) {
-					L obj = get(this, field);
-					if (obj != null && (this) instanceof IComunicacion) {
-						for (SubcribirToComunicacion sub : subs.value()) {
-							obj.subscriber((M) this, sub.comando());
-						}
-					} else {
-						Log.error("El objeto " + clase.getName() + " no tiene la implementacion de "
-								+ IComunicacion.class.getName());
-					}
-
-				}
-			}
-
+			} // end for
+			inject(object, clase.getSuperclass().getDeclaredFields(), (Class<S>) clase.getSuperclass());
 		} catch (InstantiationException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
@@ -88,6 +87,41 @@ public abstract class Reflection {
 		} catch (SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		}
+	}
+
+	/**
+	 * Se encarga de procesar la clase en busqueda de anotacion de subscripcion a
+	 * sistema de mensajeria
+	 * 
+	 * @param fields
+	 *            Fields[]
+	 * @param clase
+	 *            Class
+	 * @throws ReflectionException
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private final <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(
+			M instance, Field[] fields, Class<S> clase) throws ReflectionException {
+		if (fields == null || fields.length == 0)
+			return;
+		// procesado despues de injecciones
+		for (Field field : fields) {
+			SubcribcionesToComunicacion subs = field.getAnnotation(SubcribcionesToComunicacion.class);
+			if (subs != null) {
+				L obj;
+				obj = get(this, field);
+				if (obj != null && (this) instanceof IComunicacion) {
+					for (SubcribirToComunicacion sub : subs.value()) {
+						obj.subscriber((N) instance, sub.comando());
+					}
+				} else {
+					Log.error("El objeto " + clase.getName() + " no tiene la implementacion de "
+							+ IComunicacion.class.getName());
+				}
+
+			}
+		}
+		subscriberInject(instance, clase.getSuperclass().getDeclaredFields(), clase.getSuperclass());
 	}
 
 	/**

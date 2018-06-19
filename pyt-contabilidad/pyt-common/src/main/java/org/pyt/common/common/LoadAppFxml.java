@@ -134,7 +134,6 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				loadApp().getStage().setScene(scene);
 				loadApp().getStage().sizeToScene();
 				loadApp().getStage().show();
-				System.out.println("java");
 				loadApp().getStage().setOnCloseRequest(e -> {
 					Platform.exit();
 					System.exit(0);

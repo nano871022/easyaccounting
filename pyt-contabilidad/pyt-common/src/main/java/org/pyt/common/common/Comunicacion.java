@@ -1,6 +1,5 @@
 package org.pyt.common.common;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +8,8 @@ import java.util.Set;
 
 import org.pyt.common.annotations.Singleton;
 import org.pyt.common.interfaces.IComunicacion;
+
+import javafx.application.Platform;
 
 /**
  * Se encarga de ser un servicio que este en permanente comunicacion e indicar
@@ -20,11 +21,11 @@ import org.pyt.common.interfaces.IComunicacion;
  * @since 2018-05-24
  */
 @Singleton
-public class Comunicacion <IC extends IComunicacion> implements Runnable {
+public class Comunicacion<IC extends IComunicacion> implements Runnable {
 	private Map<String, IC[]> suscriptores;
 	private Map<String, Object[]> comandoValor;
+	@SuppressWarnings("rawtypes")
 	private static Comunicacion comunicacion;
-	private Thread hilo;
 
 	private Comunicacion() {
 	}
@@ -34,11 +35,11 @@ public class Comunicacion <IC extends IComunicacion> implements Runnable {
 	 * 
 	 * @return {@link Comunicacion}
 	 */
+	@SuppressWarnings("rawtypes")
 	public final static Comunicacion singleton() {
 		if (comunicacion == null) {
 			comunicacion = new Comunicacion();
-			comunicacion.hilo = new Thread(comunicacion);
-			comunicacion.hilo.start();
+			new Thread(comunicacion).start();
 		}
 		return comunicacion;
 	}
@@ -110,8 +111,10 @@ public class Comunicacion <IC extends IComunicacion> implements Runnable {
 	/**
 	 * se encarga de realizar la subscripcion a los comandos
 	 * 
-	 * @param subscriber {@link IComunicacion} extends
-	 * @param comandos {@link String} ...
+	 * @param subscriber
+	 *            {@link IComunicacion} extends
+	 * @param comandos
+	 *            {@link String} ...
 	 */
 	@SuppressWarnings("unchecked")
 	public final synchronized <T extends IComunicacion> void subscriber(T subscriber, String... comandos) {
@@ -139,12 +142,13 @@ public class Comunicacion <IC extends IComunicacion> implements Runnable {
 		}
 	}
 
-	@Override
 	public void run() {
 
 		try {
 			while (true) {
-				procesar();
+				Platform.runLater(() -> {
+					procesar();
+				});
 				Thread.sleep(500);
 			}
 		} catch (InterruptedException e) {
