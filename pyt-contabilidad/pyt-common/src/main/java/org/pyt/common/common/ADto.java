@@ -1,5 +1,6 @@
 package org.pyt.common.common;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.pyt.common.reflection.ReflectionDto;
@@ -10,7 +11,7 @@ import org.pyt.common.reflection.ReflectionDto;
  * @author alejandro parra
  * @since 06/05/2018
  */
-public abstract class ADto extends ReflectionDto {
+public abstract class ADto extends ReflectionDto implements Serializable{
 	protected String codigo;
 	protected Date fechaCreacion;
 	protected Date fechaActualizacion;

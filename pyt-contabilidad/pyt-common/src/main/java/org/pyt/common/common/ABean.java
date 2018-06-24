@@ -4,7 +4,6 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.interfaces.IComunicacion;
 import org.pyt.common.reflection.Reflection;
 
 /**
@@ -24,6 +23,9 @@ public abstract class ABean<T extends ADto> extends Reflection {
 
 	public ABean() {
 		try {
+			userLogin = new UsuarioDTO();
+			userLogin.setNombre("nano871022");
+			
 			inject();
 		} catch (ReflectionException e) {
 			System.err.println(e);

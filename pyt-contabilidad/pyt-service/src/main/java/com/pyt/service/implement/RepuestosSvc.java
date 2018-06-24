@@ -7,8 +7,8 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.RepuestoException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.RepuestoDTO;
-import com.pyt.service.interfaces.IQuerySvc;
 import com.pyt.service.interfaces.IRepuestosSvc;
 
 public class RepuestosSvc implements IRepuestosSvc{

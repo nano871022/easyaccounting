@@ -7,11 +7,11 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class DocumentosSvc implements IDocumentosSvc {
 	private IQuerySvc querySvc;

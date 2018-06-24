@@ -7,9 +7,9 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.IngresoException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.IngresoDTO;
 import com.pyt.service.interfaces.IIngresosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class IngresosSvc implements IIngresosSvc{
 

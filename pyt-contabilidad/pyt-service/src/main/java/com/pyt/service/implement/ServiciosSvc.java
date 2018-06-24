@@ -7,8 +7,8 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ServiciosException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ServicioDTO;
-import com.pyt.service.interfaces.IQuerySvc;
 import com.pyt.service.interfaces.IServiciosSvc;
 
 public class ServiciosSvc implements IServiciosSvc{

@@ -103,6 +103,8 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				empresaSvc.delete(registro, userLogin);
+				notificar("Se ha eliminaro la empresa.");
+				dt.search();
 			} else {
 				notificar("No se ha seleccionado una empresa.");
 			}

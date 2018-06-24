@@ -7,9 +7,9 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ActividadIcaException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.interfaces.IActividadIcaSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class ActividadIcaSvc implements IActividadIcaSvc {
 

@@ -1,11 +1,13 @@
 package org.pyt.common.reflection;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.annotations.PostConstructor;
 import org.pyt.common.annotations.Singleton;
 import org.pyt.common.annotations.SubcribcionesToComunicacion;
 import org.pyt.common.annotations.SubcribirToComunicacion;
@@ -44,6 +46,8 @@ public abstract class Reflection {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new ReflectionException(e.getMessage(), e);
 		}
 	}
 
@@ -57,6 +61,7 @@ public abstract class Reflection {
 				Inject inject = field.getAnnotation(Inject.class);
 				if (inject != null && inject.resource() != null && inject.resource().length() > 0) {
 					T obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
+					postConstructor(obj, obj.getClass());
 					put(object, field, obj);
 				} else if (inject != null && (inject.resource() == null || inject.resource().length() == 0)) {
 					Class<T> classe = (Class<T>) field.getType();
@@ -64,9 +69,11 @@ public abstract class Reflection {
 					if (singleton != null) {
 						Method method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
 						T obj = (T) method.invoke(classe);
+						postConstructor(obj, obj.getClass());
 						put(object, field, obj);
 					} else {
 						T obj = (T) field.getType().getConstructor().newInstance();
+						postConstructor(obj, obj.getClass());
 						put(object, field, obj);
 					}
 				}
@@ -86,6 +93,35 @@ public abstract class Reflection {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Se encarga de buscar dentro de la instancia un metodo que este anotado con
+	 * poscontructor para cargar algo
+	 * 
+	 * @param instance
+	 *            {@link Object} extends
+	 * @param clase
+	 *            {@link Class}
+	 */
+	private final <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws ReflectionException {
+		try {
+			if (clase == null)
+				return;
+			Method[] metodos = clase.getDeclaredMethods();
+			if (metodos == null || metodos.length == 0)
+				return;
+			if(clase.isInstance(Reflection.class) || clase.isInstance(Object.class))return; 
+			for (Method metodo : metodos) {
+				PostConstructor pc = metodo.getAnnotation(PostConstructor.class);
+				if (pc != null) {
+					metodo.invoke(instance);
+				}
+			}
+			postConstructor(instance, clase.getSuperclass());
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new ReflectionException("Problema en la ejecucion del metodo anotado con pos constructor", e);
 		}
 	}
 

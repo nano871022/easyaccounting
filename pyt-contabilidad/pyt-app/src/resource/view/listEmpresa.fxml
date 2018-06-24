@@ -20,7 +20,7 @@
 			<children>
 				<Button mnemonicParsing="false" onAction="#add"
 					text="Agregar" />
-				<Button fx:id="btnMod" mnemonicParsing="false" 
+				<Button fx:id="btnMod"  mnemonicParsing="false" 
 					onAction="#set" text="Modificar" visible="false">
 					<FlowPane.margin>
 						<Insets left="10.0" right="10.0" />
@@ -64,11 +64,11 @@
 				</GridPane>
 			</bottom>
 			<center>
-				<TableView fx:id="tabla" editable="false"
+				<TableView fx:id="tabla"   editable="false"
 					maxHeight="1.7976931348623157E308" maxWidth="-Infinity"
 					minHeight="-Infinity" minWidth="-Infinity"
 					onMouseClicked="#clickTable" tableMenuButtonVisible="false"
-					BorderPane.alignment="CENTER">
+					BorderPane.alignment="CENTER" >
 					<columns>
 						<TableColumn prefWidth="75.0" text="#">
 							<cellValueFactory>

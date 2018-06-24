@@ -1,4 +1,4 @@
-package com.pyt.service.interfaces;
+package com.pyt.query.interfaces;
 
 import java.util.List;
 

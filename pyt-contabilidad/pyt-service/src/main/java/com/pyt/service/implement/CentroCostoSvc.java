@@ -7,9 +7,9 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.CentroCostoDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class CentroCostoSvc implements ICentroCostosSvc {
 

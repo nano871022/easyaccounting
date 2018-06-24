@@ -7,10 +7,10 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class EmpleadosSvc implements IEmpleadosSvc {
 

@@ -8,9 +8,9 @@ import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class ParametrosSvc implements IParametrosSvc {
 	private IQuerySvc querySvc;

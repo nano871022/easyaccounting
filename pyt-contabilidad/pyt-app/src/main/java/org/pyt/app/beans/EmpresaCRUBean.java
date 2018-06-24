@@ -2,6 +2,7 @@ package org.pyt.app.beans;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
@@ -131,12 +132,15 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	public void add() {
 		load();
 		try {
-			if (registro.getCodigo() != null) {
+			if (StringUtils.isNotBlank(registro.getCodigo())) {
 				empresaSvc.update(registro, userLogin);
 				notificar("Se guardo la empresa correctamente.");
+				cancel();
 			} else {
 				empresaSvc.insert(registro, userLogin);
+				codigo.setText(registro.getCodigo());
 				notificar("Se agrego la emrpesa correctamente.");
+				cancel();
 			}
 		} catch (EmpresasException e) {
 			error(e);

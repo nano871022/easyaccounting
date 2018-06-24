@@ -7,9 +7,9 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.BancoException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.BancoDTO;
 import com.pyt.service.interfaces.IBancosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class BancoSvc implements IBancosSvc {
 

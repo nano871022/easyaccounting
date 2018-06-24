@@ -7,10 +7,10 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.FacturacionException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.FacturaDTO;
 import com.pyt.service.interfaces.IFacturacionSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
 public class FacturacionSvc implements IFacturacionSvc {
 
