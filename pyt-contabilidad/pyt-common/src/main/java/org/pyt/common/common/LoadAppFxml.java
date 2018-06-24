@@ -1,5 +1,6 @@
 package org.pyt.common.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -10,6 +11,7 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.LoadException;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
@@ -213,13 +215,14 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		if (!loadApp().isLastContro()) {
 			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
 		}
+		URL url = null;
 		try {
 			T lbean = bean.getDeclaredConstructor().newInstance();
 			file = lbean.pathFileFxml();
 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
 				file = AppConstants.SLASH + file;
 			}
-			URL url = bean.getResource(file);
+			url = bean.getResource(file);
 			FXMLLoader loader = new FXMLLoader(url);
 			Parent root = loader.load();
 			((ScrollPane) loadApp().getLastContro()).setContent(root);
@@ -236,6 +239,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("No se encontro el metodo.", e);
 		} catch (SecurityException e) {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
+		} catch (LoadException e) {
+			Log.error("Archivo no puede ser cargado " + url.toString());
+			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}

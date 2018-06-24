@@ -1,6 +1,8 @@
 package org.pyt.app.load;
 
 import org.pyt.app.beans.empresa.EmpresaBean;
+import org.pyt.app.beans.trabajador.TrabajadorBean;
+import org.pyt.app.beans.trabajador.TrabajadorCRUBean;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
@@ -73,15 +75,25 @@ public class Template extends Reflection implements IComunicacion {
 			ObservableList<MenuItem> menuItems = menu.getItems();
 			MenuItem item = new MenuItem("Empresa");
 			item.onActionProperty().set((event)->{
+				try {
+					LoadAppFxml.BeanFxmlScroller(scroller, EmpresaBean.class);
+				} catch (LoadAppFxmlException e) {
+					Log.logger(e);
+				}
+			});
+			MenuItem itemEmp = new MenuItem("Empleado");
+			itemEmp.onActionProperty().set((event)->{
 					try {
-						LoadAppFxml.BeanFxmlScroller(scroller, EmpresaBean.class);
+						LoadAppFxml.BeanFxmlScroller(scroller, TrabajadorBean.class);
 					} catch (LoadAppFxmlException e) {
 						Log.logger(e);
+						get(AppConstants.COMMAND_MSN_DER,e.getMessage());
 					}
 			});
 			MenuItem itemCLose = new MenuItem("Cerrar");
 			itemCLose.onActionProperty().set((event)->{Platform.exit();System.exit(0);});
 			menuItems.add(item);
+			menuItems.add(itemEmp);
 			menuItems.add(itemCLose);
 			menus.add(menu);
 			Log.logger("Cargando ventana principal");

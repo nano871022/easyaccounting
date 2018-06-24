@@ -9,12 +9,21 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class TrabajadorDTO extends ADto {
+	private static final long serialVersionUID = 8423665201076663703L;
 	private PersonaDTO persona;
 	private Date fechaIngreso;
 	private Date fechaRetiro;
 	private String estado;
 	private ParametroDTO tipoPago;
 	private CentroCostoDTO centroCosto;
+	private String correo;
+	
+	public String getCorreo() {
+		return correo;
+	}
+	public void setCorreo(String correo) {
+		this.correo = correo;
+	}
 	public PersonaDTO getPersona() {
 		return persona;
 	}

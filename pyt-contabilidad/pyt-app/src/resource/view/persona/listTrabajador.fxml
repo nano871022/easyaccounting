@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+	fx:controller="org.pyt.app.beans.trabajador.TrabajadorBean"
+>
+  <bottom>
+    <FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
+      <children>
+        <Button mnemonicParsing="false" onAction="#add" text="Agregar" />
+        <Button fx:id="btnMod" mnemonicParsing="false" onAction="#set" text="Modificar" visible="false">
+          <FlowPane.margin>
+            <Insets left="10.0" right="10.0" />
+          </FlowPane.margin>
+        </Button>
+        <Button mnemonicParsing="false" onAction="#del" text="Eliminar" />
+      </children>
+      <padding>
+        <Insets bottom="5.0" top="5.0" />
+      </padding>
+    </FlowPane>
+  </bottom>
+  <center>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <bottom>
+        <GridPane alignment="CENTER" gridLinesVisible="false" maxWidth="-1.0" minWidth="-1.0" padding="$x1" prefWidth="-1.0" BorderPane.alignment="CENTER">
+          <children>
+            <HBox fx:id="paginador" alignment="CENTER" maxWidth="-1.0" prefHeight="40.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+              <GridPane.margin>
+                <Insets top="10.0" fx:id="x1" />
+              </GridPane.margin>
+            </HBox>
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="76.0" minWidth="10.0" prefWidth="76.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="10.0" prefWidth="220.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="76.0" minWidth="10.0" prefWidth="76.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
+          </rowConstraints>
+        </GridPane>
+      </bottom>
+      <center>
+        <TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#clickTable" tableMenuButtonVisible="false" BorderPane.alignment="CENTER">
+          <columns>
+            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="96.0" text="Documento">
+              <cellValueFactory>
+                <PropertyValueFactory property="documento" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn prefWidth="75.0" text="Nombre">
+              <cellValueFactory>
+                <PropertyValueFactory property="nombre" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn prefWidth="75.0" text="Apellidos">
+              <cellValueFactory>
+                <PropertyValueFactory property="apellidos" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn prefWidth="75.0" text="Email">
+              <cellValueFactory>
+                <PropertyValueFactory property="email" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="133.0" text="Fecha Nacimiento">
+              <cellValueFactory>
+                <PropertyValueFactory property="fechaNacimiento" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn prefWidth="75.0" text="Estado">
+              <cellValueFactory>
+                <PropertyValueFactory property="estado" />
+              </cellValueFactory>
+            </TableColumn>
+          </columns>
+          <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+          </BorderPane.margin>
+        </TableView>
+      </center>
+    </BorderPane>
+  </center>
+  <top>
+    <GridPane cache="false" depthTest="INHERIT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefWidth="512.0" BorderPane.alignment="CENTER">
+      <children>
+        <Label alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="121.0" text="Documento" textAlignment="LEFT" wrapText="true" GridPane.rowIndex="1">
+          <GridPane.margin>
+            <Insets bottom="5.0" top="5.0" />
+          </GridPane.margin>
+        </Label>
+        <Label prefHeight="27.0" prefWidth="96.0" text="Nombre" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+          <GridPane.margin>
+            <Insets bottom="5.0" left="10.0" top="5.0" />
+          </GridPane.margin>
+        </Label>
+        <TextField id="codigo" fx:id="documento" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <GridPane.margin>
+            <Insets bottom="5.0" top="5.0" />
+          </GridPane.margin>
+        </TextField>
+        <TextField id="nombre" fx:id="nombres" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+          <GridPane.margin>
+            <Insets bottom="5.0" right="5.0" top="5.0" />
+          </GridPane.margin>
+        </TextField>
+        <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Listado de Empleados" textAlignment="CENTER" GridPane.columnSpan="4">
+          <font>
+            <Font name="System Bold Italic" size="18.0" />
+          </font>
+        </Label>
+        <Label prefHeight="27.0" prefWidth="96.0" text="Apellidos" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField id="nombre" fx:id="apellidos" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Button mnemonicParsing="false" onAction="#search" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="2">
+          <GridPane.margin>
+            <Insets bottom="5.0" left="10.0" top="5.0" />
+          </GridPane.margin>
+        </Button>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="129.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="141.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="131.0" minWidth="10.0" prefWidth="96.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="205.0" minWidth="10.0" prefWidth="172.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <BorderPane.margin>
+        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+      </BorderPane.margin>
+    </GridPane>
+  </top>
+</BorderPane>

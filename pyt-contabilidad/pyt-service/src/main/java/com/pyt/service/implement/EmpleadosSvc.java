@@ -156,4 +156,15 @@ public class EmpleadosSvc implements IEmpleadosSvc {
 		}
 	}
 
+	@Override
+	public Integer getTotalRows(TrabajadorDTO dto) throws EmpleadoException {
+		if (dto == null)
+			throw new EmpleadoException("EL objeto Trabajador esta vacio");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new EmpleadoException(e.getMensage(), e);
+		}
+	}
+
 }
