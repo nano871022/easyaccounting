@@ -14,7 +14,7 @@
 	style="-fx-background-color: white;"
 	xmlns:fx="http://javafx.com/fxml/1"
 	xmlns="http://javafx.com/javafx/2.2"
-	fx:controller="org.pyt.app.beans.EmpresaBean">
+	fx:controller="org.pyt.app.beans.empresa.EmpresaBean">
 	<bottom>
 		<FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
 			<children>

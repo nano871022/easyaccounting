@@ -1,4 +1,4 @@
-package org.pyt.app.beans;
+package org.pyt.app.beans.empresa;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import javafx.scene.layout.HBox;
  * @author alejandro parra
  * @since 07/05/2018
  */
-@FXMLFile(path = "view", file = "listEmpresa.fxml")
+@FXMLFile(path = "view", file = "empresa/listEmpresa.fxml")
 public class EmpresaBean extends ABean<EmpresaDTO> {
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
 	private IEmpresasSvc empresaSvc;

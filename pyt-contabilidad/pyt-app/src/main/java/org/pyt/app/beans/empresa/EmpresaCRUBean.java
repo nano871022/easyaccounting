@@ -1,4 +1,4 @@
-package org.pyt.app.beans;
+package org.pyt.app.beans.empresa;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import javafx.scene.layout.BorderPane;
  * @author Alejandro Parra
  * @since 2018-05-22
  */
-@FXMLFile(path = "/view", file = "empresa.fxml")
+@FXMLFile(path = "/view", file = "empresa/empresa.fxml")
 public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;

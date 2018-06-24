@@ -1,6 +1,6 @@
 package org.pyt.app.load;
 
-import org.pyt.app.beans.EmpresaBean;
+import org.pyt.app.beans.empresa.EmpresaBean;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
