@@ -1,6 +1,8 @@
 package org.pyt.common.common;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.ReflectionException;
@@ -38,6 +40,24 @@ public final class SelectList {
 			}
 		} catch (ReflectionException e) {
 			Log.logger(e);
+		}
+	}
+
+	/**
+	 * Se encarga de configurar el choice box para agregar los registros a ser
+	 * seleccionados, se agrega es el nombre del mapa
+	 * 
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param mapa {@link Map}
+	 */
+	@SuppressWarnings("unchecked")
+	public final static <S extends Object> void put(ChoiceBox<S> choiceBox, Map<S, Object> mapa) {
+		choiceBox.getItems().clear();
+		ObservableList<S> observable = choiceBox.getItems();
+		observable.add((S) AppConstants.SELECCIONE);
+		Set<S> sets = mapa.keySet();
+		for (S key : sets) {
+			observable.add(key);
 		}
 	}
 

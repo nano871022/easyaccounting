@@ -3,16 +3,18 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ServiciosException;
 
 import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.interfaces.IServiciosSvc;
 
-public class ServiciosSvc implements IServiciosSvc{
-
+public class ServiciosSvc extends Services implements IServiciosSvc{
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
 	public List<ServicioDTO> getServicios(ServicioDTO dto, Integer init, Integer end)

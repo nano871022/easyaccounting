@@ -4,30 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.annotations.PostConstructor;
-import org.pyt.common.common.Log;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.QueryException;
-import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.reflection.Reflection;
 
 import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
-public class EmpresaSvc extends Reflection implements IEmpresasSvc {
+public class EmpresaSvc extends Services implements IEmpresasSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
-
-	@PostConstructor
-	public void load() {
-		try {
-			inject();
-		} catch (ReflectionException e) {
-			Log.logger(e);
-		}
-	}
 
 	public List<EmpresaDTO> getEmpresas(EmpresaDTO dto, Integer init, Integer end) throws EmpresasException {
 		List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();

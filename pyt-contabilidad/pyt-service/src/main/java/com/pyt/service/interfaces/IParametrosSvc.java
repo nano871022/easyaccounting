@@ -58,4 +58,11 @@ public interface IParametrosSvc {
 	 * @throws {@link ParametroException}
 	 */
 	public void delete(ParametroDTO dto, UsuarioDTO user) throws ParametroException;
+	/**
+	 * Se encarga de obtener la cantidad de registros segun el dto aplicado como filtro en la busqueda
+	 * @param dto {@link ParametroDTO}
+	 * @return {@link Integer}
+	 * @throws {@link ParametroException}
+	 */
+	public Integer totalCount(ParametroDTO dto)throws ParametroException;
 }

@@ -3,17 +3,20 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.QueryException;
 
 import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 
-public class DocumentosSvc implements IDocumentosSvc {
+public class DocumentosSvc extends Services  implements IDocumentosSvc {
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
 	public List<DocumentoDTO> getAllDocumentos(DocumentoDTO dto) throws DocumentosException {

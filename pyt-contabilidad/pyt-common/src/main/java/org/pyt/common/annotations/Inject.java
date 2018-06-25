@@ -24,4 +24,5 @@ public @interface Inject {
 	 *         se forzara a instanciar el objeto que se indico en la anotacion.
 	 */
 	public String resource() default "";
+	
 }

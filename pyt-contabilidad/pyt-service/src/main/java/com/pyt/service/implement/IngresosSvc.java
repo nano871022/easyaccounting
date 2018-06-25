@@ -3,16 +3,18 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.IngresoException;
 import org.pyt.common.exceptions.QueryException;
 
 import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.IngresoDTO;
 import com.pyt.service.interfaces.IIngresosSvc;
 
-public class IngresosSvc implements IIngresosSvc{
-
+public class IngresosSvc extends Services implements IIngresosSvc{
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
 	public List<IngresoDTO> getIngresos(IngresoDTO dto, Integer init, Integer end)

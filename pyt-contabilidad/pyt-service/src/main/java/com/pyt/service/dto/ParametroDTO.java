@@ -10,6 +10,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class ParametroDTO extends ADto{
+	private static final long serialVersionUID = -5396836082089633791L;
 	private String codigo;
 	private String nombre;
 	private String descripcion;

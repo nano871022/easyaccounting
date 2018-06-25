@@ -1,6 +1,5 @@
 package org.pyt.common.reflection;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,6 +55,7 @@ public abstract class Reflection {
 			throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;
+		if(clase == Object.class || clase == Reflection.class)return;
 		try {
 			for (Field field : fields) {
 				Inject inject = field.getAnnotation(Inject.class);
@@ -112,7 +112,7 @@ public abstract class Reflection {
 			Method[] metodos = clase.getDeclaredMethods();
 			if (metodos == null || metodos.length == 0)
 				return;
-			if(clase.isInstance(Reflection.class) || clase.isInstance(Object.class))return; 
+			if(clase == Object.class || clase == Reflection.class) return;
 			for (Method metodo : metodos) {
 				PostConstructor pc = metodo.getAnnotation(PostConstructor.class);
 				if (pc != null) {

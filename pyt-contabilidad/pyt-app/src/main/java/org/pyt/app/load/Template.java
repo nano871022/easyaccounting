@@ -1,27 +1,18 @@
 package org.pyt.app.load;
 
-import org.pyt.app.beans.empresa.EmpresaBean;
-import org.pyt.app.beans.trabajador.TrabajadorBean;
-import org.pyt.app.beans.trabajador.TrabajadorCRUBean;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
-import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IComunicacion;
 import org.pyt.common.reflection.Reflection;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -68,34 +59,7 @@ public class Template extends Reflection implements IComunicacion {
 			leftMessage.setText("");
 			centerMessage.setText("");
 			progressBar.setProgress(0.0);
-			menu.getMenus().clear();
-			ObservableList<Menu> menus = menu.getMenus();
-			Menu menu = new Menu("Modulos");
-			menu.getItems().clear();
-			ObservableList<MenuItem> menuItems = menu.getItems();
-			MenuItem item = new MenuItem("Empresa");
-			item.onActionProperty().set((event)->{
-				try {
-					LoadAppFxml.BeanFxmlScroller(scroller, EmpresaBean.class);
-				} catch (LoadAppFxmlException e) {
-					Log.logger(e);
-				}
-			});
-			MenuItem itemEmp = new MenuItem("Empleado");
-			itemEmp.onActionProperty().set((event)->{
-					try {
-						LoadAppFxml.BeanFxmlScroller(scroller, TrabajadorBean.class);
-					} catch (LoadAppFxmlException e) {
-						Log.logger(e);
-						get(AppConstants.COMMAND_MSN_DER,e.getMessage());
-					}
-			});
-			MenuItem itemCLose = new MenuItem("Cerrar");
-			itemCLose.onActionProperty().set((event)->{Platform.exit();System.exit(0);});
-			menuItems.add(item);
-			menuItems.add(itemEmp);
-			menuItems.add(itemCLose);
-			menus.add(menu);
+			new MenuItems(menu, scroller).load();
 			Log.logger("Cargando ventana principal");
 		} catch (ReflectionException e1) {
 			Log.logger(e1);
