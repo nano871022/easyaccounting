@@ -52,7 +52,7 @@ public final class ValidateValues {
 	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(Number value1, Number value2)throws Exception{
-		return value1 == (value2);
+		return value1.byteValue() == (value2).byteValue();
 	}
 	/**
 	 * Se encarga de validar dos valores que son de tipo Long
@@ -111,10 +111,10 @@ public final class ValidateValues {
 			if(value1 instanceof Integer && value2 instanceof Integer)       return validate((Integer)value1,(Integer)value2);
 			if(value1 instanceof BigDecimal && value2 instanceof BigDecimal) return validate((BigDecimal)value1,(BigDecimal)value2);
 			if(value1 instanceof BigInteger && value2 instanceof BigInteger) return validate((BigInteger)value1,(BigInteger)value2);
-			if(value1 instanceof Number && value2 instanceof Number)  		 return validate((Number)value1,(Number)value2);
 			if(value1 instanceof Long && value2 instanceof Long)      		 return validate((Long)value1,(Long)value2);
 			if(value1 instanceof Double && value2 instanceof Double)  	 	 return validate((Double)value1,(Double)value2);
 			if(value1 instanceof Short && value2 instanceof Short )   		 return validate((Short)value1,(Short)value2);
+			if(value1 instanceof Number && value2 instanceof Number)  		 return validate((Number)value1,(Number)value2);
 			if(value1 instanceof String && value2 instanceof String ) 		 return validate((String)value1,(String)value2);
 			if(value1 != null && value2 != null )                            return value1.getClass().isInstance(value2.getClass());
 			return true;

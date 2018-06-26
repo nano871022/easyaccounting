@@ -71,7 +71,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	public final void search() {
 		T filter = getFilter();
 		list = getList(filter, currentPage, rows);
-		rows = getTotalRows(filter);
+		total = getTotalRows(filter);
 		Table.put(table, list);
 	}
 
