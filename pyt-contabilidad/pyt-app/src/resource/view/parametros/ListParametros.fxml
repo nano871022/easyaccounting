@@ -4,12 +4,12 @@
 <?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
 
-<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.parametros.ParametrosBean">
+<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="567.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.parametros.ParametrosBean">
   <bottom>
     <HBox alignment="CENTER" depthTest="INHERIT" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
       <children>
@@ -21,19 +21,16 @@
         </Button>
         <Button mnemonicParsing="false" onAction="#deleteBtn" text="Eliminar" textAlignment="CENTER" />
       </children>
-      <BorderPane.margin>
-        <Insets />
-      </BorderPane.margin>
     </HBox>
   </bottom>
   <center>
     <BorderPane prefHeight="200.0" prefWidth="200.0">
       <bottom>
-        <GridPane alignment="CENTER" gridLinesVisible="false" maxWidth="-1.0" minWidth="-1.0" padding="$x1" prefWidth="-1.0" BorderPane.alignment="CENTER">
+        <GridPane alignment="CENTER" gridLinesVisible="false" maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
           <children>
             <HBox fx:id="paginador" maxWidth="-1.0" prefHeight="40.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
               <GridPane.margin>
-                <Insets top="10.0" fx:id="x1" />
+                <Insets top="10.0" />
               </GridPane.margin>
             </HBox>
           </children>
@@ -48,18 +45,30 @@
         </GridPane>
       </bottom>
       <center>
-        <TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#clickTable" tableMenuButtonVisible="false" BorderPane.alignment="CENTER">
+        <TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#clickTable" prefWidth="383.0" tableMenuButtonVisible="false" BorderPane.alignment="CENTER">
           <columns>
-            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Nombre" />
-            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="125.0" text="Descripcion" />
-            <TableColumn prefWidth="75.0" text="Estado" />
+            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Nombre">
+              <cellValueFactory>
+                <PropertyValueFactory property="nombre" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="125.0" text="Descripcion">
+              <cellValueFactory>
+                <PropertyValueFactory property="descripcion" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn prefWidth="75.0" text="Estado">
+              <cellValueFactory>
+                <PropertyValueFactory property="estado" />
+              </cellValueFactory>
+            </TableColumn>
           </columns>
         </TableView>
       </center>
     </BorderPane>
   </center>
   <left>
-    <VBox prefHeight="200.0" prefWidth="150.0">
+    <VBox alignment="TOP_CENTER" prefHeight="410.0" prefWidth="114.0">
       <children>
         <TextField fx:id="filtroGrupo" prefWidth="200.0">
           <VBox.margin>
@@ -75,35 +84,32 @@
         <TableView fx:id="filtrar" maxWidth="1.7976931348623157E308" onMouseClicked="#clickTableFiltrar" prefHeight="200.0" prefWidth="-1.0">
           <columns>
             <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="143.0" text="Nombre">
-            	<cellValueFactory>
-            		<propertyValueFactory property="nombre"/>
-            	</cellValueFactory>
+              <cellValueFactory>
+                <PropertyValueFactory property="nombre" />
+              </cellValueFactory>
             </TableColumn>
           </columns>
           <VBox.margin>
             <Insets bottom="10.0" right="3.0" top="10.0" />
           </VBox.margin>
         </TableView>
-        <HBox fx:id="paginador2" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="-1.0" />
+        <HBox fx:id="paginador2" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="-1.0" />
         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyFiltro" text="Modificar" />
       </children>
     </VBox>
   </left>
-  <padding>
-    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-  </padding>
   <top>
-    <GridPane cache="false" depthTest="INHERIT" hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefWidth="-1.0" vgap="5.0" BorderPane.alignment="CENTER">
+    <GridPane alignment="CENTER" cache="false" depthTest="INHERIT" hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefWidth="-1.0" vgap="5.0" BorderPane.alignment="CENTER">
       <children>
         <Label text="Nombre" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <Label text="Descripcion" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-        <Label text="Grupo" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label text="Estado" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        <Label text="Estado" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="Grupo" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="1" />
         <TextField fx:id="nombre" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <TextField fx:id="descripcion" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-        <ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-        <ChoiceBox fx:id="grupo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <Button mnemonicParsing="false" onAction="#searchBtn" text="Buscar" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+        <ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <ChoiceBox fx:id="grupo" maxWidth="1.7976931348623157E308" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+        <Button mnemonicParsing="false" onAction="#searchBtn" text="Buscar" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="61.0" />
@@ -111,17 +117,11 @@
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="86.0" />
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="114.0" minWidth="10.0" prefWidth="114.0" />
       </columnConstraints>
-      <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-      </padding>
       <rowConstraints>
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       </rowConstraints>
-      <BorderPane.margin>
-        <Insets />
-      </BorderPane.margin>
     </GridPane>
   </top>
 </BorderPane>

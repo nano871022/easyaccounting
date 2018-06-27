@@ -68,17 +68,27 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	 *            {@link ParametroDTO}
 	 */
 	public void load(ParametroDTO dto) {
-		if (dto == null || dto.getCodigo() == null) {
+		if (dto.getGrupo() == null && (dto == null || StringUtils.isBlank(dto.getCodigo()))) {
 			registro = new ParametroDTO();
+		}
+		if (dto != null && StringUtils.isNotBlank(dto.getCodigo())) {
+			registro = dto;
+			assign();
 		} else {
 			registro = dto;
-			codigo.setText(registro.getCodigo());
-			nombre.setText(registro.getNombre());
-			descripcion.setText(registro.getDescripcion());
-			grupo.setText(registro.getGrupo());
-			valor.setText(registro.getValor());
-			valor2.setText(registro.getValor2());
+			grupo.setEditable(false);
+			assign();
 		}
+	}
+
+	private void assign() {
+		codigo.setText(registro.getCodigo());
+		nombre.setText(registro.getNombre());
+		descripcion.setText(registro.getDescripcion());
+		grupo.setText(registro.getGrupo());
+		valor.setText(registro.getValor());
+		valor2.setText(registro.getValor2());
+		grupo.setEditable(false);
 	}
 
 	/**
@@ -106,7 +116,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 				registro = parametroSvc.insert(registro, userLogin);
 				codigo.setText(registro.getCodigo());
 				notificar("Se ha creado el parametro correctamente.");
-			}else {
+			} else {
 				error("Se encontro problema en la validacion.");
 			}
 		} catch (ParametroException e) {
@@ -123,7 +133,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			if (valid()) {
 				parametroSvc.update(registro, userLogin);
 				notificar("Se ha modificado el parametro correctamente.");
-			}else {
+			} else {
 				error("Se encontro problema en la validacion.");
 			}
 		} catch (ParametroException e) {
@@ -140,7 +150,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
 				parametroSvc.delete(registro, userLogin);
 				notificar("El parametro fue eliminado correctamente.");
-			}else {
+			} else {
 				error("La eliminacion del codigo es vacio.");
 			}
 		} catch (ParametroException e) {

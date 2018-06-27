@@ -107,20 +107,6 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 		};
 	}
 
-	public void buscarFiltro() {
-		lazyFiltrar.search();
-	}
-
-	public void nuevoFiltro() {
-		getController(ParametrosCRUBean.class).load(new ParametroDTO());
-	}
-
-	public void modifyFiltro() {
-		if (lazyFiltrar.isSelected()) {
-			getController(ParametrosCRUBean.class).load(lazyFiltrar.getSelectedRow());
-		}
-	}
-
 	@Override
 	public void lazy() {
 		dataTable = new DataTableFXML<ParametroDTO, ParametroDTO>(paginador, tabla) {
@@ -181,6 +167,20 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 		}
 	}
 
+	public void buscarFiltro() {
+		lazyFiltrar.search();
+	}
+
+	public void nuevoFiltro() {
+		getController(ParametrosCRUBean.class).load(new ParametroDTO());
+	}
+
+	public void modifyFiltro() {
+		if (lazyFiltrar.isSelected()) {
+			getController(ParametrosCRUBean.class).load(lazyFiltrar.getSelectedRow());
+		}
+	}
+
 	@Override
 	public void searchBtn() {
 		dataTable.search();
@@ -188,7 +188,9 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	@Override
 	public void createBtn() {
-		getController(ParametrosCRUBean.class).load(new ParametroDTO());
+		ParametroDTO dto = new ParametroDTO(); 
+		dto.setGrupo(seleccionFiltro.getCodigo());
+		getController(ParametrosCRUBean.class).load(dto);
 	}
 
 	@Override

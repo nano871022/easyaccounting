@@ -41,7 +41,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		page = 1;
 	}
 
-	public DataTableFXML(HBox paginas,javafx.scene.control.TableView<S> table) {
+	public DataTableFXML(HBox paginas, javafx.scene.control.TableView<S> table) {
 		this();
 		this.paginas = paginas;
 		this.table = table;
@@ -53,7 +53,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	private final void loadPaginator() {
 		paginas.getChildren().add(0, btnPrimer = new Button("<<"));
 		paginas.getChildren().add(1, btnAtras = new Button("<"));
-		paginas.getChildren().add(2,nPages = new HBox());
+		paginas.getChildren().add(2, nPages = new HBox());
 		paginas.getChildren().add(paginas.getChildren().size(), btnSiguiente = new Button(">"));
 		paginas.getChildren().add(paginas.getChildren().size(), btnUltimo = new Button(">>"));
 		btnUltimo.setMinWidth(40);
@@ -69,10 +69,12 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	 * de registros encontrados
 	 */
 	public final void search() {
-		T filter = getFilter();
-		list = getList(filter, currentPage, rows);
-		total = getTotalRows(filter);
-		Table.put(table, list);
+		if (table.isVisible()) {
+			T filter = getFilter();
+			list = getList(filter, currentPage, rows);
+			total = getTotalRows(filter);
+			Table.put(table, list);
+		}
 	}
 
 	/**
@@ -197,19 +199,19 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	 * @return extends {@link ADto}
 	 */
 	public abstract T getFilter();
-	
+
 	public final Boolean isSelected() {
 		return table.getSelectionModel().getSelectedItems().size() > 0;
 	}
-	
-	public final List<S> getSelectedRows(){
+
+	public final List<S> getSelectedRows() {
 		return table.getSelectionModel().getSelectedItems();
 	}
-	
+
 	public final Boolean isMultiSelected() {
 		return table.getSelectionModel().getSelectedItems().size() > 1;
 	}
-	
+
 	public final S getSelectedRow() {
 		return table.getSelectionModel().getSelectedItem();
 	}
