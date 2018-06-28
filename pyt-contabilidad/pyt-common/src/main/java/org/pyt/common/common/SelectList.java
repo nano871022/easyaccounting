@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.exceptions.ValidateValueException;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
@@ -47,8 +48,10 @@ public final class SelectList {
 	 * Se encarga de configurar el choice box para agregar los registros a ser
 	 * seleccionados, se agrega es el nombre del mapa
 	 * 
-	 * @param choiceBox {@link ChoiceBox}
-	 * @param mapa {@link Map}
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param mapa
+	 *            {@link Map}
 	 */
 	@SuppressWarnings("unchecked")
 	public final static <S extends Object> void put(ChoiceBox<S> choiceBox, Map<S, Object> mapa) {
@@ -59,6 +62,27 @@ public final class SelectList {
 		for (S key : sets) {
 			observable.add(key);
 		}
+	}
+
+	/**
+	 * Obtiene el valor asociado a la lista del mapa key
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param mapa
+	 *            {@link Map}
+	 * @return {@link Object} extended
+	 */
+	@SuppressWarnings("unused")
+	public final static <S, T extends Object> T get(ChoiceBox<S> choiceBox, Map<S, T> mapa) {
+		ObservableList<S> observable = choiceBox.getItems();
+		Set<S> sets = mapa.keySet();
+		for (S key : sets) {
+			if (choiceBox.getValue() == key) {
+				return mapa.get(key);
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -98,16 +122,50 @@ public final class SelectList {
 	 */
 	public final static <S extends Object, T extends ADto> void selectItem(ChoiceBox<S> choiceBox, T obj,
 			String nombreCampoDto) {
+		Boolean select = false;
 		try {
 			if (obj != null) {
 				for (S obs : choiceBox.getItems()) {
 					if (obj.get(nombreCampoDto) == obs) {
 						choiceBox.getSelectionModel().select(obs);
+						select = true;
 					}
 				}
+			}
+			if (select) {
+				choiceBox.getSelectionModel().selectFirst();
 			}
 		} catch (ReflectionException e) {
 			Log.logger(e);
 		}
+	}
+
+	/**
+	 * Se encarga de buscar un valor en la lista y seleccionarlo por defecto
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param mapa
+	 *            {@link Map}
+	 */
+	public final static <S, T extends Object> void selectItem(ChoiceBox<S> choiceBox, Map<S, T> mapa,T value) {
+		ValidateValues vv = new ValidateValues();
+		Boolean select = false;
+		Set<S> sets = mapa.keySet();
+		for(S key : sets) {
+			T val = mapa.get(key);
+			try {
+				if(vv.validate(val, value)) {
+					choiceBox.getSelectionModel().select(key);
+				}
+			} catch (ValidateValueException e) {
+				Log.logger("Se presento problema en la busqueda del objeto seleccionado.",e);
+				choiceBox.getSelectionModel().selectFirst();
+			}
+		}
+		if(select) {
+			choiceBox.getSelectionModel().selectFirst();
+		}
+
 	}
 }

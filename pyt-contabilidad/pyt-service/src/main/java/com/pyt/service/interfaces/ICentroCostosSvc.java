@@ -73,4 +73,11 @@ public interface ICentroCostosSvc {
 	 * @throws {@link CentroCostosException}
 	 */
 	public CentroCostoDTO insert(CentroCostoDTO dto,UsuarioDTO user)throws CentroCostosException;
+	/**
+	 * Se encarga de contar los registros encontrados aplicando el filtro
+	 * @param dto {@link CentroCostoDTO}
+	 * @return {@link Integer}
+	 * @throws {@link CentroCostosException}
+	 */
+	public Integer getTotalRows(CentroCostoDTO dto)throws CentroCostosException;
 }
