@@ -3,6 +3,7 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.DocumentosException;
@@ -15,7 +16,7 @@ import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 
-public class DocumentosSvc extends Services  implements IDocumentosSvc {
+public class DocumentosSvc extends Services implements IDocumentosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
@@ -56,7 +57,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public void update(DocumentoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto documento se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del documento se encuentra vacio.");
 		try {
 			querySvc.set(dto, user);
@@ -68,7 +69,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public DocumentoDTO insert(DocumentoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto documento se encuentra vacio.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del documento no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -80,7 +81,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public void delete(DocumentoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto documento se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del documento se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
@@ -127,7 +128,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public void update(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto detalle de concepto se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del detalle de concepto se encuentra vacio.");
 		try {
 			querySvc.set(dto, user);
@@ -139,7 +140,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public DetalleConceptoDTO insert(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto detalle concepto se encuentra vacio.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del detalle concepto no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -151,7 +152,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public void delete(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto detalle concepto se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo detalle del concepto se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
@@ -197,7 +198,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public void update(ConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto concepto se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del concepto se encuentra vacio.");
 		try {
 			querySvc.set(dto, user);
@@ -209,7 +210,7 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public ConceptoDTO insert(ConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto concepto se encuentra vacio.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del concepto no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -221,10 +222,21 @@ public class DocumentosSvc extends Services  implements IDocumentosSvc {
 	public void delete(ConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto concepto se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del concepto se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException(e.getMensage(), e);
+		}
+	}
+
+	@Override
+	public Integer getTotalRows(ConceptoDTO filter) throws DocumentosException {
+		if (filter == null)
+			throw new DocumentosException("Se encontro el concepto vacio.");
+		try {
+			return querySvc.countRow(filter);
 		} catch (QueryException e) {
 			throw new DocumentosException(e.getMensage(), e);
 		}

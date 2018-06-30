@@ -3,9 +3,14 @@ package org.pyt.app.load;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pyt.app.beans.actividadIca.ActividadIcaBean;
+import org.pyt.app.beans.banco.BancoBean;
 import org.pyt.app.beans.centroCosto.CentroCostoBean;
+import org.pyt.app.beans.concepto.ConceptoBean;
 import org.pyt.app.beans.empresa.EmpresaBean;
 import org.pyt.app.beans.parametros.ParametrosBean;
+import org.pyt.app.beans.repuesto.RepuestoBean;
+import org.pyt.app.beans.servicio.ServicioBean;
 import org.pyt.app.beans.trabajador.TrabajadorBean;
 import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
@@ -38,6 +43,11 @@ public class MenuItems {
 	private final static String BTN_EMPLEADOS = "Empleados";
 	private final static String BTN_PARAMETRO = "Parametros";
 	private final static String BTN_CENTRO_COSTO = "Centro de Costos";
+	private final static String BTN_ACTIVIDAD_ICA = "Actividad Ica";
+	private final static String BTN_BANCO = "Banco";
+	private final static String BTN_REPUESTO = "Repuesto";
+	private final static String BTN_CONCEPTO = "Concepto";
+	private final static String BTN_SERVICIO = "Servicio";
 
 	public MenuItems(MenuBar menu, ScrollPane scroll) {
 		mapaMenu = new HashMap<String, Menu>();
@@ -121,6 +131,41 @@ public class MenuItems {
 		items.add(addItem(BTN_CENTRO_COSTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, CentroCostoBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_ACTIVIDAD_ICA, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, ActividadIcaBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_BANCO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, BancoBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_CONCEPTO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, ConceptoBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_REPUESTO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, RepuestoBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_SERVICIO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, ServicioBean.class);
 			} catch (LoadAppFxmlException e) {
 				Log.logger(e);
 			}

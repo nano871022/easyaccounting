@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
-import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -34,19 +33,12 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 		if (dto == null)
 			throw new ParametroException("El objeto empresa se encuentra vacio.");
-		// try {
-		// lista = querySvc.gets(dto);
-		ParametroDTO para1 = new ParametroDTO();
-		if (ParametroConstants.GRUPO_MONEDA.contains(dto.getGrupo())) {
-			para1.setCodigo("1");
-			para1.setDescripcion("COL");
-			para1.setGrupo(ParametroConstants.GRUPO_MONEDA);
-			lista.add(para1);
+		try {
+			lista = querySvc.gets(dto);
+		} catch (QueryException e) {
+			throw new ParametroException(e.getMensage(), e);
 		}
-		/*
-		 * } catch (QueryException e) { throw new ParametroException(e.getMensage(), e);
-		 * }
-		 */return lista;
+		return lista;
 	}
 
 	public ParametroDTO getParametro(ParametroDTO dto) throws ParametroException {

@@ -239,5 +239,12 @@ public interface IDocumentosSvc {
 	 *             DocumentosException}
 	 */
 	public void delete(ConceptoDTO dto, UsuarioDTO user) throws DocumentosException;
+	/**
+	 * Se encarga de contar los registros que se encontraron aplicando el filtro
+	 * @param filter {@link ConceptoDTO}
+	 * @return {@link Integer}
+	 * @throws {@link DocumentosException}
+	 */
+	public Integer getTotalRows(ConceptoDTO filter)throws DocumentosException;
 
 }

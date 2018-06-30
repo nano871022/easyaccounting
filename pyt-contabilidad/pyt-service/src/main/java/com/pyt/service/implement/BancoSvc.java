@@ -17,8 +17,7 @@ public class BancoSvc extends Services implements IBancosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
-	public List<BancoDTO> getBancos(BancoDTO dto, Integer init, Integer end)
-			throws BancoException {
+	public List<BancoDTO> getBancos(BancoDTO dto, Integer init, Integer end) throws BancoException {
 		List<BancoDTO> lista = new ArrayList<BancoDTO>();
 		if (dto == null)
 			throw new BancoException("El objeto banco se encuentra vacio.");
@@ -87,6 +86,16 @@ public class BancoSvc extends Services implements IBancosSvc {
 			throw new BancoException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public Integer getTotalRows(BancoDTO dto) throws BancoException {
+		if(dto == null) throw new BancoException("El banco se encuentra vacio.");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new BancoException(e.getMensage(), e);
+		}
 	}
 
 }

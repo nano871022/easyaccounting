@@ -88,4 +88,11 @@ public interface IActividadIcaSvc {
 	 *             ActividadIcaDTO}
 	 */
 	public void delete(ActividadIcaDTO dto, UsuarioDTO user) throws ActividadIcaException;
+	/**
+	 * Se encarga de obtner la cantidad de registros aplicado el filtro
+	 * @param filter {@link ActividadIcaDTO}
+	 * @return {@link Integer}
+	 * @throws {@link ActividadIcaException}
+	 */
+	public Integer getTotalRows(ActividadIcaDTO filter)throws ActividadIcaException;
 }

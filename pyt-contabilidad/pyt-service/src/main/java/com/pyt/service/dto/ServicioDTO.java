@@ -8,6 +8,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class ServicioDTO extends ADto{
+	private static final long serialVersionUID = -1416881593237077200L;
 	private String nombre;
 	private Long  valorManoObra;
 	private String descripcion;
