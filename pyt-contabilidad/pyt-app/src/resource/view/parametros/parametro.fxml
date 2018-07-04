@@ -11,16 +11,16 @@
 	style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
 	fx:controller="org.pyt.app.beans.parametros.ParametrosCRUBean">
 	<bottom>
-		<HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER" >
+		<HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button mnemonicParsing="false" text="Agregar" onAction="#createBtn">
+				<Button mnemonicParsing="false" onAction="#createBtn" text="Agregar">
 					<HBox.margin>
 						<Insets right="10.0" fx:id="x1" />
 					</HBox.margin>
 				</Button>
-				<Button mnemonicParsing="false" text="Actualizar" HBox.margin="$x1" onAction="#modifyBtn"/>
-				<Button mnemonicParsing="false" text="Eliminar" HBox.margin="$x1"  onAction="#deleteBtn"/>
-				<Button mnemonicParsing="false" text="Cancelar" onAction="#cancelBtn"/>
+				<Button mnemonicParsing="false" onAction="#modifyBtn" text="Actualizar" HBox.margin="$x1" />
+				<Button mnemonicParsing="false" onAction="#deleteBtn" text="Eliminar" HBox.margin="$x1" />
+				<Button mnemonicParsing="false" onAction="#cancelBtn" text="Cancelar" />
 			</children>
 		</HBox>
 	</bottom>
@@ -40,15 +40,9 @@
 				<TextField fx:id="grupo" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 				<TextField fx:id="valor" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 				<TextField fx:id="valor2" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-				<ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3">
-					<items>
-						<FXCollections fx:factory="observableArrayList">
-							<String fx:value="Item 1" />
-							<String fx:value="Item 2" />
-							<String fx:value="Item 3" />
-						</FXCollections>
-					</items>
-				</ChoiceBox>
+				<ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+				<Label fx:id="lGrupo" maxWidth="1.7976931348623157E308" text="Grupo" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+				<ChoiceBox fx:id="cGrupo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 			</children>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="79.0" />

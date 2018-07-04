@@ -7,6 +7,9 @@ import org.pyt.app.beans.actividadIca.ActividadIcaBean;
 import org.pyt.app.beans.banco.BancoBean;
 import org.pyt.app.beans.centroCosto.CentroCostoBean;
 import org.pyt.app.beans.concepto.ConceptoBean;
+import org.pyt.app.beans.dinamico.DinamicoBean;
+import org.pyt.app.beans.dinamico.FormularioBean;
+import org.pyt.app.beans.dinamico.ListaDocumentosBean;
 import org.pyt.app.beans.empresa.EmpresaBean;
 import org.pyt.app.beans.parametros.ParametrosBean;
 import org.pyt.app.beans.repuesto.RepuestoBean;
@@ -48,6 +51,9 @@ public class MenuItems {
 	private final static String BTN_REPUESTO = "Repuesto";
 	private final static String BTN_CONCEPTO = "Concepto";
 	private final static String BTN_SERVICIO = "Servicio";
+	private final static String BTN_DOCUMENTO_DINAMICO = "Documento Dinamico";
+	private final static String BTN_FORMULARIO_DOCUMENTO= "Documento";
+	private final static String BTN_LIST_DOCUMENTO= "Documentos";
 
 	public MenuItems(MenuBar menu, ScrollPane scroll) {
 		mapaMenu = new HashMap<String, Menu>();
@@ -101,6 +107,13 @@ public class MenuItems {
 		Menu modulo = getMenu(MENU_MODULOS);
 		ObservableList<MenuItem> items = getItems(modulo);
 		items.add(addItem(MENU_MODULOS, event -> System.out.println("sin config.")));
+		items.add(addItem(BTN_LIST_DOCUMENTO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, ListaDocumentosBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
 		add(modulo);
 	}
 
@@ -166,6 +179,20 @@ public class MenuItems {
 		items.add(addItem(BTN_SERVICIO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ServicioBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_DOCUMENTO_DINAMICO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, FormularioBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_FORMULARIO_DOCUMENTO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, DinamicoBean.class);
 			} catch (LoadAppFxmlException e) {
 				Log.logger(e);
 			}

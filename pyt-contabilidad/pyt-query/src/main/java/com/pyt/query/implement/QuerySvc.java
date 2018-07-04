@@ -126,7 +126,7 @@ public class QuerySvc implements IQuerySvc {
 		}
 		if (lista != null && lista.size() > 0) {
 			try {
-				fb.write(lista);
+				fb.write(lista,(Class<T>)obj.getClass());
 			} catch (FileBinException e) {
 				throw new QueryException("Se presento problem aen el almacenamieto del registro.", e);
 			}
@@ -169,15 +169,19 @@ public class QuerySvc implements IQuerySvc {
 			T cp = (T) obj.getClass().getConstructor().newInstance();
 			List<T> lista = gets(cp);
 			if (lista != null && lista.size() > 0) {
-				for (T dto : lista) {
-					if (!(new Compare<T>(dto)).to(obj)) {
+				Integer count = lista.size();
+				for(int i = 0; i < count;i++) {
+					T dto = lista.get(i);
+					if ((new Compare<T>(dto)).to(obj)) {
 						lista.remove(dto);
+						i=0;
+						count = lista.size();
 					}
 				}
 			} else if (lista == null || lista.size() == 0) {
 				throw new QueryException("No se encontraron registros.");
 			}
-			fb.write(lista);
+			fb.write(lista,(Class<T>)cp.getClass());
 		} catch (InstantiationException e) {
 			throw new QueryException("Problema de instanciacion.", e);
 		} catch (IllegalAccessException e) {

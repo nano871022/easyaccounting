@@ -10,6 +10,7 @@ import org.pyt.common.exceptions.DocumentosException;
 import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DocumentoDTO;
+import com.pyt.service.dto.DocumentosDTO;
 
 /**
  * Se encarga de realizar crud sobre doccumentos
@@ -52,7 +53,14 @@ public interface IDocumentosSvc {
 	 * @throws DocumentosException
 	 */
 	public DocumentoDTO getDocumento(DocumentoDTO dto) throws DocumentosException;
-
+	/**
+	 * Se encarga de obtener la cantidad de registros encontrados aplicando el filtro
+	 * @param dto {@link DocumentoDTO}
+	 * @return {@link Integer}
+	 * @throws {@link DocumentosException}
+	 */
+	public Integer getTotalCount(DocumentoDTO dto) throws DocumentosException;
+	
 	/**
 	 * Se encarga de actualizar un registro en la tabla de {@link DocumentoDTO}
 	 * 
@@ -239,12 +247,74 @@ public interface IDocumentosSvc {
 	 *             DocumentosException}
 	 */
 	public void delete(ConceptoDTO dto, UsuarioDTO user) throws DocumentosException;
+
 	/**
 	 * Se encarga de contar los registros que se encontraron aplicando el filtro
-	 * @param filter {@link ConceptoDTO}
+	 * 
+	 * @param filter
+	 *            {@link ConceptoDTO}
 	 * @return {@link Integer}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public Integer getTotalRows(ConceptoDTO filter) throws DocumentosException;
+
+	/**
+	 * Obtiene los registros aplicando el filtro en documentos
+	 * 
+	 * @param dto
+	 *            {@link DocumentosDTO}
+	 * @param page
+	 *            {@link Integer}
+	 * @param rows
+	 *            {@link Integer}
+	 * @return {@link List} of {@link DocumentosDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public List<DocumentosDTO> getDocumentos(DocumentosDTO dto, Integer page, Integer rows) throws DocumentosException;
+	/**
+	 * Se encarga de obtener todos los campos configurados asociados con el dto suministraddo
+	 * @param dto {@link DocumentosDTO}
+	 * @return {@link List} of {@link DocumentosDTO}
 	 * @throws {@link DocumentosException}
 	 */
-	public Integer getTotalRows(ConceptoDTO filter)throws DocumentosException;
+	public List<DocumentosDTO> getDocumentos(DocumentosDTO dto) throws DocumentosException;
 
+	/**
+	 * Se encarga de obtner la cantidad de registros encontrados apartir del filtro
+	 * aplicado
+	 * 
+	 * @param dto {@link DocumentosDTO}
+	 * @return {@link Integer}
+	 * @throws DocumentosException
+	 */
+	public Integer getTotalCount(DocumentosDTO dto) throws DocumentosException;
+	/**
+	 * Se encarga de ingresar in registro para documentos
+	 * @param dto {@link DocumentosDTO}
+	 * @param user {@link UsuarioDTO}
+	 * @return {@link DocumentosDTO}
+	 * @throws {@link DocumentosException}
+	 */
+	public DocumentosDTO insert(DocumentosDTO dto, UsuarioDTO user) throws DocumentosException;
+	/**
+	 * Se encarga de actualizar un registro de documentos
+	 * @param dto {@link DocumentosDTO}
+	 * @param user {@link UsuarioDTO}
+	 * @throws {@link DocumentosException}
+	 */
+	public void update(DocumentosDTO dto, UsuarioDTO user) throws DocumentosException;
+	
+	/**
+	 * Se encarga de eliminar un registro de documentos
+	 * 
+	 * @param dto
+	 *            {@link DocumentosDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public void delete(DocumentosDTO dto, UsuarioDTO user) throws DocumentosException;
 }

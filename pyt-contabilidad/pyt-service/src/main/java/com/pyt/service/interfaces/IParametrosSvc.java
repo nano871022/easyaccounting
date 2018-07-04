@@ -6,6 +6,7 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 
 /**
  * Se encarga de realizar crud sobre los registros de parametros
@@ -65,4 +66,33 @@ public interface IParametrosSvc {
 	 * @throws {@link ParametroException}
 	 */
 	public Integer totalCount(ParametroDTO dto)throws ParametroException;
+	/**
+	 * Se encarga de obtner los parametros asociados a los grupos
+	 * @param dto {@link ParametroGrupoDTO}
+	 * @return {@link List} of {@link ParametroGrupoDTO}
+	 * @throws {@link ParametroException}
+	 */
+	public List<ParametroGrupoDTO> getParametroGrupo(ParametroGrupoDTO dto)throws ParametroException;
+	/**
+	 * Se encarga de ingresar el nuevo parametro de grupo
+	 * @param dto {@link ParametroGrupoDTO}
+	 * @param user {@link UsuarioDTO}
+	 * @throws {@link ParametroException}
+	 */
+	public ParametroGrupoDTO insert(ParametroGrupoDTO dto,UsuarioDTO user)throws ParametroException;
+	/**
+	 * Se encarga de actualizar el registro de parametro grupo
+	 * @param dto {@link ParametroGrupoDTO}
+	 * @param user {@link UsuarioDTO}
+	 * @throws {@link ParametroException}
+	 */
+	public void update(ParametroGrupoDTO dto,UsuarioDTO user)throws ParametroException;
+	/**
+	 * Se encarga de eliminar el registro
+	 * @param dto {@link ParametroGrupoDTO}
+	 * @param user {@link UsuarioDTO}
+	 * @throws {@link ParametroException}
+	 */
+	public void delete(ParametroGrupoDTO dto,UsuarioDTO user)throws ParametroException;
+	
 }

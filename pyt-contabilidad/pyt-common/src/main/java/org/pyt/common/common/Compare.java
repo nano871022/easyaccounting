@@ -42,6 +42,9 @@ public final class Compare<T extends ADto> {
 			try {
 				S value = origen.get(name);
 				L value2 = dto.get(name);
+				if(value == null && value2 != null) {
+					return false;
+				}
 				if(!validate.validate(value, value2)) {
 					return false;
 				}

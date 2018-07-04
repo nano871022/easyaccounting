@@ -95,8 +95,12 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		registro.setNombre(nombre.getText());
 		registro.setDescripcion(descripcion.getText());
 		registro.setNumeroCuenta(numeroCuenta.getText());
-		registro.setFechaApertura(fechaApertura.getValue());
-		registro.setFechaCierre(fechaCierre.getValue());
+		if (fechaApertura != null) {
+			registro.setFechaApertura(fechaApertura.getValue());
+		}
+		if (fechaCierre != null) {
+			registro.setFechaCierre(fechaCierre.getValue());
+		}
 		registro.setTipoBanco(SelectList.get(tipoBanco, tipoBancos, "nombre"));
 		registro.setTipoCuenta(SelectList.get(tipoCuenta, tipoCuentas, "nombre"));
 		registro.setEstado(SelectList.get(estado, estados, "nombre"));
@@ -111,9 +115,9 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		numeroCuenta.setText(registro.getNumeroCuenta());
 		fechaApertura.setValue(registro.getFechaApertura());
 		fechaCierre.setValue(registro.getFechaCierre());
-		SelectList.selectItem(tipoBanco, registro, "tipoBanco");
-		SelectList.selectItem(tipoCuenta, registro, "tipoCuenta");
-		SelectList.selectItem(estado, registro, "estado");
+		SelectList.selectItem(tipoBanco, tipoBancos, "nombre", registro, "tipoBanco");
+		SelectList.selectItem(tipoCuenta, tipoCuentas, "nombre", registro, "tipoCuenta");
+		SelectList.selectItem(estado, estados, "nombre", registro, "estado");
 	}
 
 	public void load(BancoDTO dto) {

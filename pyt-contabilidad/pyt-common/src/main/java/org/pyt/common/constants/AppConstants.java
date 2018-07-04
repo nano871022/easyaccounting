@@ -18,4 +18,5 @@ public final class AppConstants {
 	public final static String COMMAND_MSN_DER = "MensajeDerecho";
 	public final static String COMMAND_MSN_CTR = "MensajeCentro";
 	
+	public final static String COMMAND_PANEL_TIPO_DOC = "PanelTipoDocs";
 }

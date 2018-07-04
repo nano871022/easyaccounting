@@ -68,7 +68,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		NombreVentana = "Agregando Nueva Empresa";
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
-		
+
 		try {
 			ParametroDTO moneda = new ParametroDTO();
 			moneda.setGrupo(ParametroConstants.GRUPO_MONEDA);
@@ -112,7 +112,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		email.setText(registro.getCorreoElectronico());
 		telefono.setText(registro.getTelefono());
 		pais.setText(registro.getPais());
-		SelectList.selectItem(moneda, registro.getMonedaDefecto(), "descripcion");
+		SelectList.selectItem(moneda, lMoneda, "descripcion", registro.getMonedaDefecto(), "descripcion");
 		representante.setText(registro.getNombreRepresentante());
 		contador.setText(registro.getNombreContador());
 		nContador.setText(registro.getTarjetaProfeccionalContador());

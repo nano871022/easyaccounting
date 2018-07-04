@@ -172,7 +172,9 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	}
 
 	public void nuevoFiltro() {
-		getController(ParametrosCRUBean.class).load(new ParametroDTO());
+		ParametroDTO parametro = new ParametroDTO();
+		parametro.setGrupo("*");
+		getController(ParametrosCRUBean.class).load(parametro);
 	}
 
 	public void modifyFiltro() {

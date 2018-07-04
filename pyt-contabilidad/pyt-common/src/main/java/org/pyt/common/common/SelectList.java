@@ -120,19 +120,30 @@ public final class SelectList {
 	 * @param nombreCampoDto
 	 *            {@link String}
 	 */
-	public final static <S extends Object, T extends ADto> void selectItem(ChoiceBox<S> choiceBox, T obj,
+	public final static <S,L,N extends Object, T extends ADto,M extends ADto> void selectItem(ChoiceBox<S> choiceBox,List<M> list,String nombreCampoList, T obj,
 			String nombreCampoDto) {
 		Boolean select = false;
 		try {
+			ObservableList<S> values =  choiceBox.getItems();
 			if (obj != null) {
-				for (S obs : choiceBox.getItems()) {
-					if (obj.get(nombreCampoDto) == obs) {
-						choiceBox.getSelectionModel().select(obs);
-						select = true;
+				N fieldValue = null;
+				N fieldValueList = null;
+				N fieldValueDto = null;
+				for(M dto : list) {
+					fieldValue = dto.get(nombreCampoList);
+					fieldValueList = dto.get(nombreCampoList);
+					fieldValueDto = obj.get(nombreCampoDto);
+					if(fieldValueList == fieldValueDto) {
+						for(S valuee : values) {
+							if(valuee==fieldValue) {
+								choiceBox.getSelectionModel().select(valuee);
+								select=true;
+							}
+						}
 					}
 				}
 			}
-			if (select) {
+			if (!select) {
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		} catch (ReflectionException e) {
@@ -148,7 +159,7 @@ public final class SelectList {
 	 * @param mapa
 	 *            {@link Map}
 	 */
-	public final static <S, T extends Object> void selectItem(ChoiceBox<S> choiceBox, Map<S, T> mapa,T value) {
+	public final static <S, T,L extends Object> void selectItem(ChoiceBox<S> choiceBox, Map<S, T> mapa,T value) {
 		ValidateValues vv = new ValidateValues();
 		Boolean select = false;
 		Set<S> sets = mapa.keySet();
@@ -156,14 +167,22 @@ public final class SelectList {
 			T val = mapa.get(key);
 			try {
 				if(vv.validate(val, value)) {
+					for(int i = 0; i < choiceBox.getItems().size();i++) {
+						if(vv.validate(choiceBox.getItems().get(i),value)) {
+							choiceBox.getSelectionModel().select(i);
+							break;
+						}
+					}
 					choiceBox.getSelectionModel().select(key);
+					select= true;
+					break;
 				}
 			} catch (ValidateValueException e) {
 				Log.logger("Se presento problema en la busqueda del objeto seleccionado.",e);
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		}
-		if(select) {
+		if(!select) {
 			choiceBox.getSelectionModel().selectFirst();
 		}
 

@@ -147,9 +147,9 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 				LocalDate.ofInstant(registro.getPersona().getFechaNacimiento().toInstant(), ZoneId.systemDefault()));
 		fechaIngreso.setValue(LocalDate.ofInstant(registro.getFechaIngreso().toInstant(), ZoneId.systemDefault()));
 		fechaRetiro.setValue(LocalDate.ofInstant(registro.getFechaRetiro().toInstant(), ZoneId.systemDefault()));
-		SelectList.selectItem(tipoDocumentos, registro.getPersona(), "tipoDocumento");
-		SelectList.selectItem(centroCostos, registro.getCentroCosto(), "descripcion");
-		SelectList.selectItem(estados, registro, "estado");
+		SelectList.selectItem(tipoDocumentos, lTipoDocumentos,"descripcion",registro.getPersona(), "tipoDocumento");
+		SelectList.selectItem(centroCostos, lCentroCostos,"descripcion",registro.getCentroCosto(), "descripcion");
+		SelectList.selectItem(estados,lEstados ,"descripcion",registro, "estado");
 	}
 
 	public void load(TrabajadorDTO dto) {

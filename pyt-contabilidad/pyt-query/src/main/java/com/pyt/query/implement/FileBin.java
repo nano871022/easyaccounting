@@ -1,5 +1,6 @@
 package com.pyt.query.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.common.binario.ABin;
@@ -22,20 +23,27 @@ public class FileBin extends ABin {
 		wb = new WriteBin();
 		rb = new ReadBin();
 	}
+
 	/**
 	 * Se encarga de guardar la lista en el archivo indicado
-	 * @param list {@link List} 
-	 * @throws {@link FileBinException}
+	 * 
+	 * @param list
+	 *            {@link List}
+	 * @throws {@link
+	 *             FileBinException}
 	 */
-	@SuppressWarnings("unchecked")
-	public final <T extends ADto> void write(List<T> list)throws FileBinException{
-		T dto = list.get(0);
-		Class<T> clas = (Class<T>) dto.getClass();
-		wb.write(this.getNameFile(clas), list);
-		
+	public final <T extends ADto> void write(List<T> list,Class<T> clas) throws FileBinException {
+		if (list.size() == 0) {
+			list = new ArrayList<T>();
+			wb.write(this.getNameFile(clas), list);
+		} else {
+			wb.write(this.getNameFile(clas), list);
+		}
 	}
+
 	/**
 	 * Se encarga de obtener la informacion del archivo almacenado en el binario
+	 * 
 	 * @param dto
 	 * @return
 	 * @throws FileBinException

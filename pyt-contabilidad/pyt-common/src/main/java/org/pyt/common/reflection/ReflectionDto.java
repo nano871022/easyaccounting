@@ -85,7 +85,7 @@ public abstract class ReflectionDto {
 			field = clase.getDeclaredField(nombreCampo);
 			nameMethod = ReflectionConstants.GET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
-
+			
 			Method method = clase.getMethod(nameMethod, value != null ? value.getClass() : null);
 			return (T) method.invoke(this, value);
 		} catch (NoSuchFieldException e) {
@@ -111,6 +111,22 @@ public abstract class ReflectionDto {
 			throw new ReflectionException("Problema argumento ilegal.", e);
 		} catch (InvocationTargetException e) {
 			throw new ReflectionException("Problema objeto invocacion.", e);
+		}
+	}
+	/**
+	 * Se encarga de retornar el tipo de campo apartir de nombre suministrado
+	 * @param nombreCampo {@link String}
+	 * @return {@link Class}
+	 * @throws {@link ReflectionException}
+	 */
+	@SuppressWarnings("unchecked")
+	public final <T extends Object> Class<T> getType(String nombreCampo) throws ReflectionException {
+		try {
+			Field field = super.getClass().getDeclaredField(nombreCampo);
+			Class<T> clas =  (Class<T>)field.getType();
+			return clas;
+		} catch (NoSuchFieldException | SecurityException e) {
+			return null;
 		}
 	}
 

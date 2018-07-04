@@ -14,6 +14,7 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DocumentoDTO;
+import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 
 public class DocumentosSvc extends Services implements IDocumentosSvc {
@@ -240,6 +241,97 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 		} catch (QueryException e) {
 			throw new DocumentosException(e.getMensage(), e);
 		}
+	}
+
+	@Override
+	public List<DocumentosDTO> getDocumentos(DocumentosDTO dto, Integer page, Integer rows) throws DocumentosException {
+		List<DocumentosDTO> lista = new ArrayList<DocumentosDTO>();
+		if (dto == null)
+			throw new DocumentosException("El documento se encuentra vacio.");
+		try {
+			lista = querySvc.gets(dto, page, rows);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presentaron errores al obtener los registros.", e);
+		}
+		return lista;
+	}
+
+	@Override
+	public Integer getTotalCount(DocumentosDTO dto) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El documento se encuentra vacio.");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException("No se puedo obtener la cantidad de registros", e);
+		}
+	}
+
+	@Override
+	public DocumentosDTO insert(DocumentosDTO dto, UsuarioDTO user) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El documento se encuentra vacio.");
+		if (StringUtils.isNotBlank(dto.getCodigo()))
+			throw new DocumentosException("El codigo del documento no se encuentra vacio.");
+		try {
+			return querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException("No se logro agregar el documento.", e);
+		}
+	}
+
+	@Override
+	public void update(DocumentosDTO dto, UsuarioDTO user) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El documento se encuentra vacio.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new DocumentosException("El codigo del documento se encuentra vacio.");
+		try {
+			querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException("No se logro actualizar el documento.");
+		}
+	}
+
+	@Override
+	public void delete(DocumentosDTO dto, UsuarioDTO user) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El documento se encuentra vacio.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new DocumentosException("El codigo del documento se encuentra vacio.");
+		try {
+			querySvc.del(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException("No se logro eliminar el documento.", e);
+		}
+	}
+
+	@Override
+	public List<DocumentosDTO> getDocumentos(DocumentosDTO dto) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El dto suministrado se encuentra vacio.");
+		if (dto.getDoctype() == null)
+			throw new DocumentosException("No se ha suministrado el tipo de documento a obtener.");
+		List<DocumentosDTO> lista = new ArrayList<DocumentosDTO>();
+		try {
+			lista = querySvc.gets(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presneto un problema al obtener los campos asociados", e);
+		}
+		return lista;
+	}
+
+	@Override
+	public Integer getTotalCount(DocumentoDTO dto) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El documento de filtro se encuentra vacio.");
+		Integer cantidad = 0;
+		try {
+			cantidad = querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento un error en obtener la cantidad de registros.", e);
+		}
+		return cantidad;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ParametroException;
@@ -11,6 +12,7 @@ import org.pyt.common.exceptions.QueryException;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 public class ParametrosSvc extends Services implements IParametrosSvc {
@@ -53,9 +55,9 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 
 	public void update(ParametroDTO dto, UsuarioDTO user) throws ParametroException {
 		if (dto == null)
-			throw new ParametroException("El objeto empresa se encuentra vacio.");
-		if (dto.getCodigo() == null)
-			throw new ParametroException("El id de empresa se encuentra vacia.");
+			throw new ParametroException("El objeto parametro se encuentra vacio.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new ParametroException("El id de parametro se encuentra vacia.");
 		try {
 			querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -96,6 +98,52 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 			return querySvc.countRow(dto);
 		} catch (QueryException e) {
 			throw new ParametroException("Se presento problema en el conteo de registro de parametros.", e);
+		}
+	}
+
+	@Override
+	public List<ParametroGrupoDTO> getParametroGrupo(ParametroGrupoDTO dto) throws ParametroException {
+		List<ParametroGrupoDTO> lista = new ArrayList<ParametroGrupoDTO>();
+		if(dto == null)throw new ParametroException("No se suministro el parametro grupo para realizar el filtro.");
+		try {
+			lista = querySvc.gets(dto);
+		} catch (QueryException e) {
+			throw new ParametroException("No se logro obtner los grupos asociados a parametros.",e);
+		}
+		return lista;
+	}
+
+	@Override
+	public ParametroGrupoDTO insert(ParametroGrupoDTO dto, UsuarioDTO user) throws ParametroException {
+		if(dto == null)throw new ParametroException("Se encontro el parameto grupo vacio.");
+		if(user == null)throw new ParametroException("Se encontro el usuario vacio.");
+		try {
+			dto = querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new ParametroException("Se presento un problema en el ingreso del registro.");
+		}
+		return dto;
+	}
+
+	@Override
+	public void update(ParametroGrupoDTO dto, UsuarioDTO user) throws ParametroException {
+		if(dto == null)throw new ParametroException("Se encontro el parameto grupo vacio.");
+		if(user == null)throw new ParametroException("Se encontro el usuario vacio.");
+		try {
+			querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new ParametroException("Se presento un problema en la actualizacion del registro.");
+		}
+	}
+
+	@Override
+	public void delete(ParametroGrupoDTO dto, UsuarioDTO user) throws ParametroException {
+		if(dto == null)throw new ParametroException("Se encontro el parameto grupo vacio.");
+		if(user == null)throw new ParametroException("Se encontro el usuario vacio.");
+		try {
+			querySvc.del(dto, user);
+		} catch (QueryException e) {
+			throw new ParametroException("Se presento un problema en la eliminacion del registro.");
 		}
 	}
 

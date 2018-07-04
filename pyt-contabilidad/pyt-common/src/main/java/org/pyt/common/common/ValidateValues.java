@@ -2,6 +2,7 @@ package org.pyt.common.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -171,12 +172,24 @@ public final class ValidateValues {
 				return validate((Number) value1, (Number) value2);
 			if (value1 instanceof String && value2 instanceof String)
 				return validate((String) value1, (String) value2);
+			if (value1 instanceof ADto && value2 instanceof ADto)
+				if (value1.getClass() == value2.getClass())
+					return validateDto(value1, value2);
 			if (value1 != null && value2 != null)
-				return value1.getClass().isInstance(value2.getClass());
+				return value1.getClass() == value2.getClass();
 			return true;
 		} catch (Exception e) {
 			throw new ValidateValueException("Se presento error en la validacion.", e);
 		}
+	}
+
+	@SuppressWarnings({ "unchecked", "unused" })
+	public final <T extends ADto> Boolean validateDto(Object obj, Object obj2) throws ValidateValueException {
+		T dto = (T) obj;
+		if (new Compare<T>((T) obj).to((T) obj2)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -192,16 +205,21 @@ public final class ValidateValues {
 	@SuppressWarnings("unchecked")
 	public final <T, S extends Object> T cast(S value, Class<T> clase) throws ValidateValueException {
 		try {
-			if (value == null)return null;
-			if (clase == null)return null;
+			if (value == null)
+				return null;
+			if (clase == null)
+				return null;
 			Method[] metodos = clase.getMethods();
 			for (Method metodo : metodos) {
 				Class<?>[] params = metodo.getParameterTypes();
 				if (params.length == 1 && metodo.getReturnType() == clase) {
 					if (params[0] == value.getClass()) {
-						T valuer = (T) metodo.invoke(null, value);
-						if (valuer == null)continue;
-						return valuer;
+						if (value != null && metodo != null && Modifier.isStatic(metodo.getModifiers())) {
+							T valuer = (T) metodo.invoke(null, value);
+							if (valuer == null)
+								continue;
+							return valuer;
+						}
 					}
 				}
 			}

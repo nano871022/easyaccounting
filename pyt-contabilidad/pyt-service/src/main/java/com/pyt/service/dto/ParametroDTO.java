@@ -11,13 +11,20 @@ import org.pyt.common.common.ADto;
  */
 public class ParametroDTO extends ADto{
 	private static final long serialVersionUID = -5396836082089633791L;
-	private String codigo;
+	private Long orden;
 	private String nombre;
 	private String descripcion;
 	private String valor;
 	private String valor2;
 	private String grupo;
 	private String estado;
+
+	public Long getOrden() {
+		return orden;
+	}
+	public void setOrden(Long orden) {
+		this.orden = orden;
+	}
 	public String getCodigo() {
 		return codigo;
 	}
