@@ -17,6 +17,7 @@ import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
+import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
@@ -88,7 +89,13 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 		tipoDocumentos.onActionProperty().set(e -> loadField());
 		SelectList.put(tipoDocumentos, listTipoDocumento, FIELD_NAME);
 	}
-
+	/**
+	 * Se encarga de cargar un nuevo registro
+	 */
+	public final void load() {
+		
+	}
+	
 	/**
 	 * Se encarga de realizar la busqueda de los campos configurados para el tipo de
 	 * docuumento seleccionado
@@ -389,12 +396,14 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 	/**
 	 * Se encarga de guardar todo
 	 */
+	@SuppressWarnings("unchecked")
 	public final void guardar() {
 		loadData();
 		if (valid()) {
 			try {
-				documentosSvc.insert(registro, userLogin);
+				registro = documentosSvc.insert(registro, userLogin);
 				notificar("Se agrego el nuevo documento.");
+				comunicacion.setComando(AppConstants.COMMAND_PANEL_TIPO_DOC, registro);
 			} catch (DocumentosException e) {
 				System.err.println(e);
 			}

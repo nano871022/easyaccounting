@@ -6,6 +6,8 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
 
+import javafx.scene.layout.Pane;
+
 /**
  * bstracto bean para heredar todos los bean y tener objetos pre creados y
  * metodos que ayudan a trabajar con los controladores de fxml
@@ -19,22 +21,39 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	protected UsuarioDTO userLogin;
 	protected String NombreVentana;
 	@Inject
-	private Comunicacion comunicacion;
+	protected Comunicacion comunicacion;
 
 	public ABean() {
 		try {
 			userLogin = new UsuarioDTO();
 			userLogin.setNombre("nano871022");
-			
 			inject();
 		} catch (ReflectionException e) {
 			System.err.println(e);
 		}
 	}
-
+	/**
+	 * Se encarga de obtener el fxml y el controlador para ponerlo sobre la pantalla
+	 * @param classOfBean {@link Class}
+	 * @return {@link ABean}
+	 */
 	public <L extends ADto, S extends ABean<L>> S getController(Class<S> classOfBean) {
 		try {
 			return LoadAppFxml.BeanFxmlScroller(null, classOfBean);
+		} catch (LoadAppFxmlException e) {
+			Log.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
+			error(e);
+		}
+		return null;
+	}
+	/**
+	 * Se encarga de obtener el fxml y el controlador para ponerlo sobre la pantalla
+	 * @param classOfBean {@link Class}
+	 * @return {@link ABean}
+	 */
+	public <M extends Pane,L extends ADto, S extends ABean<L>> S getController(M layout,Class<S> classOfBean) {
+		try {
+			return LoadAppFxml.beanFxmlPane(layout, classOfBean);
 		} catch (LoadAppFxmlException e) {
 			Log.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
 			error(e);

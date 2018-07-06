@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
@@ -34,13 +35,16 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 	@SuppressWarnings("rawtypes")
 	@Inject
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_PANEL_TIPO_DOC)
-	private Comunicacion comunicacion;
-	@Inject(resource = "com.pyt.service.implement.DocumentosScv")
+	private Comunicacion comunicacion2;
+	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
 	@FXML
 	private VBox left;
 	@FXML
+	private VBox central;
+	@FXML
 	private HBox superior;
+	private Map<String, Class> mapa;
 
 	@FXML
 	public void initialize() {
@@ -49,12 +53,17 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 
 	public final void load(DocumentoDTO registro) {
 		this.registro = registro;
+		if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 
+		} else if (registro == null || StringUtils.isBlank(registro.getCodigo())) {
+			getController(central, DinamicoBean.class).load();
+
+		}
 	}
 
 	public final void loadType() {
 		try {
-			Map<String, Class> mapa = new HashMap<String, Class>();
+			mapa = new HashMap<String, Class>();
 			DocumentosDTO dto = new DocumentosDTO();
 			dto.setDoctype(registro.getTipoDocumento());
 			List<DocumentosDTO> lista = documentosSvc.getDocumentos(dto);
@@ -70,8 +79,11 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 		Set<String> sets = mapa.keySet();
 		for (String key : sets) {
 			Button btn = new Button(key.replace("DTO", ""));
-			btn.onActionProperty().set(e -> {
-			});
+			if (mapa.get(key) == DocumentoDTO.class) {
+				btn.onActionProperty().set(e -> {
+					getController(central,DinamicoBean.class).load();
+				});
+			}
 			left.getChildren().add(btn);
 		}
 	}
@@ -83,6 +95,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 			if (valor instanceof DocumentoDTO) {
 				registro = (DocumentoDTO) valor;
 				loadType();
+				loadType(mapa);
 			}
 			break;
 		}

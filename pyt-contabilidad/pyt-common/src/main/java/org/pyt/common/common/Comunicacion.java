@@ -57,26 +57,27 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 		}
 		Integer count = 0;
 		Set<String> comandos = comandoValor.keySet();
-		for (String comando : comandos) {
-			IComunicacion[] suscriptores = this.suscriptores.get(comando);
-			if (suscriptores != null && suscriptores.length > 0) {
-				for (IComunicacion suscriptor : suscriptores) {
-					if (suscriptor != null) {
-						Object[] valores = comandoValor.get(comando);
-						if (valores != null && valores.length > 0) {
-							for (Object valor : valores) {
-								suscriptor.get(comando, valor);
+		if (comandos.size() > 0)
+			for (String comando : comandos) {
+				IComunicacion[] suscriptores = this.suscriptores.get(comando);
+				if (suscriptores != null && suscriptores.length > 0) {
+					for (IComunicacion suscriptor : suscriptores) {
+						if (suscriptor != null) {
+							Object[] valores = comandoValor.get(comando);
+							if (valores != null && valores.length > 0) {
+								for (Object valor : valores) {
+									suscriptor.get(comando, valor);
+								}
+								count++;
 							}
-							count++;
 						}
 					}
 				}
+				if (count > 0) {
+					comandoValor.remove(comando);
+					count = 0;
+				}
 			}
-			if (count > 0) {
-				comandoValor.remove(comando);
-				count = 0;
-			}
-		}
 	}
 
 	/**

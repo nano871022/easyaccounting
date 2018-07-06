@@ -204,28 +204,27 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		}
 	}
 
-	public final static <L extends ScrollPane, S extends ADto, T extends ABean<S>> T BeanFxmlScroller(L layout,
-			Class<T> bean) throws LoadAppFxmlException {
-		String file;
-
-		if (!loadApp().isLastContro()) {
-			loadApp().setLastContro(layout);
-		}
-		if (!loadApp().isLastContro()) {
-			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
-		}
+	/**
+	 * Obtiene el fxml apartir del bean y la etiqueta FXMLBean
+	 * 
+	 * @param bean
+	 *            {@link Class}
+	 * @return {@link Parent}
+	 * @throws {@link
+	 *             LoadAppFxmlException}
+	 */
+	private final static <S extends ADto, T extends ABean<S>> FXMLLoader loadFxml(Class<T> bean)
+			throws LoadAppFxmlException {
 		URL url = null;
+		String file = null;
 		try {
-			T lbean = bean.getDeclaredConstructor().newInstance();
-			file = lbean.pathFileFxml();
-			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
-				file = AppConstants.SLASH + file;
-			}
+			T lBean = bean.getDeclaredConstructor().newInstance();
+			file = lBean.pathFileFxml();
+ 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
+ 				file = AppConstants.SLASH + file;
+ 			}
 			url = bean.getResource(file);
-			FXMLLoader loader = new FXMLLoader(url);
-			Parent root = loader.load();
-			((ScrollPane) loadApp().getLastContro()).setContent(root);
-			return loader.getController();
+			return new FXMLLoader(url);
 		} catch (InstantiationException e) {
 			throw new LoadAppFxmlException("Problema en instanciacion.", e);
 		} catch (IllegalAccessException e) {
@@ -238,9 +237,58 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("No se encontro el metodo.", e);
 		} catch (SecurityException e) {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
-		} catch (LoadException e) {
-			Log.error("Archivo no puede ser cargado " + url.toString());
+		}
+	}
+
+
+	/**
+	 * Se encarga de cargar un fxml de controlador
+	 * 
+	 * @param layout
+	 *            {@link ScrollPane}
+	 * @param bean
+	 *            {@link Class}
+	 * @return {@link ABean}
+	 * @throws {@link
+	 *             LoadAppFxmlException}
+	 */
+	public final static <L extends ScrollPane, S extends ADto, T extends ABean<S>> T BeanFxmlScroller(L layout,
+			Class<T> bean) throws LoadAppFxmlException {
+		if (!loadApp().isLastContro()) {
+			loadApp().setLastContro(layout);
+		}
+		if (!loadApp().isLastContro()) {
+			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
+		}
+		FXMLLoader loader = loadFxml(bean);
+		Parent root;
+		try {
+			root = loader.load();
+			((ScrollPane) loadApp().getLastContro()).setContent(root);
+			return loader.getController();
+		} catch(IllegalStateException e) {
+			throw new LoadAppFxmlException("Problema en cargar load",e);
+		}catch (LoadException e) {
+			Log.error("Archivo no puede ser cargado. ");
 			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
+		} catch (IOException e) {
+			throw new LoadAppFxmlException("Problema en I/O.", e);
+		}
+	}
+		/**
+	 * Se encarga de cargar un archivo fxml dentro de un panel indicado
+	 * @param layout 
+	 * @param bean {@link Class}
+	 * @return {@link ABean}
+	 * @throws {@link LoadAppFxmlException}
+	 */
+	public final static <L extends Pane, S extends ADto, T extends ABean<S>> T beanFxmlPane(L layout, Class<T> bean)throws LoadAppFxmlException {
+		FXMLLoader loader = loadFxml(bean);
+		try {
+			Parent root = loader.load();
+			layout.getChildren().clear();
+			layout.getChildren().add(root);
+			return loader.getController();
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}
