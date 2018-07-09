@@ -31,6 +31,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	private Integer page;
 	private Integer total;
 	private Integer rows;
+	private Long cantidad;
 	private List<S> list;
 	private javafx.scene.control.TableView<S> table;
 
@@ -46,7 +47,6 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		this.paginas = paginas;
 		this.table = table;
 		loadPaginator();
-		loadPages();
 		search();
 	}
 
@@ -71,9 +71,14 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	public final void search() {
 		if (table.isVisible()) {
 			T filter = getFilter();
-			list = getList(filter, currentPage, rows);
+			Integer init = currentPage;
+			if(init > 1) {
+				init = (currentPage-1)*rows;
+			}
+			list = getList(filter, init, rows);
 			total = getTotalRows(filter);
 			Table.put(table, list);
+			loadPages();
 		}
 	}
 
@@ -90,6 +95,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 				((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
 			}
 		}
+		search();
 	}
 
 	/**
@@ -127,7 +133,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	public final void next() {
 		currentPage++;
 		reloadPages();
-		if (currentPage == total) {
+		if (currentPage == cantidad.intValue()) {
 			btnSiguiente.setVisible(false);
 			btnUltimo.setVisible(false);
 		} else {
@@ -143,7 +149,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	 * Se encarga de cambiar a la ultima pagina encontrada
 	 */
 	public final void last() {
-		currentPage = total;
+		currentPage = cantidad.intValue();
 		reloadPages();
 		btnSiguiente.setVisible(false);
 		btnUltimo.setVisible(false);
@@ -155,25 +161,39 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	 * Se encarga de cargar el numero de paginas
 	 */
 	public final void loadPages() {
-		for (int i = 0; i < 5; i++) {
-			Label page = new Label(String.valueOf(i + 1));
-			page.setPadding(new Insets(5));
-			page.setStyle("-fx-cursor:hand");
-			if (i == 0) {
-				page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
-			}
-			page.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-				Iterator<Node> ite = nPages.getChildren().iterator();
-				while (ite.hasNext()) {
-					Node node = ite.next();
-					((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
+		nPages.getChildren().clear();
+		cantidad = (long) 1.0;
+		if (total > rows) {
+			cantidad = (long) (total / rows);
+		}
+		cantidad = (long) Math.round(cantidad+0.3);
+		if (cantidad > 1) {
+			for (int i = 0; i < cantidad; i++) {
+				Label page = new Label(String.valueOf(i + 1));
+				page.setPadding(new Insets(5));
+				page.setStyle("-fx-cursor:hand");
+				if (i == 0) {
+					page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
 				}
-				page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
-				currentPage = Integer.valueOf(page.getText());
-			});
-			nPages.getChildren().add(page);
+				page.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+					Iterator<Node> ite = nPages.getChildren().iterator();
+					while (ite.hasNext()) {
+						Node node = ite.next();
+						((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
+					}
+					page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
+					currentPage = Integer.valueOf(page.getText());
+					search();
+				});
+				nPages.getChildren().add(page);
+				btnAtras.setVisible(false);
+				btnPrimer.setVisible(false);
+			}
+		} else {
 			btnAtras.setVisible(false);
 			btnPrimer.setVisible(false);
+			btnSiguiente.setVisible(false);
+			btnUltimo.setVisible(false);
 		}
 	}
 

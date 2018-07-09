@@ -51,6 +51,8 @@
 				<Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Fecha Cierre" GridPane.columnIndex="2" GridPane.rowIndex="3" />
 				<Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Estado" GridPane.columnIndex="0" GridPane.rowIndex="4" />
 				<ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+				<DatePicker fx:id="fechaCierre"  GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+				<DatePicker fx:id="fechaApertura"  GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 			</children>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="141.0" minWidth="10.0" prefWidth="111.0" />

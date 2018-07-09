@@ -7,6 +7,7 @@ import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.ParametroException;
@@ -63,7 +64,7 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		ParametroDTO estados = new ParametroDTO();
 		try {
 			listEmpresa = empresaSvc.getAllEmpresas(new EmpresaDTO());
-			listEstado = parametroSvc.getAllParametros(estados);
+			listEstado = parametroSvc.getAllParametros(estados,ParametroConstants.GRUPO_ESTADO_CONCEPTO);
 		} catch (ParametroException e) {
 			error(e);
 		} catch (EmpresasException e) {

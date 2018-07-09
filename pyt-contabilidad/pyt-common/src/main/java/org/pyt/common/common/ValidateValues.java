@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.exceptions.ValidateValueException;
@@ -137,8 +140,20 @@ public final class ValidateValues {
 		if (StringUtils.isNotBlank(value2)) {
 			if (StringUtils.isBlank(value1))
 				return false;
-			if (StringUtils.isNotBlank(value1) && StringUtils.isNotBlank(value2))
-				return value1.contains(value2);
+			if (StringUtils.isNotBlank(value1) && StringUtils.isNotBlank(value2)) {
+				if (value2.contains("%")) {
+					String[] split = value2.split("%");
+					Boolean valid = true;
+					for(String seg : split) {
+						if(StringUtils.isNotBlank(seg)) {
+							valid &= value1.contains(seg);
+						}
+					}
+					return valid;
+				} else {
+					return value1.contentEquals(value2);
+				}
+			}
 		}
 		return true;
 	}
@@ -209,23 +224,153 @@ public final class ValidateValues {
 				return null;
 			if (clase == null)
 				return null;
-			Method[] metodos = clase.getMethods();
+			if (clase == Date.class) {
+				if (value.getClass() == LocalDate.class) {
+					return (T) Date.from(((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toInstant());
+				}
+			}
+			if (clase == int.class) {
+				clase = (Class<T>) Integer.class;
+			}
+			if (clase == short.class) {
+				clase = (Class<T>) Short.class;
+			}
+			if (clase == double.class) {
+				clase = (Class<T>) Double.class;
+			}
+			if (clase == long.class) {
+				clase = (Class<T>) Long.class;
+			}
+			if (value.getClass() == String.class) {
+				if (clase == Integer.class) {
+					return (T) Integer.valueOf((String) value);
+				}
+				if (clase == Double.class) {
+					return (T) Double.valueOf((String) value);
+				}
+				if (clase == Long.class) {
+					return (T) Long.valueOf((String) value);
+				}
+				if (clase == Short.class) {
+					return (T) Short.valueOf((String) value);
+				}
+			}
+			if (value.getClass() == clase) {
+				return (T) value;
+			}
+
+			Method[] metodos = clase.getDeclaredMethods();
 			for (Method metodo : metodos) {
-				Class<?>[] params = metodo.getParameterTypes();
-				if (params.length == 1 && metodo.getReturnType() == clase) {
-					if (params[0] == value.getClass()) {
-						if (value != null && metodo != null && Modifier.isStatic(metodo.getModifiers())) {
-							T valuer = (T) metodo.invoke(null, value);
-							if (valuer == null)
-								continue;
-							return valuer;
+				if (Modifier.isStatic(metodo.getModifiers())) {
+					if (metodo.getReturnType() == clase) {
+						Class<?>[] clases = metodo.getParameterTypes();
+						if (clases != null && clases.length == 1) {
+							if (clases[0] == value.getClass()) {
+								return (T) metodo.invoke(null, value);
+							} else if (isCast(value, clases[0])) {
+								T val = (T) cast(value, clases[0]);
+								try {
+									System.out.println(metodo.toString());
+									return (T) metodo.invoke(null, val);
+								} catch (Exception e) {
+								}
+							}
 						}
 					}
 				}
 			}
+
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new ValidateValueException(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	/**
+	 * Se encarga de verificar si el valor no esta vacio y es del tipo de la clase
+	 * indicado
+	 * 
+	 * @param value
+	 *            {@link Object}
+	 * @param clase
+	 *            {@link Class}
+	 * @return {@link Boolean}
+	 */
+	@SuppressWarnings("unchecked")
+	public final <T, L extends Object> Boolean isCast(T value, Class<L> clase) {
+		try {
+			if (clase == int.class) {
+				clase = (Class<L>) Integer.class;
+			}
+			if (clase == short.class) {
+				clase = (Class<L>) Short.class;
+			}
+			if (clase == double.class) {
+				clase = (Class<L>) Double.class;
+			}
+			if (clase == long.class) {
+				clase = (Class<L>) Long.class;
+			}
+			if (clase == Integer.class) {
+				if (value != null && value instanceof Integer) {
+					return true;
+				} else if (value.getClass() == String.class) {
+					Integer.valueOf((String) value);
+					return true;
+				}
+			}
+			if (clase == BigDecimal.class) {
+				if (value != null && value instanceof BigDecimal) {
+					return true;
+				}
+			}
+			if (clase == BigInteger.class) {
+				if (value != null && value instanceof BigInteger) {
+					return true;
+				}
+			}
+			if (clase == Long.class) {
+				if (value != null && value instanceof Long) {
+					return true;
+				} else if (value.getClass() == String.class) {
+					Long.valueOf((String) value);
+					return true;
+				}
+			}
+			if (clase == Double.class) {
+				if (value != null && value instanceof Double) {
+					return true;
+				} else if (value.getClass() == String.class) {
+					Double.valueOf((String) value);
+					return true;
+				}
+			}
+			if (clase == Short.class) {
+				if (value != null && value instanceof Short) {
+					return true;
+				} else if (value.getClass() == String.class) {
+					Short.valueOf((String) value);
+					return true;
+				}
+			}
+			if (clase == Date.class) {
+				if (value != null && value instanceof Date)
+					return true;
+				if (value != null && value instanceof LocalDate)
+					return true;
+			}
+			if (clase == Number.class)
+				if (value != null && value instanceof Number)
+					return true;
+			if (clase == String.class)
+				if (value != null && value instanceof String && StringUtils.isNotBlank((String) value))
+					return true;
+			if (clase == ADto.class)
+				if (value instanceof ADto)
+					return true;
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

@@ -13,7 +13,7 @@ import org.pyt.common.exceptions.FileBinException;
  * @author Alejandro Parra
  * @since 21-06-2018
  */
-public class WriteBin {
+public class WriteBin extends AControlFile{
 	/**
 	 * Se encarga de guardar el objeto en el archivo
 	 * 

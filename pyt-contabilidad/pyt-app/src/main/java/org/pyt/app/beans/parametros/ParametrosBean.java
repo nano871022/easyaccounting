@@ -52,6 +52,14 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	private TableView<ParametroDTO> tabla;
 	@FXML
 	private Button modify;
+	@FXML
+	private Button add;
+	@FXML
+	private Button del;
+	@FXML
+	private Button addGroup;
+	@FXML
+	private Button modifyGroup;
 	private DataTableFXML<ParametroDTO, ParametroDTO> lazyFiltrar;
 	private ParametroDTO filtrarGrupo;
 	private ParametroDTO seleccionFiltro;
@@ -65,7 +73,11 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 		SelectList.put(grupo, ParametroConstants.mapa_grupo);
 		estado.getSelectionModel().selectFirst();
 		grupo.getSelectionModel().selectFirst();
+		add.setVisible(false);
 		modify.setVisible(false);
+		del.setVisible(false);
+		addGroup.setVisible(true);
+		modifyGroup.setVisible(false);
 		tabla.setVisible(false);
 		lazy();
 		lazy2();
@@ -155,6 +167,8 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	@Override
 	public void clickTable() {
 		modify.setVisible(isSelected());
+		del.setVisible(isSelected());
+		add.setVisible(!isSelected());
 	}
 
 	public void clickTableFiltrar() {
@@ -162,8 +176,13 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			tabla.setVisible(true);
 			seleccionFiltro = lazyFiltrar.getSelectedRow();
 			dataTable.search();
+			modifyGroup.setVisible(true);
+			addGroup.setVisible(false);
+			add.setVisible(true);
 		} else {
 			tabla.setVisible(false);
+			addGroup.setVisible(true);
+			modifyGroup.setVisible(false);
 		}
 	}
 

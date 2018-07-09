@@ -22,6 +22,7 @@ public class ParametroDTO extends ADto{
 	public Long getOrden() {
 		return orden;
 	}
+	
 	public void setOrden(Long orden) {
 		this.orden = orden;
 	}

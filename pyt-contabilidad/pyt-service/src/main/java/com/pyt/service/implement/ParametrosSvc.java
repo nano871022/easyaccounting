@@ -21,10 +21,19 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 
 	public List<ParametroDTO> getParametros(ParametroDTO dto, Integer init, Integer end) throws ParametroException {
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
+		List<ParametroDTO> lista2 = new ArrayList<ParametroDTO>();
 		if (dto == null)
 			throw new ParametroException("El objeto empresa se encuentra vacio.");
 		try {
 			lista = querySvc.gets(dto, init, end);
+			if(dto.getGrupo().equalsIgnoreCase("*")) {
+				for(ParametroDTO dt : lista) {
+					if(dt.getGrupo() != null && dt.getGrupo().equalsIgnoreCase("*")) {
+						lista2.add(dt);
+					}
+				}
+				if(lista2.size() > 0)return lista2;
+			}
 		} catch (QueryException e) {
 			throw new ParametroException(e.getMensage(), e);
 		}
@@ -145,6 +154,27 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		} catch (QueryException e) {
 			throw new ParametroException("Se presento un problema en la eliminacion del registro.");
 		}
+	}
+
+	@Override
+	public List<ParametroDTO> getAllParametros(ParametroDTO dto, String grupo) throws ParametroException {
+		if(dto == null) {
+			throw new ParametroException("No se suministro el parametro para aplicar el filtro de busqueda.");
+		}
+		ParametroGrupoDTO pgrupo = new ParametroGrupoDTO();
+		if(StringUtils.isNotBlank(grupo)) {
+			pgrupo.setGrupo(grupo);
+			List<ParametroGrupoDTO> list = getParametroGrupo(pgrupo);
+			if(list != null && list.size() == 1) {
+				pgrupo = list.get(0);
+			}
+		}
+		if(pgrupo != null && StringUtils.isNotBlank(pgrupo.getCodigo())) {
+			dto.setGrupo(pgrupo.getParametro());
+		}else {
+			dto.setGrupo(grupo);
+		}
+		return getAllParametros(dto);
 	}
 
 }

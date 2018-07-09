@@ -30,8 +30,14 @@ public class QuerySvc implements IQuerySvc {
 		if (lista == null || lista.size() == 0) {
 			return lista;
 		}
+		if(init > 0) {
+			init = init + 1;
+		}
 		if (lista.size() > init && lista.size() > init + end) {
 			return lista.subList(init, init + end);
+		}
+		if(lista.size()>init && lista.size() < (init +end)){
+			return lista.subList(init, lista.size());
 		}
 		return lista;
 	}
@@ -126,7 +132,7 @@ public class QuerySvc implements IQuerySvc {
 		}
 		if (lista != null && lista.size() > 0) {
 			try {
-				fb.write(lista,(Class<T>)obj.getClass());
+				fb.write(lista, (Class<T>) obj.getClass());
 			} catch (FileBinException e) {
 				throw new QueryException("Se presento problem aen el almacenamieto del registro.", e);
 			}
@@ -147,14 +153,14 @@ public class QuerySvc implements IQuerySvc {
 		Integer lenSize = size.toString().length();
 		name = name.replace("DTO", "");
 		Integer length = name.length();
-		if(length > max) {
+		if (length > max) {
 			name = name.substring(0, 7);
 			length = name.length();
 		}
 		Random aleatorio = new Random();
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
-		for (int i = 0; i < max-length-lenSize; i++) {
+		for (int i = 0; i < max - length - lenSize; i++) {
 			Double valor = aleatorio.nextDouble() * (cadena.length() - 1 + 0);
 			sb.append(cadena.charAt(valor.intValue()));
 		}
@@ -170,18 +176,18 @@ public class QuerySvc implements IQuerySvc {
 			List<T> lista = gets(cp);
 			if (lista != null && lista.size() > 0) {
 				Integer count = lista.size();
-				for(int i = 0; i < count;i++) {
+				for (int i = 0; i < count; i++) {
 					T dto = lista.get(i);
 					if ((new Compare<T>(dto)).to(obj)) {
 						lista.remove(dto);
-						i=0;
+						i = 0;
 						count = lista.size();
 					}
 				}
 			} else if (lista == null || lista.size() == 0) {
 				throw new QueryException("No se encontraron registros.");
 			}
-			fb.write(lista,(Class<T>)cp.getClass());
+			fb.write(lista, (Class<T>) cp.getClass());
 		} catch (InstantiationException e) {
 			throw new QueryException("Problema de instanciacion.", e);
 		} catch (IllegalAccessException e) {

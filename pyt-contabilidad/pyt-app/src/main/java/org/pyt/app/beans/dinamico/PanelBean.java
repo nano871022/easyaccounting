@@ -44,6 +44,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 	private VBox central;
 	@FXML
 	private HBox superior;
+	@SuppressWarnings("rawtypes")
 	private Map<String, Class> mapa;
 
 	@FXML
@@ -54,13 +55,15 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 	public final void load(DocumentoDTO registro) {
 		this.registro = registro;
 		if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
-
+			loadType();
+			loadType(mapa);
+			getController(central, DocumentoBean.class).load(registro);
 		} else if (registro == null || StringUtils.isBlank(registro.getCodigo())) {
-			getController(central, DinamicoBean.class).load();
-
+			getController(central, DocumentoBean.class).load();
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public final void loadType() {
 		try {
 			mapa = new HashMap<String, Class>();
@@ -75,16 +78,23 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private final void loadType(Map<String, Class> mapa) {
 		Set<String> sets = mapa.keySet();
 		for (String key : sets) {
 			Button btn = new Button(key.replace("DTO", ""));
 			if (mapa.get(key) == DocumentoDTO.class) {
 				btn.onActionProperty().set(e -> {
-					getController(central,DinamicoBean.class).load();
+					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
+						getController(central, DocumentoBean.class).load(registro);
+					} else {
+						getController(central, DocumentoBean.class).load();
+					}
 				});
 			}
-			left.getChildren().add(btn);
+			if (left != null) {
+				left.getChildren().add(btn);
+			}
 		}
 	}
 
@@ -94,8 +104,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 		case AppConstants.COMMAND_PANEL_TIPO_DOC:
 			if (valor instanceof DocumentoDTO) {
 				registro = (DocumentoDTO) valor;
-				loadType();
-				loadType(mapa);
+				getController(PanelBean.class).load(registro);
 			}
 			break;
 		}

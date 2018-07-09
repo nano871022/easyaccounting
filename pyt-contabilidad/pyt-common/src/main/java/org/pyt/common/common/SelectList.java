@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.ValidateValueException;
@@ -39,6 +40,7 @@ public final class SelectList {
 			for (T obj : lista) {
 				observable.add(obj.get(campoDto));
 			}
+			choiceBox.getSelectionModel().selectFirst();
 		} catch (ReflectionException e) {
 			Log.logger(e);
 		}
@@ -120,24 +122,24 @@ public final class SelectList {
 	 * @param nombreCampoDto
 	 *            {@link String}
 	 */
-	public final static <S,L,N extends Object, T extends ADto,M extends ADto> void selectItem(ChoiceBox<S> choiceBox,List<M> list,String nombreCampoList, T obj,
-			String nombreCampoDto) {
+	public final static <S, L, N extends Object, T extends ADto, M extends ADto> void selectItem(ChoiceBox<S> choiceBox,
+			List<M> list, String nombreCampoList, T obj, String nombreCampoDto) {
 		Boolean select = false;
 		try {
-			ObservableList<S> values =  choiceBox.getItems();
+			ObservableList<S> values = choiceBox.getItems();
 			if (obj != null) {
 				N fieldValue = null;
 				N fieldValueList = null;
 				N fieldValueDto = null;
-				for(M dto : list) {
+				for (M dto : list) {
 					fieldValue = dto.get(nombreCampoList);
 					fieldValueList = dto.get(nombreCampoList);
 					fieldValueDto = obj.get(nombreCampoDto);
-					if(fieldValueList == fieldValueDto) {
-						for(S valuee : values) {
-							if(valuee==fieldValue) {
+					if (fieldValueList == fieldValueDto) {
+						for (S valuee : values) {
+							if (valuee == fieldValue) {
 								choiceBox.getSelectionModel().select(valuee);
-								select=true;
+								select = true;
 							}
 						}
 					}
@@ -152,6 +154,77 @@ public final class SelectList {
 	}
 
 	/**
+	 * Se encarga de seleccionar el registro seleccionado
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param list
+	 *            {@link List} of {@link ADto}
+	 * @param nombreShow
+	 *            {@link String}
+	 * @param value
+	 *            {@link Object}
+	 * @param nombreAssign
+	 *            {@link String}
+	 */
+	public final static <S extends Object, M extends ADto, T extends Object> void selectItem(ChoiceBox<S> choiceBox,
+			List<M> list, String nombreShow, T value, String nombreAssign) {
+		ValidateValues vv = new ValidateValues();
+		for (M dto : list) {
+			try {
+				if (StringUtils.isNotBlank(nombreAssign)) {
+					T value2 = dto.get(nombreAssign);
+					if (vv.validate(value2, value)) {
+						S valu;
+						valu = dto.get(nombreShow);
+						choiceBox.getSelectionModel().select(valu);
+						break;
+					}
+				}
+			} catch (ReflectionException | ValidateValueException e) {
+				Log.logger(e);
+			}
+		} // end for
+	}
+
+	/**
+	 * Se encarga de seleccionar un registro cuando se suministra como valor un
+	 * objeto tipo adto y es igual al tipo dela lista Se valida que el objeto se
+	 * encuentre dentro de la lista y despues se selecciona
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param list
+	 *            {@link List}
+	 * @param nombreShow
+	 *            {@link String}
+	 * @param adto
+	 *            {@link ADto} extends
+	 */
+	public final static <S extends Object, M extends ADto> void selectItem(ChoiceBox<S> choiceBox, List<M> list,
+			String nombreShow, M adto) {
+		ValidateValues vv = new ValidateValues();
+		for (M dto : list) {
+			try {
+				if (dto != null && adto != null)
+					if (StringUtils.isNotBlank(dto.getCodigo()) && StringUtils.isNotBlank(adto.getCodigo())) {
+						if (dto.getCodigo().compareTo(adto.getCodigo()) == 0) {
+							choiceBox.getSelectionModel().select(dto.get(nombreShow));
+							break;
+						}
+					}else {
+						if(vv.validate(dto, adto)) {
+							choiceBox.getSelectionModel().select(dto.get(nombreShow));
+							break;
+						}
+					}
+			} catch (ReflectionException | ValidateValueException e) {
+				Log.logger(e);
+			}
+		} // end for
+	}
+
+	/**
 	 * Se encarga de buscar un valor en la lista y seleccionarlo por defecto
 	 * 
 	 * @param choiceBox
@@ -159,30 +232,30 @@ public final class SelectList {
 	 * @param mapa
 	 *            {@link Map}
 	 */
-	public final static <S, T,L extends Object> void selectItem(ChoiceBox<S> choiceBox, Map<S, T> mapa,T value) {
+	public final static <S, T, L extends Object> void selectItem(ChoiceBox<S> choiceBox, Map<S, T> mapa, T value) {
 		ValidateValues vv = new ValidateValues();
 		Boolean select = false;
 		Set<S> sets = mapa.keySet();
-		for(S key : sets) {
+		for (S key : sets) {
 			T val = mapa.get(key);
 			try {
-				if(vv.validate(val, value)) {
-					for(int i = 0; i < choiceBox.getItems().size();i++) {
-						if(vv.validate(choiceBox.getItems().get(i),value)) {
+				if (vv.validate(val, value)) {
+					for (int i = 0; i < choiceBox.getItems().size(); i++) {
+						if (vv.validate(choiceBox.getItems().get(i), value)) {
 							choiceBox.getSelectionModel().select(i);
 							break;
 						}
 					}
 					choiceBox.getSelectionModel().select(key);
-					select= true;
+					select = true;
 					break;
 				}
 			} catch (ValidateValueException e) {
-				Log.logger("Se presento problema en la busqueda del objeto seleccionado.",e);
+				Log.logger("Se presento problema en la busqueda del objeto seleccionado.", e);
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		}
-		if(!select) {
+		if (!select) {
 			choiceBox.getSelectionModel().selectFirst();
 		}
 

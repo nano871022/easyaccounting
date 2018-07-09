@@ -9,6 +9,7 @@ import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.BancoException;
 import org.pyt.common.exceptions.ParametroException;
 
@@ -17,9 +18,11 @@ import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IBancosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
@@ -53,6 +56,12 @@ public class BancoBean extends ABean<BancoDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
+	@FXML
+	private TableColumn<BancoDTO, String> tipoBancos;
+	@FXML
+	private TableColumn<BancoDTO, String> tipoCuentas;
+	@FXML
+	private TableColumn<BancoDTO, String> estados;
 	private DataTableFXML<BancoDTO, BancoDTO> dt;
 	private List<ParametroDTO> listEstados;
 	private List<ParametroDTO> listTipoCuenta;
@@ -67,9 +76,9 @@ public class BancoBean extends ABean<BancoDTO> {
 		ParametroDTO pTipoBanco = new ParametroDTO();
 		ParametroDTO pEstados = new ParametroDTO();
 		try {
-			listTipoCuenta = parametroSvc.getAllParametros(pTipoBanco);
-			listTipoBanco = parametroSvc.getAllParametros(pTipoCuenta);
-			listEstados = parametroSvc.getAllParametros(pEstados);
+			listTipoCuenta = parametroSvc.getAllParametros(pTipoBanco, ParametroConstants.GRUPO_TIPO_CUENTA);
+			listTipoBanco = parametroSvc.getAllParametros(pTipoCuenta, ParametroConstants.GRUPO_TIPO_BANCO);
+			listEstados = parametroSvc.getAllParametros(pEstados, ParametroConstants.GRUPO_ESTADO_BANCO);
 		} catch (ParametroException e) {
 			error(e);
 		}
@@ -79,6 +88,21 @@ public class BancoBean extends ABean<BancoDTO> {
 		tipoCuenta.getSelectionModel().selectFirst();
 		tipoBanco.getSelectionModel().selectFirst();
 		estado.getSelectionModel().selectFirst();
+		tipoBancos.setCellValueFactory(e -> {
+			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
+			property.setValue(e.getValue().getTipoBanco().getNombre());
+			return property;
+		});
+		tipoCuentas.setCellValueFactory(e -> {
+			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
+			property.setValue(e.getValue().getTipoCuenta().getNombre());
+			return property;
+		});
+		estados.setCellValueFactory(e -> {
+			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
+			property.setValue(e.getValue().getEstado().getNombre());
+			return property;
+		});
 		lazy();
 	}
 

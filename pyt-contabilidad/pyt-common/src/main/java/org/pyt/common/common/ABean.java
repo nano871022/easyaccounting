@@ -20,6 +20,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	protected T registro;
 	protected UsuarioDTO userLogin;
 	protected String NombreVentana;
+	@SuppressWarnings("rawtypes")
 	@Inject
 	protected Comunicacion comunicacion;
 

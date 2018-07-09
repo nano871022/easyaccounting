@@ -13,8 +13,10 @@ import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
@@ -40,12 +42,47 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
+	@FXML
+	private TableColumn<TrabajadorDTO, String> nombre;
+	@FXML
+	private TableColumn<TrabajadorDTO, String> apellido;
+	@FXML
+	private TableColumn<TrabajadorDTO, String> email;
+	@FXML
+	private TableColumn<TrabajadorDTO, String> cedula;
+	@FXML
+	private TableColumn<TrabajadorDTO, String> fechaNacimiento;
 	private DataTableFXML<TrabajadorDTO, TrabajadorDTO> dt;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Lista Empleados";
 		registro = new TrabajadorDTO();
+		fechaNacimiento.setCellValueFactory(e->{
+			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
+			sp.setValue(e.getValue().getPersona().getFechaNacimiento().toString());
+			return sp;
+		});
+		nombre.setCellValueFactory(e->{
+			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
+			sp.setValue(e.getValue().getPersona().getNombre());
+			return sp;
+		});
+		apellido.setCellValueFactory(e->{
+			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
+			sp.setValue(e.getValue().getPersona().getApellido());
+			return sp;
+		});
+		cedula.setCellValueFactory(e->{
+			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
+			sp.setValue(e.getValue().getPersona().getDocumento());
+			return sp;
+		});
+		email.setCellValueFactory(e->{
+			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
+			sp.setValue(e.getValue().getCorreo());
+			return sp;
+		});
 		lazy();
 	}
 

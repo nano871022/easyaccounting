@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,27 +12,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
-import org.pyt.common.constants.AppConstants;
-import org.pyt.common.exceptions.DocumentosException;
-import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.ValidateValueException;
 
 import com.pyt.query.interfaces.IQuerySvc;
-import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
 
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -42,7 +36,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 
 /**
  * Se encarga de procesar la configuracion de l formulario dinamico y mostrarlo
@@ -51,75 +44,30 @@ import javafx.scene.layout.VBox;
  * @author Alejandro Parra
  * @since 01-07-2018
  */
-@FXMLFile(path = "view/dinamico", file = "formulario.fxml")
-public final class DinamicoBean extends ABean<DocumentoDTO> {
-	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
-	private IParametrosSvc parametrosSvc;
+
+public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
-	private IDocumentosSvc documentosSvc;
+	protected IDocumentosSvc documentosSvc;
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
-	@FXML
-	private VBox central;
-	@FXML
-	private Label titulo;
-	@FXML
-	private ChoiceBox<String> tipoDocumentos;
 	private Map<String, Object> listas;
 	private Map<String, Object> fields;
-	private ParametroDTO tipoDocumento;
-	private List<DocumentosDTO> campos;
-	private List<ParametroDTO> listTipoDocumento;
+	protected List<DocumentosDTO> campos;
 	public final static String FIELD_NAME = "nombre";
 	private ValidateValues validateValue;
 
-	@FXML
 	public void initialize() {
-		registro = new DocumentoDTO();
 		listas = new HashMap<String, Object>();
 		fields = new HashMap<String, Object>();
-		tipoDocumento = new ParametroDTO();
 		validateValue = new ValidateValues();
-		try {
-			listTipoDocumento = parametrosSvc.getAllParametros(tipoDocumento);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		tipoDocumento = new ParametroDTO();
-		tipoDocumentos.onActionProperty().set(e -> loadField());
-		SelectList.put(tipoDocumentos, listTipoDocumento, FIELD_NAME);
-	}
-	/**
-	 * Se encarga de cargar un nuevo registro
-	 */
-	public final void load() {
-		
-	}
-	
-	/**
-	 * Se encarga de realizar la busqueda de los campos configurados para el tipo de
-	 * docuumento seleccionado
-	 */
-	public final void loadField() {
-		DocumentosDTO docs = new DocumentosDTO();
-		ParametroDTO tipoDoc = SelectList.get(tipoDocumentos, listTipoDocumento, FIELD_NAME);
-		if (tipoDoc != null) {
-			docs.setDoctype(tipoDoc);
-			docs.setClaseControlar(DocumentoDTO.class);
-			try {
-				campos = documentosSvc.getDocumentos(docs);
-			} catch (DocumentosException e) {
-				error(e);
-			}
-		}
-		loadGrid();
 	}
 
 	/**
 	 * Se encarga de crear la grilla con todos los campos que se encontraton y
 	 * ponerlos en el fxml
 	 */
-	private final <N, M extends ADto> void loadGrid() {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected final <N, M extends ADto> GridPane loadGrid() {
 		Integer maxColumn = 2;
 		Integer countFields = campos.size();
 		GridPane formulario = new GridPane();
@@ -129,7 +77,6 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 		formulario.setPadding(new Insets(10));
 		formulario.setAlignment(Pos.CENTER);
 		BorderPane.setAlignment(formulario, Pos.TOP_LEFT);
-		DocumentoDTO doc = new DocumentoDTO();
 		Integer columnIndex = 0;
 		Integer rowIndex = 0;
 		for (DocumentosDTO docs : campos) {
@@ -153,15 +100,16 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 							}
 						}
 					} catch (ReflectionException e1) {
-						System.err.println(e);
+						error(e1);
 					}
 				});
 				select.setMaxWidth(1.7976931348623157E308);
 				Class classe = docs.getObjectSearchDto();
-				if (classe == null) {
+				if (classe != null) {
 					try {
-						classe = doc.getType(docs.getFieldName());
-						putList(docs.getFieldName(), select, classe, docs.getPutNameShow(), docs.getSelectNameGroup());
+						classe = registro.getType(docs.getFieldName());
+						putList(docs.getFieldName(), select, classe, docs.getPutNameShow(), docs.getSelectNameGroup(),
+								registro.get(docs.getFieldName()), docs.getPutNameAssign());
 					} catch (ReflectionException e) {
 						error(e);
 					}
@@ -170,7 +118,7 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 				fields.put(docs.getFieldName(), select);
 			} else {
 				try {
-					Node field = getType(doc.getType(docs.getFieldName()));
+					Node field = getType(registro.getType(docs.getFieldName()), registro.get(docs.getFieldName()));
 					field.setDisable(!docs.getEdit());
 					if (field != null) {
 						formulario.add(field, columnIndex + 1, rowIndex);
@@ -187,8 +135,7 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 				columnIndex += 2;
 			}
 		} // end for
-		central.getChildren().clear();
-		central.getChildren().add(formulario);
+		return formulario;
 	}
 
 	/**
@@ -203,9 +150,9 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 	 * @param grupo
 	 *            {@link String} codigo del grupos a buscar
 	 */
-	@SuppressWarnings("unchecked")
-	private final <T extends Object, S extends ADto> void putList(String nameField, ChoiceBox<String> choiceBox,
-			Class<T> busqueda, String show, String grupo) {
+	@SuppressWarnings({ "unchecked", "hiding" })
+	private final <L, T extends Object, S extends ADto> void putList(String nameField, ChoiceBox<String> choiceBox,
+			Class<T> busqueda, String show, String grupo, L value, String assign) {
 		T dto = null;
 		if (busqueda == ParametroDTO.class) {
 			dto = (T) new ParametroDTO();
@@ -223,7 +170,19 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 				List<S> lista = querySvc.gets((S) dto);
 				SelectList.put(choiceBox, lista, show);
 				this.listas.put(nameField, lista);
-				choiceBox.getSelectionModel().selectFirst();
+				if (StringUtils.isNotBlank(assign)) {
+					if (value != null) {
+						SelectList.selectItem(choiceBox, lista, show, value, assign);
+					} else {
+						choiceBox.getSelectionModel().selectFirst();
+					}
+				}else {
+					if(value  instanceof ADto) {
+						SelectList.selectItem(choiceBox, lista, show,(S)value);
+					}else {
+						choiceBox.getSelectionModel().selectFirst();
+					} 
+				}
 			} catch (QueryException e) {
 				error(e);
 			}
@@ -238,36 +197,69 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 	 *            {@link Class}
 	 * @return {@link Node} campos javafx
 	 */
-	private final <T extends Object> Node getType(Class<T> type) {
+	@SuppressWarnings("hiding")
+	private final <T extends Object> Node getType(Class<T> type, T value) {
 		if (type == Date.class) {
-			return new DatePicker();
+			DatePicker dp = new DatePicker();
+			if (validateValue.isCast(value, Date.class)) {
+				LocalDate ld = ((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				dp.setValue(ld);
+			}
+			return dp;
 		}
 		if (type == LocalDate.class) {
-			return new DatePicker();
+			DatePicker dp = new DatePicker();
+			if (validateValue.isCast(value, LocalDate.class))
+				dp.setValue((LocalDate) value);
+			return dp;
 		}
 		if (type == Boolean.class) {
-			return new CheckBox();
+			CheckBox cb = new CheckBox();
+			if (validateValue.isCast(value, Boolean.class))
+				cb.setSelected((Boolean) value);
+			return cb;
 		}
 		if (type == String.class) {
-			return new TextField();
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, String.class))
+				tf.setText((String) value);
+			return tf;
 		}
 		if (type == Double.class) {
-			return new TextField();
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Double.class))
+				tf.setText(String.valueOf((Double) value));
+			return tf;
 		}
 		if (type == Integer.class) {
-			return new TextField();
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Integer.class))
+				tf.setText(String.valueOf((Integer) value));
+			return tf;
 		}
 		if (type == BigDecimal.class) {
-			return new TextField();
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, BigDecimal.class))
+				tf.setText(String.valueOf((BigDecimal) value));
+			return tf;
 		}
 		if (type == BigInteger.class) {
-			return new TextField();
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, BigInteger.class))
+				tf.setText(String.valueOf((BigInteger) value));
+			return tf;
 		}
 		if (type == Long.class) {
-			return new TextField();
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Long.class))
+				tf.setText(String.valueOf((Long) value));
+			return tf;
 		}
 		if (type == Float.class) {
-			return new TextField();
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Float.class))
+				tf.setText(String.valueOf((Float) value));
+			return tf;
 		}
 		return null;
 	}
@@ -307,14 +299,15 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 	/**
 	 * Se encarga de cargar los datos de los campos
 	 */
-	private final <M extends ADto> void loadData() {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected final <M extends ADto> void loadData() {
 		Set<String> sets = fields.keySet();
 		for (String set : sets) {
 			Object obj = fields.get(set);
 			if (obj instanceof ChoiceBox) {
 				List list = (List) this.listas.get(set);
 				String nameShow = getShow(set);
-				if (StringUtils.isNotBlank(nameShow)) {
+				if (StringUtils.isNotBlank(nameShow) && list != null && list.size() > 0) {
 					M value = (M) SelectList.get((ChoiceBox) obj, list, nameShow);
 					String nameAssign = getAssing(set);
 					if (StringUtils.isNotBlank(nameAssign)) {
@@ -322,7 +315,7 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 							Object valuer = value.get(nameAssign);
 							registro.set(set, valuer);
 						} catch (ReflectionException e) {
-							System.err.println(e);
+							error(e);
 						}
 					} else {
 						try {
@@ -330,7 +323,7 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 								registro.set(set, value);
 							}
 						} catch (ReflectionException e) {
-							System.err.println(e);
+							error(e);
 						}
 					}
 				}
@@ -343,9 +336,9 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 						registro.set(set, valueEnd);
 					}
 				} catch (ReflectionException e) {
-					System.err.println(e);
+					error(e);
 				} catch (ValidateValueException e) {
-					System.err.println(e);
+					error(e);
 				}
 			} else if (obj instanceof DatePicker) {
 				LocalDate ld = ((DatePicker) obj).getValue();
@@ -357,16 +350,16 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 						registro.set(set, valueEnd);
 					}
 				} catch (ReflectionException e) {
-					System.err.println(e);
+					error(e);
 				} catch (ValidateValueException e) {
-					System.err.println(e);
+					error(e);
 				}
 
 			} else if (obj instanceof CheckBox) {
 				try {
 					registro.set(set, ((CheckBox) obj).isSelected());
 				} catch (ReflectionException e) {
-					System.err.println(e);
+					error(e);
 				}
 			}
 		}
@@ -377,43 +370,19 @@ public final class DinamicoBean extends ABean<DocumentoDTO> {
 	 * 
 	 * @return
 	 */
-	private final Boolean valid() {
+	protected final Boolean valid() {
 		Boolean valid = true;
 		for (DocumentosDTO dto : campos) {
 			if (dto.getNullable()) {
 				try {
-					if (registro.get(dto.getFieldName()) != null) {
+					if (registro.get(dto.getFieldName()) == null) {
 						valid &= false;
 					}
 				} catch (ReflectionException e) {
-					System.err.println(e);
+					error(e);
 				}
 			}
 		}
 		return valid;
-	}
-
-	/**
-	 * Se encarga de guardar todo
-	 */
-	@SuppressWarnings("unchecked")
-	public final void guardar() {
-		loadData();
-		if (valid()) {
-			try {
-				registro = documentosSvc.insert(registro, userLogin);
-				notificar("Se agrego el nuevo documento.");
-				comunicacion.setComando(AppConstants.COMMAND_PANEL_TIPO_DOC, registro);
-			} catch (DocumentosException e) {
-				System.err.println(e);
-			}
-		}
-	}
-
-	/**
-	 * Se encarga de cancelar el almacenamiento de los datos
-	 */
-	public final void cancelar() {
-
 	}
 }

@@ -14,7 +14,7 @@ import org.pyt.common.exceptions.FileBinException;
  * @author Alejandro Parra
  * @since 22-06-2018
  */
-public class ReadBin {
+public class ReadBin extends AControlFile {
 	/**
 	 * Se encarga de leer el archivo
 	 * 
@@ -30,6 +30,7 @@ public class ReadBin {
 			if (file != null) {
 				File dat = new File(file);
 				if (!dat.exists()) {
+					verifyPath(file);
 					dat.createNewFile();
 				}
 				fis = new FileInputStream(file);

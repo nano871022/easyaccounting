@@ -9,6 +9,7 @@ import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.ParametroException;
@@ -71,7 +72,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		ParametroDTO pEstado = new ParametroDTO();
 		EmpresaDTO pEmpresa = new EmpresaDTO();
 		try {
-			listEstado = parametroSvc.getAllParametros(pEstado);
+			listEstado = parametroSvc.getAllParametros(pEstado,ParametroConstants.GRUPO_ESTADO_CONCEPTO);
 			listEmpresa = empresaSvc.getAllEmpresas(pEmpresa);
 		} catch (EmpresasException e) {
 			error(e);

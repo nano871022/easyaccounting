@@ -7,6 +7,7 @@ public class ParametroConstants {
 	public final static String GRUPO_MONEDA = "Moneda";
 	public final static String GRUPO_TIPO_PAGO = "TipoPago";
 	public final static String GRUPO_TIPO_DOCUMENTO = "TipoDocumento";
+	public final static String GRUPO_TIPOS_DOCUMENTO_PERSONA = "TiposDocumentoPersona";
 	public final static String GRUPO_ESTADO_EMPLEADO= "EstadoEmpleado";
 	public final static Map<String,Object> mapa_grupo ;
 	static {
@@ -43,5 +44,6 @@ public class ParametroConstants {
 		MAPA_GRUPOS.put(GRUPO_ESTADO_CENTRO_COSTO, GRUPO_ESTADO_CENTRO_COSTO);
 		MAPA_GRUPOS.put(GRUPO_ESTADO_BANCO, GRUPO_ESTADO_BANCO);
 		MAPA_GRUPOS.put(GRUPO_ESTADO_EMPLEADO, GRUPO_ESTADO_EMPLEADO);
+		MAPA_GRUPOS.put(GRUPO_TIPOS_DOCUMENTO_PERSONA, GRUPO_TIPOS_DOCUMENTO_PERSONA);
 	}
 }

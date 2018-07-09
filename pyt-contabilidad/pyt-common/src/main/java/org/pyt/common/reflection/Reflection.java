@@ -55,7 +55,8 @@ public abstract class Reflection {
 			throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;
-		if(clase == Object.class || clase == Reflection.class)return;
+		if (clase == Object.class || clase == Reflection.class)
+			return;
 		try {
 			for (Field field : fields) {
 				Inject inject = field.getAnnotation(Inject.class);
@@ -112,7 +113,8 @@ public abstract class Reflection {
 			Method[] metodos = clase.getDeclaredMethods();
 			if (metodos == null || metodos.length == 0)
 				return;
-			if(clase == Object.class || clase == Reflection.class) return;
+			if (clase == Object.class || clase == Reflection.class)
+				return;
 			for (Method metodo : metodos) {
 				PostConstructor pc = metodo.getAnnotation(PostConstructor.class);
 				if (pc != null) {
@@ -136,13 +138,14 @@ public abstract class Reflection {
 	 * @throws ReflectionException
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private final <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(
+	protected final <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(
 			M instance, Field[] fields, Class<S> clase) throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;
 		// procesado despues de injecciones
 		for (Field field : fields) {
 			SubcribcionesToComunicacion subs = field.getAnnotation(SubcribcionesToComunicacion.class);
+			SubcribirToComunicacion subsc = field.getAnnotation(SubcribirToComunicacion.class);
 			if (subs != null) {
 				L obj;
 				obj = get(this, field);
@@ -154,7 +157,14 @@ public abstract class Reflection {
 					Log.error("El objeto " + clase.getName() + " no tiene la implementacion de "
 							+ IComunicacion.class.getName());
 				}
-
+			} else if (subsc != null) {
+				L obj = get(this, field);
+				if (obj != null && (this) instanceof IComunicacion) {
+					obj.subscriber((N) instance, subsc.comando());
+				} else {
+					Log.error("El objeto " + clase.getName() + " no tiene la implementacion de "
+							+ IComunicacion.class.getName());
+				}
 			}
 		}
 		subscriberInject(instance, clase.getSuperclass().getDeclaredFields(), clase.getSuperclass());

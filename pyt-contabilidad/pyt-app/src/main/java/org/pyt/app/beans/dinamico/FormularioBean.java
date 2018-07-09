@@ -15,6 +15,7 @@ import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.Compare;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.ParametroException;
 
@@ -25,6 +26,7 @@ import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
@@ -126,6 +128,12 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		grupo.setGrupo("*");
 		ParametroDTO tipoDoc = new ParametroDTO();
 		try {
+			ParametroGrupoDTO preGrupo = new ParametroGrupoDTO();
+			preGrupo.setGrupo(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+			List<ParametroGrupoDTO> listPreG = parametroSvc.getParametroGrupo(preGrupo);
+			if (listPreG != null && listPreG.size() == 1) {
+				tipoDoc.setGrupo(listPreG.get(0).getParametro());
+			}
 			listGrupo = parametroSvc.getAllParametros(grupo);
 			listTipoDocumento = parametroSvc.getAllParametros(tipoDoc);
 		} catch (ParametroException e) {
@@ -185,7 +193,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			SelectList.selectItem(grupo, listGrupo, FIELD_NAME, docs, "selectNameGroup");
 			SelectList.selectItem(campoMostrar, mapa_campoMostrar, docs.getPutNameShow());
 			SelectList.selectItem(campoAsignar, mapa_campoAsignar, docs.getPutNameAssign());
-		}else {
+		} else {
 			notificar("No se ha seleccionado ningun registro.");
 		}
 	}
@@ -355,6 +363,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 				return lista;
 			}
 
+			@SuppressWarnings("rawtypes")
 			@Override
 			public DocumentosDTO getFilter() {
 				DocumentosDTO filtro = new DocumentosDTO();
@@ -385,23 +394,31 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private DocumentosDTO loadItem() {
 		DocumentosDTO dto = new DocumentosDTO();
-		dto.setDoctype(SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME));
-		dto.setClaseControlar((Class) SelectList.get(controlar, mapa_controlar));
-		dto.setFieldName((String) SelectList.get(nombreCampo, mapa_nombreCampo));
-		dto.setFieldLabel(fieldLabel.getText());
-		dto.setEdit(editable.isSelected());
-		dto.setNullable(obligatorio.isSelected());
-		if (grupo.isVisible()) {
-			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getGrupo());
+		if (dataTable.getSelectedRow() != null && StringUtils.isNotBlank(dataTable.getSelectedRow().getCodigo())) {
+			dto.setCodigo(dataTable.getSelectedRow().getCodigo());
+			dto.setDoctype(SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME));
+			dto.setClaseControlar((Class) SelectList.get(controlar, mapa_controlar));
+			dto.setFieldName((String) SelectList.get(nombreCampo, mapa_nombreCampo));
+			dto.setFieldLabel(fieldLabel.getText());
+			dto.setEdit(editable.isSelected());
+			dto.setNullable(obligatorio.isSelected());
+			if (grupo.isVisible()) {
+				dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
+			}
+			dto.setObjectSearchDto((Class) SelectList.get(busqueda, mapa_claseBusqueda));
+			dto.setPutNameShow((String) SelectList.get(campoMostrar, mapa_campoMostrar));
+			if (campoAsignar.isVisible()) {
+				dto.setPutNameAssign((String) SelectList.get(campoAsignar, mapa_campoAsignar));
+			}
+			ParametroDTO param = SelectList.get(grupo, listGrupo, FIELD_NAME);
+			if (param != null) {
+				dto.setSelectNameGroup(param.getCodigo());
+			}
+			return dto;
+		} else {
+			error("No se pudo cargar el registro seleccionado.");
 		}
-		dto.setObjectSearchDto((Class) SelectList.get(busqueda, mapa_claseBusqueda));
-		dto.setPutNameShow((String) SelectList.get(campoMostrar, mapa_campoMostrar));
-		dto.setPutNameAssign((String) SelectList.get(campoAsignar, mapa_campoAsignar));
-		ParametroDTO param = SelectList.get(grupo, listGrupo, FIELD_NAME);
-		if (param != null) {
-			dto.setSelectNameGroup(param.getCodigo());
-		}
-		return dto;
+		return null;
 	}
 
 	private Boolean validItem(DocumentosDTO dto) {

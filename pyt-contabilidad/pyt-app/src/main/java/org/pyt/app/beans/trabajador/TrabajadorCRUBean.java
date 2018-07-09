@@ -75,6 +75,8 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	private List<ParametroDTO> lEstados;
 	private List<ParametroDTO> lTipoPagos;
 	private List<CentroCostoDTO> lCentroCostos;
+	public final static String FIELD_NAME = "nombre";
+	public final static String FIELD_VALOR = "valor";
 
 	@FXML
 	public void initialize() {
@@ -89,21 +91,15 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 					Date.from(fechaIngreso.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())));
 			fechaRetiro.setOnAction(event -> registro.setFechaRetiro(
 					Date.from(fechaRetiro.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())));
-			ParametroDTO tipoDocumento = new ParametroDTO();
-			tipoDocumento.setGrupo(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
-			ParametroDTO tipoPago = new ParametroDTO();
-			tipoPago.setGrupo(ParametroConstants.GRUPO_TIPO_PAGO);
-			ParametroDTO estado = new ParametroDTO();
-			estado.setGrupo(ParametroConstants.GRUPO_ESTADO_EMPLEADO);
-			CentroCostoDTO centroCosto = new CentroCostoDTO();
-			lEstados = parametroSvc.getAllParametros(estado);
-			lTipoDocumentos = parametroSvc.getAllParametros(tipoDocumento);
-			lTipoPagos = parametroSvc.getAllParametros(tipoPago);
-			lCentroCostos = centroCostoSvc.getAllCentroCostos(centroCosto);
-			SelectList.put(tipoDocumentos, lTipoDocumentos, "descripcion");
-			SelectList.put(estados, lEstados, "descripcion");
-			SelectList.put(tipoPagos, lTipoPagos, "descripcion");
-			SelectList.put(centroCostos, lCentroCostos, "descripcion");
+			lEstados = parametroSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_ESTADO_EMPLEADO);
+			lTipoDocumentos = parametroSvc.getAllParametros(new ParametroDTO(),
+					ParametroConstants.GRUPO_TIPOS_DOCUMENTO_PERSONA);
+			lTipoPagos = parametroSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_TIPO_PAGO);
+			lCentroCostos = centroCostoSvc.getAllCentroCostos(new CentroCostoDTO());
+			SelectList.put(tipoDocumentos, lTipoDocumentos, FIELD_NAME);
+			SelectList.put(estados, lEstados, FIELD_NAME);
+			SelectList.put(tipoPagos, lTipoPagos, FIELD_NAME);
+			SelectList.put(centroCostos, lCentroCostos, FIELD_NAME);
 		} catch (ParametroException | CentroCostosException e) {
 			error(e);
 		}
@@ -123,15 +119,18 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		registro.setCorreo(email.getText());
 		registro.getPersona().setTelefono(telefono.getText());
 		registro.getPersona().setDireccion(direccion.getText());
-		registro.getPersona().setFechaNacimiento(
-				Date.from(fechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.setFechaIngreso(Date.from(fechaIngreso.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.setFechaRetiro(Date.from(fechaRetiro.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.getPersona()
-				.setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, "descripcion").getValor());
-		registro.setTipoPago(SelectList.get(tipoPagos, lTipoPagos, "descripcion"));
-		registro.setCentroCosto(SelectList.get(centroCostos, lCentroCostos, "descripcion"));
-		registro.setEstado(SelectList.get(estados, lEstados, "estado").getValor());
+		if (fechaNacimiento.getValue() != null)
+			registro.getPersona().setFechaNacimiento(
+					Date.from(fechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		if (fechaIngreso.getValue() != null)
+			registro.setFechaIngreso(
+					Date.from(fechaIngreso.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		if (fechaRetiro.getValue() != null)
+			registro.setFechaRetiro(Date.from(fechaRetiro.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		registro.getPersona().setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME).getValor());
+		registro.setTipoPago(SelectList.get(tipoPagos, lTipoPagos, FIELD_NAME));
+		registro.setCentroCosto(SelectList.get(centroCostos, lCentroCostos, FIELD_NAME));
+		registro.setEstado(SelectList.get(estados, lEstados, FIELD_NAME).getValor());
 	}
 
 	private void loadFxml() {
@@ -143,13 +142,18 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		direccion.setText(registro.getPersona().getDireccion());
 		email.setText(registro.getCorreo());
 		telefono.setText(registro.getPersona().getTelefono());
-		fechaNacimiento.setValue(
-				LocalDate.ofInstant(registro.getPersona().getFechaNacimiento().toInstant(), ZoneId.systemDefault()));
-		fechaIngreso.setValue(LocalDate.ofInstant(registro.getFechaIngreso().toInstant(), ZoneId.systemDefault()));
-		fechaRetiro.setValue(LocalDate.ofInstant(registro.getFechaRetiro().toInstant(), ZoneId.systemDefault()));
-		SelectList.selectItem(tipoDocumentos, lTipoDocumentos,"descripcion",registro.getPersona(), "tipoDocumento");
-		SelectList.selectItem(centroCostos, lCentroCostos,"descripcion",registro.getCentroCosto(), "descripcion");
-		SelectList.selectItem(estados,lEstados ,"descripcion",registro, "estado");
+		if (registro.getPersona() != null &&  registro.getPersona().getFechaNacimiento() != null)
+			fechaNacimiento.setValue(LocalDate.ofInstant(registro.getPersona().getFechaNacimiento().toInstant(),
+					ZoneId.systemDefault()));
+		if (registro.getFechaIngreso() != null)
+			fechaIngreso.setValue(LocalDate.ofInstant(registro.getFechaIngreso().toInstant(), ZoneId.systemDefault()));
+		if (registro.getFechaRetiro() != null)
+			fechaRetiro.setValue(LocalDate.ofInstant(registro.getFechaRetiro().toInstant(), ZoneId.systemDefault()));
+		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getPersona().getTipoDocumento(),
+				FIELD_VALOR);
+		SelectList.selectItem(centroCostos, lCentroCostos, FIELD_NAME, registro.getCentroCosto());
+		SelectList.selectItem(estados, lEstados, FIELD_NAME, registro.getEstado(), FIELD_VALOR);
+		SelectList.selectItem(tipoPagos, lTipoPagos, FIELD_NAME, registro.getTipoPago());
 	}
 
 	public void load(TrabajadorDTO dto) {

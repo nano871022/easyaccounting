@@ -7,6 +7,7 @@ import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.BancoException;
 import org.pyt.common.exceptions.ParametroException;
 
@@ -70,9 +71,9 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		ParametroDTO pBancos = new ParametroDTO();
 		ParametroDTO pEstados = new ParametroDTO();
 		try {
-			tipoCuentas = parametrosSvc.getAllParametros(pCuentas);
-			tipoBancos = parametrosSvc.getAllParametros(pBancos);
-			estados = parametrosSvc.getAllParametros(pEstados);
+			tipoCuentas = parametrosSvc.getAllParametros(pCuentas,ParametroConstants.GRUPO_TIPO_CUENTA);
+			tipoBancos = parametrosSvc.getAllParametros(pBancos,ParametroConstants.GRUPO_TIPO_BANCO);
+			estados = parametrosSvc.getAllParametros(pEstados,ParametroConstants.GRUPO_ESTADO_BANCO);
 		} catch (ParametroException e) {
 			error(e);
 		}
@@ -115,9 +116,9 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		numeroCuenta.setText(registro.getNumeroCuenta());
 		fechaApertura.setValue(registro.getFechaApertura());
 		fechaCierre.setValue(registro.getFechaCierre());
-		SelectList.selectItem(tipoBanco, tipoBancos, "nombre", registro, "tipoBanco");
-		SelectList.selectItem(tipoCuenta, tipoCuentas, "nombre", registro, "tipoCuenta");
-		SelectList.selectItem(estado, estados, "nombre", registro, "estado");
+		SelectList.selectItem(tipoBanco, tipoBancos, "nombre", registro.getTipoBanco());
+		SelectList.selectItem(tipoCuenta, tipoCuentas, "nombre", registro.getTipoCuenta());
+		SelectList.selectItem(estado, estados, "nombre", registro.getEstado());
 	}
 
 	public void load(BancoDTO dto) {

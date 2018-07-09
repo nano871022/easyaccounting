@@ -12,13 +12,18 @@ import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CentroCostosException;
+import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CentroCostoDTO;
+import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
@@ -32,6 +37,8 @@ import javafx.scene.layout.HBox;
 public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	@Inject(resource = "com.pyt.service.implement.CentroCostoSvc")
 	private ICentroCostosSvc centroCostoSvc;
+	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
+	private IParametrosSvc parametroSvc;
 	@FXML
 	private javafx.scene.control.TableView<CentroCostoDTO> tabla;
 	@FXML
@@ -46,15 +53,43 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
+	@FXML
+	private TableColumn<CentroCostoDTO, String> estados;
 	private DataTableFXML<CentroCostoDTO, CentroCostoDTO> dt;
+	private List<ParametroDTO> listEstados;
+	private final static String FIELD_NAME = "nombre";
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Empresas";
+		NombreVentana = "Lista Centro de Costos";
 		registro = new CentroCostoDTO();
-		SelectList.put(estado, ParametroConstants.mapa_estados_parametros);
-		estado.getSelectionModel().selectFirst();
+		try {
+			listEstados = parametroSvc.getAllParametros(new ParametroDTO(),
+					ParametroConstants.GRUPO_ESTADO_CENTRO_COSTO);
+		} catch (ParametroException e) {
+			error(e);
+		}
+		SelectList.put(estado, listEstados, FIELD_NAME);
+		estados.setCellValueFactory(e -> {
+			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
+			property.setValue(nombreEstado(e.getValue().getEstado()));
+			return property;
+		});
 		lazy();
+	}
+
+	/**
+	 * Se encarga de apartir del valor de un estado obtener el nombre de este estado
+	 * @param value {@link String}
+	 * @return {@link String}
+	 */
+	public final String nombreEstado(String value) {
+		for (ParametroDTO parametro : listEstados) {
+			if (parametro.getValor().equalsIgnoreCase(value)) {
+				return parametro.getNombre();
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -93,8 +128,8 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 				if (StringUtils.isNotBlank(descripcion.getText())) {
 					filtro.setDescripcion(descripcion.getText());
 				}
-				if(StringUtils.isNotBlank((String)SelectList.get(estado, ParametroConstants.mapa_estados_parametros))) {
-					filtro.setEstado((String)SelectList.get(estado, ParametroConstants.mapa_estados_parametros));
+				if (SelectList.get(estado, listEstados, FIELD_NAME) != null) {
+					filtro.setEstado((String) SelectList.get(estado, listEstados, FIELD_NAME).getValor());
 				}
 				try {
 					if (StringUtils.isNotBlank(orden.getText())) {

@@ -3,6 +3,7 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.BancoException;
@@ -66,7 +67,7 @@ public class BancoSvc extends Services implements IBancosSvc {
 	public BancoDTO insert(BancoDTO dto, UsuarioDTO user) throws BancoException {
 		if (dto == null)
 			throw new BancoException("El objeto banco se encuentra vacio.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new BancoException("El codigo de banco no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);

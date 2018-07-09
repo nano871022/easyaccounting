@@ -11,6 +11,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class DocumentoDTO extends ADto{
+	private static final long serialVersionUID = 284440016164488458L;
 	private ParametroDTO tipoDocumento;
 	private ParametroDTO estado;
 	private Date fechaNota;
