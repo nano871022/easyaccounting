@@ -66,9 +66,13 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 	 * Se encarga de crear la grilla con todos los campos que se encontraton y
 	 * ponerlos en el fxml
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 	protected final <N, M extends ADto> GridPane loadGrid() {
 		Integer maxColumn = 2;
+		if (campos == null) {
+			error("No se encontraron los campos para procesar.");
+			return new GridPane();
+		}
 		Integer countFields = campos.size();
 		GridPane formulario = new GridPane();
 		formulario.setHgap(5);
@@ -88,15 +92,23 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 				select.onActionProperty().set(e -> {
 					try {
 						List list = (List) listas.get(docs.getFieldName());
-						M obj = (M) SelectList.get(select, list, docs.getPutNameShow());
-						if (StringUtils.isNotBlank(docs.getPutNameAssign())) {
-							N value = obj.get(docs.getPutNameAssign());
-							if (value != null) {
-								registro.set(docs.getFieldName(), value);
+						if (list != null && list.size() > 0) {
+							M obj = (M) SelectList.get(select, list, docs.getPutNameShow());
+							if (StringUtils.isNotBlank(docs.getPutNameAssign())) {
+								N value = obj.get(docs.getPutNameAssign());
+								if (value != null) {
+									registro.set(docs.getFieldName(), value);
+								}
+							} else {
+								if (obj != null) {
+									registro.set(docs.getFieldName(), obj);
+								}
 							}
 						} else {
-							if (obj != null) {
-								registro.set(docs.getFieldName(), obj);
+							if (docs != null) {
+								error("No se encontro lista para " + docs.getFieldName());
+							} else {
+								error("No se encontro lista");
 							}
 						}
 					} catch (ReflectionException e1) {
@@ -104,23 +116,23 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 					}
 				});
 				select.setMaxWidth(1.7976931348623157E308);
-				Class classe = docs.getObjectSearchDto();
-				if (classe != null) {
-					try {
+				try {
+					Class classe = docs.getObjectSearchDto();
+					if (classe == null) {
 						classe = registro.getType(docs.getFieldName());
-						putList(docs.getFieldName(), select, classe, docs.getPutNameShow(), docs.getSelectNameGroup(),
-								registro.get(docs.getFieldName()), docs.getPutNameAssign());
-					} catch (ReflectionException e) {
-						error(e);
 					}
+					putList(docs.getFieldName(), select, classe, docs.getPutNameShow(), docs.getSelectNameGroup(),
+							registro.get(docs.getFieldName()), docs.getPutNameAssign());
+				} catch (ReflectionException e) {
+					error(e);
 				}
 				formulario.add(select, columnIndex + 1, rowIndex);
 				fields.put(docs.getFieldName(), select);
 			} else {
 				try {
 					Node field = getType(registro.getType(docs.getFieldName()), registro.get(docs.getFieldName()));
-					field.setDisable(!docs.getEdit());
 					if (field != null) {
+						field.setDisable(!docs.getEdit());
 						formulario.add(field, columnIndex + 1, rowIndex);
 						fields.put(docs.getFieldName(), field);
 					}
@@ -176,12 +188,12 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 					} else {
 						choiceBox.getSelectionModel().selectFirst();
 					}
-				}else {
-					if(value  instanceof ADto) {
-						SelectList.selectItem(choiceBox, lista, show,(S)value);
-					}else {
+				} else {
+					if (value instanceof ADto) {
+						SelectList.selectItem(choiceBox, lista, show, (S) value);
+					} else {
 						choiceBox.getSelectionModel().selectFirst();
-					} 
+					}
 				}
 			} catch (QueryException e) {
 				error(e);

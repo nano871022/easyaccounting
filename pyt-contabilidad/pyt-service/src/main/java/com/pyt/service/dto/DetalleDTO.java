@@ -10,6 +10,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class DetalleDTO extends ADto{
+	private static final long serialVersionUID = -3773810908869511818L;
 	private Integer renglon;
 	private ServicioDTO concepto;
 	private CentroCostoDTO centroCosto;
@@ -22,6 +23,13 @@ public class DetalleDTO extends ADto{
 	private BigDecimal valorConsumo;
 	private List<TrabajadorDTO> ejecutadores;
 	private ActividadIcaDTO actividadIca;
+	private String codigoDocumento;
+	public String getCodigoDocumento() {
+		return codigoDocumento;
+	}
+	public void setCodigoDocumento(String codigoDocumento) {
+		this.codigoDocumento = codigoDocumento;
+	}
 	public Integer getRenglon() {
 		return renglon;
 	}

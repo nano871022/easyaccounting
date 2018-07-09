@@ -190,13 +190,6 @@ public class MenuItems {
 				Log.logger(e);
 			}
 		}));
-		items.add(addItem(BTN_FORMULARIO_DOCUMENTO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, DinamicoBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
 		add(admin);
 	}
 

@@ -162,11 +162,11 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	 */
 	public final void loadPages() {
 		nPages.getChildren().clear();
-		cantidad = (long) 1.0;
+		Double d = (double) 0.9;
 		if (total > rows) {
-			cantidad = (long) (total / rows);
+			d = (double) (total / rows);
 		}
-		cantidad = (long) Math.round(cantidad+0.3);
+		cantidad = (long) Math.round(d+0.5);
 		if (cantidad > 1) {
 			for (int i = 0; i < cantidad; i++) {
 				Label page = new Label(String.valueOf(i + 1));

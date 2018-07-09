@@ -22,6 +22,9 @@ import org.pyt.common.exceptions.ParametroException;
 import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.dto.BancoDTO;
 import com.pyt.service.dto.CentroCostoDTO;
+import com.pyt.service.dto.DetalleConceptoDTO;
+import com.pyt.service.dto.DetalleContableDTO;
+import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
@@ -169,6 +172,9 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 
 	private final void claseControl() {
 		mapa_controlar.put("Documentos", DocumentoDTO.class);
+		mapa_controlar.put("Detalle Concepto", DetalleConceptoDTO.class);
+		mapa_controlar.put("Detalle Documento", DetalleDTO.class);
+		mapa_controlar.put("Detalle Contable", DetalleContableDTO.class);
 	}
 
 	private final void claseBusquedas() {
@@ -309,10 +315,13 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	 * principal
 	 */
 	private final <T extends ADto> void getNameFields(Class<T> clase) {
-		Field[] fields = clase.getDeclaredFields();
-		for (Field field : fields) {
-			if (!Modifier.isStatic(field.getModifiers())) {
-				mapa_nombreCampo.put(field.getName(), field.getName());
+		if (clase != null) {
+			Field[] fields = clase.getDeclaredFields();
+			mapa_nombreCampo.clear();
+			for (Field field : fields) {
+				if (!Modifier.isStatic(field.getModifiers())) {
+					mapa_nombreCampo.put(field.getName(), field.getName());
+				}
 			}
 		}
 	}
@@ -327,6 +336,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		if (clase == null)
 			return;
 		Field[] fields = clase.getDeclaredFields();
+		mapa_campoAsignar.clear();
+		mapa_campoAsignar.clear();
 		for (Field field : fields) {
 			if (!Modifier.isStatic(field.getModifiers())) {
 				mapa_campoMostrar.put(field.getName(), field.getName());
@@ -352,7 +363,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			public List<DocumentosDTO> getList(DocumentosDTO filter, Integer page, Integer rows) {
 				List<DocumentosDTO> lista = new ArrayList<DocumentosDTO>();
 				try {
-					lista = documentoSvc.getDocumentos(filter, page, rows);
+					lista = documentoSvc.getDocumentos(filter, page - 1, rows);
 					lista.addAll(documentos);
 					if (lista.size() > 0) {
 						loadControl(lista.get(0));
@@ -394,31 +405,32 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private DocumentosDTO loadItem() {
 		DocumentosDTO dto = new DocumentosDTO();
-		if (dataTable.getSelectedRow() != null && StringUtils.isNotBlank(dataTable.getSelectedRow().getCodigo())) {
+		if ((dataTable.getSelectedRow() != null && StringUtils.isNotBlank(dataTable.getSelectedRow().getCodigo()))) {
 			dto.setCodigo(dataTable.getSelectedRow().getCodigo());
-			dto.setDoctype(SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME));
-			dto.setClaseControlar((Class) SelectList.get(controlar, mapa_controlar));
-			dto.setFieldName((String) SelectList.get(nombreCampo, mapa_nombreCampo));
-			dto.setFieldLabel(fieldLabel.getText());
-			dto.setEdit(editable.isSelected());
-			dto.setNullable(obligatorio.isSelected());
-			if (grupo.isVisible()) {
-				dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
-			}
-			dto.setObjectSearchDto((Class) SelectList.get(busqueda, mapa_claseBusqueda));
-			dto.setPutNameShow((String) SelectList.get(campoMostrar, mapa_campoMostrar));
-			if (campoAsignar.isVisible()) {
-				dto.setPutNameAssign((String) SelectList.get(campoAsignar, mapa_campoAsignar));
-			}
-			ParametroDTO param = SelectList.get(grupo, listGrupo, FIELD_NAME);
-			if (param != null) {
-				dto.setSelectNameGroup(param.getCodigo());
-			}
-			return dto;
-		} else {
-			error("No se pudo cargar el registro seleccionado.");
 		}
-		return null;
+		dto.setDoctype(SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME));
+		dto.setClaseControlar((Class) SelectList.get(controlar, mapa_controlar));
+		dto.setFieldName((String) SelectList.get(nombreCampo, mapa_nombreCampo));
+		dto.setFieldLabel(fieldLabel.getText());
+		dto.setEdit(editable.isSelected());
+		dto.setNullable(obligatorio.isSelected());
+		if (grupo.isVisible()) {
+			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
+		}
+		if (busqueda.isVisible()) {
+			dto.setObjectSearchDto((Class) SelectList.get(busqueda, mapa_claseBusqueda));
+		}
+		if (campoMostrar.isVisible()) {
+			dto.setPutNameShow((String) SelectList.get(campoMostrar, mapa_campoMostrar));
+		}
+		if (campoAsignar.isVisible()) {
+			dto.setPutNameAssign((String) SelectList.get(campoAsignar, mapa_campoAsignar));
+		}
+		ParametroDTO param = SelectList.get(grupo, listGrupo, FIELD_NAME);
+		if (param != null) {
+			dto.setSelectNameGroup(param.getCodigo());
+		}
+		return dto;
 	}
 
 	private Boolean validItem(DocumentosDTO dto) {
@@ -476,6 +488,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		this.busqueda.getSelectionModel().selectFirst();
 		this.campoAsignar.getSelectionModel().selectFirst();
 		this.campoMostrar.getSelectionModel().selectFirst();
+		this.fieldLabel.setText("");
 	}
 
 	public void modificarItem() {

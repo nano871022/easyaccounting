@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.pyt.common.common.ADto;
+import org.pyt.common.common.Log;
 import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
 
@@ -85,7 +86,7 @@ public abstract class ReflectionDto {
 			field = clase.getDeclaredField(nombreCampo);
 			nameMethod = ReflectionConstants.GET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
-			
+
 			Method method = clase.getMethod(nameMethod, value != null ? value.getClass() : null);
 			return (T) method.invoke(this, value);
 		} catch (NoSuchFieldException e) {
@@ -113,17 +114,21 @@ public abstract class ReflectionDto {
 			throw new ReflectionException("Problema objeto invocacion.", e);
 		}
 	}
+
 	/**
 	 * Se encarga de retornar el tipo de campo apartir de nombre suministrado
-	 * @param nombreCampo {@link String}
+	 * 
+	 * @param nombreCampo
+	 *            {@link String}
 	 * @return {@link Class}
-	 * @throws {@link ReflectionException}
+	 * @throws {@link
+	 *             ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
 	public final <T extends Object> Class<T> getType(String nombreCampo) throws ReflectionException {
 		try {
 			Field field = super.getClass().getDeclaredField(nombreCampo);
-			Class<T> clas =  (Class<T>)field.getType();
+			Class<T> clas = (Class<T>) field.getType();
 			return clas;
 		} catch (NoSuchFieldException | SecurityException e) {
 			return null;
@@ -143,5 +148,33 @@ public abstract class ReflectionDto {
 	public final <T extends Object> T get(String nombreCampo) throws ReflectionException {
 		return get(nombreCampo, null);
 	}
+	/**
+	 * Se encarga de entregar untexto con todos los campos nombre valor
+	 * @return {@link String}
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public final String toStringAll() {
+		String campos = "{";
+		campos += stringAll((Class)this.getClass());
+		campos += "}";
+		return campos;
+	}
 	
+	@SuppressWarnings("unchecked")
+	private final <T extends ADto> String stringAll(Class<T> clase) {
+		String campos = "";
+		Field[] fields = clase.getDeclaredFields();
+		try {
+			for (Field field : fields) {
+				campos += (campos.length() > 3 ? "," : "") + (field.getName() + "=" + this.get(field.getName()));
+			}
+		} catch (ReflectionException e) {
+			Log.error(e.getMensage());
+		}
+		if(clase.getSuperclass() != ReflectionDto.class) {
+			campos += stringAll((Class<T>) clase.getSuperclass());
+		}
+		return campos;
+	}
+
 }

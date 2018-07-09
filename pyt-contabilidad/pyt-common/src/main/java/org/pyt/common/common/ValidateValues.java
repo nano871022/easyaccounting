@@ -144,18 +144,19 @@ public final class ValidateValues {
 				if (value2.contains("%")) {
 					String[] split = value2.split("%");
 					Boolean valid = true;
-					for(String seg : split) {
-						if(StringUtils.isNotBlank(seg)) {
+					for (String seg : split) {
+						if (StringUtils.isNotBlank(seg)) {
 							valid &= value1.contains(seg);
 						}
 					}
 					return valid;
 				} else {
-					return value1.contentEquals(value2);
+					Boolean val = value1.contentEquals(value2);
+					return val;
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -169,6 +170,7 @@ public final class ValidateValues {
 	 * @throws {@link
 	 *             Exception}
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final Boolean validate(Object value1, Object value2) throws ValidateValueException {
 		try {
 			if (value1 instanceof Integer && value2 instanceof Integer)
@@ -190,8 +192,15 @@ public final class ValidateValues {
 			if (value1 instanceof ADto && value2 instanceof ADto)
 				if (value1.getClass() == value2.getClass())
 					return validateDto(value1, value2);
-			if (value1 != null && value2 != null)
+			if (value1 != null && value2 != null) {
+				try {
+					Object o1 = ((Class)value1).getConstructor().newInstance();
+					Object o2 = ((Class)value2).getConstructor().newInstance();
+					return (o1.getClass() == o2.getClass());
+				}catch(Exception e) {
+				}
 				return value1.getClass() == value2.getClass();
+			}
 			return true;
 		} catch (Exception e) {
 			throw new ValidateValueException("Se presento error en la validacion.", e);

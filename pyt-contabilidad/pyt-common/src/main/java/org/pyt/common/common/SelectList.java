@@ -40,9 +40,13 @@ public final class SelectList {
 			for (T obj : lista) {
 				observable.add(obj.get(campoDto));
 			}
-			choiceBox.getSelectionModel().selectFirst();
 		} catch (ReflectionException e) {
 			Log.logger(e);
+		}
+		try {
+			choiceBox.getSelectionModel().selectFirst();
+		} catch (UnsupportedOperationException e) {
+
 		}
 	}
 
@@ -212,8 +216,8 @@ public final class SelectList {
 							choiceBox.getSelectionModel().select(dto.get(nombreShow));
 							break;
 						}
-					}else {
-						if(vv.validate(dto, adto)) {
+					} else {
+						if (vv.validate(dto, adto)) {
 							choiceBox.getSelectionModel().select(dto.get(nombreShow));
 							break;
 						}
