@@ -15,6 +15,7 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.interfaces.IComunicacion;
 
+import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
@@ -90,6 +91,17 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 					} else {
 						getController(central, DocumentoBean.class).load();
 					}
+				});
+			}
+			if (mapa.get(key) == DetalleDTO.class) {
+				btn.onActionProperty().set(e -> {
+					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
+						try {
+							getController(central, ListaDetalleBean.class).load(central,registro.getTipoDocumento());
+						} catch (Exception e1) {
+							error("No se logro cargar la lista de detalle.");
+						}
+					} 
 				});
 			}
 			if (left != null) {

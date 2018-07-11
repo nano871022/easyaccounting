@@ -45,8 +45,7 @@ public final class SelectList {
 		}
 		try {
 			choiceBox.getSelectionModel().selectFirst();
-		} catch (UnsupportedOperationException e) {
-
+		} catch (Exception e) {
 		}
 	}
 

@@ -9,6 +9,8 @@ import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.DetalleConceptoDTO;
+import com.pyt.service.dto.DetalleContableDTO;
+import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 
@@ -98,6 +100,81 @@ public interface IDocumentosSvc {
 	 */
 	public void delete(DocumentoDTO dto, UsuarioDTO user) throws DocumentosException;
 
+	/**
+	 * Se encarga de obtener todos los regisros de {@link DetalleConceptoDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleConceptoDTO}
+	 * @return {@link List} of {@link DetalleConceptoDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public List<DetalleDTO> getAllDetalles(DetalleDTO dto) throws DocumentosException;
+	
+	/**
+	 * Se encarga de obtner todos los registro de {@link DetalleConceptoDTO}
+	 * paginados
+	 * 
+	 * @param dto
+	 *            {@link DetalleDTO}
+	 * @param init
+	 *            {@link Integer}
+	 * @param end
+	 *            {@link Integer}
+	 * @return {@link List} of {@link DetalleDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public List<DetalleDTO> getDetalles(DetalleDTO dto, Integer init, Integer end)
+			throws DocumentosException;
+	
+	/**
+	 * Se encarga de obtener el registro de detalle {@link DetalleConceptoDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleConceptoDTO}
+	 * @return {@link DetalleConceptoDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public DetalleDTO getDetalle(DetalleDTO dto) throws DocumentosException;
+	
+	/**
+	 * Se encarga de actualizar un registro de {@link DetalleConceptoDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleConceptoDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public void update(DetalleDTO dto, UsuarioDTO user) throws DocumentosException;
+	
+	/**
+	 * Se encarga de insertar un registro en el {@link DetalleConceptoDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleConceptoDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @return {@link DetalleConceptoDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public DetalleDTO insert(DetalleDTO dto, UsuarioDTO user) throws DocumentosException;
+	
+	/**
+	 * Se encarga de eliminar un registro del {@link DetalleConceptoDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleConceptoDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public void delete(DetalleDTO dto, UsuarioDTO user) throws DocumentosException;
 	/**
 	 * Se encarga de obtener todos los regisros de {@link DetalleConceptoDTO}
 	 * 
@@ -258,6 +335,16 @@ public interface IDocumentosSvc {
 	 *             DocumentosException}
 	 */
 	public Integer getTotalRows(ConceptoDTO filter) throws DocumentosException;
+	/**
+	 * Se encarga de contar los registros que se encontraron aplicando el filtro
+	 * 
+	 * @param filter
+	 *            {@link DetalleDTO}
+	 * @return {@link Integer}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public Integer getTotalRows(DetalleDTO filter) throws DocumentosException;
 
 	/**
 	 * Obtiene los registros aplicando el filtro en documentos
@@ -317,4 +404,83 @@ public interface IDocumentosSvc {
 	 *             DocumentosException}
 	 */
 	public void delete(DocumentosDTO dto, UsuarioDTO user) throws DocumentosException;
+	/**
+	 * Se encarga de obtner todos los registros de detalle de contables
+	 * 
+	 * @param dto
+	 *            {@link DetalleContableDTO}
+	 * @return {@link List} of {@link DetalleContableDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public List<DetalleContableDTO> getAllDocumentos(DetalleContableDTO dto) throws DocumentosException;
+
+	/**
+	 * Se encarga de obtneer registros de {@link DetalleContableDTO} paginado
+	 * 
+	 * @param dto
+	 *            {@link DetalleContableDTO}
+	 * @param init
+	 *            {@link Integer}
+	 * @param end
+	 *            Integ
+	 * @return {@link List} of {@link DetalleContableDTO}
+	 * @throws DocumentosException
+	 */
+	public List<DetalleContableDTO> getDocumentos(DetalleContableDTO dto, Integer init, Integer end) throws DocumentosException;
+
+	/**
+	 * Se encarga de obtner un registro de {@link DetalleContableDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleContableDTO}
+	 * @return {@link DetalleContableDTO}
+	 * @throws DocumentosException
+	 */
+	public DetalleContableDTO getDocumento(DetalleContableDTO dto) throws DocumentosException;
+	/**
+	 * Se encarga de obtener la cantidad de registros encontrados aplicando el filtro
+	 * @param dto {@link DetalleContableDTO}
+	 * @return {@link Integer}
+	 * @throws {@link DocumentosException}
+	 */
+	public Integer getTotalCount(DetalleContableDTO dto) throws DocumentosException;
+	
+	/**
+	 * Se encarga de actualizar un registro en la tabla de {@link DetalleContableDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleContableDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public void update(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException;
+
+	/**
+	 * Se encarga de insertar un registro de {@link DetalleContableDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleContableDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @return {@link DetalleContableDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public DetalleContableDTO insert(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException;
+
+	/**
+	 * Se encarga de eliminar un registro de {@link DetalleContableDTO}
+	 * 
+	 * @param dto
+	 *            {@link DetalleContableDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @throws {@link
+	 *             DocumentosException}
+	 */
+	public void delete(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException;
+
 }

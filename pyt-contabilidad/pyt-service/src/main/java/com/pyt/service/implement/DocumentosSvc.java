@@ -13,6 +13,8 @@ import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.DetalleConceptoDTO;
+import com.pyt.service.dto.DetalleContableDTO;
+import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
@@ -332,6 +334,167 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 			throw new DocumentosException("Se presento un error en obtener la cantidad de registros.", e);
 		}
 		return cantidad;
+	}
+
+	@Override
+	public List<DetalleDTO> getAllDetalles(DetalleDTO dto) throws DocumentosException {
+		List<DetalleDTO> lista = new ArrayList<DetalleDTO>();
+		if (dto == null)
+			throw new DocumentosException("El objeto detallese encuentra vacio.");
+		try {
+			lista = querySvc.gets(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException(e.getMensage(), e);
+		}
+		return lista;
+	}
+
+	@Override
+	public List<DetalleDTO> getDetalles(DetalleDTO dto, Integer init, Integer end) throws DocumentosException {
+		List<DetalleDTO> lista = new ArrayList<DetalleDTO>();
+		if (dto == null)
+			throw new DocumentosException("El objeto detallese encuentra vacio.");
+		try {
+			lista = querySvc.gets(dto, init, end);
+		} catch (QueryException e) {
+			throw new DocumentosException(e.getMensage(), e);
+		}
+		return lista;
+	}
+
+	@Override
+	public DetalleDTO getDetalle(DetalleDTO dto) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El objeto detallese encuentra vacio.");
+		try {
+			return querySvc.get(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException(e.getMensage(), e);
+		}
+	}
+
+	@Override
+	public void update(DetalleDTO dto, UsuarioDTO user) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El objeto detallese encuentra vacio.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new DocumentosException("El codigo del detalle no se encuentra..");
+		try {
+			querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException(e.getMensage(), e);
+		}
+	}
+
+	@Override
+	public DetalleDTO insert(DetalleDTO dto, UsuarioDTO user) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El objeto detallese encuentra vacio.");
+		if (StringUtils.isNotBlank(dto.getCodigo()))
+			throw new DocumentosException("El codigo del detalle no se encuentra vacio.");
+		try {
+			return querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException(e.getMensage(), e);
+		}
+	}
+
+	@Override
+	public void delete(DetalleDTO dto, UsuarioDTO user) throws DocumentosException {
+		if (dto == null)
+			throw new DocumentosException("El objeto detallese encuentra vacio.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new DocumentosException("El codigo del detalle no se encuentra.");
+		try {
+			querySvc.del(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException(e.getMensage(), e);
+		}
+
+	}
+
+	@Override
+	public List<DetalleContableDTO> getAllDocumentos(DetalleContableDTO dto) throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		try {
+			return querySvc.gets(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+		}
+	}
+
+	@Override
+	public List<DetalleContableDTO> getDocumentos(DetalleContableDTO dto, Integer init, Integer end)
+			throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		try {
+			return querySvc.gets(dto,init,end);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+		}
+	}
+
+	@Override
+	public DetalleContableDTO getDocumento(DetalleContableDTO dto) throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		try {
+			return querySvc.get(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+		}
+	}
+
+	@Override
+	public Integer getTotalCount(DetalleContableDTO dto) throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+		}
+	}
+
+	@Override
+	public void update(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		if(StringUtils.isBlank(dto.getCodigo())) throw new DocumentosException("El detalle contable no se suministro.");
+		try {
+			querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+		}
+	}
+
+	@Override
+	public DetalleContableDTO insert(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		if(StringUtils.isNotBlank(dto.getCodigo())) throw new DocumentosException("El detalle contable no se suministro.");
+		try {
+			return querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+		}
+	}
+
+	@Override
+	public void delete(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		if(StringUtils.isBlank(dto.getCodigo())) throw new DocumentosException("El detalle contable no se suministro.");
+		try {
+			querySvc.del(dto, user);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+		}
+	}
+
+	@Override
+	public Integer getTotalRows(DetalleDTO filter) throws DocumentosException {
+		if(filter == null)throw new DocumentosException("No se suministro el detalle.");
+		try {
+			return querySvc.countRow(filter);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en el conteo de los detalles.",e);
+		}
 	}
 
 }

@@ -1,0 +1,187 @@
+package org.pyt.app.beans.dinamico;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.DataTableFXML;
+import org.pyt.common.annotations.FXMLFile;
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ABean;
+import org.pyt.common.exceptions.DocumentosException;
+
+import com.pyt.service.dto.DetalleDTO;
+import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.interfaces.IDocumentosSvc;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
+/**
+ * Se encargade crear la pantalla de lista de detalles
+ * 
+ * @author Alejandro Parra
+ * @since 10-07-2018
+ */
+@FXMLFile(path = "view/dinamico", file = "listDetalle.fxml", nombreVentana = "Lista de Detalles")
+public class ListaDetalleBean extends ABean<DetalleDTO> {
+	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
+	private IDocumentosSvc documentosSvc;
+	@FXML
+	private HBox paginador;
+	@FXML
+	private TableView<DetalleDTO> tabla;
+	@FXML
+	private Button editar;
+	@FXML
+	private Button eliminar;
+	private VBox panelCentral;
+	private DetalleDTO filtro;
+	private DetalleDTO registro;
+	private DataTableFXML<DetalleDTO, DetalleDTO> table;
+	private ParametroDTO tipoDocumento;
+
+	@FXML
+	private final void initialize() {
+		registro = new DetalleDTO();
+		filtro = new DetalleDTO();
+		eliminar.setVisible(false);
+		editar.setVisible(false);
+		lazy();
+	}
+
+	/**
+	 * Se encarga de cargar la pagina del listado de detalles agregados
+	 */
+	private final void lazy() {
+		table = new DataTableFXML<DetalleDTO, DetalleDTO>(paginador, tabla) {
+
+			@Override
+			public Integer getTotalRows(DetalleDTO filter) {
+				try {
+					return documentosSvc.getTotalRows(filter);
+				} catch (DocumentosException e) {
+					error(e);
+				}
+				return 0;
+			}
+
+			@Override
+			public List<DetalleDTO> getList(DetalleDTO filter, Integer page, Integer rows) {
+				List<DetalleDTO> lista = new ArrayList<DetalleDTO>();
+				try {
+					lista = documentosSvc.getDetalles(filter, page, rows);
+				} catch (DocumentosException e) {
+					error(e);
+				}
+				return lista;
+			}
+
+			@Override
+			public DetalleDTO getFilter() {
+				DetalleDTO dto = new DetalleDTO();
+				if (tipoDocumento != null && StringUtils.isNotBlank(tipoDocumento.getCodigo())) {
+					dto.setCodigoDocumento(tipoDocumento.getCodigo());
+				}
+				return dto;
+			}
+		};
+	}
+
+	/**
+	 * Se encarga de cargar los campos del filtro
+	 */
+	private final void loadFiltro() {
+		filtro = new DetalleDTO();
+	}
+
+	/**
+	 * Se encarga de cargar la interfaz con los registros
+	 * 
+	 * @param tipoDocumento
+	 *            {@link ParametroDTO}
+	 */
+	public final void load(VBox panel, ParametroDTO tipoDocumento) throws Exception {
+		if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo()))
+			throw new Exception("No se suministro el tipo de documento.");
+		if (panel == null)
+			throw new Exception("El panel de creacion no se suministro.");
+		this.tipoDocumento = tipoDocumento;
+		panelCentral = panel;
+		table.search();
+	}
+
+	/**
+	 * Se encarga de llamar el bean para cargar un nuevo registro
+	 */
+	public final void agregar() {
+		try {
+			getController(panelCentral, DetalleBean.class).load(panelCentral, tipoDocumento);
+		} catch (Exception e) {
+			error("No se logro cargar la pantalla para agregar el nuevo detalle.");
+		}
+	}
+
+	/**
+	 * Se encarga de buscar en la tabla
+	 */
+	public final void buscar() {
+		loadFiltro();
+		table.search();
+	}
+
+	/**
+	 * Se encarga de llamar el bean para editar un nuevo registro
+	 */
+	public final void editar() {
+		if (table.isSelected()) {
+			List<DetalleDTO> list = table.getSelectedRows();
+			if (list.size() == 1) {
+				registro = table.getSelectedRow();
+				try {
+					getController(panelCentral, DetalleBean.class).load(panelCentral, registro, tipoDocumento);
+				} catch (Exception e) {
+					error("No se logro la pantalla para editar el detalle.");
+				}
+			} else if (list.size() > 1) {
+				error("Se seleccionaron varios detalles.");
+			} else {
+				error("No se selecciono ningun detalle.");
+			}
+		}
+	}
+
+	/**
+	 * Se encarga de llamar el bean para eliminar un registro
+	 */
+	public final void eliminar() {
+		if (table.isSelected()) {
+			List<DetalleDTO> lista = table.getSelectedRows();
+			Integer i = 0;
+			for (DetalleDTO detalle : lista) {
+				try {
+					documentosSvc.delete(detalle, userLogin);
+					i++;
+				} catch (DocumentosException e) {
+					error(e);
+				}
+			} // end for
+			notificar("Se eliminaron " + i + "/" + lista.size() + " detalles.");
+		} else {
+			notificar("No se selecciono registros a eliminar.");
+		}
+	}
+
+	/**
+	 * Se encarga de seleccionar un registro de la tabla
+	 */
+	public final void seleccionar() {
+		if (table.isSelected()) {
+			eliminar.setVisible(true);
+			editar.setVisible(true);
+		}
+	}
+}

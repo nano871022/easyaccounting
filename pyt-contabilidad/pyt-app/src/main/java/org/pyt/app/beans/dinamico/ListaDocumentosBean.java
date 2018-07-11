@@ -40,7 +40,6 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> {
 		registro = new DocumentoDTO();
 		lazy();
 	}
-
 	public void lazy() {
 		dataTable = new DataTableFXML<DocumentoDTO, DocumentoDTO>(paginador, tabla) {
 
