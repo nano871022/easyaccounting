@@ -15,6 +15,8 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.interfaces.IComunicacion;
 
+import com.pyt.service.dto.DetalleConceptoDTO;
+import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
@@ -84,6 +86,8 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 		Set<String> sets = mapa.keySet();
 		for (String key : sets) {
 			Button btn = new Button(key.replace("DTO", ""));
+			btn.setMaxWidth(Double.MAX_VALUE);
+			btn.setMinHeight(40);
 			if (mapa.get(key) == DocumentoDTO.class) {
 				btn.onActionProperty().set(e -> {
 					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
@@ -97,9 +101,31 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 				btn.onActionProperty().set(e -> {
 					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 						try {
-							getController(central, ListaDetalleBean.class).load(central,registro.getTipoDocumento());
+							getController(central, ListaDetalleBean.class).load(central,registro.getTipoDocumento(),registro.getCodigo());
 						} catch (Exception e1) {
 							error("No se logro cargar la lista de detalle.");
+						}
+					} 
+				});
+			}
+			if (mapa.get(key) == DetalleConceptoDTO.class) {
+				btn.onActionProperty().set(e -> {
+					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
+						try {
+							getController(central, ListaDetalleConceptoBean.class).load(central,registro.getTipoDocumento(),registro.getCodigo());
+						} catch (Exception e1) {
+							error("No se logro cargar la lista de detalle concepto.");
+						}
+					} 
+				});
+			}
+			if (mapa.get(key) == DetalleContableDTO.class) {
+				btn.onActionProperty().set(e -> {
+					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
+						try {
+							getController(central, ListaDetalleContableBean.class).load(central,registro.getTipoDocumento(),registro.getCodigo());
+						} catch (Exception e1) {
+							error("No se logro cargar la lista de detalle contable.");
 						}
 					} 
 				});
@@ -107,7 +133,13 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 			if (left != null) {
 				left.getChildren().add(btn);
 			}
-		}
+		}//end for
+		Button regresar = new Button("<-Regresar");
+		regresar.setMaxWidth(Double.MAX_VALUE);
+		regresar.onActionProperty().set(e->{
+			getController(ListaDocumentosBean.class);
+		});
+		left.getChildren().add(regresar);
 	}
 
 	@Override

@@ -8,6 +8,13 @@ public class CuentaContableDTO extends ADto{
 	private String nombre;
 	private ParametroDTO tipoCuenta;
 	private String asociado;
+	
+	public ParametroDTO getTipoCuenta() {
+		return tipoCuenta;
+	}
+	public void setTipoCuenta(ParametroDTO tipoCuenta) {
+		this.tipoCuenta = tipoCuenta;
+	}
 	public String getCodigoCuenta() {
 		return codigoCuenta;
 	}

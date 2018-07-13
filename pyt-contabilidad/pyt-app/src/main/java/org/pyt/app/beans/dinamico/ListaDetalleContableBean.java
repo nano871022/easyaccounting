@@ -10,7 +10,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.DocumentosException;
 
-import com.pyt.service.dto.DetalleDTO;
+import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 
@@ -28,51 +28,46 @@ import javafx.scene.layout.VBox;
  * @author Alejandro Parra
  * @since 10-07-2018
  */
-@FXMLFile(path = "view/dinamico", file = "listDetalle.fxml", nombreVentana = "Lista de Detalles")
-public class ListaDetalleBean extends ABean<DetalleDTO> {
+@FXMLFile(path = "view/dinamico", file = "listDetalleContable.fxml", nombreVentana = "Lista de Detalles")
+public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
 	@FXML
 	private HBox paginador;
 	@FXML
-	private TableView<DetalleDTO> tabla;
+	private TableView<DetalleContableDTO> tabla;
 	@FXML
 	private Button editar;
 	@FXML
 	private Button eliminar;
 	@FXML
-	private TableColumn<DetalleDTO, String> centroCosto;
+	private TableColumn<DetalleContableDTO, String> cuentaContable;
 	@FXML
-	private TableColumn<DetalleDTO, String> categoria;
-	@FXML
-	private TableColumn<DetalleDTO, String> concepto;
+	private TableColumn<DetalleContableDTO, String> concepto;
 	private VBox panelCentral;
-	private DetalleDTO filtro;
-	private DetalleDTO registro;
-	private DataTableFXML<DetalleDTO, DetalleDTO> table;
+	private DetalleContableDTO filtro;
+	private DetalleContableDTO registro;
+	private DataTableFXML<DetalleContableDTO, DetalleContableDTO> table;
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@FXML
 	private final void initialize() {
-		registro = new DetalleDTO();
-		filtro = new DetalleDTO();
+		registro = new DetalleContableDTO();
+		filtro = new DetalleContableDTO();
 		eliminar.setVisible(false);
 		editar.setVisible(false);
-		centroCosto.setCellValueFactory(e -> {
+		cuentaContable.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			o.setValue(e.getValue().getCentroCosto().getNombre());
-			return o;
-		});
-		categoria.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			o.setValue(e.getValue().getCategoriaGasto().getNombre());
+			if (e.getValue() != null && e.getValue().getCuentaContable() != null)
+				o.setValue(e.getValue().getCuentaContable().getNombre());
 			return o;
 		});
 		concepto.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			o.setValue(e.getValue().getConcepto().getNombre());
+			if (e.getValue() != null && e.getValue().getConcepto() != null)
+				o.setValue(e.getValue().getConcepto().getNombre());
 			return o;
 		});
 		lazy();
@@ -82,12 +77,12 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 * Se encarga de cargar la pagina del listado de detalles agregados
 	 */
 	private final void lazy() {
-		table = new DataTableFXML<DetalleDTO, DetalleDTO>(paginador, tabla) {
+		table = new DataTableFXML<DetalleContableDTO, DetalleContableDTO>(paginador, tabla) {
 
 			@Override
-			public Integer getTotalRows(DetalleDTO filter) {
+			public Integer getTotalRows(DetalleContableDTO filter) {
 				try {
-					return documentosSvc.getTotalRows(filter);
+					return documentosSvc.getTotalCount(filter);
 				} catch (DocumentosException e) {
 					error(e);
 				}
@@ -95,11 +90,11 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 			}
 
 			@Override
-			public List<DetalleDTO> getList(DetalleDTO filter, Integer page, Integer rows) {
+			public List<DetalleContableDTO> getList(DetalleContableDTO filter, Integer page, Integer rows) {
 
-				List<DetalleDTO> lista = new ArrayList<DetalleDTO>();
+				List<DetalleContableDTO> lista = new ArrayList<DetalleContableDTO>();
 				try {
-					lista = documentosSvc.getDetalles(filter, page-1, rows);
+					lista = documentosSvc.getDetalles(filter, page - 1, rows);
 				} catch (DocumentosException e) {
 					error(e);
 				}
@@ -107,8 +102,8 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 			}
 
 			@Override
-			public DetalleDTO getFilter() {
-				DetalleDTO dto = new DetalleDTO();
+			public DetalleContableDTO getFilter() {
+				DetalleContableDTO dto = new DetalleContableDTO();
 				if (StringUtils.isNotBlank(codigoDocumento)) {
 					dto.setCodigoDocumento(codigoDocumento);
 				}
@@ -121,7 +116,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 * Se encarga de cargar los campos del filtro
 	 */
 	private final void loadFiltro() {
-		filtro = new DetalleDTO();
+		filtro = new DetalleContableDTO();
 	}
 
 	/**
@@ -130,7 +125,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 * @param tipoDocumento
 	 *            {@link ParametroDTO}
 	 */
-	public final void load(VBox panel, ParametroDTO tipoDocumento,String codigoDocumento) throws Exception {
+	public final void load(VBox panel, ParametroDTO tipoDocumento, String codigoDocumento) throws Exception {
 		if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo()))
 			throw new Exception("No se suministro el tipo de documento.");
 		if (panel == null)
@@ -146,7 +141,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 */
 	public final void agregar() {
 		try {
-			getController(panelCentral, DetalleBean.class).load(panelCentral, tipoDocumento,codigoDocumento);
+			getController(panelCentral, DetalleContableBean.class).load(panelCentral, tipoDocumento, codigoDocumento);
 		} catch (Exception e) {
 			error("No se logro cargar la pantalla para agregar el nuevo detalle.");
 		}
@@ -165,11 +160,12 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 */
 	public final void editar() {
 		if (table.isSelected()) {
-			List<DetalleDTO> list = table.getSelectedRows();
+			List<DetalleContableDTO> list = table.getSelectedRows();
 			if (list.size() == 1) {
 				registro = table.getSelectedRow();
 				try {
-					getController(panelCentral, DetalleBean.class).load(panelCentral, registro, tipoDocumento);
+					getController(panelCentral, DetalleContableBean.class).load(panelCentral, registro, tipoDocumento,
+							codigoDocumento);
 				} catch (Exception e) {
 					error("No se logro la pantalla para editar el detalle.");
 				}
@@ -186,9 +182,9 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 */
 	public final void eliminar() {
 		if (table.isSelected()) {
-			List<DetalleDTO> lista = table.getSelectedRows();
+			List<DetalleContableDTO> lista = table.getSelectedRows();
 			Integer i = 0;
-			for (DetalleDTO detalle : lista) {
+			for (DetalleContableDTO detalle : lista) {
 				try {
 					documentosSvc.delete(detalle, userLogin);
 					i++;

@@ -6,7 +6,6 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.DetalleDTO;
-import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
@@ -34,6 +33,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	private Label titulo;
 	private ParametroDTO tipoDocumento;
 	private VBox panelCentral;
+	private String codigoDocumento;
 
 	@FXML
 	public void initialize() {
@@ -50,7 +50,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		DocumentosDTO docs = new DocumentosDTO();
 		if (tipoDocumento != null) {
 			docs.setDoctype(tipoDocumento);
-			docs.setClaseControlar(DocumentoDTO.class);
+			docs.setClaseControlar(DetalleDTO.class);
 			try {
 				campos = documentosSvc.getDocumentos(docs);
 			} catch (DocumentosException e) {
@@ -64,7 +64,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	/**
 	 * Se encarga de cargar un nuevo registro
 	 */
-	public final void load(VBox panel, ParametroDTO tipoDoc) throws Exception {
+	public final void load(VBox panel, ParametroDTO tipoDoc,String codigoDocumento) throws Exception {
 		if (tipoDoc == null || StringUtils.isBlank(tipoDoc.getCodigo()))
 			throw new Exception("No se suministro el tipo de documento.");
 		if (panel == null)
@@ -72,6 +72,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		registro = new DetalleDTO();
 		tipoDocumento = tipoDoc;
 		panelCentral = panel;
+		this.codigoDocumento = codigoDocumento;
 		loadField();
 	}
 
@@ -96,8 +97,9 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		if (valid()) {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
+					registro.setCodigoDocumento(codigoDocumento);
 					documentosSvc.update(registro, userLogin);
-					notificar("Se agrego el nuevo detalle.");
+					notificar("Se actualizo el detalle.");
 				} else {
 					registro = documentosSvc.insert(registro, userLogin);
 					notificar("Se agrego el nuevo detalle.");
@@ -113,7 +115,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	 */
 	public final void regresar() {
 		try {
-			getController(panelCentral, ListaDetalleBean.class).load(panelCentral, tipoDocumento);
+			getController(panelCentral, ListaDetalleBean.class).load(panelCentral, tipoDocumento,codigoDocumento);
 		} catch (Exception e) {
 			error("No se logro cargar el panel de lista de detalle.");
 		}

@@ -98,18 +98,22 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 		if (comandoValor == null) {
 			comandoValor = new HashMap<>();
 		}
+		try {
+			T[] valores = (T[]) comandoValor.get(comando);
+			if (valores != null && valores.length > 0) {
+				List<T> lvalores = List.of(valores);
+				if (lvalores != null && lvalores.size() > 0) {
 
-		T[] valores = (T[]) comandoValor.get(comando);
-		if (valores != null && valores.length > 0) {
-			List<T> lvalores = List.of(valores);
-			if (lvalores != null && lvalores.size() > 0) {
+					lvalores.add(valor);
+					comandoValor.put(comando, lvalores.toArray());
+				}
+			} else {
+				List<T> lvalores = new ArrayList<>();
 				lvalores.add(valor);
 				comandoValor.put(comando, lvalores.toArray());
 			}
-		} else {
-			List<T> lvalores = new ArrayList<>();
-			lvalores.add(valor);
-			comandoValor.put(comando, lvalores.toArray());
+		} catch (Exception e) {
+			Log.logger(e);
 		}
 	}
 

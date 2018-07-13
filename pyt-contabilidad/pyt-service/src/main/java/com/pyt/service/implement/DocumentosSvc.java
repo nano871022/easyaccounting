@@ -414,7 +414,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 	}
 
 	@Override
-	public List<DetalleContableDTO> getAllDocumentos(DetalleContableDTO dto) throws DocumentosException {
+	public List<DetalleContableDTO> getAllDetalles(DetalleContableDTO dto) throws DocumentosException {
 		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
 		try {
 			return querySvc.gets(dto);
@@ -424,7 +424,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 	}
 
 	@Override
-	public List<DetalleContableDTO> getDocumentos(DetalleContableDTO dto, Integer init, Integer end)
+	public List<DetalleContableDTO> getDetalles(DetalleContableDTO dto, Integer init, Integer end)
 			throws DocumentosException {
 		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
 		try {
@@ -435,7 +435,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 	}
 
 	@Override
-	public DetalleContableDTO getDocumento(DetalleContableDTO dto) throws DocumentosException {
+	public DetalleContableDTO getDetalle(DetalleContableDTO dto) throws DocumentosException {
 		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
 		try {
 			return querySvc.get(dto);
@@ -494,6 +494,16 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 			return querySvc.countRow(filter);
 		} catch (QueryException e) {
 			throw new DocumentosException("Se presento error en el conteo de los detalles.",e);
+		}
+	}
+
+	@Override
+	public Integer getTotalCount(DetalleConceptoDTO dto) throws DocumentosException {
+		if(dto == null)throw new DocumentosException("No se suministro el detalle concepto.");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new DocumentosException("Se presento error en el conteo de los detalles concepto.",e);
 		}
 	}
 

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.pyt.common.common.ADto;
+
+import javafx.scene.control.TableColumn;
 /**
  * Contiene el detalle de la factura
  * @author alejandro parra

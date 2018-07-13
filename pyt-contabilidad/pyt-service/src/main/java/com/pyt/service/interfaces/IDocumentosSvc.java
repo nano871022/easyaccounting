@@ -64,6 +64,14 @@ public interface IDocumentosSvc {
 	public Integer getTotalCount(DocumentoDTO dto) throws DocumentosException;
 	
 	/**
+	 * Se encarga de obtener la cantidad de registros encontrados aplicando el filtro
+	 * @param dto {@link DetalleConceptoDTO}
+	 * @return {@link Integer}
+	 * @throws {@link DocumentosException}
+	 */
+	public Integer getTotalCount(DetalleConceptoDTO dto) throws DocumentosException;
+	
+	/**
 	 * Se encarga de actualizar un registro en la tabla de {@link DocumentoDTO}
 	 * 
 	 * @param dto
@@ -413,7 +421,7 @@ public interface IDocumentosSvc {
 	 * @throws {@link
 	 *             DocumentosException}
 	 */
-	public List<DetalleContableDTO> getAllDocumentos(DetalleContableDTO dto) throws DocumentosException;
+	public List<DetalleContableDTO> getAllDetalles(DetalleContableDTO dto) throws DocumentosException;
 
 	/**
 	 * Se encarga de obtneer registros de {@link DetalleContableDTO} paginado
@@ -427,7 +435,7 @@ public interface IDocumentosSvc {
 	 * @return {@link List} of {@link DetalleContableDTO}
 	 * @throws DocumentosException
 	 */
-	public List<DetalleContableDTO> getDocumentos(DetalleContableDTO dto, Integer init, Integer end) throws DocumentosException;
+	public List<DetalleContableDTO> getDetalles(DetalleContableDTO dto, Integer init, Integer end) throws DocumentosException;
 
 	/**
 	 * Se encarga de obtner un registro de {@link DetalleContableDTO}
@@ -437,7 +445,7 @@ public interface IDocumentosSvc {
 	 * @return {@link DetalleContableDTO}
 	 * @throws DocumentosException
 	 */
-	public DetalleContableDTO getDocumento(DetalleContableDTO dto) throws DocumentosException;
+	public DetalleContableDTO getDetalle(DetalleContableDTO dto) throws DocumentosException;
 	/**
 	 * Se encarga de obtener la cantidad de registros encontrados aplicando el filtro
 	 * @param dto {@link DetalleContableDTO}

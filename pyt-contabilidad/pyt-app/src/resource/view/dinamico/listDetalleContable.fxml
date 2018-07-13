@@ -10,7 +10,7 @@
 
 
 <BorderPane prefHeight="478.0" prefWidth="553.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
-	fx:controller="org.pyt.app.beans.dinamico.ListaDetalleBean">
+	fx:controller="org.pyt.app.beans.dinamico.ListaDetalleContableBean">
 	<!-- TODO Add Nodes -->
 	<bottom>
 		<HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="25.999900000002526" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -34,17 +34,16 @@
 								<PropertyValueFactory property="renglon" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn fx:id="categoria" maxWidth="5000.0" minWidth="10.0" prefWidth="130.0" text="Categoria Gasto" />
 						<TableColumn fx:id="concepto" maxWidth="5000.0" minWidth="10.0" prefWidth="88.0" text="Concepto" />
-						<TableColumn fx:id="centroCosto" maxWidth="5000.0" minWidth="10.0" prefWidth="112.0" text="Centro Costo" />
-						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="56.0" text="Valor">
+						<TableColumn fx:id="cuentaContable" maxWidth="5000.0" minWidth="10.0" prefWidth="112.0" text="Cuenta Contable" />
+						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="56.0" text="Observacion">
 							<cellValueFactory>
-								<PropertyValueFactory property="valorBruto" />
+								<PropertyValueFactory property="observacion" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="92.0" text="Valor Neto">
+						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="56.0" text="Valor">
 							<cellValueFactory>
-								<PropertyValueFactory property="valorNeto" />
+								<PropertyValueFactory property="valor" />
 							</cellValueFactory>
 						</TableColumn>
 					</columns>

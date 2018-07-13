@@ -18,7 +18,7 @@
 						<Insets right="10.0" />
 					</HBox.margin>
 				</Button>
-				<Button mnemonicParsing="false" onAction="#cancelar" text="Cancelar" />
+				<Button mnemonicParsing="false" onAction="#regresar" text="Regresar" />
 			</children>
 		</HBox>
 	</bottom>

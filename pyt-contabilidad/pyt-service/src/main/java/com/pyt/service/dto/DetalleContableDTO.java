@@ -11,6 +11,7 @@ public class DetalleContableDTO extends ADto {
 	private BigDecimal valor;
 	private Integer renglon;
 	private String observacion;
+	private String codigoDocumento;
 	public ConceptoDTO getConcepto() {
 		return concepto;
 	}
@@ -41,5 +42,10 @@ public class DetalleContableDTO extends ADto {
 	public void setObservacion(String observacion) {
 		this.observacion = observacion;
 	}
-	
+	public String getCodigoDocumento() {
+		return codigoDocumento;
+	}
+	public void setCodigoDocumento(String codigoDocumento) {
+		this.codigoDocumento = codigoDocumento;
+	}
 }

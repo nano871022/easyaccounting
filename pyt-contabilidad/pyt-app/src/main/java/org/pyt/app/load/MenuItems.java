@@ -7,7 +7,7 @@ import org.pyt.app.beans.actividadIca.ActividadIcaBean;
 import org.pyt.app.beans.banco.BancoBean;
 import org.pyt.app.beans.centroCosto.CentroCostoBean;
 import org.pyt.app.beans.concepto.ConceptoBean;
-import org.pyt.app.beans.dinamico.DinamicoBean;
+import org.pyt.app.beans.cuentaContable.CuentaContableBean;
 import org.pyt.app.beans.dinamico.FormularioBean;
 import org.pyt.app.beans.dinamico.ListaDocumentosBean;
 import org.pyt.app.beans.empresa.EmpresaBean;
@@ -51,6 +51,7 @@ public class MenuItems {
 	private final static String BTN_REPUESTO = "Repuesto";
 	private final static String BTN_CONCEPTO = "Concepto";
 	private final static String BTN_SERVICIO = "Servicio";
+	private final static String BTN_CUENTA_CONTABLE = "Cuenta Contable";
 	private final static String BTN_DOCUMENTO_DINAMICO = "Documento Dinamico";
 	private final static String BTN_FORMULARIO_DOCUMENTO= "Documento";
 	private final static String BTN_LIST_DOCUMENTO= "Documentos";
@@ -172,6 +173,13 @@ public class MenuItems {
 		items.add(addItem(BTN_REPUESTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, RepuestoBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_CUENTA_CONTABLE, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, CuentaContableBean.class);
 			} catch (LoadAppFxmlException e) {
 				Log.logger(e);
 			}
