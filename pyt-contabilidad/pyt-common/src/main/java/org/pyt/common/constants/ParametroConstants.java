@@ -29,7 +29,8 @@ public class ParametroConstants {
 	}
 	public final static String GRUPO_TIPO_BANCO          = "GRUPO_TIPO_BANCO";
 	public final static String GRUPO_TIPO_CUENTA         = "GRUPO_TIPO_CUENTA";
-	public final static String GRUPO_TTIPO_DOCUMENTO      = "GRUPO_TIPO_DOCUMENTO";
+	public final static String GRUPO_TIPO_CUENTA_CONTABLE= "GRUPO_TIPO_CUENTA_CONTABLE";
+	public final static String GRUPO_TTIPO_DOCUMENTO     = "GRUPO_TIPO_DOCUMENTO";
 	public final static String GRUPO_ESTADO_CONCEPTO     = "GRUPO_ESTADO_CONCEPTO";
 	public final static String GRUPO_ESTADO_CENTRO_COSTO = "GRUPO_ESTADO_CENTRO_COSTO";
 	public final static String GRUPO_ESTADO_BANCO        = "GRUPO_ESTADO_BANCO";
@@ -45,5 +46,6 @@ public class ParametroConstants {
 		MAPA_GRUPOS.put(GRUPO_ESTADO_BANCO, GRUPO_ESTADO_BANCO);
 		MAPA_GRUPOS.put(GRUPO_ESTADO_EMPLEADO, GRUPO_ESTADO_EMPLEADO);
 		MAPA_GRUPOS.put(GRUPO_TIPOS_DOCUMENTO_PERSONA, GRUPO_TIPOS_DOCUMENTO_PERSONA);
+		MAPA_GRUPOS.put(GRUPO_TIPO_CUENTA_CONTABLE, GRUPO_TIPO_CUENTA_CONTABLE);
 	}
 }

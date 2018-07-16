@@ -25,7 +25,9 @@ public class Table {
 	public final static <T extends Object> void put(TableView<T> table, List<T> lista) {
 		table.getItems().clear();
 		ObservableList<T> observable = table.getItems();
-		observable.addAll(lista);
+		if (lista != null && lista.size() > 0) {
+			observable.addAll(lista);
+		}
 		table.setItems(observable);
 	}
 }

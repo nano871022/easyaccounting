@@ -17,6 +17,7 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
@@ -44,6 +45,8 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	private TableColumn<DetalleContableDTO, String> cuentaContable;
 	@FXML
 	private TableColumn<DetalleContableDTO, String> concepto;
+	@FXML
+	private Label sumatoria;
 	private VBox panelCentral;
 	private DetalleContableDTO filtro;
 	private DetalleContableDTO registro;
@@ -95,6 +98,7 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 				List<DetalleContableDTO> lista = new ArrayList<DetalleContableDTO>();
 				try {
 					lista = documentosSvc.getDetalles(filter, page - 1, rows);
+					sumatoria.setText(sumatoria(lista,"valor").toString());
 				} catch (DocumentosException e) {
 					error(e);
 				}

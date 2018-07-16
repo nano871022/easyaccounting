@@ -1,10 +1,15 @@
 package org.pyt.app.components;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
 import org.pyt.common.common.ADto;
+import org.pyt.common.common.Log;
 import org.pyt.common.common.Table;
+import org.pyt.common.common.ValidateValues;
+import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.exceptions.ValidateValueException;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -34,6 +39,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	private Long cantidad;
 	private List<S> list;
 	private javafx.scene.control.TableView<S> table;
+	private ValidateValues validate = new ValidateValues();
 
 	public DataTableFXML() {
 		currentPage = 1;
@@ -108,6 +114,20 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		btnUltimo.setVisible(true);
 		btnAtras.setVisible(false);
 		btnPrimer.setVisible(false);
+	}
+	
+	public final BigDecimal sumatoria(List<T> list,String nombreCampo) {
+		BigDecimal cant = new BigDecimal(0);
+		if(list != null && list.size()>0) {
+			for(T dto : list) {
+				try {
+					cant = cant.add(validate.cast(dto.get(nombreCampo),BigDecimal.class));
+				} catch (ReflectionException | ValidateValueException e) {
+					Log.logger(e);
+				}
+			}
+		}
+		return cant;
 	}
 
 	/**

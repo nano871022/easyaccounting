@@ -28,7 +28,7 @@ import javafx.scene.layout.BorderPane;
  * @author Alejandro Parra
  * @since 2018-05-22
  */
-@FXMLFile(path = "view/concepto", file = "cuentaContable.fxml")
+@FXMLFile(path = "view/cuentaContable", file = "cuentaContable.fxml")
 public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
@@ -57,7 +57,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		registro = new CuentaContableDTO();
 		ParametroDTO estados = new ParametroDTO();
 		try {
-			listTipoCuentas = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_ESTADO_CONCEPTO);
+			listTipoCuentas = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO_CUENTA_CONTABLE);
 		} catch (ParametroException e) {
 			error(e);
 		}

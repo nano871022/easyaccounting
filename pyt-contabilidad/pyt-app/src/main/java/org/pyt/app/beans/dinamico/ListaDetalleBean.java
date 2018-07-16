@@ -13,10 +13,10 @@ import org.pyt.common.exceptions.DocumentosException;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
-
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
@@ -46,6 +46,8 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	private TableColumn<DetalleDTO, String> categoria;
 	@FXML
 	private TableColumn<DetalleDTO, String> concepto;
+	@FXML
+	private Label sumatoria;
 	private VBox panelCentral;
 	private DetalleDTO filtro;
 	private DetalleDTO registro;
@@ -99,7 +101,8 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 
 				List<DetalleDTO> lista = new ArrayList<DetalleDTO>();
 				try {
-					lista = documentosSvc.getDetalles(filter, page-1, rows);
+					lista = documentosSvc.getDetalles(filter, page - 1, rows);
+					sumatoria.setText(sumatoria(lista, "valorNeto").toString());
 				} catch (DocumentosException e) {
 					error(e);
 				}
@@ -130,7 +133,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 * @param tipoDocumento
 	 *            {@link ParametroDTO}
 	 */
-	public final void load(VBox panel, ParametroDTO tipoDocumento,String codigoDocumento) throws Exception {
+	public final void load(VBox panel, ParametroDTO tipoDocumento, String codigoDocumento) throws Exception {
 		if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo()))
 			throw new Exception("No se suministro el tipo de documento.");
 		if (panel == null)
@@ -146,7 +149,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 */
 	public final void agregar() {
 		try {
-			getController(panelCentral, DetalleBean.class).load(panelCentral, tipoDocumento,codigoDocumento);
+			getController(panelCentral, DetalleBean.class).load(panelCentral, tipoDocumento, codigoDocumento);
 		} catch (Exception e) {
 			error("No se logro cargar la pantalla para agregar el nuevo detalle.");
 		}

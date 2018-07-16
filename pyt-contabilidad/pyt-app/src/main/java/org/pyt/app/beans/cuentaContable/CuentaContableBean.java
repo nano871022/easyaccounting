@@ -32,7 +32,7 @@ import javafx.scene.layout.HBox;
  * @author alejandro parra
  * @since 07/05/2018
  */
-@FXMLFile(path = "view/concepto", file = "listCuentaContable.fxml")
+@FXMLFile(path = "view/cuentaContable", file = "listCuentaContable.fxml")
 public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
@@ -43,13 +43,13 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private TextField nombre;
 	@FXML
-	private TextField codigoCuenta;
-	@FXML
 	private TextField asociado;
 	@FXML
 	private ChoiceBox<String> tipoCuentaContables;
 	@FXML
 	private Button btnMod;
+	@FXML
+	private Button btnDel;
 	@FXML
 	private HBox paginador;
 	@FXML
@@ -61,15 +61,15 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	public void initialize() {
 		NombreVentana = "Lista de Cuenta Contable";
 		registro = new CuentaContableDTO();
+		registro.setTipoCuenta(new ParametroDTO());
 		ParametroDTO pEstado = new ParametroDTO();
 		try {
-			listTipoCuentas = parametroSvc.getAllParametros(pEstado, ParametroConstants.GRUPO_ESTADO_CONCEPTO);
+			listTipoCuentas = parametroSvc.getAllParametros(pEstado, ParametroConstants.GRUPO_TIPO_CUENTA_CONTABLE);
 		} catch (ParametroException e) {
 			error(e);
 		}
 		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
 		tipoCuentaContables.getSelectionModel().selectFirst();
-
 		tipoCuentaContable.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoCuenta().getNombre()));
 		lazy();
 	}
@@ -110,9 +110,6 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 				if (StringUtils.isNotBlank(asociado.getText())) {
 					filtro.setAsociado(asociado.getText());
 				}
-				if (StringUtils.isNotBlank(codigoCuenta.getText())) {
-					filtro.setCodigoCuenta(codigoCuenta.getText());
-				}
 				if (StringUtils.isNotBlank(tipoCuentaContables.getValue())) {
 					filtro.setTipoCuenta(SelectList.get(tipoCuentaContables, listTipoCuentas, "nombre"));
 				}
@@ -123,6 +120,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {

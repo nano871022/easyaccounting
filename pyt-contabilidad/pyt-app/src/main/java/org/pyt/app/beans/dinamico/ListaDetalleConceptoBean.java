@@ -17,6 +17,7 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
@@ -44,6 +45,8 @@ public class ListaDetalleConceptoBean extends ABean<DetalleConceptoDTO> {
 	private TableColumn<DetalleConceptoDTO, String> centroCosto;
 	@FXML
 	private TableColumn<DetalleConceptoDTO, String> concepto;
+	@FXML
+	private Label sumatoria;
 	private VBox panelCentral;
 	private DetalleConceptoDTO filtro;
 	private DetalleConceptoDTO registro;
@@ -93,6 +96,7 @@ public class ListaDetalleConceptoBean extends ABean<DetalleConceptoDTO> {
 				List<DetalleConceptoDTO> lista = new ArrayList<DetalleConceptoDTO>();
 				try {
 					lista = documentosSvc.getDetalles(filter, page-1, rows);
+					sumatoria.setText(sumatoria(lista, "valor").toString());
 				} catch (DocumentosException e) {
 					error(e);
 				}
