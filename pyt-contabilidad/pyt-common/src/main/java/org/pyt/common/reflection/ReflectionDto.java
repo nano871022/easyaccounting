@@ -33,10 +33,10 @@ public abstract class ReflectionDto {
 		String nameMethod;
 		Field field = null;
 		try {
+			if(value == null)return;
 			field = clase.getDeclaredField(nombreCampo);
 			nameMethod = ReflectionConstants.SET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
-
 			Method method = clase.getMethod(nameMethod, value.getClass());
 			method.invoke(this, value);
 		} catch (NoSuchFieldException e) {

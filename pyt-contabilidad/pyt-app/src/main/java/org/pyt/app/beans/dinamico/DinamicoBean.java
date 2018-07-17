@@ -1,5 +1,6 @@
 package org.pyt.app.beans.dinamico;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,8 +14,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.annotations.NoEdit;
+import org.pyt.common.annotations.Operacion;
+import org.pyt.common.annotations.Operaciones;
+import org.pyt.common.annotations.Operar;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
+import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.QueryException;
@@ -61,6 +67,69 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 		fields = new HashMap<String, Object>();
 		validateValue = new ValidateValues();
 	}
+	/**
+	 * Detecta si el campo esta anotado con noEdit para que el campo se desabilite
+	 * @param nombreCampo {@link String}
+	 * @return {@link Boolean}
+	 */
+	private final Boolean noEdit(String nombreCampo) {
+		Field field;
+		try {
+			field = this.getClass().getDeclaredField(nombreCampo);
+			NoEdit noEdit = field.getDeclaredAnnotation(NoEdit.class);
+			return noEdit != null;
+		} catch (NoSuchFieldException | SecurityException e) {
+			Log.logger(e);
+		}
+		return false;
+	}
+	/**
+	 * Verifica si el campo esta anotado con {@link Operacion}, para realizar calculos
+	 * @param nombreCampo {@link String}
+	 */
+	private final <S extends Object> void operacion(String nombreCampo) {
+		Field field;
+		try {
+			field = registro.getClass().getDeclaredField(nombreCampo);
+			if (field != null) {
+				Operacion operacion = field.getDeclaredAnnotation(Operacion.class);
+				Operaciones operaciones = field.getDeclaredAnnotation(Operaciones.class);
+				if (operacion != null || (operaciones != null ) ){
+					if(operaciones != null && operaciones.value().length > 0) {
+						Operacion[] operas = operaciones.value();
+						for(Operacion ope : operas) {
+							S value1 = registro.get(ope.valor1());
+							S value = registro.get(nombreCampo);
+							if(value == null) {
+								registro.set(nombreCampo, validateValue.cast(0, registro.getType(nombreCampo)));
+								value = registro.get(nombreCampo);
+							}
+							if (Operar.SUMA == ope.operacion()) {
+								registro.set(nombreCampo, validateValue.cast(validateValue.sumar(value, value1),
+										registro.getType(nombreCampo)));
+							}	
+						}
+					}else	if (StringUtils.isBlank(operacion.valor2())) {
+						S value1 = registro.get(operacion.valor1());
+						S value = registro.get(nombreCampo);
+						if (Operar.SUMA == operacion.operacion()) {
+							registro.set(nombreCampo, validateValue.cast(validateValue.sumar(value, value1),
+									registro.getType(nombreCampo)));
+						}
+					} else {
+						S value1 = registro.get(operacion.valor1());
+						S value2 = registro.get(operacion.valor2());
+						if (Operar.MULTIPLICAR == operacion.operacion()) {
+							registro.set(nombreCampo, validateValue.cast(validateValue.multiplicar(value1, value2),
+									registro.getType(nombreCampo)));
+						}
+					}
+				}
+			}
+		} catch (NoSuchFieldException | SecurityException | ReflectionException | ValidateValueException e) {
+			Log.logger(e);
+		}
+	}
 
 	/**
 	 * Se encarga de crear la grilla con todos los campos que se encontraton y
@@ -89,6 +158,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			if (StringUtils.isNotBlank(docs.getPutNameShow())) {
 				ChoiceBox<String> select = new ChoiceBox<String>();
 				select.setDisable(!docs.getEdit());
+//				select.setDisable(noEdit(docs.getFieldName()));
 				select.onActionProperty().set(e -> {
 					try {
 						List list = (List) listas.get(docs.getFieldName());
@@ -133,6 +203,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 					Node field = getType(registro.getType(docs.getFieldName()), registro.get(docs.getFieldName()));
 					if (field != null) {
 						field.setDisable(!docs.getEdit());
+//						field.setDisable(noEdit(docs.getFieldName()));
 						formulario.add(field, columnIndex + 1, rowIndex);
 						fields.put(docs.getFieldName(), field);
 					}
@@ -344,6 +415,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 				try {
 					Class clase = registro.getType(set);
 					Object valueEnd = validateValue.cast(value, clase);
+					operacion(set);
 					if (valueEnd != null) {
 						registro.set(set, valueEnd);
 					}

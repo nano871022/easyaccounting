@@ -121,6 +121,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		if(list != null && list.size()>0) {
 			for(T dto : list) {
 				try {
+					if(dto.get(nombreCampo) == null)continue;
 					cant = cant.add(validate.cast(dto.get(nombreCampo),BigDecimal.class));
 				} catch (ReflectionException | ValidateValueException e) {
 					Log.logger(e);

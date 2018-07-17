@@ -13,6 +13,7 @@ import org.pyt.common.exceptions.DocumentosException;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -138,6 +139,8 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 			throw new Exception("No se suministro el tipo de documento.");
 		if (panel == null)
 			throw new Exception("El panel de creacion no se suministro.");
+		if(StringUtils.isBlank(codigoDocumento))
+			throw new Exception("No se suministro el codigo del documento..");
 		this.tipoDocumento = tipoDocumento;
 		this.codigoDocumento = codigoDocumento;
 		panelCentral = panel;

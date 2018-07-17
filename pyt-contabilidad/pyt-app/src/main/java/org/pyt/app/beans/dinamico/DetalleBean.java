@@ -85,6 +85,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 			throw new Exception("El panel no se suministro.");
 		this.registro = registro;
 		tipoDocumento = tipoDoc;
+		codigoDocumento = registro.getCodigoDocumento();
 		panelCentral = panel;
 		loadField();
 	}
@@ -100,9 +101,12 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 					registro.setCodigoDocumento(codigoDocumento);
 					documentosSvc.update(registro, userLogin);
 					notificar("Se actualizo el detalle.");
+					loadField();
 				} else {
+					registro.setCodigoDocumento(codigoDocumento);
 					registro = documentosSvc.insert(registro, userLogin);
 					notificar("Se agrego el nuevo detalle.");
+					loadField();
 				}
 			} catch (DocumentosException e) {
 				error(e);

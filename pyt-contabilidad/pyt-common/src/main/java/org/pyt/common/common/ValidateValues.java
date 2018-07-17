@@ -194,10 +194,10 @@ public final class ValidateValues {
 					return validateDto(value1, value2);
 			if (value1 != null && value2 != null) {
 				try {
-					Object o1 = ((Class)value1).getConstructor().newInstance();
-					Object o2 = ((Class)value2).getConstructor().newInstance();
+					Object o1 = ((Class) value1).getConstructor().newInstance();
+					Object o2 = ((Class) value2).getConstructor().newInstance();
 					return (o1.getClass() == o2.getClass());
-				}catch(Exception e) {
+				} catch (Exception e) {
 				}
 				return value1.getClass() == value2.getClass();
 			}
@@ -264,6 +264,11 @@ public final class ValidateValues {
 					return (T) Short.valueOf((String) value);
 				}
 			}
+			if(value.getClass() == Integer.class) {
+				if(clase == BigDecimal.class){
+					return (T) new BigDecimal((int)value);
+				}
+			}
 			if (value.getClass() == clase) {
 				return (T) value;
 			}
@@ -282,6 +287,7 @@ public final class ValidateValues {
 									System.out.println(metodo.toString());
 									return (T) metodo.invoke(null, val);
 								} catch (Exception e) {
+									Log.logger(e);
 								}
 							}
 						}
@@ -381,5 +387,42 @@ public final class ValidateValues {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public final <S extends Object, T extends Object, P extends Object> S multiplicar(T value, P value2) {
+		try {
+			if(value == null) return null;
+			if(value2 == null)return null;
+			if(isCast(value,Long.class)) {
+				if(isCast(value2,BigDecimal.class)) {
+					return (S) cast(value2,BigDecimal.class).multiply(cast(value,BigDecimal.class));
+				}
+			}
+		} catch (ValidateValueException e) {
+			Log.logger(e);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public final <S,T,P extends Object> S sumar(T value,P value2) {
+		try {
+			if(value == null) return null;
+			if(value2 == null)return null;
+			if(isCast(value,Long.class)) {
+				if(isCast(value2,BigDecimal.class)) {
+					return (S) cast(value2,BigDecimal.class).add(cast(value,BigDecimal.class));
+				}
+			}
+			if(isCast(value,BigDecimal.class)) {
+				if(isCast(value2,BigDecimal.class)) {
+					return (S) cast(value2,BigDecimal.class).add(cast(value,BigDecimal.class));
+				}
+			}
+		} catch (ValidateValueException e) {
+			Log.logger(e);
+		}
+		return null;
 	}
 }
