@@ -284,10 +284,8 @@ public final class ValidateValues {
 							} else if (isCast(value, clases[0])) {
 								T val = (T) cast(value, clases[0]);
 								try {
-									System.out.println(metodo.toString());
 									return (T) metodo.invoke(null, val);
 								} catch (Exception e) {
-									Log.logger(e);
 								}
 							}
 						}
