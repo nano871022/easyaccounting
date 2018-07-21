@@ -3,17 +3,22 @@ package com.pyt.service.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import org.pyt.common.annotations.NoEdit;
+import org.pyt.common.common.ADto;
 /**
  * Es el documento que se encarga de realizar una nota credito,debito y otros tipo de documentos
  * @author alejandro parra
  * @since 06/05/2018
  */
 public class DocumentoDTO extends ADto{
+	private static final long serialVersionUID = 284440016164488458L;
 	private ParametroDTO tipoDocumento;
 	private ParametroDTO estado;
 	private Date fechaNota;
 	private String descripcion;
 	private BancoDTO banco;
+	@NoEdit
 	private BigDecimal valor;
 	private String numeroNota;
 	private Date fechaRegistro;

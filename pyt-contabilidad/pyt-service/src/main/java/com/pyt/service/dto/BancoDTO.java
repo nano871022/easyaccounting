@@ -1,5 +1,9 @@
 package com.pyt.service.dto;
 
+import java.time.LocalDate;
+
+import org.pyt.common.common.ADto;
+
 /**
  * Son los bancos que la empresa usa para mover el dinero
  * 
@@ -7,12 +11,16 @@ package com.pyt.service.dto;
  * @since 06/05/2018
  */
 public class BancoDTO extends ADto{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5471821713015787406L;
 	private String codigo;
 	private String nombre;
 	private String descripcion;
 	private String numeroCuenta;
-	private String fechaApertura;
-	private String fechaCierre;
+	private LocalDate fechaApertura;
+	private LocalDate fechaCierre;
 	private ParametroDTO estado;
 	private ParametroDTO tipoCuenta;
 	private ParametroDTO tipoBanco;
@@ -40,16 +48,16 @@ public class BancoDTO extends ADto{
 	public void setNumeroCuenta(String numeroCuenta) {
 		this.numeroCuenta = numeroCuenta;
 	}
-	public String getFechaApertura() {
+	public LocalDate getFechaApertura() {
 		return fechaApertura;
 	}
-	public void setFechaApertura(String fechaApertura) {
+	public void setFechaApertura(LocalDate fechaApertura) {
 		this.fechaApertura = fechaApertura;
 	}
-	public String getFechaCierre() {
+	public LocalDate getFechaCierre() {
 		return fechaCierre;
 	}
-	public void setFechaCierre(String fechaCierre) {
+	public void setFechaCierre(LocalDate fechaCierre) {
 		this.fechaCierre = fechaCierre;
 	}
 	public ParametroDTO getEstado() {

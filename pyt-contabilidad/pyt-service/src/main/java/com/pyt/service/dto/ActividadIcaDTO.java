@@ -1,4 +1,7 @@
 package com.pyt.service.dto;
+
+import org.pyt.common.common.ADto;
+
 /**
  * Son las actividades indicadas por el govierno
  * @author Alejandro Parra

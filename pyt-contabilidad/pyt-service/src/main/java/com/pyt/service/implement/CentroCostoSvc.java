@@ -3,16 +3,19 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.CentroCostoDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
-public class CentroCostoSvc implements ICentroCostosSvc {
-
+public class CentroCostoSvc extends Services implements ICentroCostosSvc {
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
 	public List<CentroCostoDTO> getCentroCostos(CentroCostoDTO dto, Integer init, Integer end)
@@ -65,7 +68,7 @@ public class CentroCostoSvc implements ICentroCostosSvc {
 	public CentroCostoDTO insert(CentroCostoDTO dto, UsuarioDTO user) throws CentroCostosException {
 		if (dto == null)
 			throw new CentroCostosException("El objeto centro de costo se encuentra vacio.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new CentroCostosException("El codigo de centro de costo no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -85,6 +88,18 @@ public class CentroCostoSvc implements ICentroCostosSvc {
 			throw new CentroCostosException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public Integer getTotalRows(CentroCostoDTO dto) throws CentroCostosException {
+		if(dto == null) {
+			throw new CentroCostosException("El objeto centro de costo se encuentra vacio.");
+		}
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new CentroCostosException(e.getMensage(), e);
+		}
 	}
 
 }

@@ -3,6 +3,8 @@ package com.pyt.service.dto;
 import java.util.Date;
 import java.util.List;
 
+import org.pyt.common.common.ADto;
+
 /**
  * Se encarga de tener en almacenamiento del ingreso de un vehiculo, en el cual se
  * realiza lo que se pretende realizar sobre el vehiculo 
@@ -11,6 +13,7 @@ import java.util.List;
  * @since 06/05/2018
  */
 public class IngresoDTO extends ADto{
+	private static final long serialVersionUID = -199744420238673033L;
 	private String placaVehiculo;
 	private String descripcion;
 	private List<ServicioDTO> servicios;
@@ -19,13 +22,21 @@ public class IngresoDTO extends ADto{
 	private String conductorEntrada;
 	private String conductorSalida;
 	private String documentoConductorEntrada;
-	private String documentoConductorSaldia;
+	private String documentoConductorSalida;
 	private String telefonoContacto;
 	private EmpresaDTO empresa;
+	private TrabajadorDTO trabajador;
 	private Date fechaEntrada;
 	private Date fechaSalida;
 	private Long tiempoEstimado;
 	private Long tiempoTrabajado;
+	
+	public TrabajadorDTO getTrabajador() {
+		return trabajador;
+	}
+	public void setTrabajador(TrabajadorDTO trabajador) {
+		this.trabajador = trabajador;
+	}
 	public String getPlacaVehiculo() {
 		return placaVehiculo;
 	}
@@ -74,11 +85,11 @@ public class IngresoDTO extends ADto{
 	public void setDocumentoConductorEntrada(String documentoConductorEntrada) {
 		this.documentoConductorEntrada = documentoConductorEntrada;
 	}
-	public String getDocumentoConductorSaldia() {
-		return documentoConductorSaldia;
+	public String getDocumentoConductorSalida() {
+		return documentoConductorSalida;
 	}
-	public void setDocumentoConductorSaldia(String documentoConductorSaldia) {
-		this.documentoConductorSaldia = documentoConductorSaldia;
+	public void setDocumentoConductorSalida(String documentoConductorSaldia) {
+		this.documentoConductorSalida = documentoConductorSaldia;
 	}
 	public String getTelefonoContacto() {
 		return telefonoContacto;

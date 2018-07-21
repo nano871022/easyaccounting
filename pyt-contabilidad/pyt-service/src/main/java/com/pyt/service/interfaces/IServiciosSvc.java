@@ -2,10 +2,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ServiciosException;
 
 import com.pyt.service.dto.ServicioDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre los registros de {@link ServicioDTO}
@@ -58,4 +58,10 @@ public interface IServiciosSvc {
 	 * @throws {@link ServicioException}
 	 */
 	public void delete(ServicioDTO dto, UsuarioDTO user) throws ServiciosException;
+	/**
+	 * Se encarga de obtener la cantidad de registros encontrados aplicando el filtro
+	 * @param filter {@link ServicioDTO}
+	 * @throws {@link ServiciosException}
+	 */
+	public Integer getTotalRows(ServicioDTO filter)throws ServiciosException;
 }

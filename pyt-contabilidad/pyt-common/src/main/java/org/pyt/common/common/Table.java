@@ -12,7 +12,7 @@ import javafx.scene.control.TableView;
  * @since 2018-05-19
  *
  */
-public final class Table {
+public class Table {
 	/**
 	 * Este metodos e encarga de coger una lista y ponerla dentro de
 	 * {@link TableView}
@@ -25,7 +25,9 @@ public final class Table {
 	public final static <T extends Object> void put(TableView<T> table, List<T> lista) {
 		table.getItems().clear();
 		ObservableList<T> observable = table.getItems();
-		observable.addAll(lista);
+		if (lista != null && lista.size() > 0) {
+			observable.addAll(lista);
+		}
 		table.setItems(observable);
 	}
 }

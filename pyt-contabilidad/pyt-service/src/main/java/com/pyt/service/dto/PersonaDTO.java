@@ -1,12 +1,15 @@
 package com.pyt.service.dto;
 
 import java.util.Date;
+
+import org.pyt.common.common.ADto;
 /**
  * Datos basicos de una persona
  * @author alejandro parra
  * @since 06/05/2018
  */
 public class PersonaDTO extends ADto{
+	private static final long serialVersionUID = 5798223959158769375L;
 	private String nombre;
 	private String apellido;
 	private String tipoDocumento;
@@ -14,6 +17,14 @@ public class PersonaDTO extends ADto{
 	private String direccion;
 	private String telefono;
 	private Date fechaNacimiento;
+	private String email;
+	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public String getNombre() {
 		return nombre;
 	}

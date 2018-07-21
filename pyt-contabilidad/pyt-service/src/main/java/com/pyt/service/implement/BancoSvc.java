@@ -3,20 +3,22 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.BancoException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.BancoDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.IBancosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
-public class BancoSvc implements IBancosSvc {
-
+public class BancoSvc extends Services implements IBancosSvc {
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
-	public List<BancoDTO> getBancos(BancoDTO dto, Integer init, Integer end)
-			throws BancoException {
+	public List<BancoDTO> getBancos(BancoDTO dto, Integer init, Integer end) throws BancoException {
 		List<BancoDTO> lista = new ArrayList<BancoDTO>();
 		if (dto == null)
 			throw new BancoException("El objeto banco se encuentra vacio.");
@@ -65,7 +67,7 @@ public class BancoSvc implements IBancosSvc {
 	public BancoDTO insert(BancoDTO dto, UsuarioDTO user) throws BancoException {
 		if (dto == null)
 			throw new BancoException("El objeto banco se encuentra vacio.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new BancoException("El codigo de banco no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -85,6 +87,16 @@ public class BancoSvc implements IBancosSvc {
 			throw new BancoException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public Integer getTotalRows(BancoDTO dto) throws BancoException {
+		if(dto == null) throw new BancoException("El banco se encuentra vacio.");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new BancoException(e.getMensage(), e);
+		}
 	}
 
 }

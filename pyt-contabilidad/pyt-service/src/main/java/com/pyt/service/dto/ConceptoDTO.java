@@ -1,4 +1,7 @@
 package com.pyt.service.dto;
+
+import org.pyt.common.common.ADto;
+
 /**
  * un concepto contable indica a que se va a contabilidar
  * @author alejandro parra

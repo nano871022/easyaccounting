@@ -1,11 +1,13 @@
 package com.pyt.service.dto;
+
+import org.pyt.common.common.ADto;
+
 /**
  * Es el nombre de la empresa
  * @author alejandro parra
  * @since 05/06/2018
  */
 public class EmpresaDTO extends ADto{
-	private String codigo;
 	private String nombre;
 	private String nit;
 	private String digitoVerificacion;
@@ -24,7 +26,6 @@ public class EmpresaDTO extends ADto{
 			String correoElectronico, String telefono, String pais, ParametroDTO monedaDefecto,
 			String nombreRepresentante, String nombreContador, String tarjetaProfeccionalContador) {
 		super();
-		this.codigo = codigo;
 		this.nombre = nombre;
 		this.nit = nit;
 		this.digitoVerificacion = digitoVerificacion;
@@ -36,12 +37,6 @@ public class EmpresaDTO extends ADto{
 		this.nombreRepresentante = nombreRepresentante;
 		this.nombreContador = nombreContador;
 		this.tarjetaProfeccionalContador = tarjetaProfeccionalContador;
-	}
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 	public String getNombre() {
 		return nombre;

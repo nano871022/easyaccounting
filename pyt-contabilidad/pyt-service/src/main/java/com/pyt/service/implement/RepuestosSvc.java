@@ -3,20 +3,22 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.RepuestoException;
 
+import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.RepuestoDTO;
-import com.pyt.service.dto.UsuarioDTO;
-import com.pyt.service.interfaces.IQuerySvc;
 import com.pyt.service.interfaces.IRepuestosSvc;
 
-public class RepuestosSvc implements IRepuestosSvc{
-
+public class RepuestosSvc extends Services implements IRepuestosSvc {
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
-	public List<RepuestoDTO> getRepuestos(RepuestoDTO dto, Integer init, Integer end)
-			throws RepuestoException {
+	public List<RepuestoDTO> getRepuestos(RepuestoDTO dto, Integer init, Integer end) throws RepuestoException {
 		List<RepuestoDTO> lista = new ArrayList<RepuestoDTO>();
 		if (dto == null)
 			throw new RepuestoException("El objeto repuesta se encuentra vacio.");
@@ -53,7 +55,7 @@ public class RepuestosSvc implements IRepuestosSvc{
 	public void update(RepuestoDTO dto, UsuarioDTO user) throws RepuestoException {
 		if (dto == null)
 			throw new RepuestoException("El objeto repuesto se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new RepuestoException("El id de repuesto se encuentra vacia.");
 		try {
 			querySvc.set(dto, user);
@@ -65,7 +67,7 @@ public class RepuestosSvc implements IRepuestosSvc{
 	public RepuestoDTO insert(RepuestoDTO dto, UsuarioDTO user) throws RepuestoException {
 		if (dto == null)
 			throw new RepuestoException("El objeto repuesto se encuentra vacio.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new RepuestoException("El codigo de repuesto no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -77,7 +79,7 @@ public class RepuestosSvc implements IRepuestosSvc{
 	public void delete(RepuestoDTO dto, UsuarioDTO user) throws RepuestoException {
 		if (dto == null)
 			throw new RepuestoException("El objeto repuesto se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new RepuestoException("El codigo repuesto se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
@@ -85,6 +87,16 @@ public class RepuestosSvc implements IRepuestosSvc{
 			throw new RepuestoException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public Integer getTotalRows(RepuestoDTO dto) throws RepuestoException {
+		if(dto == null)throw new RepuestoException("El repuesto se encuentra vacio.");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new RepuestoException(e.getMensage(), e);
+		}
 	}
 
 }

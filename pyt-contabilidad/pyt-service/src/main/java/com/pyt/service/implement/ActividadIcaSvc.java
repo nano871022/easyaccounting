@@ -3,16 +3,19 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ActividadIcaException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ActividadIcaDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.IActividadIcaSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
-public class ActividadIcaSvc implements IActividadIcaSvc {
-
+public class ActividadIcaSvc extends Services implements IActividadIcaSvc {
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
 	public List<ActividadIcaDTO> getActividadesIca(ActividadIcaDTO dto, Integer init, Integer end)
@@ -53,7 +56,7 @@ public class ActividadIcaSvc implements IActividadIcaSvc {
 	public void update(ActividadIcaDTO dto, UsuarioDTO user) throws ActividadIcaException {
 		if (dto == null)
 			throw new ActividadIcaException("El objeto actividad ica se encuentra vacia.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo() ))
 			throw new ActividadIcaException("El id de actividad ica se encuentra vacia.");
 		try {
 			querySvc.set(dto, user);
@@ -65,7 +68,7 @@ public class ActividadIcaSvc implements IActividadIcaSvc {
 	public ActividadIcaDTO insert(ActividadIcaDTO dto, UsuarioDTO user) throws ActividadIcaException {
 		if (dto == null)
 			throw new ActividadIcaException("El objeto actividad ica se encuentra vacia.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new ActividadIcaException("El codigo de actividad ica no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -77,7 +80,7 @@ public class ActividadIcaSvc implements IActividadIcaSvc {
 	public void delete(ActividadIcaDTO dto, UsuarioDTO user) throws ActividadIcaException {
 		if (dto == null)
 			throw new ActividadIcaException("El objeto actividad ica se encuentra vacia.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isBlank(dto.getCodigo() ))
 			throw new ActividadIcaException("El codigo actividad ica se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
@@ -85,6 +88,16 @@ public class ActividadIcaSvc implements IActividadIcaSvc {
 			throw new ActividadIcaException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public Integer getTotalRows(ActividadIcaDTO filter) throws ActividadIcaException {
+		if(filter == null)throw new ActividadIcaException("El filtro suministrado se encuentra vacio.");
+		try {
+			return querySvc.countRow(filter);
+		} catch (QueryException e) {
+			throw new ActividadIcaException(e.getMensage(),e);
+		}
 	}
 
 }

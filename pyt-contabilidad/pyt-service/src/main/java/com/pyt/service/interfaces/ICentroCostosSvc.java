@@ -7,10 +7,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CentroCostosException;
 
 import com.pyt.service.dto.CentroCostoDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre los registros de centro de costos
@@ -73,4 +73,11 @@ public interface ICentroCostosSvc {
 	 * @throws {@link CentroCostosException}
 	 */
 	public CentroCostoDTO insert(CentroCostoDTO dto,UsuarioDTO user)throws CentroCostosException;
+	/**
+	 * Se encarga de contar los registros encontrados aplicando el filtro
+	 * @param dto {@link CentroCostoDTO}
+	 * @return {@link Integer}
+	 * @throws {@link CentroCostosException}
+	 */
+	public Integer getTotalRows(CentroCostoDTO dto)throws CentroCostosException;
 }

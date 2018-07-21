@@ -2,11 +2,11 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpleadoException;
 
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 /**
  * Se encarga de relizar crud sobre la rabla de trabajadores y personas
@@ -137,4 +137,11 @@ public interface IEmpleadosSvc {
 	 * @throws {@link EmpleadoException}
 	 */
 	public void delete(PersonaDTO dto,UsuarioDTO user)throws EmpleadoException;
+	/**
+	 * Se encarga de obtener la cantidada de registros encontrados con el filtro aplicado
+	 * @param dto {@link TrabajadorDTO}
+	 * @return {@link Integer}
+	 * @throws {@link EmpleadoException}
+	 */
+	public Integer getTotalRows(TrabajadorDTO dto)throws EmpleadoException;
 }

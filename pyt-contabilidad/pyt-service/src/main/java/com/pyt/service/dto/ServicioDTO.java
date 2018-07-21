@@ -1,10 +1,14 @@
 package com.pyt.service.dto;
+
+import org.pyt.common.common.ADto;
+
 /**
  * Nombre de los servicios que ofrece la empresa
  * @author alejandro parra 
  * @since 06/05/2018
  */
 public class ServicioDTO extends ADto{
+	private static final long serialVersionUID = -1416881593237077200L;
 	private String nombre;
 	private Long  valorManoObra;
 	private String descripcion;

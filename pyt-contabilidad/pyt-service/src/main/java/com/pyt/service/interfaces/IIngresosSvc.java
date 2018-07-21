@@ -2,10 +2,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.IngresoException;
 
 import com.pyt.service.dto.IngresoDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre los ingresos de vehiculos
@@ -21,6 +21,13 @@ public interface IIngresosSvc {
 	 * @throws {@link IngresoException}
 	 */
 	public List<IngresoDTO> getAllIngresos(IngresoDTO dto) throws IngresoException;
+	/**
+	 * Se encarga de contar la cantidad de registros que se encontraron con el filtro aplicado
+	 * @param dto {@link IngresoDTO}
+	 * @return {@link Integer}
+	 * @throws {@link IngresoException}
+	 */
+	public Integer getTotalRow(IngresoDTO dto) throws IngresoException;
 	/**
 	 * Se encarga de obtener todos los registros paginados de {@link IngresoDTO}
 	 * @param dto {@link IngresoDTO}

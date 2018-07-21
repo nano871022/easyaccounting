@@ -3,17 +3,19 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.QueryException;
 
+import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
-import com.pyt.service.dto.UsuarioDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
-import com.pyt.service.interfaces.IQuerySvc;
 
-public class EmpleadosSvc implements IEmpleadosSvc {
-
+public class EmpleadosSvc extends Services implements IEmpleadosSvc {
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
 	public List<TrabajadorDTO> getAllTrabajadores(TrabajadorDTO dto) throws EmpleadoException {
@@ -151,6 +153,17 @@ public class EmpleadosSvc implements IEmpleadosSvc {
 			throw new EmpleadoException("El codigo del persona se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
+		} catch (QueryException e) {
+			throw new EmpleadoException(e.getMensage(), e);
+		}
+	}
+
+	@Override
+	public Integer getTotalRows(TrabajadorDTO dto) throws EmpleadoException {
+		if (dto == null)
+			throw new EmpleadoException("EL objeto Trabajador esta vacio");
+		try {
+			return querySvc.countRow(dto);
 		} catch (QueryException e) {
 			throw new EmpleadoException(e.getMensage(), e);
 		}

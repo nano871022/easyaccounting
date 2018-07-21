@@ -7,10 +7,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.BancoException;
 
 import com.pyt.service.dto.BancoDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre sobre los registros
@@ -22,47 +22,82 @@ public interface IBancosSvc {
 	/**
 	 * Se encarga de obtener todos los registros de la bd
 	 * 
-	 * @param dto {@link BancoDTO}
+	 * @param dto
+	 *            {@link BancoDTO}
 	 * @return {@link List} of {@link BancoDTO}
-	 * @throws {@link BancoException}
+	 * @throws {@link
+	 *             BancoException}
 	 */
 	public List<BancoDTO> getAllBancos(BancoDTO dto) throws BancoException;
+
 	/**
 	 * Se encarga de obtener los registros paginados
-	 * @param dto {@link BancoDTO}
-	 * @param init {@link Integer}
-	 * @param end {@link Integer}
+	 * 
+	 * @param dto
+	 *            {@link BancoDTO}
+	 * @param init
+	 *            {@link Integer}
+	 * @param end
+	 *            {@link Integer}
 	 * @return {@link List} of {@link BancoDTO}
 	 * @throws BancoException
 	 */
 	public List<BancoDTO> getBancos(BancoDTO dto, Integer init, Integer end) throws BancoException;
+
 	/**
 	 * Se encarga de obtner un registro
-	 * @param dto {@link BancoDTO}
+	 * 
+	 * @param dto
+	 *            {@link BancoDTO}
 	 * @return {@link BancoDTO}
-	 * @throws {@link BancoException}
+	 * @throws {@link
+	 *             BancoException}
 	 */
 	public BancoDTO getBancos(BancoDTO dto) throws BancoException;
+
 	/**
 	 * Se encarga de actualizar el registro
-	 * @param dto {@link BancoDTO}
-	 * @param user {@link UsuarioDTO}
-	 * @throws {@link BancoException}
+	 * 
+	 * @param dto
+	 *            {@link BancoDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @throws {@link
+	 *             BancoException}
 	 */
-	public void update(BancoDTO dto,UsuarioDTO user)throws BancoException;
+	public void update(BancoDTO dto, UsuarioDTO user) throws BancoException;
+
 	/**
 	 * Se encarga de insertar un registro
-	 * @param dto {@link BancoDTO}
-	 * @param user {@link UsuarioDTO}
+	 * 
+	 * @param dto
+	 *            {@link BancoDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
 	 * @return {@link BancoDTO}
-	 * @throws {@link BancoException}
+	 * @throws {@link
+	 *             BancoException}
 	 */
-	public BancoDTO insert(BancoDTO dto,UsuarioDTO user)throws BancoException;
+	public BancoDTO insert(BancoDTO dto, UsuarioDTO user) throws BancoException;
+
 	/**
 	 * Se encarga de eliminar el registro
+	 * 
+	 * @param dto
+	 *            {@link BancoDTO}
+	 * @param user
+	 *            {@link UsuarioDTO}
+	 * @throws {@link
+	 *             BancoException}
+	 */
+	public void delete(BancoDTO dto, UsuarioDTO user) throws BancoException;
+
+	/**
+	 * Se encarrga de conntar la cantidad de registros encontrados segun el filtro
+	 * aplicado
+	 * 
 	 * @param dto {@link BancoDTO}
-	 * @param user {@link UsuarioDTO}
 	 * @throws {@link BancoException}
 	 */
-	public void delete(BancoDTO dto,UsuarioDTO user)throws BancoException;
+	public Integer getTotalRows(BancoDTO dto) throws BancoException;
 }

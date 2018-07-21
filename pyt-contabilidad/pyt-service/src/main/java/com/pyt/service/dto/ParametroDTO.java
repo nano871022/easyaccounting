@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.common.ADto;
+
 /**
  * Se almacenan todos los parametros que se van a utilizar en la aplicacion y se
  * separan por grupos.
@@ -8,13 +10,22 @@ package com.pyt.service.dto;
  * @since 06/05/2018
  */
 public class ParametroDTO extends ADto{
-	private String codigo;
+	private static final long serialVersionUID = -5396836082089633791L;
+	private Long orden;
 	private String nombre;
 	private String descripcion;
 	private String valor;
 	private String valor2;
 	private String grupo;
 	private String estado;
+
+	public Long getOrden() {
+		return orden;
+	}
+	
+	public void setOrden(Long orden) {
+		this.orden = orden;
+	}
 	public String getCodigo() {
 		return codigo;
 	}

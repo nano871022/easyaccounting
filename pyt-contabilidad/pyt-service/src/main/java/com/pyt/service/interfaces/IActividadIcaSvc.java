@@ -2,10 +2,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ActividadIcaException;
 
 import com.pyt.service.dto.ActividadIcaDTO;
-import com.pyt.service.dto.UsuarioDTO;
 
 /**
  * Se realiza un servicio para realizar crud de actividades iva
@@ -88,4 +88,11 @@ public interface IActividadIcaSvc {
 	 *             ActividadIcaDTO}
 	 */
 	public void delete(ActividadIcaDTO dto, UsuarioDTO user) throws ActividadIcaException;
+	/**
+	 * Se encarga de obtner la cantidad de registros aplicado el filtro
+	 * @param filter {@link ActividadIcaDTO}
+	 * @return {@link Integer}
+	 * @throws {@link ActividadIcaException}
+	 */
+	public Integer getTotalRows(ActividadIcaDTO filter)throws ActividadIcaException;
 }

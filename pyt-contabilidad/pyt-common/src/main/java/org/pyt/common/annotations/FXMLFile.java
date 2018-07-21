@@ -22,9 +22,13 @@ public @interface FXMLFile {
 	 * @return {@link String}
 	 */
 	public String path();
+
 	/**
 	 * nombre del archivo
+	 * 
 	 * @return {@link String}
 	 */
 	public String file();
+
+	public String nombreVentana() default "";
 }
