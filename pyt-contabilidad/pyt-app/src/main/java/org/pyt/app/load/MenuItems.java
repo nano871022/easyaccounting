@@ -3,6 +3,7 @@ package org.pyt.app.load;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pyt.app.beans.GuiaIngresos.ListIngresosBean;
 import org.pyt.app.beans.actividadIca.ActividadIcaBean;
 import org.pyt.app.beans.banco.BancoBean;
 import org.pyt.app.beans.centroCosto.CentroCostoBean;
@@ -55,6 +56,7 @@ public class MenuItems {
 	private final static String BTN_DOCUMENTO_DINAMICO = "Documento Dinamico";
 	private final static String BTN_FORMULARIO_DOCUMENTO= "Documento";
 	private final static String BTN_LIST_DOCUMENTO= "Documentos";
+	private final static String BTN_LIST_INGRESOS= "Ingresos";
 
 	public MenuItems(MenuBar menu, ScrollPane scroll) {
 		mapaMenu = new HashMap<String, Menu>();
@@ -111,6 +113,13 @@ public class MenuItems {
 		items.add(addItem(BTN_LIST_DOCUMENTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ListaDocumentosBean.class);
+			} catch (LoadAppFxmlException e) {
+				Log.logger(e);
+			}
+		}));
+		items.add(addItem(BTN_LIST_INGRESOS, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, ListIngresosBean.class);
 			} catch (LoadAppFxmlException e) {
 				Log.logger(e);
 			}

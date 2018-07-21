@@ -21,7 +21,7 @@
 			<groupId>co.com.pyt.query</groupId>
 			<artifactId>pyt-query</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -33,13 +33,13 @@
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.com.pyt.query</groupId>
 			<artifactId>pyt-query</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 		<build>

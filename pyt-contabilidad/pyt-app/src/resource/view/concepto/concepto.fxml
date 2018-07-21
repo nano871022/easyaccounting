@@ -42,15 +42,7 @@
 					GridPane.rowIndex="1" />
 				<Label alignment="CENTER" prefHeight="27.0" prefWidth="90.0" text="Estado" GridPane.rowIndex="2" />
 				<ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-				<ChoiceBox fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1">
-					<items>
-						<FXCollections fx:factory="observableArrayList">
-							<String fx:value="Item 1" />
-							<String fx:value="Item 2" />
-							<String fx:value="Item 3" />
-						</FXCollections>
-					</items>
-				</ChoiceBox>
+				<ChoiceBox fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 			</children>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="77.0" />

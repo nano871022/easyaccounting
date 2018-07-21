@@ -1,9 +1,12 @@
 package org.pyt.app.beans.dinamico;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.ValidateValueException;
 
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentosDTO;
@@ -64,7 +67,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	/**
 	 * Se encarga de cargar un nuevo registro
 	 */
-	public final void load(VBox panel, ParametroDTO tipoDoc,String codigoDocumento) throws Exception {
+	public final void load(VBox panel, ParametroDTO tipoDoc, String codigoDocumento) throws Exception {
 		if (tipoDoc == null || StringUtils.isBlank(tipoDoc.getCodigo()))
 			throw new Exception("No se suministro el tipo de documento.");
 		if (panel == null)
@@ -119,9 +122,56 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	 */
 	public final void regresar() {
 		try {
-			getController(panelCentral, ListaDetalleBean.class).load(panelCentral, tipoDocumento,codigoDocumento);
+			getController(panelCentral, ListaDetalleBean.class).load(panelCentral, tipoDocumento, codigoDocumento);
 		} catch (Exception e) {
 			error("No se logro cargar el panel de lista de detalle.");
+		}
+	}
+
+	@Override
+	protected final void methodChanges() {
+		try {
+			getField("valorIva");
+			getField("impuestoConsumo");
+			getField("valorConsumo");
+			getField("valorBruto");
+			getField("porcentajeIva");
+			Double iVa = null;
+			Double cons = null;
+			if(registro.getValorIva() == null) {
+				registro.setValorIva(new BigDecimal(0));
+			}
+			if(registro.getValorConsumo() == null) {
+				registro.setValorConsumo(new BigDecimal(0));
+			}
+			if(registro.getPorcentajeIva() == null) {
+				registro.setPorcentajeIva((long)0);
+			}else {
+				iVa = registro.getPorcentajeIva().doubleValue();
+				if(iVa >= 1 && iVa <=100) {
+					iVa = iVa/100;
+				}
+				registro.setValorIva(registro.getValorBruto()
+						.multiply(getValid().cast(iVa, BigDecimal.class)));
+			}
+			if(registro.getImpuestoConsumo() == null) {
+				registro.setImpuestoConsumo((long)0);
+			}else {
+				cons = registro.getImpuestoConsumo().doubleValue();
+				if(cons >= 1 && cons <= 100) {
+					cons = cons/100;
+				}
+				registro.setValorConsumo(registro.getValorBruto()
+						.multiply(getValid().cast(cons, BigDecimal.class)));
+			}
+			
+			registro.setValorNeto(registro.getValorConsumo().add(registro.getValorIva().add(registro.getValorBruto())));
+			
+			putValueField("valorIva", registro.getValorIva());
+			putValueField("valorConsumo", registro.getValorConsumo());
+			putValueField("valorNeto", registro.getValorNeto());
+		} catch (ValidateValueException e) {
+			error(e);
 		}
 	}
 }

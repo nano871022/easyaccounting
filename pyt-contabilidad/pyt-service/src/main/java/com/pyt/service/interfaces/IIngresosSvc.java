@@ -22,6 +22,13 @@ public interface IIngresosSvc {
 	 */
 	public List<IngresoDTO> getAllIngresos(IngresoDTO dto) throws IngresoException;
 	/**
+	 * Se encarga de contar la cantidad de registros que se encontraron con el filtro aplicado
+	 * @param dto {@link IngresoDTO}
+	 * @return {@link Integer}
+	 * @throws {@link IngresoException}
+	 */
+	public Integer getTotalRow(IngresoDTO dto) throws IngresoException;
+	/**
 	 * Se encarga de obtener todos los registros paginados de {@link IngresoDTO}
 	 * @param dto {@link IngresoDTO}
 	 * @param init {@link Integer}

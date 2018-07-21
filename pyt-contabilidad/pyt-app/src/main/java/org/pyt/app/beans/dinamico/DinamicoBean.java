@@ -100,30 +100,36 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			field = registro.getClass().getDeclaredField(nombreCampo);
 			if (field != null) {
 				Operacion operacion = field.getDeclaredAnnotation(Operacion.class);
-				operar(nombreCampo,operacion);
+				operar(nombreCampo, operacion);
 				Operaciones operaciones = field.getDeclaredAnnotation(Operaciones.class);
-				if(operaciones == null)return;
-				for(Operacion opera : operaciones.value()) {
-					operar(nombreCampo,opera);
+				if (operaciones == null)
+					return;
+				for (Operacion opera : operaciones.value()) {
+					operar(nombreCampo, opera);
 				}
 			}
 		} catch (NoSuchFieldException | SecurityException e) {
 			Log.logger(e);
 		}
 	}
+
 	/**
 	 * Se encarga de operar los valores de los campos
-	 * @param nombreCampo {@link String}
-	 * @param operacion {@link Operacion}
+	 * 
+	 * @param nombreCampo
+	 *            {@link String}
+	 * @param operacion
+	 *            {@link Operacion}
 	 */
-	private final <M extends Object, N extends Object, S extends Object, R extends Object> void operar(String nombreCampo,
-			Operacion operacion) {
+	private final <M extends Object, N extends Object, S extends Object, R extends Object> void operar(
+			String nombreCampo, Operacion operacion) {
 		M value = null;
 		N value1 = null;
 		S value2 = null;
 		R result = null;
 		try {
-			if(operacion == null)return;
+			if (operacion == null)
+				return;
 			if (StringUtils.isNotBlank(operacion.valor1())) {
 				value1 = registro.get(operacion.valor1());
 			}
@@ -133,21 +139,42 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			if (StringUtils.isNotBlank(nombreCampo)) {
 				value = registro.get(nombreCampo);
 			}
-			if(Operar.SUMA == operacion.operacion()) {
-				if(value2 == null)	result = validateValue.sumar(value1, value);
-				else result = validateValue.sumar(value1, value2);
+			if (Operar.SUMA == operacion.operacion()) {
+				if (value2 == null)
+					result = validateValue.sumar(value1, value);
+				else
+					result = validateValue.sumar(value1, value2);
 			}
-			if(Operar.MULTIPLICAR == operacion.operacion()) {
-				if(value2 == null)result = validateValue.multiplicar(value1, value);
-				else result = validateValue.multiplicar(value, value2);
+			if (Operar.MULTIPLICAR == operacion.operacion()) {
+				if (value2 == null)
+					result = validateValue.multiplicar(value1, value);
+				else
+					result = validateValue.multiplicar(value1, value2);
 			}
-			if(result != null) {
-				if(validateValue.isCast(result, registro.getType(nombreCampo))) {
+			if (result != null) {
+				if (validateValue.isCast(result, registro.getType(nombreCampo))) {
 					registro.set(nombreCampo, validateValue.cast(result, registro.getType(nombreCampo)));
+					putValueField(nombreCampo,result);
 				}
 			}
 		} catch (ReflectionException | ValidateValueException e) {
-			Log.logger(e);
+			error(e);
+		}
+	}
+	/**
+	 * Se encarga de poner en un campo el valor suministrado
+	 * @param nombreCampo {@link String}
+	 * @param value {@link Object} extends
+	 */
+	protected final <S extends Object> void putValueField(String nombreCampo, S value) {
+		try {
+			if(value == null)return;
+			Object obj = this.fields.get(nombreCampo);
+			if (obj instanceof TextField) {
+				((TextField) obj).setText(validateValue.cast(value, String.class));
+			}
+		} catch (ValidateValueException e) {
+			error(e);
 		}
 	}
 
@@ -157,22 +184,23 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 	public final void methodChange() {
 		Field[] fields = registro.getClass().getDeclaredFields();
 		for (Field field : fields) {
-			getField(field.getName());
 			Operacion operacion = field.getAnnotation(Operacion.class);
 			Operaciones operaciones = field.getAnnotation(Operaciones.class);
 			if (operacion != null) {
+				getField(field.getName());
 				getField(operacion.valor1());
 				getField(operacion.valor2());
-				operar(field.getName(),operacion);
+				operar(field.getName(), operacion);
 			}
 			if (operaciones != null) {
+				getField(field.getName());
 				for (Operacion opera : operaciones.value()) {
 					getField(opera.valor1());
 					getField(opera.valor2());
-					operar(field.getName(),opera);
+					operar(field.getName(), opera);
 				}
 			}
-		}//end for
+		} // end for
 		loadGrid();
 	}
 
@@ -182,7 +210,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 	 * @param nombre
 	 *            {@link String}
 	 */
-	private final void getField(String nombre) {
+	protected final void getField(String nombre) {
 		String valor = "";
 		if (StringUtils.isBlank(nombre))
 			return;
@@ -196,6 +224,8 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			}
 		}
 	}
+	
+	protected void methodChanges() {}
 
 	/**
 	 * Se encarga de crear la grilla con todos los campos que se encontraton y
@@ -267,7 +297,8 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			} else {
 				try {
 					Node field = getType(registro.getType(docs.getFieldName()), registro.get(docs.getFieldName()));
-					field.setOnKeyReleased(e -> methodChange());
+					if(field instanceof TextField)
+					((TextField)field).focusedProperty().addListener(e->methodChanges());
 					if (field != null) {
 						field.setDisable(!docs.getEdit());
 						field.setDisable(noEdit(docs.getFieldName()));
@@ -482,7 +513,6 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 				try {
 					Class clase = registro.getType(set);
 					Object valueEnd = validateValue.cast(value, clase);
-					operacion(set);
 					if (valueEnd != null) {
 						registro.set(set, valueEnd);
 					}
@@ -535,5 +565,12 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			}
 		}
 		return valid;
+	}
+	
+	protected final Map<String, Object> getFields(){
+		return this.fields;
+	}
+	protected final ValidateValues getValid() {
+		return validateValue;
 	}
 }

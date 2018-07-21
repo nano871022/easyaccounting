@@ -17,6 +17,7 @@ import org.pyt.common.common.ADto;
  */
 public class DetalleDTO extends ADto {
 	private static final long serialVersionUID = -3773810908869511818L;
+	private String codeDocumento;
 	@Increment
 	private Integer renglon;
 	private ServicioDTO concepto;
@@ -24,8 +25,7 @@ public class DetalleDTO extends ADto {
 	private ParametroDTO categoriaGasto;
 	private BigDecimal valorBruto;
 	@NoEdit
-	@Operacion(valor1 = "valorBruto", operacion = Operar.SUMA)
-	@Operacion(valor1 = "valorIva", operacion = Operar.SUMA)
+	@Operacion(valor1 = "valorBruto",valor2="valorIva", operacion = Operar.SUMA)
 	@Operacion(valor1 = "valorConsumo", operacion = Operar.SUMA)
 	private BigDecimal valorNeto;
 	private Long porcentajeIva;
@@ -37,6 +37,23 @@ public class DetalleDTO extends ADto {
 	private List<TrabajadorDTO> ejecutadores;
 	private ActividadIcaDTO actividadIca;
 	private String codigoDocumento;
+	private IngresoDTO ingreso;
+	
+	public String getCodeDocumento() {
+		return codeDocumento;
+	}
+
+	public void setCodeDocumento(String codeDocumento) {
+		this.codeDocumento = codeDocumento;
+	}
+
+	public IngresoDTO getIngreso() {
+		return ingreso;
+	}
+
+	public void setIngreso(IngresoDTO ingreso) {
+		this.ingreso = ingreso;
+	}
 
 	public String getCodigoDocumento() {
 		return codigoDocumento;

@@ -238,6 +238,11 @@ public final class ValidateValues {
 					return (T) Date.from(((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toInstant());
 				}
 			}
+			if(clase == LocalDate.class) {
+				if(value.getClass() == Date.class) {
+					return (T) LocalDate.ofInstant(((Date)value).toInstant(),ZoneId.systemDefault());
+				}
+			}
 			if (clase == int.class) {
 				clase = (Class<T>) Integer.class;
 			}
@@ -289,6 +294,14 @@ public final class ValidateValues {
 								}
 							}
 						}
+					}
+				}
+			}
+			metodos = value.getClass().getMethods();
+			for(Method metodo : metodos) {
+				if(metodo.getParameterTypes().length == 0) {
+					if(metodo.getReturnType() == clase) {
+						return (T) metodo.invoke(value);
 					}
 				}
 			}

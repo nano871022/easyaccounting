@@ -3,6 +3,7 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.IngresoException;
@@ -54,9 +55,9 @@ public class IngresosSvc extends Services implements IIngresosSvc{
 
 	public void update(IngresoDTO dto, UsuarioDTO user) throws IngresoException {
 		if (dto == null)
-			throw new IngresoException("El objeto empresa se encuentra vacio.");
-		if (dto.getCodigo() == null)
-			throw new IngresoException("El id de empresa se encuentra vacia.");
+			throw new IngresoException("El objeto ingreso se encuentra vacio.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new IngresoException("El id de ingreso se encuentra vacia.");
 		try {
 			querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -66,9 +67,9 @@ public class IngresosSvc extends Services implements IIngresosSvc{
 
 	public IngresoDTO insert(IngresoDTO dto, UsuarioDTO user) throws IngresoException {
 		if (dto == null)
-			throw new IngresoException("El objeto empresa se encuentra vacio.");
-		if (dto.getCodigo() != null)
-			throw new IngresoException("El codigo de empresa no se encuentra vacio.");
+			throw new IngresoException("El objeto ingreso se encuentra vacio.");
+		if (StringUtils.isNotBlank(dto.getCodigo()))
+			throw new IngresoException("El codigo de ingreso no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -78,15 +79,27 @@ public class IngresosSvc extends Services implements IIngresosSvc{
 
 	public void delete(IngresoDTO dto, UsuarioDTO user) throws IngresoException {
 		if (dto == null)
-			throw new IngresoException("El objeto empresa se encuentra vacio.");
-		if (dto.getCodigo() == null)
-			throw new IngresoException("El codigo empresa se encuentra vacio.");
+			throw new IngresoException("El objeto ingreso se encuentra vacio.");
+		if (StringUtils.isBlank(dto.getCodigo() ))
+			throw new IngresoException("El codigo ingreso se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
 		} catch (Exception e) {
 			throw new IngresoException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public Integer getTotalRow(IngresoDTO dto) throws IngresoException {
+		if(dto == null)throw new IngresoException("El dto suministrado se encuentra vacio.");
+		Integer count = 0;
+		try {
+			count = querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new IngresoException("Se presento error en la obtencion de registros.",e);
+		}
+		return count;
 	}
 
 }

@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>co.com.pyt</groupId>
@@ -28,27 +26,27 @@
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.com.pyt.query</groupId>
 			<artifactId>pyt-query</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.oracle</groupId> -->
-<!-- 			<artifactId>javafx</artifactId> -->
-<!-- 			<version>2.2</version> -->
-<!-- 			<systemPath>${java.home}/lib/ext/jfxrt.jar</systemPath> -->
-<!-- 			<scope>system</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.oracle</groupId> -->
+		<!-- <artifactId>javafx</artifactId> -->
+		<!-- <version>2.2</version> -->
+		<!-- <systemPath>${java.home}/lib/ext/jfxrt.jar</systemPath> -->
+		<!-- <scope>system</scope> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
@@ -64,6 +62,21 @@
 				<configuration>
 					<source>${project.build.compile.version}</source>
 					<target>${project.build.compile.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>libs/</classpathPrefix>
+							<mainClass>
+								org.pyt.app.load.App
+							</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

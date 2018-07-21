@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.pyt.common.annotations.NoEdit;
 import org.pyt.common.common.ADto;
 /**
  * Es el documento que se encarga de realizar una nota credito,debito y otros tipo de documentos
@@ -17,6 +18,7 @@ public class DocumentoDTO extends ADto{
 	private Date fechaNota;
 	private String descripcion;
 	private BancoDTO banco;
+	@NoEdit
 	private BigDecimal valor;
 	private String numeroNota;
 	private Date fechaRegistro;
