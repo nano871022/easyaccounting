@@ -1,9 +1,7 @@
 package org.pyt.common.common;
 
-import java.io.File;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Se encarga de manejar el log de l aaplicacion y es transeversal a toda la
@@ -13,27 +11,49 @@ import org.apache.log4j.PropertyConfigurator;
  * @since 2018-05-24
  */
 public final class Log {
-	private Logger log = Logger.getLogger("application_logger.log");
 	private static Log logger;
-	private final static String properties = "../pyt-common/src/resource/log4j.properties";
+	private WriteFile writer;
+	private final static String properties = "properties/log4j.properties";
+	private final static String propertie = "properties/data.properties";
+	private final static String INFO = "INFO";
+	private final static String WARN = "WARN";
+	private final static String ERROR = "ERROR";
+
+	private Log() {
+		writer = new WriteFile();
+		writer.file("./logger/logger.log");
+	}
 
 	private final static Log Log() {
 		if (logger == null) {
 			logger = new Log();
-			File f = new File(properties);
-			System.out.println(f.getAbsolutePath() +" - "+f.exists());
-			PropertyConfigurator.configure(properties);
 		}
 		return logger;
 	}
+
+	private final String now() {
+		LocalDateTime ldt = LocalDateTime.now();
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		String timer = ldt.format(formatter);
+		return timer;
+	}
+
+	public final void msnBuild(String msn, String type) {
+		String line = String.format("%s %s %s", now(), type, msn);
+		Log().getWriteFile().writer(line);
+	}
+
 	/**
 	 * Mensaje de warning
-	 * @param mensaje {@link String}
+	 * 
+	 * @param mensaje
+	 *            {@link String}
 	 */
 	public final static void warn(String mensaje) {
-		Log().getLogger().warn(mensaje);
+		Log().msnBuild(mensaje, WARN);
 	}
-	
+
 	/**
 	 * Se encaga de cargar un mensaje en el log
 	 * 
@@ -41,7 +61,7 @@ public final class Log {
 	 *            {@link String}
 	 */
 	public final static void logger(String mensaje) {
-		Log().getLogger().info(mensaje);
+		Log().msnBuild(mensaje, INFO);
 	}
 
 	/**
@@ -51,7 +71,11 @@ public final class Log {
 	 *            {@link Exception}
 	 */
 	public final static <T extends Exception> void logger(T error) {
-		Log().getLogger().error(error);
+		if (error.getCause() instanceof NullPointerException) {
+			Log().msnBuild("Null pointer exception", ERROR);
+		} else {
+			Log().msnBuild(error.getMessage(), ERROR);
+		}
 	}
 
 	/**
@@ -61,7 +85,7 @@ public final class Log {
 	 *            {@link Exception}
 	 */
 	public final static <T extends Exception> void error(String error) {
-		Log().getLogger().error(error);
+		Log().msnBuild(error, ERROR);
 	}
 
 	/**
@@ -73,11 +97,10 @@ public final class Log {
 	 *            {@link Exception}
 	 */
 	public final static <T extends Exception> void logger(String mensaje, T error) {
-		Log().getLogger().error(mensaje, error);;
+		Log().msnBuild(mensaje, ERROR);
 	}
 
-	public final Logger getLogger() {
-		return log;
+	public final WriteFile getWriteFile() {
+		return writer;
 	}
-
 }
