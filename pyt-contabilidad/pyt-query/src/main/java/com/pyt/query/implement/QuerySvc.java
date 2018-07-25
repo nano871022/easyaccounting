@@ -174,12 +174,14 @@ public class QuerySvc implements IQuerySvc {
 		try {
 			T cp = (T) obj.getClass().getConstructor().newInstance();
 			List<T> lista = gets(cp);
+			List<T> dels = (List<T>) fb.loadRead(obj.getClass());
 			if (lista != null && lista.size() > 0) {
 				Integer count = lista.size();
 				for (int i = 0; i < count; i++) {
 					T dto = lista.get(i);
 					if ((new Compare<T>(dto)).to(obj)) {
 						lista.remove(dto);
+						dels.add(cp);
 						i = 0;
 						count = lista.size();
 					}
