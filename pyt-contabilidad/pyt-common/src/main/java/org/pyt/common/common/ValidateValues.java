@@ -155,6 +155,8 @@ public final class ValidateValues {
 					return val;
 				}
 			}
+		}else if(StringUtils.isBlank(value2)) {
+			return true;
 		}
 		return false;
 	}
