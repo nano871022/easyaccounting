@@ -1,19 +1,26 @@
 package com.pyt.query.implement;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.Compare;
+import org.pyt.common.common.Log;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.FileBinException;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.interfaces.IDelClass;
+import org.pyt.common.interfaces.IUpdClass;
+import org.pyt.common.reflection.ReflectionUtils;
 
 import com.pyt.query.interfaces.IQuerySvc;
 
@@ -30,13 +37,13 @@ public class QuerySvc implements IQuerySvc {
 		if (lista == null || lista.size() == 0) {
 			return lista;
 		}
-		if(init > 0) {
+		if (init > 0) {
 			init = init + 1;
 		}
 		if (lista.size() > init && lista.size() > init + end) {
 			return lista.subList(init, init + end);
 		}
-		if(lista.size()>init && lista.size() < (init +end)){
+		if (lista.size() > init && lista.size() < (init + end)) {
 			return lista.subList(init, lista.size());
 		}
 		return lista;
@@ -79,12 +86,14 @@ public class QuerySvc implements IQuerySvc {
 	@SuppressWarnings({ "unchecked", "unused" })
 	@Override
 	public <T extends ADto> T set(T obj, UsuarioDTO user) throws QueryException {
+		Boolean nuevo = false;
 		if (obj == null) {
 			throw new QueryException("No se suministro el objeto a configurar.");
 		}
 		if (user == null)
 			throw new QueryException("No se suministro el usuario.");
 		T o = null;
+		nuevo = StringUtils.isBlank(obj.getCodigo());
 		List<T> lista = null;
 		try {
 			o = (T) obj.getClass().getConstructor().newInstance();
@@ -121,7 +130,7 @@ public class QuerySvc implements IQuerySvc {
 				}
 				lista.add(obj);
 			}
-		} else if (obj.getCodigo() == null || obj.getCodigo().length() == 0) {
+		} else if (StringUtils.isBlank(obj.getCodigo()) || obj.getCodigo().length() == 0) {
 			obj.setCreador(user.getNombre());
 			obj.setFechaCreacion(new Date());
 			if (lista == null) {
@@ -133,6 +142,8 @@ public class QuerySvc implements IQuerySvc {
 		if (lista != null && lista.size() > 0) {
 			try {
 				fb.write(lista, (Class<T>) obj.getClass());
+				if(!nuevo)
+					getDelUpd(obj, UpdClass.class, user.getNombre());
 			} catch (FileBinException e) {
 				throw new QueryException("Se presento problem aen el almacenamieto del registro.", e);
 			}
@@ -168,20 +179,58 @@ public class QuerySvc implements IQuerySvc {
 		return sb.toString();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private <T extends ADto, S extends ADto> void getDelUpd(T obj, Class annotation,String user) {
+		if (annotation == null)
+			return;
+		if (obj == null)
+			return;
+		try {
+			if (annotation == DelClass.class) {
+				DelClass del = obj.getClass().getDeclaredAnnotation(DelClass.class);
+				if (del != null && del.clase() != null) {
+					S bk = (S) ReflectionUtils.instanciar().copy(obj, del.clase());
+					((IDelClass)bk).setFechaElimina(LocalDateTime.now());
+					((IDelClass)bk).setUsuarioElimina(user);
+					List<S> list = fb.loadRead(del.clase());
+					if(list == null) {
+						list = new ArrayList<S>();
+					}
+					list.add(bk);
+					fb.write(list, del.clase());
+				}
+			}
+			if (annotation == UpdClass.class) {
+				UpdClass upd = obj.getClass().getDeclaredAnnotation(UpdClass.class);
+				if (upd != null & upd.clase() != null) {
+					S bk = (S) ReflectionUtils.instanciar().copy(obj, upd.clase());
+					((IUpdClass)bk).setFechaActualizado(LocalDateTime.now());
+					((IUpdClass)bk).setUsuarioActualizo(user);
+					List<S> list = fb.loadRead(upd.clase());
+					if(list == null) {
+						list = new ArrayList<S>();
+					}
+					list.add(bk);
+					fb.write(list, upd.clase());
+				}
+			}
+		} catch (FileBinException| SecurityException e) {
+			Log.logger(e);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public <T extends ADto> void del(T obj, UsuarioDTO user) throws QueryException {
 		try {
 			T cp = (T) obj.getClass().getConstructor().newInstance();
 			List<T> lista = gets(cp);
-			List<T> dels = (List<T>) fb.loadRead(obj.getClass());
 			if (lista != null && lista.size() > 0) {
 				Integer count = lista.size();
 				for (int i = 0; i < count; i++) {
 					T dto = lista.get(i);
 					if ((new Compare<T>(dto)).to(obj)) {
 						lista.remove(dto);
-						dels.add(cp);
 						i = 0;
 						count = lista.size();
 					}
@@ -190,6 +239,7 @@ public class QuerySvc implements IQuerySvc {
 				throw new QueryException("No se encontraron registros.");
 			}
 			fb.write(lista, (Class<T>) cp.getClass());
+			getDelUpd(obj, DelClass.class, user.getNombre());
 		} catch (InstantiationException e) {
 			throw new QueryException("Problema de instanciacion.", e);
 		} catch (IllegalAccessException e) {
@@ -212,5 +262,4 @@ public class QuerySvc implements IQuerySvc {
 		List<T> lista = gets(obj);
 		return lista.size();
 	}
-
 }

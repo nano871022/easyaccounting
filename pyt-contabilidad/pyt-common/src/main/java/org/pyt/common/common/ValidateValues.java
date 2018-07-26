@@ -155,7 +155,7 @@ public final class ValidateValues {
 					return val;
 				}
 			}
-		}else if(StringUtils.isBlank(value2)) {
+		} else if (StringUtils.isBlank(value2)) {
 			return true;
 		}
 		return false;
@@ -240,9 +240,9 @@ public final class ValidateValues {
 					return (T) Date.from(((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toInstant());
 				}
 			}
-			if(clase == LocalDate.class) {
-				if(value.getClass() == Date.class) {
-					return (T) LocalDate.ofInstant(((Date)value).toInstant(),ZoneId.systemDefault());
+			if (clase == LocalDate.class) {
+				if (value.getClass() == Date.class) {
+					return (T) LocalDate.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault());
 				}
 			}
 			if (clase == int.class) {
@@ -271,9 +271,9 @@ public final class ValidateValues {
 					return (T) Short.valueOf((String) value);
 				}
 			}
-			if(value.getClass() == Integer.class) {
-				if(clase == BigDecimal.class){
-					return (T) new BigDecimal((int)value);
+			if (value.getClass() == Integer.class) {
+				if (clase == BigDecimal.class) {
+					return (T) new BigDecimal((int) value);
 				}
 			}
 			if (value.getClass() == clase) {
@@ -300,9 +300,9 @@ public final class ValidateValues {
 				}
 			}
 			metodos = value.getClass().getMethods();
-			for(Method metodo : metodos) {
-				if(metodo.getParameterTypes().length == 0) {
-					if(metodo.getReturnType() == clase) {
+			for (Method metodo : metodos) {
+				if (metodo.getParameterTypes().length == 0) {
+					if (metodo.getReturnType() == clase) {
 						return (T) metodo.invoke(value);
 					}
 				}
@@ -393,6 +393,21 @@ public final class ValidateValues {
 			if (clase == String.class)
 				if (value != null && value instanceof String && StringUtils.isNotBlank((String) value))
 					return true;
+			if (clase.getConstructor().newInstance() instanceof ADto) {
+				if(value instanceof ADto) {
+					try {
+						clase.cast(value);
+						return true;
+					}catch(ClassCastException cast) {
+						try {
+							clase.asSubclass(value.getClass());
+							return true;
+						}catch(ClassCastException e1) {
+							return false;
+						}
+					}
+				}
+			}
 			if (clase == ADto.class)
 				if (value instanceof ADto)
 					return true;
@@ -405,11 +420,13 @@ public final class ValidateValues {
 	@SuppressWarnings("unchecked")
 	public final <S extends Object, T extends Object, P extends Object> S multiplicar(T value, P value2) {
 		try {
-			if(value == null) return null;
-			if(value2 == null)return null;
-			if(isCast(value,Long.class)) {
-				if(isCast(value2,BigDecimal.class)) {
-					return (S) cast(value2,BigDecimal.class).multiply(cast(value,BigDecimal.class));
+			if (value == null)
+				return null;
+			if (value2 == null)
+				return null;
+			if (isCast(value, Long.class)) {
+				if (isCast(value2, BigDecimal.class)) {
+					return (S) cast(value2, BigDecimal.class).multiply(cast(value, BigDecimal.class));
 				}
 			}
 		} catch (ValidateValueException e) {
@@ -417,20 +434,22 @@ public final class ValidateValues {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public final <S,T,P extends Object> S sumar(T value,P value2) {
+	public final <S, T, P extends Object> S sumar(T value, P value2) {
 		try {
-			if(value == null) return null;
-			if(value2 == null)return null;
-			if(isCast(value,Long.class)) {
-				if(isCast(value2,BigDecimal.class)) {
-					return (S) cast(value2,BigDecimal.class).add(cast(value,BigDecimal.class));
+			if (value == null)
+				return null;
+			if (value2 == null)
+				return null;
+			if (isCast(value, Long.class)) {
+				if (isCast(value2, BigDecimal.class)) {
+					return (S) cast(value2, BigDecimal.class).add(cast(value, BigDecimal.class));
 				}
 			}
-			if(isCast(value,BigDecimal.class)) {
-				if(isCast(value2,BigDecimal.class)) {
-					return (S) cast(value2,BigDecimal.class).add(cast(value,BigDecimal.class));
+			if (isCast(value, BigDecimal.class)) {
+				if (isCast(value2, BigDecimal.class)) {
+					return (S) cast(value2, BigDecimal.class).add(cast(value, BigDecimal.class));
 				}
 			}
 		} catch (ValidateValueException e) {
