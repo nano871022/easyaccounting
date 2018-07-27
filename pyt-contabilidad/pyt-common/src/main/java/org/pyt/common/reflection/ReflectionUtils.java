@@ -1,6 +1,7 @@
 package org.pyt.common.reflection;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.pyt.common.common.ADto;
@@ -17,25 +18,32 @@ import org.pyt.common.exceptions.ReflectionException;
 public final class ReflectionUtils {
 	private ValidateValues valid;
 	private static ReflectionUtils instancia;
+	private final static String FIELD_CLONE = "clone";
+
 	private ReflectionUtils() {
 		valid = new ValidateValues();
 	}
+
 	/**
-	 * Instancia de la clase 
+	 * Instancia de la clase
+	 * 
 	 * @return {@link ReflectionUtils}
 	 */
 	public final static ReflectionUtils instanciar() {
-		if(instancia == null) {
+		if (instancia == null) {
 			instancia = new ReflectionUtils();
 		}
 		return instancia;
 	}
+
 	/**
 	 * Se encarga de copiar un onjeto en otro, esta copia se debe realizar el que el
 	 * objeto de destino debe ser ina insancia del origen
 	 * 
-	 * @param origen {@link Object} extends {@link ADto}
-	 * @param destino {@link Class} extends {@link ADto}
+	 * @param origen
+	 *            {@link Object} extends {@link ADto}
+	 * @param destino
+	 *            {@link Class} extends {@link ADto}
 	 * @return {@link Object} extends {@link ADto}
 	 */
 	public final <T extends ADto, S extends ADto> S copy(T origen, Class<S> destino) {
@@ -43,7 +51,7 @@ public final class ReflectionUtils {
 			List<String> campos = origen.getNameFields();
 			S out = destino.getConstructor().newInstance();
 			if (valid.isCast(origen, destino)) {
-				for (String campo: campos) {
+				for (String campo : campos) {
 					out.set(campo, origen.get(campo));
 				}
 			}
@@ -53,5 +61,22 @@ public final class ReflectionUtils {
 			Log.logger(e);
 		}
 		return null;
+	}
+	/**
+	 * Usado si esta clase implementa la interfce cloneable
+	 * @param obj
+	 * @return
+	 * @throws ReflectionException
+	 */
+	@SuppressWarnings("unchecked")
+	public final static <T extends Cloneable> T clone(T obj) throws ReflectionException {
+		Method clone;
+		try {
+			clone = Object.class.getMethod(FIELD_CLONE);
+			return (T) clone.invoke(obj);
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			throw new ReflectionException("Se encontro error en refleccion de cloneable.", e);
+		}
 	}
 }
