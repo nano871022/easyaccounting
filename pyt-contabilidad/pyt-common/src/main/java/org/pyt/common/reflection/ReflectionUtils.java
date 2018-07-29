@@ -1,5 +1,10 @@
 package org.pyt.common.reflection;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -77,6 +82,28 @@ public final class ReflectionUtils {
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			throw new ReflectionException("Se encontro error en refleccion de cloneable.", e);
+		}
+	}
+	/**
+	 * Obliga a generar una copia del objeto suministrado por medio de bytes serializable
+	 * @param obj {@link Object}
+	 * @return {@link Object}
+	 */
+	@SuppressWarnings("unchecked")
+	public final static <T> T copy(T obj)throws ReflectionException {
+		try {
+			ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+			ObjectOutputStream oostream = new ObjectOutputStream(ostream);
+			oostream.writeObject(obj);
+			oostream.flush();
+			byte[] bytes = ostream.toByteArray();
+			InputStream istream = new ByteArrayInputStream(bytes);
+			ObjectInputStream oistream = new ObjectInputStream(istream);
+			return (T)oistream.readObject();
+		}catch(RuntimeException e) {
+			throw new ReflectionException("Error en runtime para copia de archivo por bytes",e);
+		}catch(Exception e) {
+			throw new ReflectionException("Error por copia de archivo por bytes.",e);
 		}
 	}
 }

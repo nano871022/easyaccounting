@@ -8,51 +8,47 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.ValidateValueException;
-import org.pyt.common.reflection.ReflectionUtils;
 
 /**
  * Se ecarga de llenar los marcadores dentro de un archivo de word docx
  * 
- * @author Ing-0-0013
- *
+ * @author Alejandro Parra
+ * @since 27/07/2018
  */
-public final class DocX {
-	private String file = "./docs/text.docx";
-	private String fileOut = "./docs/text2.docx";
-	private String separator = System.getProperty("file.separator");
+public class DocX extends Poi {
 	private XWPFDocument docx;
-	private ValidateValues valid;
+	private List<Map<String, Object>> listBookmarks;
+	private Map<String, Object> bookmarks;
 
-	public DocX() {
-		valid = new ValidateValues();
-	}
-
-	public final void get() {
+	/**
+	 * Se encarga de generar la conversion de los marcadores por los valores en
+	 * parrafos como en tablas de todo el documento.
+	 * 
+	 * @throws Exception
+	 */
+	public final void generar() throws Exception {
 		try {
 			if (validFile(file)) {
 				docx = new XWPFDocument(new FileInputStream(file));
-
-				CTText bookmark = searchBookmark(docx.getParagraphs(), "prueba");
-				changeMarcador(bookmark, ".Cambiando valor del marcador.");
-				List<Map<String, Object>> listMarks = new ArrayList<Map<String, Object>>();
-				Map<String, Object> maps = new HashMap<String, Object>();
-				maps.put("idTabla", 10);
-				maps.put("nombreTabla", "nombre del registro");
-				maps.put("valorTabla", "valor del registro");
-				listMarks.add(maps);
-				tables(listMarks);
-				addRow.addRow(newRow, 2);
+				for (String key : bookmarks.keySet()) {
+					XWPFParagraph parrafo = searchBookmarkP(docx.getParagraphs(), key);
+					if (parrafo != null) {
+						replaceBookmark(parrafo, key, bookmarks.get(key));
+					}
+				}
+				tables(listBookmarks);
 				writeFileOut();
 			} else {
 				Log.error("Se presento error en la validacion del archivo.");
@@ -71,7 +67,7 @@ public final class DocX {
 	 * @throws {@link
 	 *             ValidateValueException}
 	 */
-	public final void tables(List<Map<String, Object>> listMaps) throws ValidateValueException {
+	public final void tables(List<Map<String, Object>> listMaps) throws Exception {
 		if (listMaps == null || listMaps.size() == 0)
 			return;
 		Map<String, Object> maps = listMaps.get(0);
@@ -79,16 +75,50 @@ public final class DocX {
 		XWPFTableRow row = searchTabla(marks);
 		for (int i = 0; i < listMaps.size(); i++) {
 			Map<String, Object> map = listMaps.get(i);
-			if (i + 1 > 1) {
-				ReflectionUtils.clone((T) row);
-				row.getTable().addRow(row, i + 1);
-			}
-			if (row != null) {
-				for (String nameBookmark : marks) {
-					CTText book = getBookmark(row, nameBookmark);
-					changeMarcador(book, maps.get(nameBookmark));
+			cells(row, row.getTableCells(), map, i + 1);
+			// if (rowUsar != null) {
+			// for (String nameBookmark : marks) {
+			// CTText book = getBookmark(rowUsar, nameBookmark);
+			// changeMarcador(book, maps.get(nameBookmark));
+			// }
+			// if (i + 1 > 1)
+			// row.getTable().addRow(rowUsar, i + 1);
+			// }
+		}
+	}
+
+	private final void cells(XWPFTableRow row, List<XWPFTableCell> celdas, Map<String, Object> nameBookmarks,
+			Integer position) {
+		try {
+			XWPFTableRow rowUsar = null;
+			Set<String> keys = nameBookmarks.keySet();
+			for (int pos = 0; pos < celdas.size(); pos++) {
+				XWPFTableCell cell = celdas.get(pos);
+				for (String key : keys) {
+					CTText valor = searchBookmark(cell.getParagraphs(), key);
+					if (valor != null) {
+						if (rowUsar == null) {
+								rowUsar = null;
+								// row.getTable().addNewRowBetween(position, position + 1);
+								rowUsar = new XWPFTableRow(row.getCtRow(), row.getTable());
+								// rowUsar = row.getTable().createRow();
+								// rowUsar = row.getTable().getRow(position);
+								row.getTable().addRow(rowUsar, position);
+								rowUsar = row.getTable().getRow(position);
+						}
+						XWPFTableCell celll = rowUsar.getCell(pos);
+						if (celll != null) {
+							celll.setText(valid.cast(nameBookmarks.get(key), String.class));
+						} else {
+							Log.logger("La celda con posicion " + pos
+									+ " no fue encontrada, la cual debe ponerse el valor " + nameBookmarks.get(key)
+									+ " en la columan " + key);
+						}
+					}
 				}
 			}
+		} catch (ValidateValueException e) {
+			Log.logger(e);
 		}
 	}
 
@@ -182,6 +212,54 @@ public final class DocX {
 	}
 
 	/**
+	 * Se encarga de realizar la bsuqueda del bookmark y retorna el parrafo donde se
+	 * encontro el bookmark
+	 * 
+	 * @param list
+	 *            {@link List} of {@link XWPFParagraph}
+	 * @param nameBookmark
+	 *            {@link String}
+	 * @return {@link XWPFParagraph}
+	 */
+	private final XWPFParagraph searchBookmarkP(List<XWPFParagraph> list, String nameBookmark) {
+		for (XWPFParagraph p : list) {
+			List<CTBookmark> lists = p.getCTP().getBookmarkStartList();
+			for (CTBookmark bookMark : lists) {
+				if (bookMark.getName().contains(nameBookmark)) {
+					return p;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Se encarga de remplazar el marcador sobre el parrafo
+	 * 
+	 * @param list
+	 *            {@link List}
+	 * @param nameBookmark
+	 *            {@link String}
+	 * @param value
+	 *            {@link Object}
+	 * @throws {@link
+	 *             Exception}
+	 */
+	private final <T extends Object> void replaceBookmark(XWPFParagraph parrafo, String nameBookmark, T value)
+			throws Exception {
+		XWPFRun run = null;
+		List<CTBookmark> lists = parrafo.getCTP().getBookmarkStartList();
+		for (CTBookmark bookMark : lists) {
+			if (bookMark.getName().contains(nameBookmark)) {
+				run = parrafo.createRun();
+				run.setText(valid.cast(value, String.class));
+				parrafo.getCTP().getDomNode().insertBefore(run.getCTR().getDomNode(), bookMark.getDomNode());
+				break;
+			}
+		}
+	}
+
+	/**
 	 * Se crea usa para cambiar el marcador por un valor.
 	 * 
 	 * @param bookmark
@@ -210,69 +288,42 @@ public final class DocX {
 
 	}
 
-	/**
-	 * Se encarga de validar el archivo si existe y si no crearlo
-	 * 
-	 * @param files
-	 *            {@link String} ruta del archivo
-	 * @return {@link Boolean}
-	 */
-	private final Boolean validFile(String files) {
-		String nameFile = files;
-		String[] split = null;
-		if (files.contains("/") && !"/".equalsIgnoreCase(separator)) {
-			nameFile = files.replace("/", separator);
-		}
-		if (new File(nameFile).exists()) {
-			return true;
-		}
-		try {
-			split = nameFile.split(separator);
-		} catch (Exception e) {
-			try {
-				split = nameFile.split(separator + separator);
-			} catch (Exception e1) {
-				throw e1;
-			}
-		}
-		if (split != null && split.length > 0) {
-			StringBuilder paths = new StringBuilder();
-			File file = null;
-			try {
-				for (String path : split) {
-					if (paths.length() > 0) {
-						paths.append(separator);
-					}
-					paths.append(path);
-					if (path.equalsIgnoreCase(".")) {
-						continue;
-					}
-					file = new File(paths.toString());
-					if (!file.exists() && !path.contains(".")) {
-						file.mkdirs();
-					} else if (!file.exists() && path.contains(".")) {
-						if (file.createNewFile()) {
-							return true;
-						}
-					}
-				}
-			} catch (IOException e) {
-				Log.logger(e);
-			}
-		}
-		return false;
+	public void setListBookmarks(List<Map<String, Object>> listBookmarks) {
+		this.listBookmarks = listBookmarks;
 	}
 
-	public final void setFile(String pathFile) {
-		file = pathFile;
-	}
-
-	public final void setFileOut(String pathFile) {
-		fileOut = pathFile;
+	public void setBookmarks(Map<String, Object> bookmarks) {
+		this.bookmarks = bookmarks;
 	}
 
 	public final static void main(String... strings) {
-		new DocX().get();
+		List<Map<String, Object>> listMarks = new ArrayList<Map<String, Object>>();
+		Map<String, Object> maps = new HashMap<String, Object>();
+		maps.put("idTabla", 10);
+		maps.put("nombreTabla", "nombre del registro");
+		maps.put("valorTabla", "valor del registro");
+		Map<String, Object> maps2 = new HashMap<String, Object>();
+		maps2.put("idTabla", 11);
+		maps2.put("nombreTabla", "nombre del registro 2");
+		maps2.put("valorTabla", "valor del registro 2");
+		listMarks.add(maps2);
+		listMarks.add(maps);
+
+		Map<String, Object> bookmarks = new HashMap<String, Object>();
+		bookmarks.put("Prueba", " valor a cambiar ");
+		bookmarks.put("between", " valor entre textos ");
+		bookmarks.put("remplazo", " valor de remplazo ");
+		DocX doc = new DocX();
+		doc.setListBookmarks(listMarks);
+		doc.setBookmarks(bookmarks);
+		doc.setFile("./docs/text.docx");
+		doc.setFileOut("./docs/text2.docx");
+		try {
+			doc.generar();
+		} catch (Exception e) {
+			System.err.println(e);
+		}
+
 	}
 
 }
