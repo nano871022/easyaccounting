@@ -7,6 +7,7 @@ import java.util.Date;
  * @since 06/05/2018
  */
 public class UsuarioDTO extends ADto{
+	private static final long serialVersionUID = -2598260782899678821L;
 	private String nombre;
 	private String password;
 	private Date fechaIncio;

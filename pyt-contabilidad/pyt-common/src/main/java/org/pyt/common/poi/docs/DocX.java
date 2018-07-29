@@ -145,6 +145,7 @@ public class DocX extends Poi {
 	 *            {@link String}
 	 * @return {@link CTText}
 	 */
+	@SuppressWarnings("unused")
 	private final CTText getBookmark(XWPFTableRow row, String nameBookmark) {
 		List<XWPFTableCell> listCells = row.getTableCells();
 		for (XWPFTableCell cell : listCells) {
@@ -261,6 +262,7 @@ public class DocX extends Poi {
 	 * @throws {@link
 	 *             ValidateValueException}
 	 */
+	@SuppressWarnings("unused")
 	private final <T extends Object> void changeMarcador(CTText bookmark, T value) throws ValidateValueException {
 		bookmark.setStringValue(valid.cast(value, String.class));
 	}

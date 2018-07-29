@@ -7,6 +7,7 @@ import org.pyt.common.interfaces.IDelClass;
 import com.pyt.service.dto.DetalleDTO;
 
 public class DetalleDelDTO extends DetalleDTO implements IDelClass {
+	private static final long serialVersionUID = -6702342330732353704L;
 	private LocalDateTime fechaElimina;
 	private String usuario;
 	@Override

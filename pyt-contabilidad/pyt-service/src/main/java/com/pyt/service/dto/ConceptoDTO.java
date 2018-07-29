@@ -8,6 +8,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class ConceptoDTO extends ADto{
+	private static final long serialVersionUID = 8544091132270171494L;
 	private String codigo;
 	private String nombre;
 	private String descripcion;
