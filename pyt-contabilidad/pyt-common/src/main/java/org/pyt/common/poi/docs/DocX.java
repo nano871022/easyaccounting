@@ -75,15 +75,7 @@ public class DocX extends Poi {
 		XWPFTableRow row = searchTabla(marks);
 		for (int i = 0; i < listMaps.size(); i++) {
 			Map<String, Object> map = listMaps.get(i);
-			cells(row, row.getTableCells(), map, i + 1);
-			// if (rowUsar != null) {
-			// for (String nameBookmark : marks) {
-			// CTText book = getBookmark(rowUsar, nameBookmark);
-			// changeMarcador(book, maps.get(nameBookmark));
-			// }
-			// if (i + 1 > 1)
-			// row.getTable().addRow(rowUsar, i + 1);
-			// }
+			cells(row, row.getTableCells(), map, i +1);
 		}
 	}
 
@@ -99,16 +91,16 @@ public class DocX extends Poi {
 					if (valor != null) {
 						if (rowUsar == null) {
 								rowUsar = null;
-								// row.getTable().addNewRowBetween(position, position + 1);
 								rowUsar = new XWPFTableRow(row.getCtRow(), row.getTable());
-								// rowUsar = row.getTable().createRow();
-								// rowUsar = row.getTable().getRow(position);
-								row.getTable().addRow(rowUsar, position);
-								rowUsar = row.getTable().getRow(position);
+								rowUsar.getTable().addRow(rowUsar, position);
 						}
+//						rowUsar.removeCell(pos);
+//						XWPFTableCell celll = rowUsar.createCell();
 						XWPFTableCell celll = rowUsar.getCell(pos);
+						
 						if (celll != null) {
-							celll.setText(valid.cast(nameBookmarks.get(key), String.class));
+							valor.setStringValue(valid.cast(nameBookmarks.get(key), String.class));
+//							celll.setText(valid.cast(nameBookmarks.get(key), String.class));
 						} else {
 							Log.logger("La celda con posicion " + pos
 									+ " no fue encontrada, la cual debe ponerse el valor " + nameBookmarks.get(key)
@@ -306,8 +298,8 @@ public class DocX extends Poi {
 		maps2.put("idTabla", 11);
 		maps2.put("nombreTabla", "nombre del registro 2");
 		maps2.put("valorTabla", "valor del registro 2");
-		listMarks.add(maps2);
 		listMarks.add(maps);
+		listMarks.add(maps2); 
 
 		Map<String, Object> bookmarks = new HashMap<String, Object>();
 		bookmarks.put("Prueba", " valor a cambiar ");
