@@ -10,6 +10,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class FacturaDTO extends ADto{
+	private static final long serialVersionUID = -1911681512925350489L;
 	private String codigo;
 	private EmpresaDTO tercero;
 	private Date fechaFactura;

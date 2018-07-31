@@ -12,6 +12,7 @@ import org.pyt.common.reflection.ReflectionDto;
  * @since 06/05/2018
  */
 public abstract class ADto extends ReflectionDto implements Serializable{
+	private static final long serialVersionUID = 4414212889450828040L;
 	protected String codigo;
 	protected Date fechaCreacion;
 	protected Date fechaActualizacion;

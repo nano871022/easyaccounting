@@ -9,6 +9,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class CentroCostoDTO extends ADto{
+	private static final long serialVersionUID = -7537599944970961982L;
 	private String codigo;
 	private String nombre;
 	private String descripcion;

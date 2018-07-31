@@ -1,6 +1,11 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
+
+import com.pyt.service.dto.dels.ParametroDelDTO;
+import com.pyt.service.dto.upds.ParametroUpdDTO;
 
 /**
  * Se almacenan todos los parametros que se van a utilizar en la aplicacion y se
@@ -9,6 +14,8 @@ import org.pyt.common.common.ADto;
  * @author alejandro parra 
  * @since 06/05/2018
  */
+@DelClass(clase=ParametroDelDTO.class)
+@UpdClass(clase=ParametroUpdDTO.class)
 public class ParametroDTO extends ADto{
 	private static final long serialVersionUID = -5396836082089633791L;
 	private Long orden;

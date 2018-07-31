@@ -6,7 +6,6 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.DetalleConceptoDTO;
-import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
