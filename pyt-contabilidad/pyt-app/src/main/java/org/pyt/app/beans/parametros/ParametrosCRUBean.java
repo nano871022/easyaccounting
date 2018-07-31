@@ -96,7 +96,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			error(e);
 		}
 		registro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
-		if (StringUtils.isNotBlank(cGrupo.getValue())) {
+		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
 			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroConstants.MAPA_GRUPOS));
 		}
 		insert.setVisible(true);
@@ -239,7 +239,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		try {
 			if (valid()) {
 				parametroSvc.update(registro, userLogin);
-				if (StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
+				if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
 					parametroSvc.update(parametroGrupo, userLogin);
 				}

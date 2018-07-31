@@ -8,6 +8,7 @@ import org.pyt.common.common.ADto;
  * @since 06/05/2018
  */
 public class ActividadIcaDTO extends ADto{
+	private static final long serialVersionUID = 5006959473201225898L;
 	private String codigo;
 	private String nombre;
 	private String descripcion;

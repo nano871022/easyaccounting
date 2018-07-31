@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.exceptions.FileBinException;
 
 /**
@@ -27,7 +28,7 @@ public class ReadBin extends AControlFile {
 		ObjectInputStream ois = null;
 		T obj = null;
 		try {
-			if (file != null) {
+			if (StringUtils.isNotBlank(file)) {
 				File dat = new File(file);
 				if (!dat.exists()) {
 					verifyPath(file);
