@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>co.com.pyt</groupId>
 	<artifactId>pyt-common</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${project.version}</version>
 	<name>pyt-common</name>
 	<url>http://maven.apache.org</url>
 	<properties>
