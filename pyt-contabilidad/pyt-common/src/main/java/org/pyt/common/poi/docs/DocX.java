@@ -29,7 +29,7 @@ import org.pyt.common.exceptions.ValidateValueException;
  */
 public class DocX extends Poi {
 	private XWPFDocument docx;
-	private List<Map<String, Object>> listBookmarks;
+	private List<TableBookmark> listBookmarks;
 	private Map<String, Object> bookmarks;
 
 	/**
@@ -67,51 +67,108 @@ public class DocX extends Poi {
 	 * @throws {@link
 	 *             ValidateValueException}
 	 */
-	public final void tables(List<Map<String, Object>> listMaps) throws Exception {
+	public final void tables(List<TableBookmark> listMaps) throws Exception {
 		if (listMaps == null || listMaps.size() == 0)
 			return;
-		Map<String, Object> maps = listMaps.get(0);
-		String[] marks = maps.keySet().stream().toArray(size -> new String[size]);
-		XWPFTableRow row = searchTabla(marks);
 		for (int i = 0; i < listMaps.size(); i++) {
-			Map<String, Object> map = listMaps.get(i);
-			cells(row, row.getTableCells(), map, i +1);
+			TableBookmark table = listMaps.get(i);
+			String[] marks = table.getBookmarks();
+			XWPFTableRow row = searchTabla(marks);
+			while(table.hasNext()){
+				Map<String, Object> map = table.next();
+				cells(row, row.getTableCells(), map, table.getPosition());
+			}
 		}
 	}
 
 	private final void cells(XWPFTableRow row, List<XWPFTableCell> celdas, Map<String, Object> nameBookmarks,
 			Integer position) {
 		try {
-			XWPFTableRow rowUsar = null;
+			// XWPFTableRow rowUsar = new XWPFTableRow(row.getCtRow(), row.getTable());
 			Set<String> keys = nameBookmarks.keySet();
+			// for (int i = 0; i < celdas.size(); i++)
+			// rowUsar.removeCell(0);
+			XWPFTableRow rowUsar = null;
 			for (int pos = 0; pos < celdas.size(); pos++) {
 				XWPFTableCell cell = celdas.get(pos);
-				for (String key : keys) {
-					CTText valor = searchBookmark(cell.getParagraphs(), key);
-					if (valor != null) {
-						if (rowUsar == null) {
-								rowUsar = null;
-								rowUsar = new XWPFTableRow(row.getCtRow(), row.getTable());
-								rowUsar.getTable().addRow(rowUsar, position);
-						}
-//						rowUsar.removeCell(pos);
-//						XWPFTableCell celll = rowUsar.createCell();
-						XWPFTableCell celll = rowUsar.getCell(pos);
-						
-						if (celll != null) {
-							valor.setStringValue(valid.cast(nameBookmarks.get(key), String.class));
-//							celll.setText(valid.cast(nameBookmarks.get(key), String.class));
-						} else {
-							Log.logger("La celda con posicion " + pos
-									+ " no fue encontrada, la cual debe ponerse el valor " + nameBookmarks.get(key)
-									+ " en la columan " + key);
+				for (XWPFParagraph p : cell.getParagraphs()) {
+					for (CTBookmark b : p.getCTP().getBookmarkStartList()) {
+						for (String key : keys) {
+							if (b.getName().contains(key)) {
+								XWPFRun run = null;
+								XWPFParagraph para = null;
+
+								if (rowUsar == null) {
+									if (position == 1) {
+										rowUsar = row;
+									} else {
+										rowUsar = row.getTable().insertNewTableRow(position);
+									}
+								}
+								XWPFTableCell cellOut = rowUsar.getCell(pos);
+								if (cellOut == null) {
+									cellOut = rowUsar.addNewTableCell();
+									putStyleCell(cellOut, cell);
+								} else {
+									putStyleCell(cellOut, cell);
+								}
+								if (cellOut.getParagraphs().size() > 0) {
+									para = cellOut.getParagraph(p.getCTP());
+									if (para == null) {
+										para = cellOut.addParagraph();
+										putStyleParagraph(para, p);
+									}
+								} else {
+									para = cellOut.addParagraph();
+									putStyleParagraph(para, p);
+								}
+								if (para.getRuns().size() > 0) {
+									run = para.getRuns().get(0);
+									putStyleRun(run, p.getRuns().get(0));
+								} else {
+									run = para.createRun();
+									putStyleRun(run, p.getRuns().get(0));
+								}
+								run.setText(valid.cast(nameBookmarks.get(key), String.class), 0);
+								break;
+							}
 						}
 					}
 				}
+
 			}
+			rowUsar = null;
 		} catch (ValidateValueException e) {
 			Log.logger(e);
 		}
+	}
+
+	private final void putStyleCell(XWPFTableCell cell, XWPFTableCell cellLast) {
+		cell.setColor(cellLast.getColor());
+	}
+
+	private final void putStyleParagraph(XWPFParagraph p, XWPFParagraph pLast) {
+		p.setAlignment(pLast.getAlignment());
+		p.setBorderBetween(pLast.getBorderBetween());
+		p.setBorderBottom(pLast.getBorderBottom());
+		p.setBorderLeft(pLast.getBorderLeft());
+		p.setBorderRight(pLast.getBorderRight());
+		p.setBorderTop(pLast.getBorderTop());
+		p.setFontAlignment(pLast.getFontAlignment());
+		p.setStyle(pLast.getStyle());
+		p.setVerticalAlignment(pLast.getVerticalAlignment());
+		try {
+			p.setWordWrapped(pLast.isWordWrapped());
+		} catch (IndexOutOfBoundsException e) {
+		}
+	}
+
+	private final void putStyleRun(XWPFRun run, XWPFRun runLast) {
+		run.setColor(runLast.getColor());
+		run.setFontFamily(runLast.getFontFamily());
+		run.setCapitalized(runLast.isCapitalized());
+		run.setBold(runLast.isBold());
+		run.setUnderline(runLast.getUnderline());
 	}
 
 	/**
@@ -282,8 +339,21 @@ public class DocX extends Poi {
 
 	}
 
-	public void setListBookmarks(List<Map<String, Object>> listBookmarks) {
-		this.listBookmarks = listBookmarks;
+	/**
+	 * se encarga de agregar la tabla de bookmarks
+	 * 
+	 * @param tableBookmarks
+	 *            {@link TableBookmark}
+	 */
+	public void addTableBookmark(TableBookmark tableBookmarks) {
+		if (tableBookmarks == null)
+			return;
+		if (tableBookmarks.getSize() == 0)
+			return;
+		if (listBookmarks == null) {
+			listBookmarks = new ArrayList<TableBookmark>();
+		}
+		this.listBookmarks.add(tableBookmarks);
 	}
 
 	public void setBookmarks(Map<String, Object> bookmarks) {
@@ -291,7 +361,6 @@ public class DocX extends Poi {
 	}
 
 	public final static void main(String... strings) {
-		List<Map<String, Object>> listMarks = new ArrayList<Map<String, Object>>();
 		Map<String, Object> maps = new HashMap<String, Object>();
 		maps.put("idTabla", 10);
 		maps.put("nombreTabla", "nombre del registro");
@@ -300,15 +369,29 @@ public class DocX extends Poi {
 		maps2.put("idTabla", 11);
 		maps2.put("nombreTabla", "nombre del registro 2");
 		maps2.put("valorTabla", "valor del registro 2");
-		listMarks.add(maps);
-		listMarks.add(maps2); 
+		Map<String, Object> maps3 = new HashMap<String, Object>();
+		maps3.put("idTabla", 12);
+		maps3.put("nombreTabla", "nombre del registro 3");
+		maps3.put("valorTabla", "valor del registro 3");
+		Map<String, Object> maps4 = new HashMap<String, Object>();
+		maps4.put("cantidad", 2);
+		maps4.put("descripcionTabla2", "descripcion tabla 2");
+		maps4.put("valorTabla2", 1000);
+		maps4.put("subTotalTabla", 2000);
+		TableBookmark tabla1 = new TableBookmark();
+		tabla1.add(maps);
+		tabla1.add(maps2);
+		tabla1.add(maps3);
+		TableBookmark tabla2 = new TableBookmark();
+		tabla2.add(maps4);
 
 		Map<String, Object> bookmarks = new HashMap<String, Object>();
 		bookmarks.put("Prueba", " valor a cambiar ");
 		bookmarks.put("between", " valor entre textos ");
 		bookmarks.put("remplazo", " valor de remplazo ");
 		DocX doc = new DocX();
-		doc.setListBookmarks(listMarks);
+		doc.addTableBookmark(tabla1);
+		doc.addTableBookmark(tabla2);
 		doc.setBookmarks(bookmarks);
 		doc.setFile("./docs/text.docx");
 		doc.setFileOut("./docs/text2.docx");

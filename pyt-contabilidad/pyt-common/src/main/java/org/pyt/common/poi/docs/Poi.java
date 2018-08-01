@@ -15,6 +15,9 @@ public abstract class Poi extends VerifyFiles {
 		valid = new ValidateValues();
 	}
 	
+	
+	
+	
 	public final void setFile(String pathFile) {
 		file = pathFile;
 	}
