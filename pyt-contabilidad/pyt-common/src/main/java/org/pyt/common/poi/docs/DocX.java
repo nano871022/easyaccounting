@@ -74,9 +74,9 @@ public class DocX extends Poi {
 			TableBookmark table = listMaps.get(i);
 			String[] marks = table.getBookmarks();
 			XWPFTableRow row = searchTabla(marks);
-			while(table.hasNext()){
+			while (table.hasNext()) {
 				Map<String, Object> map = table.next();
-				cells(row, row.getTableCells(), map, table.getPosition());
+				cells(row, row.getTableCells(), map, table.getPosition()+1);
 			}
 		}
 	}
@@ -127,7 +127,9 @@ public class DocX extends Poi {
 									putStyleRun(run, p.getRuns().get(0));
 								} else {
 									run = para.createRun();
-									putStyleRun(run, p.getRuns().get(0));
+									if (p.getRuns().size() > 0) {
+										putStyleRun(run, p.getRuns().get(0));
+									}
 								}
 								run.setText(valid.cast(nameBookmarks.get(key), String.class), 0);
 								break;
@@ -378,13 +380,18 @@ public class DocX extends Poi {
 		maps4.put("descripcionTabla2", "descripcion tabla 2");
 		maps4.put("valorTabla2", 1000);
 		maps4.put("subTotalTabla", 2000);
+		Map<String, Object> maps5 = new HashMap<String, Object>();
+		maps5.put("cantidad", 3);
+		maps5.put("descripcionTabla2", "descripcion tabla 3");
+		maps5.put("valorTabla2", 2000);
+		maps5.put("subTotalTabla", 6000);
 		TableBookmark tabla1 = new TableBookmark();
 		tabla1.add(maps);
 		tabla1.add(maps2);
 		tabla1.add(maps3);
 		TableBookmark tabla2 = new TableBookmark();
 		tabla2.add(maps4);
-
+		tabla2.add(maps5);
 		Map<String, Object> bookmarks = new HashMap<String, Object>();
 		bookmarks.put("Prueba", " valor a cambiar ");
 		bookmarks.put("between", " valor entre textos ");
