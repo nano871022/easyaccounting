@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -20,6 +23,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.ValidateValueException;
+
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 
 /**
  * Se ecarga de llenar los marcadores dentro de un archivo de word docx
@@ -53,6 +59,7 @@ public class DocX extends Poi {
 				}
 				tables(listBookmarks);
 				writeFileOut();
+				convertToPdf();
 			} else {
 				Log.error("Se presento error en la validacion del archivo.");
 			}
@@ -149,7 +156,8 @@ public class DocX extends Poi {
 	}
 
 	private final void putStyleCell(XWPFTableCell cell, XWPFTableCell cellLast) {
-		cell.setColor(cellLast.getColor());
+		if (StringUtils.isNotBlank(cellLast.getColor()))
+			cell.setColor(cellLast.getColor());
 	}
 
 	private final void putStyleParagraph(XWPFParagraph p, XWPFParagraph pLast) {
@@ -160,7 +168,8 @@ public class DocX extends Poi {
 		p.setBorderRight(pLast.getBorderRight());
 		p.setBorderTop(pLast.getBorderTop());
 		p.setFontAlignment(pLast.getFontAlignment());
-		p.setStyle(pLast.getStyle());
+		if (StringUtils.isNotBlank(pLast.getStyle()))
+			p.setStyle(pLast.getStyle());
 		p.setVerticalAlignment(pLast.getVerticalAlignment());
 		try {
 			p.setWordWrapped(pLast.isWordWrapped());
@@ -169,8 +178,10 @@ public class DocX extends Poi {
 	}
 
 	private final void putStyleRun(XWPFRun run, XWPFRun runLast) {
-		run.setColor(runLast.getColor());
-		run.setFontFamily(runLast.getFontFamily());
+		if (StringUtils.isNotBlank(runLast.getColor()))
+			run.setColor(runLast.getColor());
+		if (StringUtils.isNotBlank(runLast.getFontFamily()))
+			run.setFontFamily(runLast.getFontFamily());
 		run.setCapitalized(runLast.isCapitalized());
 		run.setBold(runLast.isBold());
 		run.setUnderline(runLast.getUnderline());
@@ -370,8 +381,21 @@ public class DocX extends Poi {
 		if (validFile(fileOut)) {
 			FileOutputStream fo = new FileOutputStream(new File(fileOut));
 			docx.write(fo);
+			fo.close();
+			docx.close();
 		}
+	}
 
+	private final void convertToPdf() throws IOException {
+		InputStream doc = new FileInputStream(new File(fileOut));
+		XWPFDocument document = new XWPFDocument(doc);
+		PdfOptions options = PdfOptions.create();
+		OutputStream out = new FileOutputStream(new File(fileOut.replace("docx", "pdf")));
+		PdfConverter.getInstance().convert(document, out, options);
+		System.out.println("Done");
+		doc.close();
+		document.close();
+		out.close();
 	}
 
 	/**
@@ -440,7 +464,7 @@ public class DocX extends Poi {
 		try {
 			doc.generar();
 		} catch (Exception e) {
-			System.err.println(e);
+			e.printStackTrace();
 		}
 
 	}
