@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -36,7 +34,7 @@ import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 public class DocX extends Poi {
 	private XWPFDocument docx;
 	private List<TableBookmark> listBookmarks;
-	private Map<String, Object> bookmarks;
+	private Bookmark bookmarks;
 
 	/**
 	 * Se encarga de generar la conversion de los marcadores por los valores en
@@ -48,13 +46,13 @@ public class DocX extends Poi {
 		try {
 			if (validFile(file)) {
 				docx = new XWPFDocument(new FileInputStream(file));
-				for (String key : bookmarks.keySet()) {
+				for (String key : bookmarks.getBookmarks()) {
 					XWPFParagraph parrafo = searchBookmarkP(docx.getParagraphs(), key);
 					if (parrafo == null) {
 						parrafo = searchBookmarkT(docx.getTables(), key);
 					}
 					if (parrafo != null) {
-						replaceBookmark(parrafo, key, bookmarks.get(key));
+						replaceBookmark(parrafo, key, bookmarks.getValue(key));
 					}
 				}
 				tables(listBookmarks);
@@ -85,19 +83,16 @@ public class DocX extends Poi {
 			String[] marks = table.getBookmarks();
 			XWPFTableRow row = searchTabla(marks);
 			while (table.hasNext()) {
-				Map<String, Object> map = table.next();
-				cells(row, row.getTableCells(), map, table.getPosition() + 1);
+				Bookmark bookmark = table.next();
+				cells(row, row.getTableCells(), bookmark, table.getPosition() + 1);
 			}
 		}
 	}
 
-	private final void cells(XWPFTableRow row, List<XWPFTableCell> celdas, Map<String, Object> nameBookmarks,
+	private final void cells(XWPFTableRow row, List<XWPFTableCell> celdas, Bookmark nameBookmarks,
 			Integer position) {
 		try {
-			// XWPFTableRow rowUsar = new XWPFTableRow(row.getCtRow(), row.getTable());
-			Set<String> keys = nameBookmarks.keySet();
-			// for (int i = 0; i < celdas.size(); i++)
-			// rowUsar.removeCell(0);
+			String[] keys = nameBookmarks.getBookmarks();
 			XWPFTableRow rowUsar = null;
 			for (int pos = 0; pos < celdas.size(); pos++) {
 				XWPFTableCell cell = celdas.get(pos);
@@ -141,7 +136,7 @@ public class DocX extends Poi {
 										putStyleRun(run, p.getRuns().get(0));
 									}
 								}
-								run.setText(valid.cast(nameBookmarks.get(key), String.class), 0);
+								run.setText(valid.cast(nameBookmarks.getValue(key), String.class), 0);
 								break;
 							}
 						}
@@ -392,7 +387,6 @@ public class DocX extends Poi {
 		PdfOptions options = PdfOptions.create();
 		OutputStream out = new FileOutputStream(new File(fileOut.replace("docx", "pdf")));
 		PdfConverter.getInstance().convert(document, out, options);
-		System.out.println("Done");
 		doc.close();
 		document.close();
 		out.close();
@@ -415,46 +409,46 @@ public class DocX extends Poi {
 		this.listBookmarks.add(tableBookmarks);
 	}
 
-	public void setBookmarks(Map<String, Object> bookmarks) {
+	public void setBookmarks(Bookmark bookmarks) {
 		this.bookmarks = bookmarks;
 	}
 
 	public final static void main(String... strings) {
-		Map<String, Object> maps = new HashMap<String, Object>();
-		maps.put("idTabla", 10);
-		maps.put("nombreTabla", "nombre del registro");
-		maps.put("valorTabla", "valor del registro");
-		Map<String, Object> maps2 = new HashMap<String, Object>();
-		maps2.put("idTabla", 11);
-		maps2.put("nombreTabla", "nombre del registro 2");
-		maps2.put("valorTabla", "valor del registro 2");
-		Map<String, Object> maps3 = new HashMap<String, Object>();
-		maps3.put("idTabla", 12);
-		maps3.put("nombreTabla", "nombre del registro 3");
-		maps3.put("valorTabla", "valor del registro 3");
-		Map<String, Object> maps4 = new HashMap<String, Object>();
-		maps4.put("cantidad", 2);
-		maps4.put("descripcionTabla2", "descripcion tabla 2");
-		maps4.put("valorTabla2", 1000);
-		maps4.put("subTotalTabla", 2000);
-		Map<String, Object> maps5 = new HashMap<String, Object>();
-		maps5.put("cantidad", 3);
-		maps5.put("descripcionTabla2", "descripcion tabla 3");
-		maps5.put("valorTabla2", 2000);
-		maps5.put("subTotalTabla", 6000);
-		TableBookmark tabla1 = new TableBookmark();
-		tabla1.add(maps);
-		tabla1.add(maps2);
-		tabla1.add(maps3);
-		TableBookmark tabla2 = new TableBookmark();
-		tabla2.add(maps4);
-		tabla2.add(maps5);
-		Map<String, Object> bookmarks = new HashMap<String, Object>();
-		bookmarks.put("Prueba", " valor a cambiar ");
-		bookmarks.put("between", " valor entre textos ");
-		bookmarks.put("remplazo", " valor de remplazo ");
-		bookmarks.put("totalTabla1", 20000);
-		bookmarks.put("totalTabla", 100000);
+		Bookmark bookmark = Bookmark.instance()
+		.add("idTabla", 10)
+		.add("nombreTabla", "nombre del registro")
+		.add("valorTabla", "valor del registro");
+		Bookmark bookmark2 = Bookmark.instance()
+		.add("idTabla", 11)
+		.add("nombreTabla", "nombre del registro 2")
+		.add("valorTabla", "valor del registro 2");
+		Bookmark bookmark3 = Bookmark.instance()
+		.add("idTabla", 12)
+		.add("nombreTabla", "nombre del registro 3")
+		.add("valorTabla", "valor del registro 3");
+		Bookmark bookmark4 = Bookmark.instance()
+		.add("cantidad", 2)
+		.add("descripcionTabla2", "descripcion tabla 2")
+		.add("valorTabla2", 1000)
+		.add("subTotalTabla", 2000);
+		Bookmark bookmark5 = Bookmark.instance()
+		.add("cantidad", 3)
+		.add("descripcionTabla2", "descripcion tabla 3")
+		.add("valorTabla2", 2000)
+		.add("subTotalTabla", 6000);
+		TableBookmark tabla1 = TableBookmark.instance()
+		.add(bookmark)
+		.add(bookmark2)
+		.add(bookmark3);
+		TableBookmark tabla2 = TableBookmark.instance();
+		tabla2.add(bookmark4);
+		tabla2.add(bookmark5);
+		Bookmark bookmarks = Bookmark.instance()
+		.add("Prueba", " valor a cambiar ")
+		.add("between", " valor entre textos ")
+		.add("remplazo", " valor de remplazo ")
+		.add("totalTabla1", 20000)
+		.add("totalTabla", 100000);
 		DocX doc = new DocX();
 		doc.addTableBookmark(tabla1);
 		doc.addTableBookmark(tabla2);

@@ -3,7 +3,6 @@ package org.pyt.common.poi.docs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Se encarga de almacenar todos los bookmark con sus valores en lista que se
@@ -13,9 +12,13 @@ import java.util.Set;
  * @since 01-08-2018
  */
 public class TableBookmark {
-	private List<Map<String, Object>> list;
+	private List<Bookmark> list;
 	private String[] bookmarks;
 	private Integer position;
+	
+	public final static TableBookmark instance() {
+		return new TableBookmark();
+	}
 
 	/**
 	 * Agrega una nueva asociacion de bookmark y valor
@@ -23,15 +26,15 @@ public class TableBookmark {
 	 * @param mapa
 	 *            {@link Map} {@link String} {@link Object}
 	 */
-	public final <T extends Object> void add(Map<String, Object> mapa) {
+	public final <T extends Object> TableBookmark add(Bookmark mapa) {
 		if (list == null) {
-			list = new ArrayList<Map<String, Object>>();
+			list = new ArrayList<Bookmark>();
 		}
 		if (bookmarks == null) {
-			Set<String> keys = mapa.keySet();
-			bookmarks = keys.toArray(new String[keys.size()]);
+			bookmarks = mapa.getBookmarks();
 		}
 		list.add(mapa);
+		return this;
 	}
 
 	/**
@@ -39,7 +42,7 @@ public class TableBookmark {
 	 * 
 	 * @return {@link Map}
 	 */
-	public final Map<String, Object> next() {
+	public final Bookmark next() {
 		if (position == null) {
 			position = 0;
 		} else if (position + 1 < list.size()) {
@@ -67,7 +70,7 @@ public class TableBookmark {
 			return null;
 		if (list.size() >= position)
 			return null;
-		return (T) list.get(position).get(bookmark);
+		return (T) list.get(position).getValue(bookmark);
 	}
 
 	/**
@@ -102,7 +105,7 @@ public class TableBookmark {
 		return position;
 	}
 
-	public final Map<String, Object> getMap(Integer pos) {
+	public final Bookmark getMap(Integer pos) {
 		return list.get(pos);
 	}
 
