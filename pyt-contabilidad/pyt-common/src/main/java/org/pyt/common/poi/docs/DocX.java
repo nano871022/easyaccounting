@@ -44,6 +44,9 @@ public class DocX extends Poi {
 				docx = new XWPFDocument(new FileInputStream(file));
 				for (String key : bookmarks.keySet()) {
 					XWPFParagraph parrafo = searchBookmarkP(docx.getParagraphs(), key);
+					if (parrafo == null) {
+						parrafo = searchBookmarkT(docx.getTables(), key);
+					}
 					if (parrafo != null) {
 						replaceBookmark(parrafo, key, bookmarks.get(key));
 					}
@@ -76,7 +79,7 @@ public class DocX extends Poi {
 			XWPFTableRow row = searchTabla(marks);
 			while (table.hasNext()) {
 				Map<String, Object> map = table.next();
-				cells(row, row.getTableCells(), map, table.getPosition()+1);
+				cells(row, row.getTableCells(), map, table.getPosition() + 1);
 			}
 		}
 	}
@@ -277,8 +280,38 @@ public class DocX extends Poi {
 		for (XWPFParagraph p : list) {
 			List<CTBookmark> lists = p.getCTP().getBookmarkStartList();
 			for (CTBookmark bookMark : lists) {
-				if (bookMark.getName().contains(nameBookmark)) {
+				if (bookMark.getName().contentEquals(nameBookmark)) {
 					return p;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Se encarga de buscar dentro de las tabals un bookname
+	 * 
+	 * @param list
+	 *            List of XWPFTable
+	 * @param nameBookmark
+	 *            String
+	 * @return
+	 */
+	private final XWPFParagraph searchBookmarkT(List<XWPFTable> list, String nameBookmark) {
+		for (XWPFTable t : list) {
+			List<XWPFTableRow> rows = t.getRows();
+			for (XWPFTableRow row : rows) {
+				List<XWPFTableCell> cells = row.getTableCells();
+				for (XWPFTableCell cell : cells) {
+					List<XWPFParagraph> paragraphs = cell.getParagraphs();
+					for (XWPFParagraph p : paragraphs) {
+						List<CTBookmark> lists = p.getCTP().getBookmarkStartList();
+						for (CTBookmark bookMark : lists) {
+							if (bookMark.getName().contentEquals(nameBookmark)) {
+								return p;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -396,6 +429,8 @@ public class DocX extends Poi {
 		bookmarks.put("Prueba", " valor a cambiar ");
 		bookmarks.put("between", " valor entre textos ");
 		bookmarks.put("remplazo", " valor de remplazo ");
+		bookmarks.put("totalTabla1", 20000);
+		bookmarks.put("totalTabla", 100000);
 		DocX doc = new DocX();
 		doc.addTableBookmark(tabla1);
 		doc.addTableBookmark(tabla2);
