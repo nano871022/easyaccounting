@@ -62,6 +62,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void notificar(String msn) {
 		System.out.println(msn);
 		comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, msn);
@@ -73,6 +74,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		System.err.println(error);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void error(String msn) {
 		Log.logger(msn);
 		System.err.println(msn);

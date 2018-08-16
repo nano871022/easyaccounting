@@ -50,6 +50,24 @@ public final class SelectList {
 	}
 
 	/**
+	 * Se encarga de poner una lista de tipo string dentro de un choicebox de tipo
+	 * string
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param lista
+	 *            {@link List} of {@link String}
+	 */
+	public final static void put(ChoiceBox<String> choiceBox, List<String> lista) {
+		choiceBox.getItems().clear();
+		ObservableList<String> observable = choiceBox.getItems();
+		observable.add(AppConstants.SELECCIONE);
+		for (String valor : lista) {
+			observable.add(valor);
+		}
+	}
+
+	/**
 	 * Se encarga de configurar el choice box para agregar los registros a ser
 	 * seleccionados, se agrega es el nombre del mapa
 	 * 
@@ -88,6 +106,14 @@ public final class SelectList {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Se encarga de obtener la opcion seleccionada en el choice box
+	 * @param choiceBox {@link ChoiceBox}
+	 * @return {@link String}
+	 */
+	public final static String get(ChoiceBox<String> choiceBox) {
+		return choiceBox.getValue();
 	}
 
 	/**
