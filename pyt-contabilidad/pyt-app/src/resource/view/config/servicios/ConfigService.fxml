@@ -12,13 +12,13 @@
 	<bottom>
 		<HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="40.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button mnemonicParsing="false" text="Anterior" onAction="#anterior">
+				<Button mnemonicParsing="false" text="Anterior" onAction="#anterior" fx:id="btnAnterior">
 					<HBox.margin>
 						<Insets right="10.0" fx:id="x1" />
 					</HBox.margin>
 				</Button>
-				<Button alignment="CENTER" mnemonicParsing="false" text="Siguiente" HBox.margin="$x1" onAction="#siguiente" />
-				<Button mnemonicParsing="false" text="Cancelar" onAction="#cancelar"/>
+				<Button alignment="CENTER" mnemonicParsing="false" text="Siguiente" HBox.margin="$x1" onAction="#siguiente" fx:id="btnSiguiente" />
+				<Button mnemonicParsing="false" text="Cancelar" onAction="#cancelar" fx:id="tbnCancelar" />
 			</children>
 		</HBox>
 	</bottom>
@@ -49,18 +49,18 @@
 										<TextField fx:id="nameMarcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1"
 											GridPane.rowIndex="1" />
 										<Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#agregar"
-											text="Agregar" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-										<TableView fx:id="lstMarcadores" maxHeight="1.7976931348623157E308" maxWidth="227.0" prefHeight="163.0" prefWidth="227.0" GridPane.columnIndex="0"
-											GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+											text="Agregar" GridPane.columnIndex="2" GridPane.rowIndex="1" onMouseClicked="#addMarcador" />
+										<TableView fx:id="lstMarcadores" maxHeight="1.7976931348623157E308" maxWidth="227.0" prefHeight="163.0" prefWidth="227.0"
+											GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
 											<columns>
-												<TableColumn maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="-1.0" text="Marcador" />
+												<TableColumn maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="-1.0" text="Marcador" fx:id="colMarcador" />
 											</columns>
 										</TableView>
 										<HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="479.0"
 											GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
 											<children>
-												<Button mnemonicParsing="false" text="Guardar" HBox.margin="$x1"  onAction="#guardar"/>
-												<Button mnemonicParsing="false" text="Eliminar" onAction="#eliminar"/>
+												<Button mnemonicParsing="false" text="Guardar" HBox.margin="$x1" onAction="#guardar" fx:id="btnGuardar" />
+												<Button mnemonicParsing="false" text="Eliminar" onAction="#eliminar"  fx:id="btnEliminar" />
 											</children>
 										</HBox>
 										<Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Nombre Archivo" GridPane.columnIndex="0"
@@ -104,7 +104,8 @@
 											GridPane.rowIndex="2" />
 										<Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#agregar"
 											text="Agregar" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-										<TableView fx:id="lstServicioCampo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="3">
+										<TableView fx:id="lstServicioCampo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="3"
+											GridPane.rowIndex="3">
 											<columns>
 												<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="151.0" text="Servicio" />
 												<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="134.0" text="Columna" />

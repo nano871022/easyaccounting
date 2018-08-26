@@ -47,6 +47,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 		return lista;
 	}
 
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = co.com.arquitectura.annotation.proccessor.Services.scope.EJB, tipo = co.com.arquitectura.annotation.proccessor.Services.kind.PUBLIC, alias = "Documento", descripcion = "Se encarga de obtner el documentos segun objeto lleno, debe contener el id.")
 	public DocumentoDTO getDocumento(DocumentoDTO dto) throws DocumentosException {
 		if (dto == null)
 			throw new DocumentosException("El objeto documento se encuentra vacio.");
@@ -92,7 +93,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 			throw new DocumentosException(e.getMensage(), e);
 		}
 	}
-
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = co.com.arquitectura.annotation.proccessor.Services.scope.EJB, tipo = co.com.arquitectura.annotation.proccessor.Services.kind.PUBLIC, alias = "Detalle concepto", descripcion = "Se encarga de obtner todos los detalles de concepto asociados al documento.")
 	public List<DetalleConceptoDTO> getAllDetalles(DetalleConceptoDTO dto) throws DocumentosException {
 		List<DetalleConceptoDTO> lista = new ArrayList<DetalleConceptoDTO>();
 		if (dto == null)
@@ -335,7 +336,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 		}
 		return cantidad;
 	}
-
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = co.com.arquitectura.annotation.proccessor.Services.scope.EJB, tipo = co.com.arquitectura.annotation.proccessor.Services.kind.PUBLIC, alias = "Detalle Documento", descripcion = "Se encarga de obtener los detalles asociados al documento.")
 	@Override
 	public List<DetalleDTO> getAllDetalles(DetalleDTO dto) throws DocumentosException {
 		List<DetalleDTO> lista = new ArrayList<DetalleDTO>();
@@ -412,98 +413,110 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 		}
 
 	}
-
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = co.com.arquitectura.annotation.proccessor.Services.scope.EJB, tipo = co.com.arquitectura.annotation.proccessor.Services.kind.PUBLIC, alias = "Detalle Contable", descripcion = "Se encarga de obtner el detalle contable asociados al documento.")
 	@Override
 	public List<DetalleContableDTO> getAllDetalles(DetalleContableDTO dto) throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle contable.");
 		try {
 			return querySvc.gets(dto);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
 		}
 	}
 
 	@Override
 	public List<DetalleContableDTO> getDetalles(DetalleContableDTO dto, Integer init, Integer end)
 			throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle contable.");
 		try {
-			return querySvc.gets(dto,init,end);
+			return querySvc.gets(dto, init, end);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
 		}
 	}
 
 	@Override
 	public DetalleContableDTO getDetalle(DetalleContableDTO dto) throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle contable.");
 		try {
 			return querySvc.get(dto);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
 		}
 	}
 
 	@Override
 	public Integer getTotalCount(DetalleContableDTO dto) throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle contable.");
 		try {
 			return querySvc.countRow(dto);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
 		}
 	}
 
 	@Override
 	public void update(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
-		if(StringUtils.isBlank(dto.getCodigo())) throw new DocumentosException("El detalle contable no se suministro.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle contable.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new DocumentosException("El detalle contable no se suministro.");
 		try {
 			querySvc.set(dto, user);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
 		}
 	}
 
 	@Override
 	public DetalleContableDTO insert(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
-		if(StringUtils.isNotBlank(dto.getCodigo())) throw new DocumentosException("El detalle contable no se suministro.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle contable.");
+		if (StringUtils.isNotBlank(dto.getCodigo()))
+			throw new DocumentosException("El detalle contable no se suministro.");
 		try {
 			return querySvc.set(dto, user);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
 		}
 	}
 
 	@Override
 	public void delete(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle contable.");
-		if(StringUtils.isBlank(dto.getCodigo())) throw new DocumentosException("El detalle contable no se suministro.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle contable.");
+		if (StringUtils.isBlank(dto.getCodigo()))
+			throw new DocumentosException("El detalle contable no se suministro.");
 		try {
 			querySvc.del(dto, user);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.",e);
+			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
 		}
 	}
 
 	@Override
 	public Integer getTotalRows(DetalleDTO filter) throws DocumentosException {
-		if(filter == null)throw new DocumentosException("No se suministro el detalle.");
+		if (filter == null)
+			throw new DocumentosException("No se suministro el detalle.");
 		try {
 			return querySvc.countRow(filter);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en el conteo de los detalles.",e);
+			throw new DocumentosException("Se presento error en el conteo de los detalles.", e);
 		}
 	}
 
 	@Override
 	public Integer getTotalCount(DetalleConceptoDTO dto) throws DocumentosException {
-		if(dto == null)throw new DocumentosException("No se suministro el detalle concepto.");
+		if (dto == null)
+			throw new DocumentosException("No se suministro el detalle concepto.");
 		try {
 			return querySvc.countRow(dto);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en el conteo de los detalles concepto.",e);
+			throw new DocumentosException("Se presento error en el conteo de los detalles concepto.", e);
 		}
 	}
 

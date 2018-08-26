@@ -40,6 +40,12 @@
 			<version>${project.version}</version>
 			<scope>${project.scope}</scope>
 		</dependency>
+		<dependency>
+			<groupId>co.com.arquitectura.librerias</groupId>
+			<artifactId>arquitecrura-librerias</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>${project.scope}</scope>
+		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>com.oracle</groupId> -->
 		<!-- <artifactId>javafx</artifactId> -->

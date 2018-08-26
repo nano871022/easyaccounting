@@ -48,6 +48,27 @@ public final class SelectList {
 		} catch (Exception e) {
 		}
 	}
+	/**
+	 * Se encarga de limpiiar la lista de items y agrega string seleccione
+	 * @param choiceBox {@link ChoiceBox}
+	 */
+	public final static <S extends Object> void clear(ChoiceBox<S> choiceBox) {
+		choiceBox.getItems().clear();
+		choiceBox.getItems().add((S) AppConstants.SELECCIONE);
+	}
+	/**
+	 * Se encarga de cargar registro por registro e indicar que se seleccione el primer registro por defecto
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param value {@link Object}
+	 */
+	public final static <S extends Object, V extends Object> void add(ChoiceBox<S> choiceBox, V value) {
+		ObservableList<S> observable = choiceBox.getItems();
+		observable.add((S) value);
+		try {
+			choiceBox.getSelectionModel().selectFirst();
+		} catch (Exception e) {
+		}
+	}
 
 	/**
 	 * Se encarga de poner una lista de tipo string dentro de un choicebox de tipo
@@ -107,9 +128,12 @@ public final class SelectList {
 		}
 		return null;
 	}
+
 	/**
 	 * Se encarga de obtener la opcion seleccionada en el choice box
-	 * @param choiceBox {@link ChoiceBox}
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
 	 * @return {@link String}
 	 */
 	public final static String get(ChoiceBox<String> choiceBox) {

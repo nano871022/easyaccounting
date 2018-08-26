@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.common.Table;
+import org.pyt.common.constants.AppConstants;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
@@ -17,14 +19,29 @@ import com.pyt.service.dto.MarcadorServicioDTO;
  */
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 
+import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
+import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
 @FXMLFile(path = "view/config/servicios", file = "ConfigService.fxml")
 public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
+	@FXML
+	private Button btnAnterior;
+	@FXML
+	private Button btnEliminar;
+	@FXML
+	private Button btnGuardar;
+	@FXML
+	private Button btnSiguiente;
+	@FXML
+	private Button btnCancelar;
 	@FXML
 	private Tab tabServicios;
 	@FXML
@@ -39,6 +56,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private TextField nameFiler;
 	@FXML
 	private TableView<String> lstMarcadores;
+	@FXML
+	private TableColumn<String, String> colMarcador;
 	@FXML
 	private TableView<ServicioCampoBusquedaDTO> lstServicioCampo;
 	@FXML
@@ -56,6 +75,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private List<String> campos;
 	private List<ServicioCampoBusquedaDTO> serviciosCampoBusqueda;
 	private List<MarcadorServicioDTO> marcadoresServicios;
+	private List<ServicePOJO> serviciosPOJO;
 	private Integer posicion;
 	private Integer max;
 	public final static Integer TAB_MARCADOR = 1;
@@ -72,25 +92,71 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		marcadoresServicios = new ArrayList<MarcadorServicioDTO>();
 		posicion = TAB_MARCADOR;
 		max = TAB_PROBAR;
+		hiddenTabs();
+		hiddenBtns();
+		configColmn();
+		loadServices();
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
+	private void loadServices() {
+		try {
+			AbstractListFromProccess<ServicePOJO> list = (AbstractListFromProccess) this.getClass()
+					.forName(AppConstants.PATH_LIST_SERVICE).getConstructor().newInstance();
+			serviciosPOJO = list.getList();
+			SelectList.clear(lstServicios);
+			for (ServicePOJO sp : serviciosPOJO) {
+				SelectList.add(lstServicios, sp.getAlias());
+			}
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	private void configColmn() {
+		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue()));
+	}
+
+	private void hiddenTabs() {
+		// tabProbar.setDisable(true);
+		tabServicios.setDisable(true);
+		tabAsociaciones.setDisable(true);
+	}
+
+	private void hiddenBtns() {
+		btnAnterior.setVisible(false);
+		btnEliminar.setVisible(false);
+		btnGuardar.setVisible(false);
 	}
 
 	private void tabView() {
-		tabMarcadores.setDisable(posicion.compareTo(TAB_MARCADOR) == 0);
-		tabServicios.setDisable(posicion.compareTo(TAB_SERVICIO_CAMPO) == 0);
-		tabAsociaciones.setDisable(posicion.compareTo(TAB_ASOCIAR_MARCADOR) == 0);
-		tabProbar.setDisable(posicion.compareTo(TAB_PROBAR) == 0);
+		tabMarcadores.setDisable(posicion.compareTo(TAB_MARCADOR) != 0);
+		tabServicios.setDisable(posicion.compareTo(TAB_SERVICIO_CAMPO) != 0);
+		tabAsociaciones.setDisable(posicion.compareTo(TAB_ASOCIAR_MARCADOR) != 0);
+		// tabProbar.setDisable(posicion.compareTo(TAB_PROBAR) != 0);
+		if (posicion.compareTo(TAB_MARCADOR) == 0) {
+			tabMarcadores.getTabPane().getSelectionModel().select(tabMarcadores);
+		}
+		if (posicion.compareTo(TAB_SERVICIO_CAMPO) == 0) {
+			tabServicios.getTabPane().getSelectionModel().select(tabServicios);
+		}
+		if (posicion.compareTo(TAB_ASOCIAR_MARCADOR) == 0) {
+			tabAsociaciones.getTabPane().getSelectionModel().select(tabAsociaciones);
+		}
 	}
 
-	private void addMarcador() {
+	public void addMarcador() {
 		if (posicion.compareTo(TAB_MARCADOR) != 0)
 			return;
 		String marcador = nameMarcador.getText();
 		if (StringUtils.isNotBlank(marcador)) {
 			marcadores.add(marcador);
+			Table.put(lstMarcadores, marcadores);
+			nameMarcador.clear();
 		}
 	}
 
-	private void delMarcador() {
+	public void delMarcador() {
 		if (posicion.compareTo(TAB_MARCADOR) != 0)
 			return;
 		String marcador = lstMarcadores.getSelectionModel().getSelectedItem();
@@ -99,7 +165,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
-	private void addServicioCampo() {
+	public void addServicioCampo() {
 		if (posicion.compareTo(TAB_SERVICIO_CAMPO) != 0)
 			return;
 
@@ -111,11 +177,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		serviciosCampoBusqueda.add(serviceField);
 	}
 
-	private void delServicioCampo() {
+	public void delServicioCampo() {
 		if (posicion.compareTo(TAB_SERVICIO_CAMPO) != 0)
 			return;
 		String service = SelectList.get(servicio);
-
 	}
 
 	public void agregar() {
@@ -130,11 +195,17 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	}
 
+	private void mostratBotonesMov() {
+		btnSiguiente.setVisible(posicion < max);
+		btnAnterior.setVisible(posicion > TAB_MARCADOR);
+	}
+
 	public void anterior() {
 		if (posicion > TAB_MARCADOR) {
 			posicion--;
 		}
 		tabView();
+		mostratBotonesMov();
 	}
 
 	public void siguiente() {
@@ -142,6 +213,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			posicion++;
 		}
 		tabView();
+		mostratBotonesMov();
 	}
 
 	public void cancelar() {

@@ -30,6 +30,18 @@
 			<version>${project.version}</version>
 			<scope>${project.scope}</scope>
 		</dependency>
+		<dependency>
+			<groupId>co.com.arquitectura.proccessor</groupId>
+			<artifactId>arquitectura-proccessor</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>co.com.arquitectura.anotaciones</groupId>
+			<artifactId>arquitetura-anotaciones</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -40,6 +52,12 @@
 				<configuration>
 					<source>${project.build.compile.version}</source>
 					<target>${project.build.compile.version}</target>
+					<generatedSourcesDirectory>${project.build.directory}/generated-resources/</generatedSourcesDirectory>
+					<annotationProcessors>
+						<annotationProcessor>
+							co.com.arquitectura.proccessor.implement.ServiceProccessor
+						</annotationProcessor>
+					</annotationProcessors>
 				</configuration>
 			</plugin>
 		</plugins>
