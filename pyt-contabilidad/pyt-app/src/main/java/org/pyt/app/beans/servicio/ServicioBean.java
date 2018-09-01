@@ -56,7 +56,7 @@ public class ServicioBean extends ABean<ServicioDTO> {
 			public List<ServicioDTO> getList(ServicioDTO filter, Integer page, Integer rows) {
 				List<ServicioDTO> lista = new ArrayList<ServicioDTO>();
 				try {
-					lista = serviciosSvc.getServicios(filter, page, rows);
+					lista = serviciosSvc.getServicios(filter, page-1, rows);
 				} catch (ServiciosException e) {
 					error(e);
 				}

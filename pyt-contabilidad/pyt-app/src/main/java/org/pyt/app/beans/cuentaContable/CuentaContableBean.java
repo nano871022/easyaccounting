@@ -14,6 +14,7 @@ import org.pyt.common.exceptions.CuentaContableException;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CuentaContableDTO;
+import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.ICuentaContableSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
@@ -61,16 +62,19 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	public void initialize() {
 		NombreVentana = "Lista de Cuenta Contable";
 		registro = new CuentaContableDTO();
-		registro.setTipoCuenta(new ParametroDTO());
+		registro.setNaturaleza(new ParametroDTO());
+		registro.setTipoPlanContable(new ParametroDTO());
+		registro.setTipo(new ParametroDTO());
+		registro.setEmpresa(new  EmpresaDTO());
 		ParametroDTO pEstado = new ParametroDTO();
 		try {
-			listTipoCuentas = parametroSvc.getAllParametros(pEstado, ParametroConstants.GRUPO_TIPO_CUENTA_CONTABLE);
+			listTipoCuentas = parametroSvc.getAllParametros(pEstado, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
 		} catch (ParametroException e) {
 			error(e);
 		}
 		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
 		tipoCuentaContables.getSelectionModel().selectFirst();
-		tipoCuentaContable.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoCuenta().getNombre()));
+		tipoCuentaContable.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
 		lazy();
 	}
 
@@ -83,7 +87,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 			public List<CuentaContableDTO> getList(CuentaContableDTO filter, Integer page, Integer rows) {
 				List<CuentaContableDTO> lista = new ArrayList<CuentaContableDTO>();
 				try {
-					lista = cuentaContableSvc.getCuentaContables(filter, page, rows);
+					lista = cuentaContableSvc.getCuentaContables(filter, page-1, rows);
 				} catch (CuentaContableException e) {
 					error(e);
 				}
@@ -111,7 +115,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 					filtro.setAsociado(asociado.getText());
 				}
 				if (StringUtils.isNotBlank(tipoCuentaContables.getValue())) {
-					filtro.setTipoCuenta(SelectList.get(tipoCuentaContables, listTipoCuentas, "nombre"));
+					filtro.setTipoPlanContable(SelectList.get(tipoCuentaContables, listTipoCuentas, "nombre"));
 				}
 				return filtro;
 			}

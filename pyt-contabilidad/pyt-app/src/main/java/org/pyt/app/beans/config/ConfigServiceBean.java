@@ -112,7 +112,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			error(e);
 		}
 	}
-
+r
 	private void configColmn() {
 		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue()));
 	}

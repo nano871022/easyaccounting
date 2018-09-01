@@ -54,7 +54,7 @@ public class RepuestoBean extends ABean<RepuestoDTO> {
 			public List<RepuestoDTO> getList(RepuestoDTO filter, Integer page, Integer rows) {
 				List<RepuestoDTO> lista = new ArrayList<RepuestoDTO>();
 				try {
-					lista = repuestoSvc.getRepuestos(filter, page, rows);
+					lista = repuestoSvc.getRepuestos(filter, page-1, rows);
 				} catch (RepuestoException e) {
 					error(e);
 				}

@@ -10,10 +10,18 @@ import org.pyt.common.common.ADto;
 public class ActividadIcaDTO extends ADto{
 	private static final long serialVersionUID = 5006959473201225898L;
 	private String codigo;
+	private String codigoIca;
 	private String nombre;
 	private String descripcion;
 	private String base;
 	private String tarifa;
+	
+	public String getCodigoIca() {
+		return codigoIca;
+	}
+	public void setCodigoIca(String codigoIca) {
+		this.codigoIca = codigoIca;
+	}
 	public String getCodigo() {
 		return codigo;
 	}

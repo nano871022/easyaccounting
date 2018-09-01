@@ -56,6 +56,8 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	@FXML
 	private Button btnMod;
 	@FXML
+	private Button btnDel;
+	@FXML
 	private HBox paginador;
 	@FXML
 	private TableColumn<ConceptoDTO, String> columnEmpresa;
@@ -98,7 +100,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 			public List<ConceptoDTO> getList(ConceptoDTO filter, Integer page, Integer rows) {
 				List<ConceptoDTO> lista = new ArrayList<ConceptoDTO>();
 				try {
-					lista = documentoSvc.getConceptos(filter, page, rows);
+					lista = documentoSvc.getConceptos(filter, page-1, rows);
 				} catch (DocumentosException e) {
 					error(e);
 				}
@@ -138,6 +140,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {

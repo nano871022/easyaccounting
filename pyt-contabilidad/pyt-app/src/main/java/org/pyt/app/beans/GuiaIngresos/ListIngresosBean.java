@@ -66,7 +66,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 			public List<IngresoDTO> getList(IngresoDTO filter, Integer page, Integer rows) {
 				List<IngresoDTO> lista = new ArrayList<IngresoDTO>();
 				try {
-					lista = ingresosSvc.getIngresos(filter, page, rows);
+					lista = ingresosSvc.getIngresos(filter, page-1, rows);
 				} catch (IngresoException e) {
 					error(e);
 				}

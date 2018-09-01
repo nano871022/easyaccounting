@@ -52,6 +52,8 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	@FXML
 	private Button btnMod;
 	@FXML
+	private Button btnDel;
+	@FXML
 	private HBox paginador;
 	@FXML
 	private TableColumn<CentroCostoDTO, String> estados;
@@ -101,7 +103,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 			public List<CentroCostoDTO> getList(CentroCostoDTO filter, Integer page, Integer rows) {
 				List<CentroCostoDTO> lista = new ArrayList<CentroCostoDTO>();
 				try {
-					lista = centroCostoSvc.getCentroCostos(filter, page, rows);
+					lista = centroCostoSvc.getCentroCostos(filter, page-1, rows);
 				} catch (CentroCostosException e) {
 					error(e);
 				}
@@ -145,6 +147,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {

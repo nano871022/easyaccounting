@@ -29,6 +29,8 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 	@FXML
 	private TextField nombre;
 	@FXML
+	private TextField codigoIca;
+	@FXML
 	private TextField descripcion;
 	@FXML
 	private TextField tarifa;
@@ -54,6 +56,7 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 			registro = new ActividadIcaDTO();
 		}
 		registro.setCodigo(codigo.getText());
+		registro.setCodigoIca(codigoIca.getText());
 		registro.setNombre(nombre.getText());
 		registro.setDescripcion(descripcion.getText());
 		registro.setBase(base.getText());
@@ -64,6 +67,7 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 		if (registro == null)
 			return;
 		codigo.setText(registro.getCodigo());
+		codigoIca.setText(registro.getCodigoIca());
 		nombre.setText(registro.getNombre());
 		descripcion.setText(registro.getDescripcion());
 		base.setText(registro.getBase());
@@ -92,6 +96,7 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 		valid &= StringUtils.isNotBlank(registro.getDescripcion());
 		valid &= StringUtils.isNotBlank(registro.getBase());
 		valid &= StringUtils.isNotBlank(registro.getTarifa());
+		valid &= StringUtils.isNotBlank(registro.getCodigoIca());
 		return valid;
 	}
 

@@ -115,7 +115,7 @@ public class BancoBean extends ABean<BancoDTO> {
 			public List<BancoDTO> getList(BancoDTO filter, Integer page, Integer rows) {
 				List<BancoDTO> lista = new ArrayList<BancoDTO>();
 				try {
-					lista = bancoSvc.getBancos(filter, page, rows);
+					lista = bancoSvc.getBancos(filter, page-1, rows);
 				} catch (BancoException e) {
 					error(e);
 				}

@@ -33,9 +33,13 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 	@FXML
 	private TextField nombre;
 	@FXML
+	private TextField codigoIca;
+	@FXML
 	private TextField descripcion;
 	@FXML
 	private Button btnMod;
+	@FXML
+	private Button btnDel;
 	@FXML
 	private HBox paginador;
 	private DataTableFXML<ActividadIcaDTO, ActividadIcaDTO> dt;
@@ -56,7 +60,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 			public List<ActividadIcaDTO> getList(ActividadIcaDTO filter, Integer page, Integer rows) {
 				List<ActividadIcaDTO> lista = new ArrayList<ActividadIcaDTO>();
 				try {
-					lista = actividadIcaSvc.getActividadesIca(filter, page, rows);
+					lista = actividadIcaSvc.getActividadesIca(filter, page-1, rows);
 				} catch (ActividadIcaException e) {
 					error(e);
 				}
@@ -83,6 +87,9 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 				if (StringUtils.isNotBlank(descripcion.getText())) {
 					filtro.setDescripcion(descripcion.getText());
 				}
+				if(StringUtils.isNotBlank(codigoIca.getText())) {
+					filtro.setCodigoIca(codigoIca.getText());
+				}
 				return filtro;
 			}
 		};
@@ -90,6 +97,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {

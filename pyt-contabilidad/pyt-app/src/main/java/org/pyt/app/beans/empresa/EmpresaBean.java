@@ -38,6 +38,8 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	@FXML
 	private Button btnMod;
 	@FXML
+	private Button btnDel;
+	@FXML
 	private HBox paginador;
 	private DataTableFXML<EmpresaDTO, EmpresaDTO> dt;
 
@@ -57,7 +59,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 			public List<EmpresaDTO> getList(EmpresaDTO filter, Integer page, Integer rows) {
 				List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
 				try {
-					lista = empresaSvc.getEmpresas(filter, page, rows);
+					lista = empresaSvc.getEmpresas(filter, page-1, rows);
 				} catch (EmpresasException e) {
 					error(e);
 				}
@@ -88,6 +90,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {

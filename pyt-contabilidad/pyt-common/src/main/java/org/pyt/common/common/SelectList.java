@@ -8,9 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.reflection.ReflectionUtils;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
+import javafx.util.StringConverter;
 
 /**
  * Se encargo de cargar registros a un choicebox opcion seleccionable
@@ -48,18 +50,26 @@ public final class SelectList {
 		} catch (Exception e) {
 		}
 	}
+
 	/**
 	 * Se encarga de limpiiar la lista de items y agrega string seleccione
-	 * @param choiceBox {@link ChoiceBox}
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
 	 */
 	public final static <S extends Object> void clear(ChoiceBox<S> choiceBox) {
 		choiceBox.getItems().clear();
 		choiceBox.getItems().add((S) AppConstants.SELECCIONE);
 	}
+
 	/**
-	 * Se encarga de cargar registro por registro e indicar que se seleccione el primer registro por defecto
-	 * @param choiceBox {@link ChoiceBox}
-	 * @param value {@link Object}
+	 * Se encarga de cargar registro por registro e indicar que se seleccione el
+	 * primer registro por defecto
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param value
+	 *            {@link Object}
 	 */
 	public final static <S extends Object, V extends Object> void add(ChoiceBox<S> choiceBox, V value) {
 		ObservableList<S> observable = choiceBox.getItems();
@@ -178,6 +188,7 @@ public final class SelectList {
 	public final static <S, L, N extends Object, T extends ADto, M extends ADto> void selectItem(ChoiceBox<S> choiceBox,
 			List<M> list, String nombreCampoList, T obj, String nombreCampoDto) {
 		Boolean select = false;
+		ValidateValues val = new ValidateValues();
 		try {
 			ObservableList<S> values = choiceBox.getItems();
 			if (obj != null) {
@@ -188,7 +199,7 @@ public final class SelectList {
 					fieldValue = dto.get(nombreCampoList);
 					fieldValueList = dto.get(nombreCampoList);
 					fieldValueDto = obj.get(nombreCampoDto);
-					if (fieldValueList == fieldValueDto) {
+					if (val.validate(fieldValueList, fieldValueDto)) {
 						for (S valuee : values) {
 							if (valuee == fieldValue) {
 								choiceBox.getSelectionModel().select(valuee);
@@ -202,6 +213,8 @@ public final class SelectList {
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		} catch (ReflectionException e) {
+			Log.logger(e);
+		} catch (ValidateValueException e) {
 			Log.logger(e);
 		}
 	}
@@ -311,6 +324,26 @@ public final class SelectList {
 		if (!select) {
 			choiceBox.getSelectionModel().selectFirst();
 		}
+	}
 
+	public final static <S> void addItems(ChoiceBox<S> choiceBox, List<S> list, String... campos) {
+		choiceBox.setConverter(new StringConverter<S>() {
+			private StringBuilder name;
+			@Override
+			public String toString(S object) {
+				name = new StringBuilder();
+				for(String campo : campos) {
+					try {
+						name.append(ReflectionUtils.getValueField(object, campo).toString());
+					} catch (ReflectionException e) {
+					}
+				}
+				return name.toString();
+			}
+			@Override
+			public S fromString(String string) {
+				return null;
+			}
+		});
 	}
 }

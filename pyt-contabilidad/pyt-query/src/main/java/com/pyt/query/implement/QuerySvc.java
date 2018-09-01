@@ -142,7 +142,7 @@ public class QuerySvc implements IQuerySvc {
 		if (lista != null && lista.size() > 0) {
 			try {
 				fb.write(lista, (Class<T>) obj.getClass());
-				if(!nuevo)
+				if (!nuevo)
 					getDelUpd(obj, UpdClass.class, user.getNombre());
 			} catch (FileBinException e) {
 				throw new QueryException("Se presento problem aen el almacenamieto del registro.", e);
@@ -180,7 +180,7 @@ public class QuerySvc implements IQuerySvc {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private <T extends ADto, S extends ADto> void getDelUpd(T obj, Class annotation,String user) {
+	private <T extends ADto, S extends ADto> void getDelUpd(T obj, Class annotation, String user) {
 		if (annotation == null)
 			return;
 		if (obj == null)
@@ -190,10 +190,10 @@ public class QuerySvc implements IQuerySvc {
 				DelClass del = obj.getClass().getDeclaredAnnotation(DelClass.class);
 				if (del != null && del.clase() != null) {
 					S bk = (S) ReflectionUtils.instanciar().copy(obj, del.clase());
-					((IDelClass)bk).setFechaElimina(LocalDateTime.now());
-					((IDelClass)bk).setUsuarioElimina(user);
+					((IDelClass) bk).setFechaElimina(LocalDateTime.now());
+					((IDelClass) bk).setUsuarioElimina(user);
 					List<S> list = fb.loadRead(del.clase());
-					if(list == null) {
+					if (list == null) {
 						list = new ArrayList<S>();
 					}
 					list.add(bk);
@@ -202,19 +202,20 @@ public class QuerySvc implements IQuerySvc {
 			}
 			if (annotation == UpdClass.class) {
 				UpdClass upd = obj.getClass().getDeclaredAnnotation(UpdClass.class);
-				if (upd != null & upd.clase() != null) {
-					S bk = (S) ReflectionUtils.instanciar().copy(obj, upd.clase());
-					((IUpdClass)bk).setFechaActualizado(LocalDateTime.now());
-					((IUpdClass)bk).setUsuarioActualizo(user);
-					List<S> list = fb.loadRead(upd.clase());
-					if(list == null) {
-						list = new ArrayList<S>();
+				if (upd != null)
+					if (upd.clase() != null) {
+						S bk = (S) ReflectionUtils.instanciar().copy(obj, upd.clase());
+						((IUpdClass) bk).setFechaActualizado(LocalDateTime.now());
+						((IUpdClass) bk).setUsuarioActualizo(user);
+						List<S> list = fb.loadRead(upd.clase());
+						if (list == null) {
+							list = new ArrayList<S>();
+						}
+						list.add(bk);
+						fb.write(list, upd.clase());
 					}
-					list.add(bk);
-					fb.write(list, upd.clase());
-				}
 			}
-		} catch (FileBinException| SecurityException e) {
+		} catch (FileBinException | SecurityException e) {
 			Log.logger(e);
 		}
 	}

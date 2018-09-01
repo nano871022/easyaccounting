@@ -95,7 +95,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			public List<TrabajadorDTO> getList(TrabajadorDTO filter, Integer page, Integer rows) {
 				List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
 				try {
-					lista = empleadosSvc.getTrabajadores(getFilter(), page, rows);
+					lista = empleadosSvc.getTrabajadores(getFilter(), page-1, rows);
 				} catch (EmpleadoException e) {
 					error(e);
 				}
