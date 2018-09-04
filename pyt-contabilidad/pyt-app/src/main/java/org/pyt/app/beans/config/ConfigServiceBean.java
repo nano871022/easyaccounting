@@ -1,11 +1,14 @@
 package org.pyt.app.beans.config;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.Table;
 import org.pyt.common.constants.AppConstants;
@@ -22,6 +25,7 @@ import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -29,6 +33,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 
 @FXMLFile(path = "view/config/servicios", file = "ConfigService.fxml")
 public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
@@ -55,13 +60,17 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@FXML
 	private TextField nameFiler;
 	@FXML
+	private TextField columna;
+	@FXML
 	private TableView<String> lstMarcadores;
 	@FXML
 	private TableColumn<String, String> colMarcador;
 	@FXML
 	private TableView<ServicioCampoBusquedaDTO> lstServicioCampo;
 	@FXML
-	private ChoiceBox<String> lstServicios;
+	private TableColumn<String, String> colServicios;
+	@FXML
+	private ChoiceBox<ServicePOJO> lstServicios;
 	@FXML
 	private ChoiceBox<String> servicio;
 	@FXML
@@ -82,6 +91,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public final static Integer TAB_SERVICIO_CAMPO = 2;
 	public final static Integer TAB_ASOCIAR_MARCADOR = 3;
 	public final static Integer TAB_PROBAR = 4;
+	private AbstractListFromProccess<ServicePOJO> listServices;
 
 	@FXML
 	public void initialize() {
@@ -96,18 +106,44 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		hiddenBtns();
 		configColmn();
 		loadServices();
+		Table.put(lstServicioCampo, serviciosCampoBusqueda);
+		columna.setText(String.valueOf(serviciosCampoBusqueda.size()+1));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
 	private void loadServices() {
 		try {
-			AbstractListFromProccess<ServicePOJO> list = (AbstractListFromProccess) this.getClass()
-					.forName(AppConstants.PATH_LIST_SERVICE).getConstructor().newInstance();
-			serviciosPOJO = list.getList();
-			SelectList.clear(lstServicios);
-			for (ServicePOJO sp : serviciosPOJO) {
-				SelectList.add(lstServicios, sp.getAlias());
-			}
+			listServices = (AbstractListFromProccess) this.getClass().forName(AppConstants.PATH_LIST_SERVICE)
+					.getConstructor().newInstance();
+			lstServicios.converterProperty().set(new StringConverter<ServicePOJO>() {
+				@Override
+				public String toString(ServicePOJO object) {
+					try {
+						return object.getAlias() + ":" + object.getDescription();
+					} catch (Exception e) {
+						error(e);
+					}
+					return null;
+				}
+
+				@Override
+				public ServicePOJO fromString(String string) {
+					try {
+						for (ServicePOJO service : listServices.getList()) {
+							if ((service.getAlias() + ":" + service.getDescription()).equalsIgnoreCase(string)) {
+								return service;
+							}
+						}
+					} catch (Exception e) {
+						error(e);
+					}
+					return null;
+				}
+			});
+			lstServicios.getSelectionModel().selectedItemProperty()
+					.addListener((ObservableValue<? extends ServicePOJO> observable, ServicePOJO oldVal,
+							ServicePOJO newVal) -> putCamposServicio(newVal));
+			SelectList.put(lstServicios, listServices.getList());
 		} catch (Exception e) {
 			error(e);
 		}
@@ -169,12 +205,15 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (posicion.compareTo(TAB_SERVICIO_CAMPO) != 0)
 			return;
 
-		String service = SelectList.get(servicio);
-		String field = SelectList.get(campo);
-		ServicioCampoBusquedaDTO serviceField = new ServicioCampoBusquedaDTO();
-		serviceField.setCampo(field);
-		serviceField.setServicio(service);
-		serviciosCampoBusqueda.add(serviceField);
+		ServicioCampoBusquedaDTO scb = new ServicioCampoBusquedaDTO();
+		ServicePOJO s =  SelectList.get(lstServicios);
+		scb.setCampo(SelectList.get(lstCampos));
+		scb.setColumna(Integer.valueOf(columna.getText()));
+		scb.setServicio(s.getClasss().getSimpleName()+":"+s.getAlias());
+		serviciosCampoBusqueda.add(scb);
+		Table.put(lstServicioCampo, serviciosCampoBusqueda);
+		lstCampos.getSelectionModel().selectFirst();
+		columna.setText(String.valueOf(serviciosCampoBusqueda.size()+1));
 	}
 
 	public void delServicioCampo() {
@@ -183,8 +222,53 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		String service = SelectList.get(servicio);
 	}
 
-	public void agregar() {
+	@SuppressWarnings({ "unchecked", })
+	public <T extends Object> void putCamposServicio(ServicePOJO service) {
+		try {
+			List<String> listaCampos = new ArrayList<String>();
+			Class<T> servicio = (Class<T>) service.getClasss();
+			Method[] metodos = servicio.getDeclaredMethods();
+			Method metodoUso = null;
+			Boolean valid = true;
+			for (Method metodo : metodos) {
+				if (metodo.getName().equalsIgnoreCase(service.getName())) {
+					Class<?>[] clases = metodo.getParameterTypes();
+					for (Class<?> clase : clases) {
+						for (String parametro : service.getParameter()) {
+							if (clase.getCanonicalName().equalsIgnoreCase(parametro)) {
+								valid &= true;
+							}
+						}
+						if (valid) {
+							metodoUso = metodo;
+							break;
+						}
+					}
+				}
+			}
+			if (metodoUso != null) {
+				Class<?>[] parametros = metodoUso.getParameterTypes();
+				for (Class<?> parametro : parametros) {
+					if (parametro.getConstructor().newInstance() instanceof ADto) {
+						List<String> campos = (List<String>) parametro.getMethod("getNameFields")
+								.invoke(parametro.getConstructor().newInstance());
+						for (String campo : campos) {
+							listaCampos.add(parametro.getSimpleName() + "::" + campo);
+						}
+					} else {
+						listaCampos.add(parametro.getSimpleName());
+					}
 
+				}
+			}
+			SelectList.put(lstCampos, listaCampos);
+		} catch (SecurityException | ClassNotFoundException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+			error(e);
+		}
+	}
+
+	public void agregar() {
 	}
 
 	public void guardar() {

@@ -89,11 +89,15 @@ public final class SelectList {
 	 * @param lista
 	 *            {@link List} of {@link String}
 	 */
-	public final static void put(ChoiceBox<String> choiceBox, List<String> lista) {
+	@SuppressWarnings("unchecked")
+	public final static <S extends Object> void put(ChoiceBox<S> choiceBox, List<S> lista) {
 		choiceBox.getItems().clear();
-		ObservableList<String> observable = choiceBox.getItems();
-		observable.add(AppConstants.SELECCIONE);
-		for (String valor : lista) {
+		if(lista==null || lista.size() == 0)return;
+		ObservableList<S> observable = choiceBox.getItems();
+		if (lista.get(0) instanceof String) {
+			observable.add((S) AppConstants.SELECCIONE);
+		}
+		for (S valor : lista) {
 			observable.add(valor);
 		}
 	}
@@ -146,7 +150,7 @@ public final class SelectList {
 	 *            {@link ChoiceBox}
 	 * @return {@link String}
 	 */
-	public final static String get(ChoiceBox<String> choiceBox) {
+	public final static <T extends Object> T get(ChoiceBox<T> choiceBox) {
 		return choiceBox.getValue();
 	}
 
@@ -329,10 +333,11 @@ public final class SelectList {
 	public final static <S> void addItems(ChoiceBox<S> choiceBox, List<S> list, String... campos) {
 		choiceBox.setConverter(new StringConverter<S>() {
 			private StringBuilder name;
+
 			@Override
 			public String toString(S object) {
 				name = new StringBuilder();
-				for(String campo : campos) {
+				for (String campo : campos) {
 					try {
 						name.append(ReflectionUtils.getValueField(object, campo).toString());
 					} catch (ReflectionException e) {
@@ -340,6 +345,7 @@ public final class SelectList {
 				}
 				return name.toString();
 			}
+
 			@Override
 			public S fromString(String string) {
 				return null;

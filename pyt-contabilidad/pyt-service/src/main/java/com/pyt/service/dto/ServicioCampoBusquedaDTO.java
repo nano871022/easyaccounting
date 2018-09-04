@@ -6,6 +6,7 @@ public class ServicioCampoBusquedaDTO extends ADto {
 	private static final long serialVersionUID = 1584913745551304294L;
 	private String servicio;
 	private String campo;
+	private Integer columna;
 	public String getServicio() {
 		return servicio;
 	}
@@ -17,5 +18,11 @@ public class ServicioCampoBusquedaDTO extends ADto {
 	}
 	public void setCampo(String campo) {
 		this.campo = campo;
+	}
+	public Integer getColumna() {
+		return columna;
+	}
+	public void setColumna(Integer columna) {
+		this.columna = columna;
 	}
 }
