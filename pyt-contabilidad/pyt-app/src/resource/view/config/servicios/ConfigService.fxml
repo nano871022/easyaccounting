@@ -107,11 +107,6 @@
 										</TableView>
 										<HBox alignment="CENTER" prefHeight="39.0" prefWidth="396.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="4">
 											<children>
-												<Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#guardar" text="Guardar" textAlignment="CENTER">
-													<HBox.margin>
-														<Insets right="10.0" fx:id="x1" />
-													</HBox.margin>
-												</Button>
 												<Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
 											</children>
 										</HBox>

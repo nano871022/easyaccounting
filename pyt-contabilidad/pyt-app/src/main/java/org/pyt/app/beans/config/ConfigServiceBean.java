@@ -3,7 +3,9 @@ package org.pyt.app.beans.config;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
@@ -107,7 +109,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		configColmn();
 		loadServices();
 		Table.put(lstServicioCampo, serviciosCampoBusqueda);
-		columna.setText(String.valueOf(serviciosCampoBusqueda.size()+1));
+		columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
@@ -178,7 +180,29 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 		if (posicion.compareTo(TAB_ASOCIAR_MARCADOR) == 0) {
 			tabAsociaciones.getTabPane().getSelectionModel().select(tabAsociaciones);
+			loadTabSociaciones();
 		}
+	}
+
+	private void loadTabSociaciones() {
+		Set<String> service = new HashSet<String>();
+		for (ServicioCampoBusquedaDTO scb : serviciosCampoBusqueda) {
+			service.add(scb.getServicio());
+		}
+		servicios.addAll(service);
+		SelectList.put(servicio, servicios);
+		SelectList.put(marcador, marcadores);
+		servicio.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> observable,
+				String oldval, String newVal) -> putCamposServicio(newVal));
+	}
+
+	public void putCamposServicio(String service) {
+		for (ServicioCampoBusquedaDTO scb : serviciosCampoBusqueda) {
+			if (scb.getServicio().contains(service)) {
+				campos.add(scb.getCampo());
+			}
+		}
+		SelectList.put(campo, campos);
 	}
 
 	public void addMarcador() {
@@ -206,20 +230,35 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			return;
 
 		ServicioCampoBusquedaDTO scb = new ServicioCampoBusquedaDTO();
-		ServicePOJO s =  SelectList.get(lstServicios);
-		scb.setCampo(SelectList.get(lstCampos));
-		scb.setColumna(Integer.valueOf(columna.getText()));
-		scb.setServicio(s.getClasss().getSimpleName()+":"+s.getAlias());
-		serviciosCampoBusqueda.add(scb);
-		Table.put(lstServicioCampo, serviciosCampoBusqueda);
-		lstCampos.getSelectionModel().selectFirst();
-		columna.setText(String.valueOf(serviciosCampoBusqueda.size()+1));
+		ServicePOJO s = SelectList.get(lstServicios);
+		if (s != null) {
+			if (SelectList.get(lstCampos).equalsIgnoreCase("seleccione")) {
+				error("No se selecciono ningun campo.");
+				return;
+			}
+			scb.setCampo(SelectList.get(lstCampos));
+			scb.setColumna(Integer.valueOf(columna.getText()));
+			scb.setServicio(s.getClasss().getSimpleName() + ":" + s.getAlias());
+			serviciosCampoBusqueda.add(scb);
+			Table.put(lstServicioCampo, serviciosCampoBusqueda);
+			lstCampos.getSelectionModel().selectFirst();
+			columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
+		}
 	}
 
+	/**
+	 * Se encarga de eliminar un registro seleccionado en la tabla de asociacion
+	 * servicio campo
+	 */
 	public void delServicioCampo() {
 		if (posicion.compareTo(TAB_SERVICIO_CAMPO) != 0)
 			return;
-		String service = SelectList.get(servicio);
+		if (Table.isSelected(lstServicioCampo)) {
+			List<ServicioCampoBusquedaDTO> lista = Table.getSelectedRows(lstServicioCampo);
+			serviciosCampoBusqueda.removeAll(lista);
+			Table.put(lstServicioCampo, serviciosCampoBusqueda);
+			columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", })
@@ -269,6 +308,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	public void agregar() {
+		MarcadorServicioDTO ms = new MarcadorServicioDTO();
+//		ms.setServicio(servicio);
+//		ms.setMarcador(marcador);
+//		ms.setNombreCampo(nombreCampo);
 	}
 
 	public void guardar() {
