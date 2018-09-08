@@ -70,6 +70,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@FXML
 	private TableView<ServicioCampoBusquedaDTO> lstServicioCampo;
 	@FXML
+	private TableView<MarcadorServicioDTO> lstMarcadoresCampos;
+	@FXML
 	private TableColumn<String, String> colServicios;
 	@FXML
 	private ChoiceBox<ServicePOJO> lstServicios;
@@ -180,11 +182,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 		if (posicion.compareTo(TAB_ASOCIAR_MARCADOR) == 0) {
 			tabAsociaciones.getTabPane().getSelectionModel().select(tabAsociaciones);
-			loadTabSociaciones();
+			loadTabAsociaciones();
 		}
 	}
 
-	private void loadTabSociaciones() {
+	private void loadTabAsociaciones() {
+		servicios.clear();
 		Set<String> service = new HashSet<String>();
 		for (ServicioCampoBusquedaDTO scb : serviciosCampoBusqueda) {
 			service.add(scb.getServicio());
@@ -309,9 +312,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	public void agregar() {
 		MarcadorServicioDTO ms = new MarcadorServicioDTO();
-//		ms.setServicio(servicio);
-//		ms.setMarcador(marcador);
-//		ms.setNombreCampo(nombreCampo);
+		ms.setServicio(SelectList.get(servicio));
+		ms.setMarcador(SelectList.get(marcador));
+		ms.setNombreCampo(SelectList.get(campo));
+		marcadoresServicios.add(ms);
+		Table.add(lstMarcadoresCampos, ms);
+		campo.getSelectionModel().selectFirst();
+		marcador.getSelectionModel().selectFirst();
 	}
 
 	public void guardar() {
@@ -319,7 +326,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	public void eliminar() {
-
+		if (posicion.compareTo(TAB_ASOCIAR_MARCADOR) != 0)
+			return;
+		if (Table.isSelected(lstMarcadoresCampos)) {
+			List<MarcadorServicioDTO> lista = Table.getSelectedRows(lstMarcadoresCampos);
+			marcadoresServicios.removeAll(lista);
+			Table.put(lstMarcadoresCampos, marcadoresServicios);
+		}
 	}
 
 	private void mostratBotonesMov() {

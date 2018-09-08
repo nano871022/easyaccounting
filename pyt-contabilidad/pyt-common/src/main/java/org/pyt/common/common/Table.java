@@ -31,6 +31,17 @@ public class Table {
 		table.setItems(observable);
 	}
 	/**
+	 * Este metodo se encarga de agregar un objeto al table list
+	 * @param table {@link TableView}
+	 * @param object {@link Object}
+	 */
+	public final static <T extends Object> void add(TableView<T> table,T object) {
+		ObservableList<T> observable = table.getItems();
+		observable.add(object);
+		if(object == null) return;
+		table.setItems(observable);
+	}
+	/**
 	 * Verifica si tiene algun registro seleccionado en la tabla
 	 * @param table {@link TableView}
 	 * @return {@link Boolean}
