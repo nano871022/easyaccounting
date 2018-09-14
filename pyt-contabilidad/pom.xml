@@ -15,9 +15,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.compile.version>10</project.build.compile.version>
-<!-- 		<project.version>1.0.0-BETA</project.version> -->
+<!-- 		<project.version>1.0.1-BETA</project.version> -->
 		<project.version>0.0.1-SNAPSHOT</project.version>
 <!-- 		<project.scope>runtime</project.scope> -->
+<!-- USED FOR COMPILATION, TO BUILD VERSION  -->
 		<project.scope>provided</project.scope>
 <!-- 		<project.scope>compile</project.scope> -->
 <!-- 		<project.scope>system</project.scope> -->

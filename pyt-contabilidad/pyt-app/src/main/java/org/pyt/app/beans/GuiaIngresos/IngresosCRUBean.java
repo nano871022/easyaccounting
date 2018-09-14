@@ -82,7 +82,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private ChoiceBox<String> repuesto;
 	@FXML
-	private ChoiceBox<String> trabajador;
+	private ChoiceBox<TrabajadorDTO> trabajador;
 	@FXML
 	private TextField tiempoEstimado;
 	@FXML
@@ -127,7 +127,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			SelectList.put(empresa, listEmpresas, field_name);
 			SelectList.put(servicio, listServicio, field_name);
 			SelectList.put(repuesto, listRepuesto, field_name);
-			//SelectList.put(trabajador, listTrabajador, "nombre");
+			//SelectList.put(trabajador, listTrabajador);
 		} catch (EmpresasException | ServiciosException | RepuestoException | EmpleadoException e) {
 			error(e);
 		}
