@@ -142,7 +142,7 @@ public final class SelectList {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Se encarga de obtener la opcion seleccionada en el choice box
 	 * 
@@ -328,6 +328,14 @@ public final class SelectList {
 		if (!select) {
 			choiceBox.getSelectionModel().selectFirst();
 		}
+	}
+	/**
+	 * Se encarga dde seleccionar el registro
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param value {@link Object}
+	 */
+	public final static <T extends Object> void selectItem(ChoiceBox<T> choiceBox,T value) {
+		choiceBox.getSelectionModel().select(value);
 	}
 
 	public final static <S> void addItems(ChoiceBox<S> choiceBox, List<S> list, String... campos) {
