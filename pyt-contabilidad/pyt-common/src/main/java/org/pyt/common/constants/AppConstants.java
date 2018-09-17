@@ -21,4 +21,6 @@ public final class AppConstants {
 	public final static String COMMAND_PANEL_TIPO_DOC = "PanelTipoDocs";
 	
 	public final static String PATH_LIST_SERVICE = "com.pyt.service.implement.ServicesPackage.List"; 
+	
+	public final static String GET_NAME_FIELDS = "getNameFields";
 }

@@ -15,6 +15,9 @@ public abstract class AExceptions extends Exception {
 	public AExceptions(String mensaje,Throwable e) {
 		super(mensaje,e);
 	}
+	public AExceptions(Throwable e) {
+		super(e);
+	}
 	public AExceptions(String mensaje) {
 		super(mensaje);
 	}

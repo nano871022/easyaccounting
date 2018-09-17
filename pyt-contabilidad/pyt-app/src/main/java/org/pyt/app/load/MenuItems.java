@@ -9,6 +9,7 @@ import org.pyt.app.beans.banco.BancoBean;
 import org.pyt.app.beans.centroCosto.CentroCostoBean;
 import org.pyt.app.beans.concepto.ConceptoBean;
 import org.pyt.app.beans.config.ConfigServiceBean;
+import org.pyt.app.beans.config.ListConfigBean;
 import org.pyt.app.beans.cuentaContable.CuentaContableBean;
 import org.pyt.app.beans.dinamico.FormularioBean;
 import org.pyt.app.beans.dinamico.ListaDocumentosBean;
@@ -58,7 +59,7 @@ public class MenuItems {
 	private final static String BTN_FORMULARIO_DOCUMENTO= "Documento";
 	private final static String BTN_LIST_DOCUMENTO= "Documentos";
 	private final static String BTN_LIST_INGRESOS= "Ingresos";
-	private final static String BTN_CONFG_PRINT = "Configuracion Impresiones";
+	private final static String BTN_CONFG_PRINT = "Lista Configuracion Servicio Marcadores";
 
 	public MenuItems(MenuBar menu, ScrollPane scroll) {
 		mapaMenu = new HashMap<String, Menu>();
@@ -211,7 +212,7 @@ public class MenuItems {
 		}));
 		items.add(addItem(BTN_CONFG_PRINT, event -> {
 			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, ConfigServiceBean.class);
+				LoadAppFxml.BeanFxmlScroller(scroll, ListConfigBean.class);
 			} catch (LoadAppFxmlException e) {
 				Log.logger(e);
 			}

@@ -142,7 +142,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	private Boolean valid() {
 		Boolean valid = true;
 		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getAsociado());
+//		valid &= StringUtils.isNotBlank(registro.getAsociado());
 		valid &= StringUtils.isNotBlank(registro.getCodigoCuenta());
 		valid &= StringUtils.isNotBlank(registro.getNaturaleza().getCodigo());
 		valid &= StringUtils.isNotBlank(registro.getTipoPlanContable().getCodigo());

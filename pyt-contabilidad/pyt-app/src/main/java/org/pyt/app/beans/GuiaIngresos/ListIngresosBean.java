@@ -42,6 +42,8 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
+	@FXML
+	private Button eliminar;
 	private DataTableFXML<IngresoDTO, IngresoDTO> dt;
 
 	@FXML
@@ -55,6 +57,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 			});
 		lazy();
 		search();
+		eliminar.setVisible(false);
 	}
 
 	/**
@@ -100,6 +103,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		eliminar.setVisible(isSelected());
 	}
 
 	public void add() {

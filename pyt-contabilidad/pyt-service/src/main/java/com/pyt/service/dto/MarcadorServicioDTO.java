@@ -7,6 +7,7 @@ public class MarcadorServicioDTO extends ADto {
 	private String marcador;
 	private String servicio;
 	private String nombreCampo;
+	private String configuracion;
 
 	public String getMarcador() {
 		return marcador;
@@ -30,5 +31,13 @@ public class MarcadorServicioDTO extends ADto {
 
 	public void setNombreCampo(String nombreCampo) {
 		this.nombreCampo = nombreCampo;
+	}
+
+	public String getConfiguracion() {
+		return configuracion;
+	}
+
+	public void setConfiguracion(String configuracion) {
+		this.configuracion = configuracion;
 	}
 }

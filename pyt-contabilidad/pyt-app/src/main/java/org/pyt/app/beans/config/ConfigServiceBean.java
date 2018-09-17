@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
@@ -16,6 +17,8 @@ import org.pyt.common.common.Table;
 import org.pyt.common.constants.AppConstants;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
+import com.pyt.service.dto.ConfiguracionDTO;
+import com.pyt.service.dto.MarcadorDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
 /**
  * Se encarga de controlar las asociacionesentra marcadores y servicios 
@@ -23,6 +26,7 @@ import com.pyt.service.dto.MarcadorServicioDTO;
  * @since 05-08-2018
  */
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
+import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
@@ -50,13 +54,19 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@FXML
 	private Button btnCancelar;
 	@FXML
+	private Button btnDelServicio;
+	@FXML
+	private Button btnSaveMarcador;
+	@FXML
+	private Button btnDelMarcador;
+	@FXML
 	private Tab tabServicios;
 	@FXML
 	private Tab tabMarcadores;
 	@FXML
 	private Tab tabAsociaciones;
 	@FXML
-	private Tab tabProbar;
+	private Tab tabConfigurar;
 	@FXML
 	private TextField nameMarcador;
 	@FXML
@@ -64,9 +74,11 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@FXML
 	private TextField columna;
 	@FXML
-	private TableView<String> lstMarcadores;
+	private TextField configuracion;
 	@FXML
-	private TableColumn<String, String> colMarcador;
+	private TableView<MarcadorDTO> lstMarcadores;
+	@FXML
+	private TableColumn<MarcadorDTO, String> colMarcador;
 	@FXML
 	private TableView<ServicioCampoBusquedaDTO> lstServicioCampo;
 	@FXML
@@ -83,7 +95,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private ChoiceBox<String> marcador;
 	@FXML
 	private ChoiceBox<String> lstCampos;
-	private List<String> marcadores;
+	private List<MarcadorDTO> marcadores;
 	private List<String> servicios;
 	private List<String> campos;
 	private List<ServicioCampoBusquedaDTO> serviciosCampoBusqueda;
@@ -94,18 +106,22 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public final static Integer TAB_MARCADOR = 1;
 	public final static Integer TAB_SERVICIO_CAMPO = 2;
 	public final static Integer TAB_ASOCIAR_MARCADOR = 3;
-	public final static Integer TAB_PROBAR = 4;
+	public final static Integer TAB_CONFIGURACION= 4;
 	private AbstractListFromProccess<ServicePOJO> listServices;
+	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
+	private IConfigMarcadorServicio configMarcadorServicio;
+	private ConfiguracionDTO config;
 
 	@FXML
 	public void initialize() {
-		marcadores = new ArrayList<String>();
+		marcadores = new ArrayList<MarcadorDTO>();
 		servicios = new ArrayList<String>();
 		campos = new ArrayList<String>();
 		serviciosCampoBusqueda = new ArrayList<ServicioCampoBusquedaDTO>();
 		marcadoresServicios = new ArrayList<MarcadorServicioDTO>();
+		config = new ConfiguracionDTO();
 		posicion = TAB_MARCADOR;
-		max = TAB_PROBAR;
+		max = TAB_CONFIGURACION;
 		hiddenTabs();
 		hiddenBtns();
 		configColmn();
@@ -154,11 +170,11 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	private void configColmn() {
-		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue()));
+		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getMarcador()));
 	}
 
 	private void hiddenTabs() {
-		// tabProbar.setDisable(true);
+	    tabConfigurar.setDisable(true);
 		tabServicios.setDisable(true);
 		tabAsociaciones.setDisable(true);
 	}
@@ -166,14 +182,16 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private void hiddenBtns() {
 		btnAnterior.setVisible(false);
 		btnEliminar.setVisible(false);
-		btnGuardar.setVisible(false);
+		btnDelServicio.setVisible(false);
+		btnDelMarcador.setVisible(false);
+		btnSaveMarcador.setVisible(false);
 	}
 
 	private void tabView() {
 		tabMarcadores.setDisable(posicion.compareTo(TAB_MARCADOR) != 0);
 		tabServicios.setDisable(posicion.compareTo(TAB_SERVICIO_CAMPO) != 0);
 		tabAsociaciones.setDisable(posicion.compareTo(TAB_ASOCIAR_MARCADOR) != 0);
-		// tabProbar.setDisable(posicion.compareTo(TAB_PROBAR) != 0);
+		tabConfigurar.setDisable(posicion.compareTo(TAB_CONFIGURACION) != 0);
 		if (posicion.compareTo(TAB_MARCADOR) == 0) {
 			tabMarcadores.getTabPane().getSelectionModel().select(tabMarcadores);
 		}
@@ -183,6 +201,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (posicion.compareTo(TAB_ASOCIAR_MARCADOR) == 0) {
 			tabAsociaciones.getTabPane().getSelectionModel().select(tabAsociaciones);
 			loadTabAsociaciones();
+		}
+		if (posicion.compareTo(TAB_CONFIGURACION) == 0) {
+			tabConfigurar.getTabPane().getSelectionModel().select(tabConfigurar);
 		}
 	}
 
@@ -194,18 +215,59 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 		servicios.addAll(service);
 		SelectList.put(servicio, servicios);
-		SelectList.put(marcador, marcadores);
+		SelectList.put(marcador, marcadores, "marcador");
 		servicio.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> observable,
 				String oldval, String newVal) -> putCamposServicio(newVal));
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void putCamposServicio(String service) {
-		for (ServicioCampoBusquedaDTO scb : serviciosCampoBusqueda) {
-			if (scb.getServicio().contains(service)) {
-				campos.add(scb.getCampo());
+		try {
+			if (service.contentEquals(AppConstants.SELECCIONE))
+				return;
+			Class[] parametros = null;
+			for (ServicePOJO servicio : listServices.getList()) {
+				if ((servicio.getClasss().getSimpleName() + ":" + servicio.getAlias()).contentEquals(service)) {
+					try {
+						parametros = new Class[servicio.getParameter().length];
+						int i = 0;
+						for (String parametro : servicio.getParameter()) {
+							parametros[i] = Class.forName(parametro);
+							i++;
+						}
+						Method metodo = servicio.getClasss().getDeclaredMethod(servicio.getName(), parametros);
+						Class retorno = metodo.getReturnType();
+						if (retorno.getConstructor().newInstance() instanceof ADto) {
+							List<String> campos = (List<String>) retorno.getMethod(AppConstants.GET_NAME_FIELDS)
+									.invoke(retorno.getConstructor().newInstance());
+							for (String campo : campos) {
+								this.campos.add(retorno.getSimpleName() + "::" + campo);
+							}
+						} else {
+							campos.add(retorno.getSimpleName());
+						}
+					} catch (ClassNotFoundException e) {
+						throw new Exception(e);
+					} catch (NoSuchMethodException e) {
+						throw new Exception(e);
+					} catch (SecurityException e) {
+						throw new Exception(e);
+					} catch (InstantiationException e) {
+						throw new Exception(e);
+					} catch (IllegalAccessException e) {
+						throw new Exception(e);
+					} catch (IllegalArgumentException e) {
+						throw new Exception(e);
+					} catch (InvocationTargetException e) {
+						throw new Exception(e);
+					}
+					break;
+				}
 			}
+			SelectList.put(campo, campos);
+		} catch (Exception e) {
+			error(e);
 		}
-		SelectList.put(campo, campos);
 	}
 
 	public void addMarcador() {
@@ -213,7 +275,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			return;
 		String marcador = nameMarcador.getText();
 		if (StringUtils.isNotBlank(marcador)) {
-			marcadores.add(marcador);
+			MarcadorDTO marca = new MarcadorDTO();
+			marca.setMarcador(marcador);
+			marcadores.add(marca);
 			Table.put(lstMarcadores, marcadores);
 			nameMarcador.clear();
 		}
@@ -222,7 +286,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public void delMarcador() {
 		if (posicion.compareTo(TAB_MARCADOR) != 0)
 			return;
-		String marcador = lstMarcadores.getSelectionModel().getSelectedItem();
+		String marcador = lstMarcadores.getSelectionModel().getSelectedItem().getMarcador();
 		if (StringUtils.isNotBlank(marcador)) {
 			marcadores.remove(marcador);
 		}
@@ -235,7 +299,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		ServicioCampoBusquedaDTO scb = new ServicioCampoBusquedaDTO();
 		ServicePOJO s = SelectList.get(lstServicios);
 		if (s != null) {
-			if (SelectList.get(lstCampos).equalsIgnoreCase("seleccione")) {
+			if (SelectList.get(lstCampos).equalsIgnoreCase(AppConstants.SELECCIONE)) {
 				error("No se selecciono ningun campo.");
 				return;
 			}
@@ -292,7 +356,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				Class<?>[] parametros = metodoUso.getParameterTypes();
 				for (Class<?> parametro : parametros) {
 					if (parametro.getConstructor().newInstance() instanceof ADto) {
-						List<String> campos = (List<String>) parametro.getMethod("getNameFields")
+						List<String> campos = (List<String>) parametro.getMethod(AppConstants.GET_NAME_FIELDS)
 								.invoke(parametro.getConstructor().newInstance());
 						for (String campo : campos) {
 							listaCampos.add(parametro.getSimpleName() + "::" + campo);
@@ -308,6 +372,59 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				| InvocationTargetException | NoSuchMethodException | InstantiationException e) {
 			error(e);
 		}
+	}
+
+	public final void saveAll() {
+		try {
+			config.setConfiguracion(configuracion.getText());
+			for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
+				servicio.setConfiguracion(config.getConfiguracion());
+				if (StringUtils.isNotBlank(servicio.getCodigo())) {
+					configMarcadorServicio.updateServicioCampo(servicio, userLogin);
+				} else if (StringUtils.isBlank(servicio.getCodigo())) {
+					configMarcadorServicio.insertServicioCampoBusqueda(servicio, userLogin);
+				}
+			}
+			for (MarcadorServicioDTO marcador : marcadoresServicios) {
+				marcador.setConfiguracion(config.getConfiguracion());
+				if (StringUtils.isNotBlank(marcador.getCodigo())) {
+					configMarcadorServicio.updateServicioMarcador(marcador, userLogin);
+				} else if (StringUtils.isBlank(marcador.getCodigo())) {
+					configMarcadorServicio.insertMarcadorServicio(marcador, userLogin);
+				}
+			}
+			for (MarcadorDTO marcador : marcadores) {
+				marcador.setConfiguracion(config.getConfiguracion());
+				if (StringUtils.isNotBlank(marcador.getCodigo())) {
+					configMarcadorServicio.updateMarcador(marcador, userLogin);
+				} else if (StringUtils.isBlank(marcador.getCodigo())) {
+					configMarcadorServicio.insertMarcador(marcador, userLogin);
+				}
+			}
+			if(StringUtils.isNotBlank(config.getCodigo())) {
+				configMarcadorServicio.updateConfiguracion(config, userLogin);
+			}else if(StringUtils.isBlank(config.getCodigo())){
+				configMarcadorServicio.insertConfiguracion(config, userLogin);
+			}
+			this.notificar("Se guardaron los registros correctamente.");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void load(ConfiguracionDTO configuracion) {
+		try {
+			config = configuracion;
+			serviciosCampoBusqueda = configMarcadorServicio.getServiciosCampoBusqueda(configuracion.getConfiguracion());
+			marcadoresServicios = configMarcadorServicio.getMarcadorServicio(configuracion.getConfiguracion());
+			marcadores = configMarcadorServicio.getMarcador(configuracion.getConfiguracion());
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void generar() {
+
 	}
 
 	public void agregar() {

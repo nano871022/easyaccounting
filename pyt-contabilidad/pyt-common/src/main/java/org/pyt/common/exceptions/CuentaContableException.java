@@ -12,5 +12,9 @@ public class CuentaContableException extends AExceptions {
 	public CuentaContableException(String mensaje,Throwable e) {
 		super(mensaje,e);
 	}
+	
+	public CuentaContableException(Throwable e) {
+		super(e);
+	}
 
 }

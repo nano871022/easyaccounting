@@ -54,6 +54,10 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private HBox paginador;
 	@FXML
+	private TableColumn<CuentaContableDTO, String> tipo;
+	@FXML
+	private TableColumn<CuentaContableDTO, String> naturaleza;
+	@FXML
 	private TableColumn<CuentaContableDTO, String> tipoCuentaContable;
 	private DataTableFXML<CuentaContableDTO, CuentaContableDTO> dt;
 	private List<ParametroDTO> listTipoCuentas;
@@ -75,6 +79,8 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
 		tipoCuentaContables.getSelectionModel().selectFirst();
 		tipoCuentaContable.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
+		tipo.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getTipo().getNombre()));
+		naturaleza.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getNaturaleza().getNombre()));
 		lazy();
 	}
 

@@ -19,8 +19,8 @@
 		<project.version>0.0.1-SNAPSHOT</project.version>
 <!-- 		<project.scope>runtime</project.scope> -->
 <!-- USED FOR COMPILATION, TO BUILD VERSION  -->
-		<project.scope>provided</project.scope>
-<!-- 		<project.scope>compile</project.scope> -->
+<!-- 		<project.scope>provided</project.scope> -->
+		<project.scope>compile</project.scope>
 <!-- 		<project.scope>system</project.scope> -->
 	</properties>
 	<dependencies>

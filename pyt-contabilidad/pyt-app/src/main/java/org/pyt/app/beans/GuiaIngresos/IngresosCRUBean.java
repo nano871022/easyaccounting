@@ -33,6 +33,7 @@ import com.pyt.service.interfaces.IIngresosSvc;
 import com.pyt.service.interfaces.IRepuestosSvc;
 import com.pyt.service.interfaces.IServiciosSvc;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
@@ -128,29 +129,37 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			SelectList.put(empresa, listEmpresas, field_name);
 			SelectList.put(servicio, listServicio, field_name);
 			SelectList.put(repuesto, listRepuesto, field_name);
-			trabajador.converterProperty().set(new StringConverter<TrabajadorDTO>() {
-
-				@Override
-				public String toString(TrabajadorDTO object) {
-					return String.format("%s : %s %s", object.getPersona().getDocumento(),
-							object.getPersona().getNombre(), object.getPersona().getApellido());
-				}
-
-				@Override
-				public TrabajadorDTO fromString(String string) {
-					for (TrabajadorDTO dto : listTrabajador) {
-						if (string.contentEquals(String.format("%s : %s %s", dto.getPersona().getDocumento(),
-								dto.getPersona().getNombre(), dto.getPersona().getApellido()))) {
-							return dto;
-						}
-					}
-					return null;
-				}
-			});
+			configTrabajador();
 			SelectList.put(trabajador, listTrabajador);
 		} catch (EmpresasException | ServiciosException | RepuestoException | EmpleadoException e) {
 			error(e);
 		}
+	}
+
+	/**
+	 * Se encarga de configurar el trabajador
+	 */
+	private final void configTrabajador() {
+		trabajador.converterProperty().set(new StringConverter<TrabajadorDTO>() {
+
+			@Override
+			public String toString(TrabajadorDTO object) {
+				return String.format("%s : %s %s", object.getPersona().getDocumento(), object.getPersona().getNombre(),
+						object.getPersona().getApellido());
+			}
+
+			@Override
+			public TrabajadorDTO fromString(String string) {
+				for (TrabajadorDTO dto : listTrabajador) {
+					if (string.contentEquals(String.format("%s : %s %s", dto.getPersona().getDocumento(),
+							dto.getPersona().getNombre(), dto.getPersona().getApellido()))) {
+						return dto;
+					}
+				}
+				return null;
+			}
+		});
+
 	}
 
 	/**
@@ -200,7 +209,8 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			telContacto.setText(registro.getTelefonoContacto());
 			tiempoEstimado.setText(valid.cast(registro.getTiempoEstimado(), String.class));
 			tiempoTrabajo.setText(valid.cast(registro.getTiempoTrabajado(), String.class));
-			SelectList.selectItem(trabajador, registro.getTrabajador());
+			// SelectList.selectItem(trabajador, registro.getTrabajador());
+			selectTrabajador();
 			SelectList.selectItem(empresa, listEmpresas, field_name, registro.getEmpresa());
 			Table.put(tablaRepuesto, registro.getRespuestos());
 			Table.put(tablaServicio, registro.getServicios());
@@ -208,6 +218,17 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			totalServicio.setText(sumar(registro.getServicios(), field_valor_mano_obra).toString());
 		} catch (ValidateValueException e) {
 			error(e);
+		}
+	}
+
+	private void selectTrabajador() {
+		for (TrabajadorDTO obj : trabajador.getItems()) {
+			if (registro.getTrabajador() != null) {
+				if (obj.getPersona().getDocumento()
+						.contentEquals(registro.getTrabajador().getPersona().getDocumento())) {
+					trabajador.setValue(obj);
+				}
+			}
 		}
 	}
 
