@@ -9,6 +9,13 @@ import org.pyt.common.common.ADto;
 public class ConfiguracionDTO extends ADto {
 	private static final long serialVersionUID = -5794475592464268409L;
 	private String configuracion;
+	private String archivo;
+	public String getArchivo() {
+		return archivo;
+	}
+	public void setArchivo(String archivo) {
+		this.archivo = archivo;
+	}
 	public String getConfiguracion() {
 		return configuracion;
 	}

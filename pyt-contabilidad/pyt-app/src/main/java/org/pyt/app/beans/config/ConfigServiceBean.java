@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
-import org.pyt.common.common.Table;
 import org.pyt.common.constants.AppConstants;
+import org.pyt.common.exceptions.MarcadorServicioException;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -39,6 +40,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
 @FXMLFile(path = "view/config/servicios", file = "ConfigService.fxml")
@@ -95,6 +97,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private ChoiceBox<String> marcador;
 	@FXML
 	private ChoiceBox<String> lstCampos;
+	@FXML
+	private HBox paginatorMarcadores;
+	@FXML
+	private HBox paginatorServicios;
+	@FXML
+	private HBox paginatorAsociar;
 	private List<MarcadorDTO> marcadores;
 	private List<String> servicios;
 	private List<String> campos;
@@ -106,11 +114,14 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public final static Integer TAB_MARCADOR = 1;
 	public final static Integer TAB_SERVICIO_CAMPO = 2;
 	public final static Integer TAB_ASOCIAR_MARCADOR = 3;
-	public final static Integer TAB_CONFIGURACION= 4;
+	public final static Integer TAB_CONFIGURACION = 4;
 	private AbstractListFromProccess<ServicePOJO> listServices;
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configMarcadorServicio;
 	private ConfiguracionDTO config;
+	private DataTableFXML<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO> tbServicioCampoBusqueda;
+	private DataTableFXML<MarcadorServicioDTO, MarcadorServicioDTO> tbMarcadorSerivicio;
+	private DataTableFXML<MarcadorDTO, MarcadorDTO> tbMarcador;
 
 	@FXML
 	public void initialize() {
@@ -126,8 +137,143 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		hiddenBtns();
 		configColmn();
 		loadServices();
-		Table.put(lstServicioCampo, serviciosCampoBusqueda);
+		// Table.put(lstServicioCampo, serviciosCampoBusqueda);
 		columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
+	}
+
+	/**
+	 * Se carga de realizar busqueda de los registros y carga las data tablas
+	 * 
+	 * @param configuracion
+	 *            {@link ConfiguracionDTO}
+	 */
+	public final void load(ConfiguracionDTO configuracion) {
+		try {
+			config = configuracion;
+			if (StringUtils.isNotBlank(config.getConfiguracion())) {
+				this.configuracion.setText(config.getConfiguracion());
+			}
+			if(StringUtils.isNotBlank(config.getArchivo())) {
+				this.nameFiler.setText(config.getArchivo());
+			}
+			dataTable();
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	/**
+	 * Se encarga de cargar la configuracion de consultass de data tablas para
+	 * marcadores, servicios Campo busqueda y marcadores servicios
+	 */
+	private void dataTable() {
+		tbServicioCampoBusqueda = new DataTableFXML<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO>(
+				paginatorMarcadores, lstServicioCampo) {
+
+			@Override
+			public Integer getTotalRows(ServicioCampoBusquedaDTO filter) {
+				Integer cantidad = 0;
+				try {
+					cantidad = configMarcadorServicio.cantidadServiciosCampoBusqueda(filter.getConfiguracion());
+					cantidad += serviciosCampoBusqueda.size();
+				} catch (MarcadorServicioException e) {
+					error(e);
+				}
+				return 0;
+			}
+
+			@Override
+			public List<ServicioCampoBusquedaDTO> getList(ServicioCampoBusquedaDTO filter, Integer page, Integer rows) {
+				List<ServicioCampoBusquedaDTO> lista = new ArrayList<ServicioCampoBusquedaDTO>();
+				try {
+					lista = configMarcadorServicio.getServiciosCampoBusqueda(filter.getConfiguracion(), page - 1, rows);
+					lista.addAll(serviciosCampoBusqueda);
+				} catch (MarcadorServicioException e) {
+					error(e);
+				}
+				return lista;
+			}
+
+			@Override
+			public ServicioCampoBusquedaDTO getFilter() {
+				ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
+				if (StringUtils.isNotBlank(configuracion.getText())) {
+					dto.setConfiguracion(configuracion.getText());
+				}
+				return dto;
+			}
+		};
+		tbMarcadorSerivicio = new DataTableFXML<MarcadorServicioDTO, MarcadorServicioDTO>(paginatorAsociar,
+				lstMarcadoresCampos) {
+
+			@Override
+			public Integer getTotalRows(MarcadorServicioDTO filter) {
+				Integer cantidad = 0;
+				try {
+					cantidad = configMarcadorServicio.cantidadMarcadorServicio(filter.getConfiguracion());
+					cantidad += marcadoresServicios.size();
+				} catch (MarcadorServicioException e) {
+					error(e);
+				}
+				return cantidad;
+			}
+
+			@Override
+			public List<MarcadorServicioDTO> getList(MarcadorServicioDTO filter, Integer page, Integer rows) {
+				List<MarcadorServicioDTO> lista = new ArrayList<MarcadorServicioDTO>();
+				try {
+					lista = configMarcadorServicio.getMarcadorServicio(filter.getConfiguracion());
+					lista.addAll(marcadoresServicios);
+				} catch (MarcadorServicioException e) {
+					error(e);
+				}
+				return lista;
+			}
+
+			@Override
+			public MarcadorServicioDTO getFilter() {
+				MarcadorServicioDTO dto = new MarcadorServicioDTO();
+				if (StringUtils.isNotBlank(configuracion.getText())) {
+					dto.setConfiguracion(configuracion.getText());
+				}
+				return dto;
+			}
+		};
+		tbMarcador = new DataTableFXML<MarcadorDTO, MarcadorDTO>(paginatorMarcadores, lstMarcadores) {
+
+			@Override
+			public Integer getTotalRows(MarcadorDTO filter) {
+				Integer cantidad = 0;
+				try {
+					cantidad = configMarcadorServicio.cantidadMarcador(filter.getConfiguracion());
+					cantidad += marcadores.size();
+				} catch (MarcadorServicioException e) {
+					error(e);
+				}
+				return cantidad;
+			}
+
+			@Override
+			public List<MarcadorDTO> getList(MarcadorDTO filter, Integer page, Integer rows) {
+				List<MarcadorDTO> lista = new ArrayList<MarcadorDTO>();
+				try {
+					lista = configMarcadorServicio.getMarcador(filter.getConfiguracion());
+					lista.addAll(marcadores);
+				} catch (MarcadorServicioException e) {
+					error(e);
+				}
+				return lista;
+			}
+
+			@Override
+			public MarcadorDTO getFilter() {
+				MarcadorDTO dto = new MarcadorDTO();
+				if (StringUtils.isNotBlank(configuracion.getText())) {
+					dto.setConfiguracion(configuracion.getText());
+				}
+				return dto;
+			}
+		};
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
@@ -174,7 +320,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	private void hiddenTabs() {
-	    tabConfigurar.setDisable(true);
+		tabConfigurar.setDisable(true);
 		tabServicios.setDisable(true);
 		tabAsociaciones.setDisable(true);
 	}
@@ -210,12 +356,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private void loadTabAsociaciones() {
 		servicios.clear();
 		Set<String> service = new HashSet<String>();
-		for (ServicioCampoBusquedaDTO scb : serviciosCampoBusqueda) {
+		for (ServicioCampoBusquedaDTO scb : tbServicioCampoBusqueda.getList()) {
 			service.add(scb.getServicio());
 		}
 		servicios.addAll(service);
 		SelectList.put(servicio, servicios);
-		SelectList.put(marcador, marcadores, "marcador");
+		SelectList.put(marcador, tbMarcador.getList(), "marcador");
 		servicio.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> observable,
 				String oldval, String newVal) -> putCamposServicio(newVal));
 	}
@@ -278,16 +424,17 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			MarcadorDTO marca = new MarcadorDTO();
 			marca.setMarcador(marcador);
 			marcadores.add(marca);
-			Table.put(lstMarcadores, marcadores);
+			// Table.put(lstMarcadores, marcadores);
 			nameMarcador.clear();
+			tbMarcador.search();
 		}
 	}
 
 	public void delMarcador() {
 		if (posicion.compareTo(TAB_MARCADOR) != 0)
 			return;
-		String marcador = lstMarcadores.getSelectionModel().getSelectedItem().getMarcador();
-		if (StringUtils.isNotBlank(marcador)) {
+		MarcadorDTO marcador = tbMarcador.getSelectedRow();
+		if (StringUtils.isNotBlank(marcador.getMarcador()) && StringUtils.isNotBlank(marcador.getCodigo())) {
 			marcadores.remove(marcador);
 		}
 	}
@@ -307,9 +454,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			scb.setColumna(Integer.valueOf(columna.getText()));
 			scb.setServicio(s.getClasss().getSimpleName() + ":" + s.getAlias());
 			serviciosCampoBusqueda.add(scb);
-			Table.put(lstServicioCampo, serviciosCampoBusqueda);
+			// Table.put(lstServicioCampo, serviciosCampoBusqueda);
 			lstCampos.getSelectionModel().selectFirst();
-			columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
+			columna.setText(String.valueOf(tbServicioCampoBusqueda.getTotal() + 1));
+			tbServicioCampoBusqueda.search();
 		}
 	}
 
@@ -320,10 +468,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public void delServicioCampo() {
 		if (posicion.compareTo(TAB_SERVICIO_CAMPO) != 0)
 			return;
-		if (Table.isSelected(lstServicioCampo)) {
-			List<ServicioCampoBusquedaDTO> lista = Table.getSelectedRows(lstServicioCampo);
+		if (tbServicioCampoBusqueda.isSelected()) {
+			List<ServicioCampoBusquedaDTO> lista = tbServicioCampoBusqueda.getSelectedRows();// Table.getSelectedRows(lstServicioCampo);
 			serviciosCampoBusqueda.removeAll(lista);
-			Table.put(lstServicioCampo, serviciosCampoBusqueda);
+			// Table.put(lstServicioCampo, serviciosCampoBusqueda);
 			columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
 		}
 	}
@@ -376,13 +524,24 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	public final void saveAll() {
 		try {
-			config.setConfiguracion(configuracion.getText());
+			if (StringUtils.isNotBlank(configuracion.getText())) {
+				config.setConfiguracion(configuracion.getText());
+			}else {
+				this.notificar("No se encontró el nombre de la configuración.");
+				return;
+			}
+			if (StringUtils.isNotBlank(nameFiler.getText())) {
+				config.setArchivo(nameFiler.getText());
+			}else {
+				this.notificar("No se encontró el nombre del archivo.");
+				return;
+			}
 			for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
 				servicio.setConfiguracion(config.getConfiguracion());
 				if (StringUtils.isNotBlank(servicio.getCodigo())) {
 					configMarcadorServicio.updateServicioCampo(servicio, userLogin);
 				} else if (StringUtils.isBlank(servicio.getCodigo())) {
-					configMarcadorServicio.insertServicioCampoBusqueda(servicio, userLogin);
+					servicio = configMarcadorServicio.insertServicioCampoBusqueda(servicio, userLogin);
 				}
 			}
 			for (MarcadorServicioDTO marcador : marcadoresServicios) {
@@ -390,7 +549,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				if (StringUtils.isNotBlank(marcador.getCodigo())) {
 					configMarcadorServicio.updateServicioMarcador(marcador, userLogin);
 				} else if (StringUtils.isBlank(marcador.getCodigo())) {
-					configMarcadorServicio.insertMarcadorServicio(marcador, userLogin);
+					marcador = configMarcadorServicio.insertMarcadorServicio(marcador, userLogin);
 				}
 			}
 			for (MarcadorDTO marcador : marcadores) {
@@ -398,26 +557,15 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				if (StringUtils.isNotBlank(marcador.getCodigo())) {
 					configMarcadorServicio.updateMarcador(marcador, userLogin);
 				} else if (StringUtils.isBlank(marcador.getCodigo())) {
-					configMarcadorServicio.insertMarcador(marcador, userLogin);
+					marcador = configMarcadorServicio.insertMarcador(marcador, userLogin);
 				}
 			}
-			if(StringUtils.isNotBlank(config.getCodigo())) {
+			if (StringUtils.isNotBlank(config.getCodigo())) {
 				configMarcadorServicio.updateConfiguracion(config, userLogin);
-			}else if(StringUtils.isBlank(config.getCodigo())){
-				configMarcadorServicio.insertConfiguracion(config, userLogin);
+			} else if (StringUtils.isBlank(config.getCodigo())) {
+				config = configMarcadorServicio.insertConfiguracion(config, userLogin);
 			}
 			this.notificar("Se guardaron los registros correctamente.");
-		} catch (Exception e) {
-			error(e);
-		}
-	}
-
-	public final void load(ConfiguracionDTO configuracion) {
-		try {
-			config = configuracion;
-			serviciosCampoBusqueda = configMarcadorServicio.getServiciosCampoBusqueda(configuracion.getConfiguracion());
-			marcadoresServicios = configMarcadorServicio.getMarcadorServicio(configuracion.getConfiguracion());
-			marcadores = configMarcadorServicio.getMarcador(configuracion.getConfiguracion());
 		} catch (Exception e) {
 			error(e);
 		}
@@ -433,9 +581,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		ms.setMarcador(SelectList.get(marcador));
 		ms.setNombreCampo(SelectList.get(campo));
 		marcadoresServicios.add(ms);
-		Table.add(lstMarcadoresCampos, ms);
+		// Table.add(lstMarcadoresCampos, ms);
 		campo.getSelectionModel().selectFirst();
 		marcador.getSelectionModel().selectFirst();
+		tbMarcadorSerivicio.search();
 	}
 
 	public void guardar() {
@@ -445,10 +594,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public void eliminar() {
 		if (posicion.compareTo(TAB_ASOCIAR_MARCADOR) != 0)
 			return;
-		if (Table.isSelected(lstMarcadoresCampos)) {
-			List<MarcadorServicioDTO> lista = Table.getSelectedRows(lstMarcadoresCampos);
+		if (tbMarcadorSerivicio.isSelected()) {// Table.isSelected(lstMarcadoresCampos)) {
+			List<MarcadorServicioDTO> lista = tbMarcadorSerivicio.getSelectedRows();// Table.getSelectedRows(lstMarcadoresCampos);
 			marcadoresServicios.removeAll(lista);
-			Table.put(lstMarcadoresCampos, marcadoresServicios);
+			// Table.put(lstMarcadoresCampos, marcadoresServicios);
 		}
 	}
 
@@ -474,6 +623,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	public void cancelar() {
+		if (posicion == TAB_MARCADOR) {
+			getController(ListConfigBean.class);
+		}
 		posicion = TAB_MARCADOR;
 		marcadores.clear();
 		servicios.clear();
