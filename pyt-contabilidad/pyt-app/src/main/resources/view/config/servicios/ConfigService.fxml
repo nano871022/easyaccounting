@@ -45,7 +45,7 @@
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                     <TextField fx:id="nameMarcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addMarcador" onMouseClicked="#addMarcador" text="Agregar" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                    <TableView fx:id="lstMarcadores" maxHeight="1.7976931348623157E308" maxWidth="227.0" prefHeight="163.0" prefWidth="227.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                    <TableView fx:id="lstMarcadores" maxHeight="1.7976931348623157E308" maxWidth="227.0" prefHeight="163.0" prefWidth="227.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" onMouseClicked="#marcadorSelect">
                       <columns>
                         <TableColumn maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="227.0" text="Marcador" fx:id="colMarcador" />
                       </columns>
@@ -88,7 +88,7 @@
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Campo" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                     <ChoiceBox fx:id="lstCampos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addServicioCampo" text="Agregar" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                    <TableView fx:id="lstServicioCampo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="3">
+                    <TableView fx:id="lstServicioCampo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="3" onMouseClicked="#servicioCampo">
                       <columns>
                         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="44.0" text="#">
                           <cellValueFactory>
@@ -149,7 +149,7 @@
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                     <ChoiceBox fx:id="marcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#agregar" text="Agregar" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                    <TableView fx:id="lstMarcadoresCampos" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="2">
+                    <TableView fx:id="lstMarcadoresCampos" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="2" onMouseClicked="#servicioMarcador">
                       <columns>
                         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="236.0" text="Servicio">
                           <cellValueFactory>
