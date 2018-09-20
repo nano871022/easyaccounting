@@ -1,6 +1,10 @@
 package com.pyt.service.implement;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,8 +12,11 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.QueryException;
+import org.pyt.common.poi.docs.Bookmark;
+import org.pyt.common.poi.docs.TableBookmark;
 
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
@@ -18,6 +25,10 @@ import com.pyt.service.dto.MarcadorDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
+
+import co.com.arquitectura.librerias.abstracts.ADTO;
+import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
+import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 
 public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcadorServicio {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
@@ -376,15 +387,174 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Map<String, Object>> generar(String nombreConfiguracion, String servicio, Map<String, Object> busqueda)
+	public <T extends ADTO, D extends ADTO, S extends Object, L extends Object,N extends Object> N generar(
+			String nombreConfiguracion, String servicio, Map<String, Object> busqueda)
 			throws MarcadorServicioException {
-		ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
-		dto.setServicio(servicio);
-		dto.setConfiguracion(nombreConfiguracion);
 		Set<String> set = busqueda.keySet();
-		for(String nombre : set) {
-			dto.set(nombre, busqueda.get(nombre));
+		T dto = null;
+		for (String campo : set) {
+			if (dto == null) {
+				dto = getDTOService(servicio, campo);
+				try {
+					dto.set(campo, busqueda.get(campo));
+				} catch (Exception e) {
+					throw new MarcadorServicioException(e);
+				}
+			}
+		}
+		Map<String, String> mapa = new HashMap<String, String>();
+		List<MarcadorServicioDTO> marcadores = getMarcadorServicio(nombreConfiguracion);
+		for (MarcadorServicioDTO marcador : marcadores) {
+			if (servicio.contains(marcador.getServicio())) {
+				mapa.put(marcador.getNombreCampo(), marcador.getMarcador());
+			}
+		}
+		S service = getService(servicio);
+		L resultado = getResultService(service, getMetodo(servicio), dto);
+		if (resultado instanceof List) {
+			List<D> lista = (List<D>) resultado;
+			if(lista != null && lista.size() > 0) {
+				TableBookmark tbm = new TableBookmark();
+				for(D d : lista) {
+					tbm.add(getAsociaciones(d, mapa));
+				}
+				return (N) tbm;
+			}
+		} else if (resultado instanceof ADTO) {
+			D d = (D) resultado;
+			Bookmark bookmark = getAsociaciones(d, mapa);
+			return (N) bookmark;
+		}
+		return null;
+	}
+	/**
+	 * Obtiene todas las asociaciones entre campos y el resultado 
+	 * @param dto 
+	 * @param mapa {@link Map}
+	 * @return {@link Bookmark}
+	 * @throws MarcadorServicioException
+	 */
+	@SuppressWarnings("unchecked")
+	private <T extends ADTO> Bookmark getAsociaciones(T dto, Map<String, String> mapa)
+			throws MarcadorServicioException {
+		try {
+			Bookmark book = null;
+			Set<String> set = mapa.keySet();
+			Class<T> clase = (Class<T>) dto.getClass();
+			for (String campo : set) {
+				String[] split = campo.split("::");
+				if (clase.getSimpleName().contains(split[0])) {
+					if (book == null) {
+						book = new Bookmark();
+					}
+					book.add(split[1], dto.get(split[1]));
+				}
+			}
+			return book;
+		} catch (Exception e) {
+			throw new MarcadorServicioException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends Object, L extends Object, S extends ADTO> T getResultService(L service, String metodo, S dto)
+			throws MarcadorServicioException {
+		Method[] metodos = service.getClass().getMethods();
+		for (Method metod : metodos) {
+			if (metod.getName().contains(metodo)) {
+				try {
+					return (T) metod.invoke(service, dto);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new MarcadorServicioException(e);
+				}
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
+	private String getMetodo(String servicio) throws MarcadorServicioException {
+		AbstractListFromProccess<ServicePOJO> listServices;
+		try {
+			listServices = (AbstractListFromProccess) this.getClass().forName(AppConstants.PATH_LIST_SERVICE)
+					.getConstructor().newInstance();
+			for (ServicePOJO service : listServices.getList()) {
+				if ((service.getClasss().getSimpleName() + ":" + service.getAlias()).contains(servicio)) {
+					return service.getName();
+				}
+			}
+			return null;
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+			throw new MarcadorServicioException(e);
+		}
+	}
+
+	@SuppressWarnings({ "static-access", "unchecked", "rawtypes" })
+	private <T extends Object> T getService(String servicio) throws MarcadorServicioException {
+		try {
+			AbstractListFromProccess<ServicePOJO> listServices = (AbstractListFromProccess) this.getClass()
+					.forName(AppConstants.PATH_LIST_SERVICE).getConstructor().newInstance();
+			for (ServicePOJO service : listServices.getList()) {
+				if ((service.getClasss().getSimpleName() + ":" + service.getAlias()).contains(servicio)) {
+					return (T) service.getClasss().getConstructor().newInstance();
+				}
+			}
+			return null;
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new MarcadorServicioException(e);
+		} catch (ClassNotFoundException e) {
+			throw new MarcadorServicioException(e);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
+	private <T extends Object, S extends ADTO> S getDTOService(String servicio, String campo)
+			throws MarcadorServicioException {
+		try {
+			AbstractListFromProccess<ServicePOJO> listServices = (AbstractListFromProccess) this.getClass()
+					.forName(AppConstants.PATH_LIST_SERVICE).getConstructor().newInstance();
+			String[] split = campo.split("::");
+			Boolean valid = true;
+			for (ServicePOJO service : listServices.getList()) {
+				if ((service.getClasss().getSimpleName() + ":" + service.getAlias()).contains(servicio)) {
+					Method[] metodos = service.getClasss().getDeclaredMethods();
+					for (Method metodo : metodos) {
+						if (metodo.getName().contains(service.getName())) {
+							Parameter[] parametros = metodo.getParameters();
+							for (String parametro : service.getParameter()) {
+								for (Parameter parameter : parametros) {
+									valid &= parameter.getName().contains(parametro);
+								}
+							}
+							if (valid) {
+								for (Parameter parametro : parametros) {
+									if (parametro.getName().contains(split[0])) {
+										return (S) parametro.getType().getConstructor().newInstance();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (InstantiationException e) {
+			throw new MarcadorServicioException(e);
+		} catch (IllegalAccessException e) {
+			throw new MarcadorServicioException(e);
+		} catch (IllegalArgumentException e) {
+			throw new MarcadorServicioException(e);
+		} catch (InvocationTargetException e) {
+			throw new MarcadorServicioException(e);
+		} catch (NoSuchMethodException e) {
+			throw new MarcadorServicioException(e);
+		} catch (SecurityException e) {
+			throw new MarcadorServicioException(e);
+		} catch (ClassNotFoundException e) {
+			throw new MarcadorServicioException(e);
 		}
 		return null;
 	}

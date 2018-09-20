@@ -11,6 +11,8 @@ import com.pyt.service.dto.MarcadorDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 
+import co.com.arquitectura.librerias.abstracts.ADTO;
+
 /**
  * Se encarga de realizar el crud sobre asociacion de marcadores y servicios
  * para la impresion de archivos o carga de archivos
@@ -341,12 +343,15 @@ public interface IConfigMarcadorServicio {
 	 * Se encarga de obtener los datos de configuracion con los marcadores de
 	 * respuesta de la informacion que se encontro en la base de datos
 	 * 
-	 * @param nombreConfiguracion {@link String}
-	 * @param servicio {@link String}
-	 * @param busqueda {@link Map} < {@link String} , {@link Object} >
+	 * @param nombreConfiguracion
+	 *            {@link String}
+	 * @param servicio
+	 *            {@link String}
+	 * @param busqueda
+	 *            {@link Map} < {@link String} , {@link Object} >
 	 * @return {@link List} of {@link Map} < {@link String} , {@link Object} >
 	 * @throws MarcadorServicioException
 	 */
-	public List<Map<String, Object>> generar(String nombreConfiguracion, String servicio, Map<String, Object> busqueda)
-			throws MarcadorServicioException;
+	public <T extends ADTO, D extends ADTO, S extends Object, L extends Object, N extends Object> N generar(
+			String nombreConfiguracion, String servicio, Map<String, Object> busqueda) throws MarcadorServicioException;
 }
