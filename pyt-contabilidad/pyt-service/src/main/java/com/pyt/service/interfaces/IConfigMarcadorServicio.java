@@ -3,6 +3,7 @@ package com.pyt.service.interfaces;
 import java.util.List;
 import java.util.Map;
 
+import org.pyt.common.common.ADto;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
@@ -10,8 +11,6 @@ import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.dto.MarcadorDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
-
-import co.com.arquitectura.librerias.abstracts.ADTO;
 
 /**
  * Se encarga de realizar el crud sobre asociacion de marcadores y servicios
@@ -352,6 +351,6 @@ public interface IConfigMarcadorServicio {
 	 * @return {@link List} of {@link Map} < {@link String} , {@link Object} >
 	 * @throws MarcadorServicioException
 	 */
-	public <T extends ADTO, D extends ADTO, S extends Object, L extends Object, N extends Object> N generar(
+	public <T extends ADto, D extends ADto, S extends Object, L extends Object, N extends Object> N generar(
 			String nombreConfiguracion, String servicio, Map<String, Object> busqueda) throws MarcadorServicioException;
 }

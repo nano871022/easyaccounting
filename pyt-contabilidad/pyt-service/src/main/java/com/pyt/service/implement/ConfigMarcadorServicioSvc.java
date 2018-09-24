@@ -3,7 +3,6 @@ package com.pyt.service.implement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ADto;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.MarcadorServicioException;
@@ -26,7 +26,6 @@ import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
-import co.com.arquitectura.librerias.abstracts.ADTO;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 
@@ -389,7 +388,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ADTO, D extends ADTO, S extends Object, L extends Object,N extends Object> N generar(
+	public <T extends ADto, D extends ADto, S extends Object, L extends Object,N extends Object> N generar(
 			String nombreConfiguracion, String servicio, Map<String, Object> busqueda)
 			throws MarcadorServicioException {
 		Set<String> set = busqueda.keySet();
@@ -398,7 +397,8 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 			if (dto == null) {
 				dto = getDTOService(servicio, campo);
 				try {
-					dto.set(campo, busqueda.get(campo));
+					String[] split = campo.split("::");
+					dto.set(split[1], busqueda.get(campo));
 				} catch (Exception e) {
 					throw new MarcadorServicioException(e);
 				}
@@ -422,7 +422,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 				}
 				return (N) tbm;
 			}
-		} else if (resultado instanceof ADTO) {
+		} else if (resultado instanceof ADto) {
 			D d = (D) resultado;
 			Bookmark bookmark = getAsociaciones(d, mapa);
 			return (N) bookmark;
@@ -437,7 +437,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	 * @throws MarcadorServicioException
 	 */
 	@SuppressWarnings("unchecked")
-	private <T extends ADTO> Bookmark getAsociaciones(T dto, Map<String, String> mapa)
+	private <T extends ADto> Bookmark getAsociaciones(T dto, Map<String, String> mapa)
 			throws MarcadorServicioException {
 		try {
 			Bookmark book = null;
@@ -459,7 +459,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends Object, L extends Object, S extends ADTO> T getResultService(L service, String metodo, S dto)
+	private <T extends Object, L extends Object, S extends ADto> T getResultService(L service, String metodo, S dto)
 			throws MarcadorServicioException {
 		Method[] metodos = service.getClass().getMethods();
 		for (Method metod : metodos) {
@@ -512,7 +512,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
-	private <T extends Object, S extends ADTO> S getDTOService(String servicio, String campo)
+	private <T extends Object, S extends ADto> S getDTOService(String servicio, String campo)
 			throws MarcadorServicioException {
 		try {
 			AbstractListFromProccess<ServicePOJO> listServices = (AbstractListFromProccess) this.getClass()
@@ -527,16 +527,26 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 							Parameter[] parametros = metodo.getParameters();
 							for (String parametro : service.getParameter()) {
 								for (Parameter parameter : parametros) {
-									valid &= parameter.getName().contains(parametro);
+									System.out.println(parameter.getParameterizedType().getTypeName()+" - "+(parametro)+" - "+split[0]);
+									valid &= parameter.getParameterizedType().getTypeName().contains(parametro) && parametro.contains(split[0]);
 								}
 							}
 							if (valid) {
 								for (Parameter parametro : parametros) {
-									if (parametro.getName().contains(split[0])) {
-										return (S) parametro.getType().getConstructor().newInstance();
+									System.out.println(parametro.getParameterizedType().getTypeName() +" - "+(split[0]));
+									if (parametro.getParameterizedType().getTypeName().contains(split[0])) {
+										Object obj = Class.forName(parametro.getParameterizedType().getTypeName()).getConstructor().newInstance();
+										if (obj instanceof ADto) {
+											S ret = (S) obj;
+											return ret;
+										}
+										return (S) obj;
 									}
 								}
+							}else {
+								valid = true;
 							}
+								
 						}
 					}
 				}

@@ -3,8 +3,10 @@ package org.pyt.app.beans.config;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -140,7 +142,6 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		// Table.put(lstServicioCampo, serviciosCampoBusqueda);
 		columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
 	}
-	
 
 	/**
 	 * Se carga de realizar busqueda de los registros y carga las data tablas
@@ -162,20 +163,26 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			error(e);
 		}
 	}
+
 	/**
-	 * Se encargaa de verificar que se selecciono el registro de la tabla y acivar el campo de eliminar
+	 * Se encargaa de verificar que se selecciono el registro de la tabla y acivar
+	 * el campo de eliminar
 	 */
 	public final void marcadorSelect() {
 		btnEliminar.setVisible(tbMarcador.isSelected());
 	}
+
 	/**
-	 * Se encarga de verificar que se selecciono el registro de la tabla y actuvar el campo de eliminar
+	 * Se encarga de verificar que se selecciono el registro de la tabla y actuvar
+	 * el campo de eliminar
 	 */
 	public final void servicioCampo() {
 		btnDelServicio.setVisible(tbServicioCampoBusqueda.isSelected());
 	}
+
 	/**
-	 * Se encarga de verificar que se selecciono el registro de la tabla y activa el campo
+	 * Se encarga de verificar que se selecciono el registro de la tabla y activa el
+	 * campo
 	 */
 	public final void servicioMarcador() {
 		btnDelMarcador.setVisible(tbMarcadorSerivicio.isSelected());
@@ -477,7 +484,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				return;
 			}
 			scb.setCampo(SelectList.get(lstCampos));
-			if(StringUtils.isBlank(columna.getText())) {
+			if (StringUtils.isBlank(columna.getText())) {
 				error("No contiene la columna.");
 				return;
 			}
@@ -515,7 +522,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				// Table.put(lstServicioCampo, serviciosCampoBusqueda);
 				columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
 			}
-			tbServicioCampoBusqueda.search();			
+			tbServicioCampoBusqueda.search();
 		}
 	}
 
@@ -613,10 +620,26 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			error(e);
 		}
 	}
-
-	public final void generar() {
-		System.out.println("generando..");
-		
+	/**
+	 * Se encarga de generar la consulta de la factura
+	 */
+	public final <T extends Object> void generar() {
+		try {
+			GenConfigServices gcs = new GenConfigServices(configMarcadorServicio);
+			gcs.setNombreConfiguracion(config.getConfiguracion());
+			Map<String, List<String>> mapa = gcs.getConfigAsociar();
+			Set<String> sets = mapa.keySet();
+			Map<String,Object> busqueda = new HashMap<String,Object>();
+			for(String key : sets) {
+				List<String> lista = mapa.get(key);
+				for(String campo : lista) {
+					busqueda.put(campo, "");
+				}
+				T g = gcs.gen(config.getConfiguracion(), key, busqueda);
+			}
+		} catch (Exception e) {
+			error(e);
+		}
 	}
 
 	public void agregar() {
@@ -634,6 +657,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public void guardar() {
 
 	}
+
 	/**
 	 * Se encarga de eliminar el marcador asociado al campo del servicio
 	 */
@@ -650,7 +674,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 						} catch (MarcadorServicioException e) {
 							error(e);
 						}
-					}else {
+					} else {
 						marcadoresServicios.remove(marcador);
 					}
 				}
