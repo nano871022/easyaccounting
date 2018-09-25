@@ -18,6 +18,8 @@ import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.MarcadorServicioException;
+import org.pyt.common.poi.docs.Bookmark;
+import org.pyt.common.poi.docs.TableBookmark;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -620,22 +622,28 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			error(e);
 		}
 	}
+
 	/**
 	 * Se encarga de generar la consulta de la factura
 	 */
+	@SuppressWarnings("unused")
 	public final <T extends Object> void generar() {
+		List<Object> list = new ArrayList<Object>();
 		try {
 			GenConfigServices gcs = new GenConfigServices(configMarcadorServicio);
 			gcs.setNombreConfiguracion(config.getConfiguracion());
 			Map<String, List<String>> mapa = gcs.getConfigAsociar();
 			Set<String> sets = mapa.keySet();
-			Map<String,Object> busqueda = new HashMap<String,Object>();
-			for(String key : sets) {
+			Map<String, Object> busqueda = new HashMap<String, Object>();
+			for (String key : sets) {
 				List<String> lista = mapa.get(key);
-				for(String campo : lista) {
-					busqueda.put(campo, "");
+				for (String campo : lista) {
+					busqueda.put(campo, "DocumentotvgÑO0");
 				}
 				T g = gcs.gen(config.getConfiguracion(), key, busqueda);
+				if (g != null) {
+					list.add(g);
+				}
 			}
 		} catch (Exception e) {
 			error(e);

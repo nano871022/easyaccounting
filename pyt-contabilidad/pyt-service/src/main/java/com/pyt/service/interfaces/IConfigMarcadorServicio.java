@@ -7,6 +7,7 @@ import org.pyt.common.common.ADto;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.dto.MarcadorDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
@@ -351,6 +352,6 @@ public interface IConfigMarcadorServicio {
 	 * @return {@link List} of {@link Map} < {@link String} , {@link Object} >
 	 * @throws MarcadorServicioException
 	 */
-	public <T extends ADto, D extends ADto, S extends Object, L extends Object, N extends Object> N generar(
+	public <T extends ADto, D extends ADto, S extends Object, L extends Object, N extends Object,K extends Services> N generar(
 			String nombreConfiguracion, String servicio, Map<String, Object> busqueda) throws MarcadorServicioException;
 }

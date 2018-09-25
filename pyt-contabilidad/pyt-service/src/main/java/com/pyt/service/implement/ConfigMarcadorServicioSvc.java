@@ -388,7 +388,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ADto, D extends ADto, S extends Object, L extends Object,N extends Object> N generar(
+	public <T extends ADto, D extends ADto, S extends Object, L extends Object, N extends Object, K extends Services> N generar(
 			String nombreConfiguracion, String servicio, Map<String, Object> busqueda)
 			throws MarcadorServicioException {
 		Set<String> set = busqueda.keySet();
@@ -396,11 +396,13 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 		for (String campo : set) {
 			if (dto == null) {
 				dto = getDTOService(servicio, campo);
-				try {
-					String[] split = campo.split("::");
-					dto.set(split[1], busqueda.get(campo));
-				} catch (Exception e) {
-					throw new MarcadorServicioException(e);
+				if (dto != null) {
+					try {
+						String[] split = campo.split("::");
+						dto.set(split[1], busqueda.get(campo));
+					} catch (Exception e) {
+						throw new MarcadorServicioException(e);
+					}
 				}
 			}
 		}
@@ -412,15 +414,24 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 			}
 		}
 		S service = getService(servicio);
+		K servic = (K) service;
+		servic.load();
 		L resultado = getResultService(service, getMetodo(servicio), dto);
+
 		if (resultado instanceof List) {
 			List<D> lista = (List<D>) resultado;
-			if(lista != null && lista.size() > 0) {
+			if (lista != null && lista.size() > 0) {
 				TableBookmark tbm = new TableBookmark();
-				for(D d : lista) {
-					tbm.add(getAsociaciones(d, mapa));
+				for (D d : lista) {
+					Bookmark bookmark = getAsociaciones(d, mapa);
+					if (bookmark != null) {
+						tbm.add(bookmark);
+					}
 				}
-				return (N) tbm;
+				if (tbm.getSize() > 0) {
+					return (N) tbm;
+				}
+				return null;
 			}
 		} else if (resultado instanceof ADto) {
 			D d = (D) resultado;
@@ -429,10 +440,13 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 		}
 		return null;
 	}
+
 	/**
-	 * Obtiene todas las asociaciones entre campos y el resultado 
-	 * @param dto 
-	 * @param mapa {@link Map}
+	 * Obtiene todas las asociaciones entre campos y el resultado
+	 * 
+	 * @param dto
+	 * @param mapa
+	 *            {@link Map}
 	 * @return {@link Bookmark}
 	 * @throws MarcadorServicioException
 	 */
@@ -461,13 +475,44 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	@SuppressWarnings("unchecked")
 	private <T extends Object, L extends Object, S extends ADto> T getResultService(L service, String metodo, S dto)
 			throws MarcadorServicioException {
-		Method[] metodos = service.getClass().getMethods();
-		for (Method metod : metodos) {
-			if (metod.getName().contains(metodo)) {
-				try {
-					return (T) metod.invoke(service, dto);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new MarcadorServicioException(e);
+		try {
+			Method method = getMethod((Class<Services>) service.getClass(), dto, metodo);
+			if (method != null) {
+				return (T) method.invoke(service, dto);
+			}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new MarcadorServicioException(e);
+		}
+		return null;
+	}
+
+	/**
+	 * Se encarga de obtener el metodo con el cual se necesita, para invoicar el
+	 * servicio correctamente.
+	 * 
+	 * @param service
+	 *            {@link Services} extends
+	 * @param dto
+	 *            {@link ADto} extends
+	 * @param name
+	 *            {@link String}
+	 * @return {@link Method}
+	 * @throws {@link
+	 *             MarcadorServicioException}
+	 */
+	@SuppressWarnings("unchecked")
+	private <T extends Services, L extends ADto, A extends ADto> Method getMethod(Class<T> service, L dto, String name)
+			throws MarcadorServicioException {
+		Method[] metodos = service.getDeclaredMethods();
+		for (Method metodo : metodos) {
+			if (metodo.getName().contains(name)) {
+				Class<A>[] parametros = (Class<A>[]) metodo.getParameterTypes();
+				if (parametros.length == 1) {
+					for (Class<A> parametro : parametros) {
+						if (parametro == dto.getClass()) {
+							return metodo;
+						}
+					}
 				}
 			}
 		}
@@ -527,15 +572,19 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 							Parameter[] parametros = metodo.getParameters();
 							for (String parametro : service.getParameter()) {
 								for (Parameter parameter : parametros) {
-									System.out.println(parameter.getParameterizedType().getTypeName()+" - "+(parametro)+" - "+split[0]);
-									valid &= parameter.getParameterizedType().getTypeName().contains(parametro) && parametro.contains(split[0]);
+									System.out.println(parameter.getParameterizedType().getTypeName() + " - "
+											+ (parametro) + " - " + split[0]);
+									valid &= parameter.getParameterizedType().getTypeName().contains(parametro)
+											&& parametro.contains(split[0]);
 								}
 							}
 							if (valid) {
 								for (Parameter parametro : parametros) {
-									System.out.println(parametro.getParameterizedType().getTypeName() +" - "+(split[0]));
+									System.out.println(
+											parametro.getParameterizedType().getTypeName() + " - " + (split[0]));
 									if (parametro.getParameterizedType().getTypeName().contains(split[0])) {
-										Object obj = Class.forName(parametro.getParameterizedType().getTypeName()).getConstructor().newInstance();
+										Object obj = Class.forName(parametro.getParameterizedType().getTypeName())
+												.getConstructor().newInstance();
 										if (obj instanceof ADto) {
 											S ret = (S) obj;
 											return ret;
@@ -543,10 +592,10 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 										return (S) obj;
 									}
 								}
-							}else {
+							} else {
 								valid = true;
 							}
-								
+
 						}
 					}
 				}
