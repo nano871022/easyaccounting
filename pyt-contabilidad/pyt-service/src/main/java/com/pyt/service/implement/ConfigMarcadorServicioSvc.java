@@ -403,6 +403,8 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 					} catch (Exception e) {
 						throw new MarcadorServicioException(e);
 					}
+				}else {
+					return null;
 				}
 			}
 		}

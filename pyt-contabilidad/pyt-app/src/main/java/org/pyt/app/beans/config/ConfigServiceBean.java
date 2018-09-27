@@ -1,7 +1,10 @@
 package org.pyt.app.beans.config;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -395,11 +398,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void putCamposServicio(String service) {
+	public <T extends Object, S extends ADto> void putCamposServicio(String service) {
 		try {
 			if (service.contentEquals(AppConstants.SELECCIONE))
 				return;
 			Class[] parametros = null;
+			campos.clear();
 			for (ServicePOJO servicio : listServices.getList()) {
 				if ((servicio.getClasss().getSimpleName() + ":" + servicio.getAlias()).contentEquals(service)) {
 					try {
@@ -411,14 +415,39 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 						}
 						Method metodo = servicio.getClasss().getDeclaredMethod(servicio.getName(), parametros);
 						Class retorno = metodo.getReturnType();
-						if (retorno.getConstructor().newInstance() instanceof ADto) {
-							List<String> campos = (List<String>) retorno.getMethod(AppConstants.GET_NAME_FIELDS)
-									.invoke(retorno.getConstructor().newInstance());
-							for (String campo : campos) {
-								this.campos.add(retorno.getSimpleName() + "::" + campo);
+
+						if (retorno == List.class) {
+
+							Type tipoRetorno = metodo.getGenericReturnType();
+							if (tipoRetorno instanceof ParameterizedType) {
+								ParameterizedType type = (ParameterizedType) tipoRetorno;
+								Type[] typeArguments = type.getActualTypeArguments();
+								for (Type typeArgument : typeArguments) {
+									Class clase = (Class) typeArgument;
+									T obj = (T)clase.getDeclaredConstructor().newInstance();
+									if(obj instanceof ADto){
+										List<String> campos = (List<String>) clase.getMethod(AppConstants.GET_NAME_FIELDS)
+												.invoke(clase.getConstructor().newInstance());
+										for (String campo : campos) {
+											this.campos.add(clase.getSimpleName() + "::" + campo);
+										}		
+									}else {
+										campos.add(retorno.getSimpleName());
+									}
+								}
 							}
+
 						} else {
-							campos.add(retorno.getSimpleName());
+							T obj = (T) retorno.getDeclaredConstructor().newInstance();
+							if (obj instanceof ADto) {
+								List<String> campos = (List<String>) retorno.getMethod(AppConstants.GET_NAME_FIELDS)
+										.invoke(retorno.getConstructor().newInstance());
+								for (String campo : campos) {
+									this.campos.add(retorno.getSimpleName() + "::" + campo);
+								}
+							} else {
+								campos.add(retorno.getSimpleName());
+							}
 						}
 					} catch (ClassNotFoundException e) {
 						throw new Exception(e);
@@ -626,7 +655,6 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/**
 	 * Se encarga de generar la consulta de la factura
 	 */
-	@SuppressWarnings("unused")
 	public final <T extends Object> void generar() {
 		List<Object> list = new ArrayList<Object>();
 		try {
@@ -642,6 +670,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				}
 				T g = gcs.gen(config.getConfiguracion(), key, busqueda);
 				if (g != null) {
+					System.out.println("Datos Encontrados.");
 					list.add(g);
 				}
 			}
