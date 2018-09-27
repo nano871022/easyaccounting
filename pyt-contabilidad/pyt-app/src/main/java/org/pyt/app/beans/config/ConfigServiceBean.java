@@ -1,6 +1,5 @@
 package org.pyt.app.beans.config;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -21,8 +20,6 @@ import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.MarcadorServicioException;
-import org.pyt.common.poi.docs.Bookmark;
-import org.pyt.common.poi.docs.TableBookmark;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -156,6 +153,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 */
 	public final void load(ConfiguracionDTO configuracion) {
 		try {
+			if(configuracion == null) {
+				configuracion = new ConfiguracionDTO();
+			}
 			config = configuracion;
 			if (StringUtils.isNotBlank(config.getConfiguracion())) {
 				this.configuracion.setText(config.getConfiguracion());

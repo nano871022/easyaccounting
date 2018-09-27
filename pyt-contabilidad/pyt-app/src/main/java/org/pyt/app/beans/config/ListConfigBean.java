@@ -92,7 +92,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	}
 
 	public void add() {
-		getController(ConfigServiceBean.class);
+		getController(ConfigServiceBean.class).load(null);
 	}
 
 	public void search() {
