@@ -84,13 +84,14 @@ public class DocX extends Poi {
 			XWPFTableRow row = searchTabla(marks);
 			while (table.hasNext()) {
 				Bookmark bookmark = table.next();
-				cells(row, row.getTableCells(), bookmark, table.getPosition() + 1);
+				if (row != null) {
+					cells(row, row.getTableCells(), bookmark, table.getPosition() + 1);
+				}
 			}
 		}
 	}
 
-	private final void cells(XWPFTableRow row, List<XWPFTableCell> celdas, Bookmark nameBookmarks,
-			Integer position) {
+	private final void cells(XWPFTableRow row, List<XWPFTableCell> celdas, Bookmark nameBookmarks, Integer position) {
 		try {
 			String[] keys = nameBookmarks.getBookmarks();
 			XWPFTableRow rowUsar = null;
@@ -386,10 +387,15 @@ public class DocX extends Poi {
 		XWPFDocument document = new XWPFDocument(doc);
 		PdfOptions options = PdfOptions.create();
 		OutputStream out = new FileOutputStream(new File(fileOut.replace("docx", "pdf")));
-		PdfConverter.getInstance().convert(document, out, options);
-		doc.close();
-		document.close();
-		out.close();
+		try {
+			PdfConverter.getInstance().convert(document, out, options);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			doc.close();
+			document.close();
+			out.close();
+		}
 	}
 
 	/**
@@ -414,41 +420,23 @@ public class DocX extends Poi {
 	}
 
 	public final static void main(String... strings) {
-		Bookmark bookmark = Bookmark.instance()
-		.add("idTabla", 10)
-		.add("nombreTabla", "nombre del registro")
-		.add("valorTabla", "valor del registro");
-		Bookmark bookmark2 = Bookmark.instance()
-		.add("idTabla", 11)
-		.add("nombreTabla", "nombre del registro 2")
-		.add("valorTabla", "valor del registro 2");
-		Bookmark bookmark3 = Bookmark.instance()
-		.add("idTabla", 12)
-		.add("nombreTabla", "nombre del registro 3")
-		.add("valorTabla", "valor del registro 3");
-		Bookmark bookmark4 = Bookmark.instance()
-		.add("cantidad", 2)
-		.add("descripcionTabla2", "descripcion tabla 2")
-		.add("valorTabla2", 1000)
-		.add("subTotalTabla", 2000);
-		Bookmark bookmark5 = Bookmark.instance()
-		.add("cantidad", 3)
-		.add("descripcionTabla2", "descripcion tabla 3")
-		.add("valorTabla2", 2000)
-		.add("subTotalTabla", 6000);
-		TableBookmark tabla1 = TableBookmark.instance()
-		.add(bookmark)
-		.add(bookmark2)
-		.add(bookmark3);
+		Bookmark bookmark = Bookmark.instance().add("idTabla", 10).add("nombreTabla", "nombre del registro")
+				.add("valorTabla", "valor del registro");
+		Bookmark bookmark2 = Bookmark.instance().add("idTabla", 11).add("nombreTabla", "nombre del registro 2")
+				.add("valorTabla", "valor del registro 2");
+		Bookmark bookmark3 = Bookmark.instance().add("idTabla", 12).add("nombreTabla", "nombre del registro 3")
+				.add("valorTabla", "valor del registro 3");
+		Bookmark bookmark4 = Bookmark.instance().add("cantidad", 2).add("descripcionTabla2", "descripcion tabla 2")
+				.add("valorTabla2", 1000).add("subTotalTabla", 2000);
+		Bookmark bookmark5 = Bookmark.instance().add("cantidad", 3).add("descripcionTabla2", "descripcion tabla 3")
+				.add("valorTabla2", 2000).add("subTotalTabla", 6000);
+		TableBookmark tabla1 = TableBookmark.instance().add(bookmark).add(bookmark2).add(bookmark3);
 		TableBookmark tabla2 = TableBookmark.instance();
 		tabla2.add(bookmark4);
 		tabla2.add(bookmark5);
-		Bookmark bookmarks = Bookmark.instance()
-		.add("Prueba", " valor a cambiar ")
-		.add("between", " valor entre textos ")
-		.add("remplazo", " valor de remplazo ")
-		.add("totalTabla1", 20000)
-		.add("totalTabla", 100000);
+		Bookmark bookmarks = Bookmark.instance().add("Prueba", " valor a cambiar ")
+				.add("between", " valor entre textos ").add("remplazo", " valor de remplazo ").add("totalTabla1", 20000)
+				.add("totalTabla", 100000);
 		DocX doc = new DocX();
 		doc.addTableBookmark(tabla1);
 		doc.addTableBookmark(tabla2);

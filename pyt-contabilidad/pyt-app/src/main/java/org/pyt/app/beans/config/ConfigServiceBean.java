@@ -20,6 +20,9 @@ import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.MarcadorServicioException;
+import org.pyt.common.poi.docs.Bookmark;
+import org.pyt.common.poi.docs.DocX;
+import org.pyt.common.poi.docs.TableBookmark;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -153,7 +156,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 */
 	public final void load(ConfiguracionDTO configuracion) {
 		try {
-			if(configuracion == null) {
+			if (configuracion == null) {
 				configuracion = new ConfiguracionDTO();
 			}
 			config = configuracion;
@@ -424,14 +427,15 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 								Type[] typeArguments = type.getActualTypeArguments();
 								for (Type typeArgument : typeArguments) {
 									Class clase = (Class) typeArgument;
-									T obj = (T)clase.getDeclaredConstructor().newInstance();
-									if(obj instanceof ADto){
-										List<String> campos = (List<String>) clase.getMethod(AppConstants.GET_NAME_FIELDS)
+									T obj = (T) clase.getDeclaredConstructor().newInstance();
+									if (obj instanceof ADto) {
+										List<String> campos = (List<String>) clase
+												.getMethod(AppConstants.GET_NAME_FIELDS)
 												.invoke(clase.getConstructor().newInstance());
 										for (String campo : campos) {
 											this.campos.add(clase.getSimpleName() + "::" + campo);
-										}		
-									}else {
+										}
+									} else {
 										campos.add(retorno.getSimpleName());
 									}
 								}
@@ -557,30 +561,63 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
+	public void agregar() {
+		MarcadorServicioDTO ms = new MarcadorServicioDTO();
+		ms.setServicio(SelectList.get(servicio));
+		ms.setMarcador(SelectList.get(marcador));
+		ms.setNombreCampo(SelectList.get(campo));
+		marcadoresServicios.add(ms);
+		// Table.add(lstMarcadoresCampos, ms);
+		campo.getSelectionModel().selectFirst();
+		marcador.getSelectionModel().selectFirst();
+		tbMarcadorSerivicio.search();
+	}
+
+	/**
+	 * Se encarga de obtener el metodo del servicio segun los datos suministrados
+	 * 
+	 * @param cservice
+	 *            {@link Class}
+	 * @param nombre
+	 *            {@link String}
+	 * @param parametros
+	 *            {@link String}[]
+	 * @return {@link Method}
+	 */
+	@SuppressWarnings("unused")
+	private <S extends Object> Method getMethod(Class<S> cservice, String nombre, String[] parametros) {
+		Boolean valid = true;
+		if (cservice != null) {
+			List<String> listaCampos = new ArrayList<String>();
+			Method[] metodos = cservice.getDeclaredMethods();
+			for (Method metodo : metodos) {
+				if (metodo.getName().equalsIgnoreCase(nombre)) {
+					Class<?>[] clases = metodo.getParameterTypes();
+					for (Class<?> clase : clases) {
+						for (String parametro : parametros) {
+							if (clase.getCanonicalName().equalsIgnoreCase(parametro)) {
+								valid &= true;
+							} else {
+								valid &= false;
+							}
+						}
+					}
+					if (valid) {
+						return metodo;
+					}else {
+						valid = true;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	@SuppressWarnings({ "unchecked", })
 	public <T extends Object> void putCamposServicio(ServicePOJO service) {
 		try {
 			List<String> listaCampos = new ArrayList<String>();
-			Class<T> servicio = (Class<T>) service.getClasss();
-			Method[] metodos = servicio.getDeclaredMethods();
-			Method metodoUso = null;
-			Boolean valid = true;
-			for (Method metodo : metodos) {
-				if (metodo.getName().equalsIgnoreCase(service.getName())) {
-					Class<?>[] clases = metodo.getParameterTypes();
-					for (Class<?> clase : clases) {
-						for (String parametro : service.getParameter()) {
-							if (clase.getCanonicalName().equalsIgnoreCase(parametro)) {
-								valid &= true;
-							}
-						}
-						if (valid) {
-							metodoUso = metodo;
-							break;
-						}
-					}
-				}
-			}
+			Method metodoUso = getMethod(service.getClasss(), service.getName(), service.getParameter());
 			if (metodoUso != null) {
 				Class<?>[] parametros = metodoUso.getParameterTypes();
 				for (Class<?> parametro : parametros) {
@@ -655,7 +692,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/**
 	 * Se encarga de generar la consulta de la factura
 	 */
-	public final <T extends Object> void generar() {
+	public final <T extends Object,M extends Object> void generar() {
 		List<Object> list = new ArrayList<Object>();
 		try {
 			GenConfigServices gcs = new GenConfigServices(configMarcadorServicio);
@@ -665,6 +702,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			Map<String, Object> busqueda = new HashMap<String, Object>();
 			for (String key : sets) {
 				List<String> lista = mapa.get(key);
+				busqueda.clear();
 				for (String campo : lista) {
 					busqueda.put(campo, "DocumentotvgÑO0");
 				}
@@ -674,21 +712,22 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 					list.add(g);
 				}
 			}
+			DocX doc = new DocX();
+			for(Object mark : list) {
+				if(mark instanceof TableBookmark) {
+					doc.addTableBookmark((TableBookmark)mark);
+				}else if(mark instanceof Bookmark) {
+					doc.setBookmarks((Bookmark)mark);
+				}
+			}
+			doc.setFile("./docs/text.docx");
+			doc.setFileOut("./docs/text2.docx");
+			//doc.setFile(config.getArchivo());
+			//doc.setFileOut(config.getArchivo());
+			doc.generar();
 		} catch (Exception e) {
 			error(e);
 		}
-	}
-
-	public void agregar() {
-		MarcadorServicioDTO ms = new MarcadorServicioDTO();
-		ms.setServicio(SelectList.get(servicio));
-		ms.setMarcador(SelectList.get(marcador));
-		ms.setNombreCampo(SelectList.get(campo));
-		marcadoresServicios.add(ms);
-		// Table.add(lstMarcadoresCampos, ms);
-		campo.getSelectionModel().selectFirst();
-		marcador.getSelectionModel().selectFirst();
-		tbMarcadorSerivicio.search();
 	}
 
 	public void guardar() {

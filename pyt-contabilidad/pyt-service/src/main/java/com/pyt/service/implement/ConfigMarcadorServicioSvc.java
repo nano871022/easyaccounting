@@ -465,7 +465,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 					if (book == null) {
 						book = new Bookmark();
 					}
-					book.add(split[1], dto.get(split[1]));
+					book.add(mapa.get(campo), dto.get(split[1]));
 				}
 			}
 			return book;
