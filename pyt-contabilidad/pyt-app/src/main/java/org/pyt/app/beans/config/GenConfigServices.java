@@ -1,9 +1,10 @@
 package org.pyt.app.beans.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.MarcadorServicioException;
@@ -51,18 +52,13 @@ public class GenConfigServices {
 	 * @throws {@link
 	 *             Exception}
 	 */
-	public final Map<String, List<String>> getConfigAsociar() throws Exception {
-		Map<String, List<String>> mapaServicioCampo = new HashMap<String, List<String>>();
+	public final String[] getConfigAsociar() throws Exception {
+		Set<String> campos = new HashSet<String>();
 		List<ServicioCampoBusquedaDTO> lista = getServicioCampo();
 		for (ServicioCampoBusquedaDTO dto : lista) {
-			List<String> campos = mapaServicioCampo.get(dto.getServicio());
-			if (campos == null) {
-				campos = new ArrayList<String>();
-			}
-			campos.add(dto.getCampo());
-			mapaServicioCampo.put(dto.getServicio(), campos);
+			campos.add(dto.getMarcador());
 		}
-		return mapaServicioCampo;
+		return campos.toArray(new String[campos.size()]);
 	}
 
 	/**
@@ -71,8 +67,18 @@ public class GenConfigServices {
 	 * @param busqueda
 	 * @throws Exception
 	 */
-	public final <T extends Object> T gen(String nombreConfig, String servicio, Map<String, Object> busqueda)
-			throws Exception {
+	public final <T extends Object> T gen(String nombreConfig, Map<String, Object> busqueda) throws Exception {
+		Set<String> sets = busqueda.keySet();
+		List<ServicioCampoBusquedaDTO> lstServFieldSearch = configMarcadorServicio
+				.getServiciosCampoBusqueda(nombreConfig);
+		for (ServicioCampoBusquedaDTO servFieldSearch : lstServFieldSearch) {
+			Optional<String> opt = sets.stream().filter(p -> p.equalsIgnoreCase(servFieldSearch.getMarcador()))
+					.findFirst();
+			if (opt.isPresent()) {
+				servFieldSearch.getServicio();
+				servFieldSearch.getCampo();
+			}
+		}
 		return configMarcadorServicio.generar(nombreConfig, servicio, busqueda);
 	}
 

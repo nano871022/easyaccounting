@@ -13,6 +13,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.AppConstants;
+import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.poi.docs.Bookmark;
@@ -398,7 +399,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 				dto = getDTOService(servicio, campo);
 				if (dto != null) {
 					try {
-						String[] split = campo.split("::");
+						String[] split = campo.split(ConfigServiceConstant.SEP_2_DOTS);
 						dto.set(split[1], busqueda.get(campo));
 					} catch (Exception e) {
 						throw new MarcadorServicioException(e);
