@@ -1,14 +1,17 @@
 package org.pyt.app.beans.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
+import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
@@ -22,6 +25,7 @@ public class GenConfigServices {
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configMarcadorServicio;
 	private String nombreConfiguracion;
+	private String nameFiler;
 
 	public GenConfigServices(IConfigMarcadorServicio config) {
 		if (configMarcadorServicio == null) {
@@ -67,19 +71,35 @@ public class GenConfigServices {
 	 * @param busqueda
 	 * @throws Exception
 	 */
-	public final <T extends Object> T gen(String nombreConfig, Map<String, Object> busqueda) throws Exception {
+	public final <T extends Object> List<Object> gen(String nombreConfig, Map<String, Object> busqueda)
+			throws Exception {
+		Map<String, Map<String, Object>> campoValorServ = new HashMap<String, Map<String, Object>>();
+		List<Object> list = new ArrayList<Object>();
 		Set<String> sets = busqueda.keySet();
 		List<ServicioCampoBusquedaDTO> lstServFieldSearch = configMarcadorServicio
 				.getServiciosCampoBusqueda(nombreConfig);
 		for (ServicioCampoBusquedaDTO servFieldSearch : lstServFieldSearch) {
-			Optional<String> opt = sets.stream().filter(p -> p.equalsIgnoreCase(servFieldSearch.getMarcador()))
-					.findFirst();
-			if (opt.isPresent()) {
-				servFieldSearch.getServicio();
-				servFieldSearch.getCampo();
+			Map<String, Object> campoValor = campoValorServ.get(servFieldSearch.getServicio());
+			if (campoValor == null) {
+				campoValor = new HashMap<String, Object>();
+			}
+			campoValor.put(servFieldSearch.getCampo(), busqueda.get(servFieldSearch.getMarcador()));
+			campoValorServ.put(servFieldSearch.getServicio(), campoValor);
+			/*
+			 * Optional<String> opt = sets.stream().filter(p ->
+			 * p.equalsIgnoreCase(servFieldSearch.getMarcador())) .findFirst(); if
+			 * (opt.isPresent()) { servFieldSearch.getServicio();
+			 * servFieldSearch.getCampo(); }
+			 */
+		}
+		Set<String> servicios = campoValorServ.keySet();
+		for (String servicio : servicios) {
+			T bookmark = configMarcadorServicio.generar(nombreConfig, servicio, campoValorServ.get(servicio));
+			if (bookmark != null) {
+				list.add(bookmark);
 			}
 		}
-		return configMarcadorServicio.generar(nombreConfig, servicio, busqueda);
+		return list;
 	}
 
 	/**
@@ -90,6 +110,18 @@ public class GenConfigServices {
 	 */
 	public final void setNombreConfiguracion(String nombreConfiguracion) {
 		this.nombreConfiguracion = nombreConfiguracion;
+	}
+
+	public final String getNameFile() throws Exception {
+		if (StringUtils.isBlank(nameFiler)) {
+			ConfiguracionDTO dto = new ConfiguracionDTO();
+			dto.setConfiguracion(nombreConfiguracion);
+			List<ConfiguracionDTO> lista = configMarcadorServicio.getConfiguraciones(dto);
+			if (lista != null && lista.size() > 0) {
+				nameFiler =  lista.get(0).getArchivo();
+			}
+		}
+		return nameFiler;
 	}
 
 }

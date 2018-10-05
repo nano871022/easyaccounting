@@ -739,24 +739,23 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			for (String campo : campos) {
 				busqueda.put(campo, "DocumentotvgÑO0");
 			}
-			T g = gcs.gen(config.getConfiguracion(), busqueda);
-			if (g != null) {
-				System.out.println("Datos Encontrados.");
-				list.add(g);
-			}
-			DocX doc = new DocX();
-			for (Object mark : list) {
-				if (mark instanceof TableBookmark) {
-					doc.addTableBookmark((TableBookmark) mark);
-				} else if (mark instanceof Bookmark) {
-					doc.setBookmarks((Bookmark) mark);
+			list = gcs.gen(config.getConfiguracion(), busqueda);
+			if (list.size() > 0) {
+				DocX doc = new DocX();
+				for (Object mark : list) {
+					if (mark instanceof TableBookmark) {
+						doc.addTableBookmark((TableBookmark) mark);
+					} else if (mark instanceof Bookmark) {
+						doc.setBookmarks((Bookmark) mark);
+					}
 				}
+				System.out.println("Nombre de archivo "+gcs.getNameFile());
+				doc.setFile("./docs/"+gcs.getNameFile());
+				doc.setFileOut("./docs/text2.docx");
+				// doc.setFile(config.getArchivo());
+				// doc.setFileOut(config.getArchivo());
+				doc.generar();
 			}
-			doc.setFile("./docs/text.docx");
-			doc.setFileOut("./docs/text2.docx");
-			// doc.setFile(config.getArchivo());
-			// doc.setFileOut(config.getArchivo());
-			doc.generar();
 		} catch (Exception e) {
 			error(e);
 		}
