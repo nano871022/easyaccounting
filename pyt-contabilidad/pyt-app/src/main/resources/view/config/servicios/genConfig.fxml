@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="554.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.config.GenConfigBean">
+  <bottom>
+    <HBox alignment="CENTER" prefHeight="39.0" prefWidth="200.0">
+      <children>
+        <Button fx:id="btnGenerar" onAction="#generar" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Generar">
+          <HBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+          </HBox.margin>
+        </Button>
+        <Button fx:id="btnCancelar" onAction="#cancelar" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Cancelar" HBox.margin="$x1" />
+      </children>
+    </HBox>
+  </bottom>
+  <center>
+    <ScrollPane  maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+      <content>
+        <AnchorPane fx:id="Content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0" />
+      </content>
+    </ScrollPane>
+  </center>
+  <top>
+    <HBox prefHeight="39.0" prefWidth="200.0">
+      <children>
+        <Label maxHeight="1.7976931348623157E308" text="Nombre" HBox.margin="$x1" />
+        <Label fx:id="nameGen" maxHeight="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0" text="" HBox.margin="$x1" />
+      </children>
+    </HBox>
+  </top>
+</BorderPane>

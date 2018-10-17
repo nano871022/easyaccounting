@@ -17,9 +17,11 @@ import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.poi.docs.Bookmark;
 import org.pyt.common.poi.docs.DocX;
@@ -51,6 +53,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 @FXMLFile(path = "view/config/servicios", file = "ConfigService.fxml")
@@ -729,34 +732,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/**
 	 * Se encarga de generar la consulta de la factura
 	 */
+	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void generar() {
-		List<Object> list = new ArrayList<Object>();
+		GenConfigBean gcb;
 		try {
-			GenConfigServices gcs = new GenConfigServices(configMarcadorServicio);
-			gcs.setNombreConfiguracion(config.getConfiguracion());
-			String[] campos = gcs.getConfigAsociar();
-			Map<String, Object> busqueda = new HashMap<String, Object>();
-			for (String campo : campos) {
-				busqueda.put(campo, "DocumentotvgÑO0");
-			}
-			list = gcs.gen(config.getConfiguracion(), busqueda);
-			if (list.size() > 0) {
-				DocX doc = new DocX();
-				for (Object mark : list) {
-					if (mark instanceof TableBookmark) {
-						doc.addTableBookmark((TableBookmark) mark);
-					} else if (mark instanceof Bookmark) {
-						doc.setBookmarks((Bookmark) mark);
-					}
-				}
-				System.out.println("Nombre de archivo "+gcs.getNameFile());
-				doc.setFile("./docs/"+gcs.getNameFile());
-				doc.setFileOut("./docs/text2.docx");
-				// doc.setFile(config.getArchivo());
-				// doc.setFileOut(config.getArchivo());
-				doc.generar();
-			}
-		} catch (Exception e) {
+			gcb = LoadAppFxml.loadBeanFxml(new Stage(), GenConfigBean.class);
+			gcb.load(config.getConfiguracion());
+		} catch (LoadAppFxmlException e) {
 			error(e);
 		}
 	}

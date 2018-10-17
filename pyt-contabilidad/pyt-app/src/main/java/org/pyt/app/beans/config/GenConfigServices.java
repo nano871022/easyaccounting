@@ -26,6 +26,7 @@ public class GenConfigServices {
 	private IConfigMarcadorServicio configMarcadorServicio;
 	private String nombreConfiguracion;
 	private String nameFiler;
+	
 
 	public GenConfigServices(IConfigMarcadorServicio config) {
 		if (configMarcadorServicio == null) {

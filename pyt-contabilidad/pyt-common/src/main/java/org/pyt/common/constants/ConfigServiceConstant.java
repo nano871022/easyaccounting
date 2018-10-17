@@ -11,6 +11,7 @@ public final class ConfigServiceConstant {
 		public final static String MARK = "marcador";
 		public final static String SEP_2_DOTS = "::";
 		public final static String SEP_2_DOT = ":";
+		public final static String SEP_DOT = ".";
 		
 		public final static Integer TAB_MARCADOR = 1;
 		public final static Integer TAB_SERVICIO_CAMPO = 2;

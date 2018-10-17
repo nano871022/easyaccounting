@@ -99,6 +99,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		}
 	}
 
+
 	/**
 	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
 	 * anotada el file fxml y el titulo de la ventana.
@@ -220,9 +221,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		try {
 			T lBean = bean.getDeclaredConstructor().newInstance();
 			file = lBean.pathFileFxml();
- 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
- 				file = AppConstants.SLASH + file;
- 			}
+			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
+				file = AppConstants.SLASH + file;
+			}
 			url = bean.getResource(file);
 			return new FXMLLoader(url);
 		} catch (InstantiationException e) {
@@ -239,7 +240,6 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
 		}
 	}
-
 
 	/**
 	 * Se encarga de cargar un fxml de controlador
@@ -266,23 +266,28 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			root = loader.load();
 			((ScrollPane) loadApp().getLastContro()).setContent(root);
 			return loader.getController();
-		} catch(IllegalStateException e) {
-			throw new LoadAppFxmlException("Problema en cargar load",e);
-		}catch (LoadException e) {
+		} catch (IllegalStateException e) {
+			throw new LoadAppFxmlException("Problema en cargar load", e);
+		} catch (LoadException e) {
 			Log.error("Archivo no puede ser cargado. ");
 			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}
 	}
-		/**
+
+	/**
 	 * Se encarga de cargar un archivo fxml dentro de un panel indicado
-	 * @param layout 
-	 * @param bean {@link Class}
+	 * 
+	 * @param layout
+	 * @param bean
+	 *            {@link Class}
 	 * @return {@link ABean}
-	 * @throws {@link LoadAppFxmlException}
+	 * @throws {@link
+	 *             LoadAppFxmlException}
 	 */
-	public final static <L extends Pane, S extends ADto, T extends ABean<S>> T beanFxmlPane(L layout, Class<T> bean)throws LoadAppFxmlException {
+	public final static <L extends Pane, S extends ADto, T extends ABean<S>> T beanFxmlPane(L layout, Class<T> bean)
+			throws LoadAppFxmlException {
 		FXMLLoader loader = loadFxml(bean);
 		try {
 			Parent root = loader.load();
