@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
@@ -17,11 +18,16 @@ import org.pyt.common.poi.docs.TableBookmark;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 /**
  * Se encarga de realizar la generacion de la configuracion de los servicios
@@ -31,6 +37,8 @@ import javafx.scene.layout.GridPane;
  */
 @FXMLFile(path = "view/config/servicios", file = "genConfig.fxml",nombreVentana="Generar Archivo de Servicios")
 public class GenConfigBean extends ABean {
+	@FXML
+	private BorderPane window;
 	@FXML
 	private Button btnGenerar;
 	@FXML
@@ -56,7 +64,9 @@ public class GenConfigBean extends ABean {
 		gcs = new GenConfigServices(configMarcadorServicio);
 		doc = new DocX();
 		gridPane = new GridPane();
+		campos = new HashMap<String,Object>();
 		camposAgregados = new HashMap<String,TextField>();
+		Content.getChildren().add(gridPane);
 	}
 
 	/**
@@ -86,17 +96,19 @@ public class GenConfigBean extends ABean {
 	 * Se encarga de crear la grilla con los objetos puestos en lass posiciones correctas
 	 */
 	private void loadGrid() {
-		Integer columnIndex = 1;
-		Integer rowIndex = 1;
+		Integer columnIndex = 0;
+		Integer rowIndex = 0;
 		Integer maXRow = nombreCampos.size()<=5?nombreCampos.size():nombreCampos.size()<=16?nombreCampos.size()/2:nombreCampos.size()/3;
 		Integer maxCol = nombreCampos.size()<=5?2:nombreCampos.size()<=16?4:6;
 		for (String nombreCampo : nombreCampos) {
 			camposAgregados.put(nombreCampo,new TextField());
-			gridPane.add(new Label(nombreCampo), columnIndex, rowIndex);
 			camposAgregados.get(nombreCampo).setVisible(true);
 			camposAgregados.get(nombreCampo).setEditable(true);
 			camposAgregados.get(nombreCampo).setDisable(false);
-			gridPane.add(camposAgregados.get(nombreCampo), columnIndex+1, rowIndex);
+			gridPane.add(new Label(nombreCampo), columnIndex, rowIndex,1,1);
+			gridPane.add(camposAgregados.get(nombreCampo), columnIndex+1, rowIndex,1,1);
+			gridPane.setMargin(camposAgregados.get(nombreCampo), new Insets(5, 5, 5, 5));
+			gridPane.setPadding(new Insets(5,5,5,5));
 			columnIndex += 2;
 			if(columnIndex>maxCol) {
 				columnIndex=0;
@@ -105,6 +117,8 @@ public class GenConfigBean extends ABean {
 				rowIndex += 1;
 			}
 		}
+		Content.setMinHeight(gridPane.getHeight()+50);
+		gridPane.setMaxWidth(Content.getMaxWidth());
 	}
 
 	/**
@@ -112,7 +126,8 @@ public class GenConfigBean extends ABean {
 	 */
 	public void generar() {
 		List<Object> list = new ArrayList<Object>();
-		try {
+		loadValueFields();
+		try {//DocumentotvgÑO0
 			list = gcs.gen(nombreConfig, campos);
 			if (list.size() > 0) {
 				for (Object mark : list) {
@@ -122,14 +137,30 @@ public class GenConfigBean extends ABean {
 						doc.setBookmarks((Bookmark) mark);
 					}
 				}
-				System.out.println("Nombre de archivo " + gcs.getNameFile());
-				doc.setFile(PATH_DOCS + gcs.getNameFile());
-				doc.setFileOut(PATH_DOCS + fileOut(gcs.getNameFile()));
+				String nameFile = gcs.getNameFile();
+				System.out.println("Nombre de archivo " + nameFile);
+				doc.setFile(PATH_DOCS + nameFile);
+				doc.setFileOut(PATH_DOCS + fileOut(nameFile));
 				doc.generar();
+				cancelar();
+				notificar("Se genero "+ nombreConfig +" con el nombre " + fileOut(nameFile));
 			}
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+	
+	private void loadValueFields() {
+		campos.clear();
+		Set<String> lcampos = camposAgregados.keySet();
+		for(String campo : lcampos) {
+			campos.put(campo,getValue(campo));
+		}
+	}
+	
+	private final <S extends Node> String getValue(String nombreCampo) {
+		TextField campo = camposAgregados.get(nombreCampo);
+		return campo.getText();
 	}
 
 	/**
@@ -140,7 +171,7 @@ public class GenConfigBean extends ABean {
 	 * @return {@link String} nombre de salida
 	 */
 	private String fileOut(String nameFileOrig) {
-		String[] name_split = nameFileOrig.split(ConfigServiceConstant.SEP_DOT);
+		String[] name_split = nameFileOrig.split(ConfigServiceConstant.SEP_BACK_DOT);
 		name_split[0] = name_split[0] + "_out";
 		return String.join(ConfigServiceConstant.SEP_DOT, name_split);
 	}
@@ -149,6 +180,7 @@ public class GenConfigBean extends ABean {
 	 * Se encarga de cancelar la generacion
 	 */
 	public void cancelar() {
-
+		Stage stage = (Stage) window.getScene().getWindow();
+		stage.close();
 	}
 }

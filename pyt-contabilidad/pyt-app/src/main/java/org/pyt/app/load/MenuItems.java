@@ -8,7 +8,6 @@ import org.pyt.app.beans.actividadIca.ActividadIcaBean;
 import org.pyt.app.beans.banco.BancoBean;
 import org.pyt.app.beans.centroCosto.CentroCostoBean;
 import org.pyt.app.beans.concepto.ConceptoBean;
-import org.pyt.app.beans.config.ConfigServiceBean;
 import org.pyt.app.beans.config.ListConfigBean;
 import org.pyt.app.beans.cuentaContable.CuentaContableBean;
 import org.pyt.app.beans.dinamico.FormularioBean;
@@ -45,7 +44,7 @@ public class MenuItems {
 	private final static String MENU_ADMINISTRADOR = "Administrador";
 	private final static String MENU_MODULOS = "Modulos";
 	private final static String BTN_CERRAR = "Cerrar";
-	private final static String BTN_PROVEEDOR = "Proveedores";
+	private final static String BTN_PROVEEDOR = "Terceros";
 	private final static String BTN_EMPLEADOS = "Empleados";
 	private final static String BTN_PARAMETRO = "Parametros";
 	private final static String BTN_CENTRO_COSTO = "Centro de Costos";

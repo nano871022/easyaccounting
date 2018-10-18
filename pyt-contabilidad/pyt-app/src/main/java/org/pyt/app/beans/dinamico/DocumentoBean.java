@@ -174,6 +174,6 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	 * Se encarga de cancelar el almacenamiento de los datos
 	 */
 	public final void cancelar() {
-
+       getController(ListaDocumentosBean.class);
 	}
 }
