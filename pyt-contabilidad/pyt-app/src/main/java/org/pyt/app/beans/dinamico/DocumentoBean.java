@@ -66,6 +66,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 		tipoDocumento = new ParametroDTO();
 		tipoDocumentos.onActionProperty().set(e -> loadField());
 		SelectList.put(tipoDocumentos, listTipoDocumento, FIELD_NAME);
+		titulo.setText("");
 	}
 
 	/**

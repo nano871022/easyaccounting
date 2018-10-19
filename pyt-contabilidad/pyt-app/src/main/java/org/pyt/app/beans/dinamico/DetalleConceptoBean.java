@@ -69,6 +69,7 @@ public class DetalleConceptoBean extends DinamicoBean<DetalleConceptoDTO> {
 		tipoDocumento = tipoDoc;
 		this.codigoDocumento = codigoDocumento;
 		this.centro = central;
+		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -76,6 +77,7 @@ public class DetalleConceptoBean extends DinamicoBean<DetalleConceptoDTO> {
 		this.registro = registro;
 		tipoDocumento = tipoDoc;
 		this.centro = central;
+		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
 		loadField();
 	}
 

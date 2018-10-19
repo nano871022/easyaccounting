@@ -36,11 +36,17 @@ public final class SelectList {
 	public final static <S extends Object, T extends ADto> void put(ChoiceBox<S> choiceBox, List<T> lista,
 			String campoDto) {
 		try {
+			if(campoDto == null)return;
 			choiceBox.getItems().clear();
 			ObservableList<S> observable = choiceBox.getItems();
 			observable.add((S) AppConstants.SELECCIONE);
 			for (T obj : lista) {
-				observable.add(obj.get(campoDto));
+				if(obj != null) {
+					S v = obj.get(campoDto);
+					if(v != null) {
+						observable.add(v);
+					}
+				}
 			}
 		} catch (ReflectionException e) {
 			Log.logger(e);

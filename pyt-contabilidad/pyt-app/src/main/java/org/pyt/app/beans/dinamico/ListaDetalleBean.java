@@ -71,7 +71,12 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 		});
 		categoria.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			o.setValue(e.getValue().getCategoriaGasto().getNombre());
+			if(e.getValue() != null && e.getValue().getCategoriaGasto() != null && e.getValue().getCategoriaGasto().getNombre() != null){ 
+			o.setValue(
+					e.getValue().
+						getCategoriaGasto().
+							getNombre());
+			}
 			return o;
 		});
 		concepto.setCellValueFactory(e -> {
@@ -140,7 +145,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 			throw new Exception("No se suministro el tipo de documento.");
 		if (panel == null)
 			throw new Exception("El panel de creacion no se suministro.");
-		if(StringUtils.isBlank(codigoDocumento))
+		if (StringUtils.isBlank(codigoDocumento))
 			throw new Exception("No se suministro el codigo del documento..");
 		this.tipoDocumento = tipoDocumento;
 		this.codigoDocumento = codigoDocumento;

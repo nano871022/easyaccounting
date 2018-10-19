@@ -44,6 +44,6 @@
 		</VBox>
 	</center>
 	<top>
-		<Label fx:id="titulo" alignment="CENTER" maxWidth="1.7976931348623157E308" text="TIpo de Documento" BorderPane.alignment="CENTER" />
+		<Label fx:id="titulo" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Tipo de Documento" BorderPane.alignment="CENTER" />
 	</top>
 </BorderPane>

@@ -69,6 +69,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
+		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -77,6 +78,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
+		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
 		loadField();
 	}
 

@@ -367,7 +367,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	private void hiddenTabs() {
-		tabConfigurar.setDisable(true);
+		tabConfigurar.setDisable(false);
 		tabServicios.setDisable(true);
 		tabAsociaciones.setDisable(true);
 	}
