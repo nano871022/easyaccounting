@@ -1,7 +1,6 @@
 package org.pyt.common.common;
 
-import javax.swing.plaf.metal.MetalBorders.PopupMenuBorder;
-
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
@@ -35,9 +34,12 @@ public abstract class ABean<T extends ADto> extends Reflection {
 			System.err.println(e);
 		}
 	}
+
 	/**
 	 * Se encarga de obtener el fxml y el controlador para ponerlo sobre la pantalla
-	 * @param classOfBean {@link Class}
+	 * 
+	 * @param classOfBean
+	 *            {@link Class}
 	 * @return {@link ABean}
 	 */
 	public <L extends ADto, S extends ABean<L>> S getController(Class<S> classOfBean) {
@@ -49,12 +51,15 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		}
 		return null;
 	}
+
 	/**
 	 * Se encarga de obtener el fxml y el controlador para ponerlo sobre la pantalla
-	 * @param classOfBean {@link Class}
+	 * 
+	 * @param classOfBean
+	 *            {@link Class}
 	 * @return {@link ABean}
 	 */
-	public <M extends Pane,L extends ADto, S extends ABean<L>> S getController(M layout,Class<S> classOfBean) {
+	public <M extends Pane, L extends ADto, S extends ABean<L>> S getController(M layout, Class<S> classOfBean) {
 		try {
 			return LoadAppFxml.beanFxmlPane(layout, classOfBean);
 		} catch (LoadAppFxmlException e) {
@@ -65,26 +70,75 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void notificar(String msn) {
-		System.out.println(msn);
-		comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, msn);
+	public void alerta(String mensaje) {
+		comunicacion.setComando(AppConstants.COMMAND_POPUP_WARN, mensaje);
 	}
 
-	@SuppressWarnings("hiding")
+	@SuppressWarnings("unchecked")
+	public void notificar(String msn) {
+		comunicacion.setComando(AppConstants.COMMAND_POPUP_INFO, msn);
+	}
+
+	@SuppressWarnings({ "hiding", "unchecked" })
 	public <T extends Exception> void error(T error) {
+		String mensaje = error.getMessage();
 		Log.logger(error);
-		System.err.println(error);
+		if (StringUtils.isNotBlank(mensaje)) {
+			comunicacion.setComando(AppConstants.COMMAND_POPUP_ERROR, mensaje);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void error(String msn) {
 		Log.logger(msn);
-		System.err.println(msn);
-		comunicacion.setComando(AppConstants.COMMAND_MSN_CTR, msn);
+		comunicacion.setComando(AppConstants.COMMAND_POPUP_ERROR, msn);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void error(Throwable e) {
+		String mensaje = e.getMessage();
+		Log.logger(e);
+		if (StringUtils.isNotBlank(mensaje)) {
+			comunicacion.setComando(AppConstants.COMMAND_POPUP_ERROR, mensaje);
+		}
+	}
 
+	@SuppressWarnings({ "unchecked", "hiding" })
+	public final <T extends Exception> void mensajeIzquierdo(T error) {
+		String mensaje = error.getMessage();
+		Log.logger(error);
+		if (StringUtils.isNotBlank(mensaje)) {
+			comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, mensaje);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "hiding" })
+	public final <T extends Throwable> void mensajeIzquierdo(T error) {
+		String mensaje = error.getMessage();
+		Log.logger(error);
+		if (StringUtils.isNotBlank(mensaje)) {
+			comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, mensaje);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public final void mensajeIzquierdo(String mensaje) {
+		comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, mensaje);
+	}
+
+	@SuppressWarnings("unchecked")
+	public final void mensajeDerecho(String mensaje) {
+		comunicacion.setComando(AppConstants.COMMAND_MSN_DER, mensaje);
+	}
+
+	@SuppressWarnings("unchecked")
+	public final void mensajeCentral(String mensaje) {
+		comunicacion.setComando(AppConstants.COMMAND_MSN_CTR, mensaje);
+	}
+
+	@SuppressWarnings("unchecked")
+	public final void progreso(Double valor) {
+		comunicacion.setComando(AppConstants.COMMAND_PROGRESS, valor);
 	}
 
 	public T getRegistro() {

@@ -53,6 +53,9 @@ public class Template extends Reflection implements IComunicacion {
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_MSN_IZQ)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_MSN_DER)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_MSN_CTR)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_WARN)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_INFO)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_ERROR)
 	private Comunicacion comunicacion;
 
 	@FXML
@@ -78,21 +81,33 @@ public class Template extends Reflection implements IComunicacion {
 			case AppConstants.COMMAND_MSN_CTR:
 				if (valor instanceof String)
 					centerMessage.setText((String) valor);
-				LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
 				break;
 			case AppConstants.COMMAND_MSN_DER:
 				if (valor instanceof String)
 					rightMessage.setText((String) valor);
-				LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.WARNING);
 				break;
 			case AppConstants.COMMAND_MSN_IZQ:
 				if (valor instanceof String)
 					leftMessage.setText((String) valor);
-				LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.INFO);
 				break;
 			case AppConstants.COMMAND_PROGRESS:
 				if (valor instanceof Double) {
 					progressBar.setProgress((Double) valor);
+				}
+				break;
+			case AppConstants.COMMAND_POPUP_ERROR:
+				if (valor instanceof String) {
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
+				}
+				break;
+			case AppConstants.COMMAND_POPUP_INFO:
+				if (valor instanceof String) {
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.INFO);
+				}
+				break;
+			case AppConstants.COMMAND_POPUP_WARN:
+				if (valor instanceof String) {
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.WARNING);
 				}
 				break;
 			}

@@ -77,6 +77,20 @@ public final class Log {
 			Log().msnBuild(error.getMessage(), ERROR);
 		}
 	}
+	
+	/**
+	 * Se encarga de cargar un error en el log
+	 * 
+	 * @param error
+	 *            {@link Exception}
+	 */
+	public final static <T extends Throwable> void logger(T error) {
+		if (error.getCause() instanceof NullPointerException) {
+			Log().msnBuild("Null pointer exception", ERROR);
+		} else {
+			Log().msnBuild(error.getMessage(), ERROR);
+		}
+	}
 
 	/**
 	 * Se encarga de cargar un error en el log

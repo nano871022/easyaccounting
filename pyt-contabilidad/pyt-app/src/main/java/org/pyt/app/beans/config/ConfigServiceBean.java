@@ -504,7 +504,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 			SelectList.put(campo, campos);
 		} catch (Exception e) {
-			error(e);
+			mensajeIzquierdo(e);
 		}
 	}
 
