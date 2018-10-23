@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
@@ -74,6 +75,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 			listTipoPlanContable = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
 			listNaturaleza = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_NATURALEZA);
 			listTipo = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO);
+			Log.logger("Se encontraron "+listTipo.size()+" registrosde tipo.");
 			listEmpresa = empresaSvc.getAllEmpresas(new EmpresaDTO());
 		} catch (ParametroException e) {
 			error(e);

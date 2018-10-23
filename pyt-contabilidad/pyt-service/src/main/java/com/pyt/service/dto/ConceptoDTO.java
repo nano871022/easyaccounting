@@ -14,9 +14,38 @@ public class ConceptoDTO extends ADto{
 	private String descripcion;
 	private ParametroDTO estado;
 	private EmpresaDTO empresa;
+	private String subconcepto;
+	private CuentaContableDTO cuentaGasto;
+	private CuentaContableDTO cuentaXPagar;
+	
 	public String getCodigo() {
 		return codigo;
 	}
+	
+	public String getSubconcepto() {
+		return subconcepto;
+	}
+
+	public void setSubconcepto(String subconcepto) {
+		this.subconcepto = subconcepto;
+	}
+
+	public CuentaContableDTO getCuentaGasto() {
+		return cuentaGasto;
+	}
+
+	public void setCuentaGasto(CuentaContableDTO cuentaGasto) {
+		this.cuentaGasto = cuentaGasto;
+	}
+
+	public CuentaContableDTO getCuentaXPagar() {
+		return cuentaXPagar;
+	}
+
+	public void setCuentaXPagar(CuentaContableDTO cuentaXPagar) {
+		this.cuentaXPagar = cuentaXPagar;
+	}
+
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}

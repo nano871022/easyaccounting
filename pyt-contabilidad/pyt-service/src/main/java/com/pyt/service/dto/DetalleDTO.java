@@ -38,7 +38,70 @@ public class DetalleDTO extends ADto {
 	private ActividadIcaDTO actividadIca;
 	private String codigoDocumento;
 	private IngresoDTO ingreso;
+	private Long porcentajeDescuento;
+	private BigDecimal valorDescuento;
+	private BigDecimal tarifaActividadIca;
+	private ParametroDTO tipoConcepto;
+	private String observaciones;
+	private String descripcion;
+	private EmpresaDTO tercero;
 	
+	public Long getPorcentajeDescuento() {
+		return porcentajeDescuento;
+	}
+
+	public void setPorcentajeDescuento(Long porcentajeDescuento) {
+		this.porcentajeDescuento = porcentajeDescuento;
+	}
+
+	public EmpresaDTO getTercero() {
+		return tercero;
+	}
+
+	public void setTercero(EmpresaDTO tercero) {
+		this.tercero = tercero;
+	}
+
+	public BigDecimal getValorDescuento() {
+		return valorDescuento;
+	}
+
+	public void setValorDescuento(BigDecimal valorDescuento) {
+		this.valorDescuento = valorDescuento;
+	}
+
+	public BigDecimal getTarifaActividadIca() {
+		return tarifaActividadIca;
+	}
+
+	public void setTarifaActividadIca(BigDecimal tarifaActividadIca) {
+		this.tarifaActividadIca = tarifaActividadIca;
+	}
+
+	public ParametroDTO getTipoConcepto() {
+		return tipoConcepto;
+	}
+
+	public void setTipoConcepto(ParametroDTO tipoConcepto) {
+		this.tipoConcepto = tipoConcepto;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
 	public String getCodeDocumento() {
 		return codeDocumento;
 	}

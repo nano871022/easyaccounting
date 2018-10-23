@@ -23,13 +23,20 @@ public class DocumentoDTO extends ADto{
 	private String numeroNota;
 	private Date fechaRegistro;
 	private Date fechaAnulacion;
-	private List<DetalleConceptoDTO> detalle;
+	private EmpresaDTO tercero;
+	private ParametroDTO moneda;
 	
-	public List<DetalleConceptoDTO> getDetalle() {
-		return detalle;
+	public EmpresaDTO getTercero() {
+		return tercero;
 	}
-	public void setDetalle(List<DetalleConceptoDTO> detalle) {
-		this.detalle = detalle;
+	public void setTercero(EmpresaDTO tercero) {
+		this.tercero = tercero;
+	}
+	public ParametroDTO getMoneda() {
+		return moneda;
+	}
+	public void setMoneda(ParametroDTO moneda) {
+		this.moneda = moneda;
 	}
 	public ParametroDTO getTipoDocumento() {
 		return tipoDocumento;

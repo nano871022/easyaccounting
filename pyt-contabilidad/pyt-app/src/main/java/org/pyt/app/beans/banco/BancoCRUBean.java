@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.BancoException;
@@ -73,6 +74,7 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		try {
 			tipoCuentas = parametrosSvc.getAllParametros(pCuentas,ParametroConstants.GRUPO_TIPO_CUENTA);
 			tipoBancos = parametrosSvc.getAllParametros(pBancos,ParametroConstants.GRUPO_TIPO_BANCO);
+			Log.logger("Se encontraron "+tipoBancos.size()+" registros de banco.");
 			estados = parametrosSvc.getAllParametros(pEstados,ParametroConstants.GRUPO_ESTADO_BANCO);
 		} catch (ParametroException e) {
 			error(e);

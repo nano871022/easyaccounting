@@ -36,7 +36,7 @@ import javafx.scene.layout.VBox;
  * @author Alejandro Parra
  * @since 07-07-2018
  */
-@FXMLFile(path = "view/dinamico", file = "formulario.fxml")
+@FXMLFile(path = "view/dinamico", file = "formulario.fxml",name="DocumentoDinamico")
 public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
