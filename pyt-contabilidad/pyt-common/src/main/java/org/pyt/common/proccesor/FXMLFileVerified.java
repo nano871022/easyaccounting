@@ -26,7 +26,6 @@ public class FXMLFileVerified extends AbstractVerified<FXMLFile> {
 		if (service == null) {
 			throw new Exception("La anotacion @FXMLFile service no existe en " + clase.getSimpleName() + ".");
 		}
-//		throw new Exception("Se encontro");
 		return service;
 	}
 

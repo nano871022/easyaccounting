@@ -37,7 +37,6 @@ public class FXMLFileProccessor extends AbstractProccessorGeneric<FXMLFileVerifi
 		info(null,"fin proccess");
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	protected Boolean verifiedTypeElement(RoundEnvironment roundEnv) {
 		FXMLFileVerified veryfied = null;
