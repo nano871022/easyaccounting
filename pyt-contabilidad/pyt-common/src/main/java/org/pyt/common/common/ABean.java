@@ -5,6 +5,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.proccesor.LocatorController;
 import org.pyt.common.reflection.Reflection;
 
 import javafx.scene.layout.Pane;
@@ -30,7 +31,10 @@ public abstract class ABean<T extends ADto> extends Reflection {
 			userLogin = new UsuarioDTO();
 			userLogin.setNombre("nano871022");
 			inject();
+			LocatorController.getInstance().putLoadInController(this);
 		} catch (ReflectionException e) {
+			System.err.println(e);
+		} catch (Exception e) {
 			System.err.println(e);
 		}
 	}
@@ -50,6 +54,34 @@ public abstract class ABean<T extends ADto> extends Reflection {
 			error(e);
 		}
 		return null;
+	}
+	/**
+	 * Se encarga de realizar la invoicacion para obtener o introducir datos a un bean que se encuentre en uso
+	 * @param caller {@link String} anotacion bean . metodo
+	 * @param value {@link Object} valores que se desean inyectar en el metodo
+	 * @return {@link Object} valor retornado cuando es un get
+	 * @throws {@link Exception}
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes", "hiding" })
+	protected <T extends Object,S extends Object> S caller(String caller,T...value) throws Exception{
+			S returns = null;
+			Class clase = this.getClass();
+			if(value.length == 0) {
+				returns = LocatorController.getInstance().setClass(clase).call(caller, null);
+			}else if(value.length == 1){
+				LocatorController.getInstance().setClass(clase).call(caller, value[0]);
+			}else {
+				throw new Exception("Se suministraron varios objetos, solo se necesita uno.");
+			}
+			return returns;
+	}
+	
+	protected final void destroy() {
+		try {
+			LocatorController.getInstance().removeLoadInController(this);
+		} catch (Exception e) {
+			mensajeIzquierdo(e);
+		}
 	}
 
 	/**

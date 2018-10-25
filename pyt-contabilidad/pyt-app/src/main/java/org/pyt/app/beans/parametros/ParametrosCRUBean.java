@@ -3,12 +3,15 @@ package org.pyt.app.beans.parametros;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ValidateValueException;
 
@@ -21,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * Se encarga de controlar la pantalla de parametros cru
@@ -144,7 +148,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 				} catch (ParametroException e) {
 					error(e);
 				}
-			}else {
+			} else {
 				parametroGrupo = new ParametroGrupoDTO();
 			}
 			registro = dto;
@@ -255,20 +259,34 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	/**
 	 * Se encarga de eliminar el registro
 	 */
+	@SuppressWarnings("unchecked")
 	public void deleteBtn() {
-		load();
 		try {
-			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				if (StringUtils.isNotBlank(parametroGrupo.getCodigo())) {
-					parametroSvc.delete(parametroGrupo, userLogin);
-				}
-				parametroSvc.delete(registro, userLogin);
-				notificar("El parametro fue eliminado correctamente.");
-			} else {
-				error("La eliminacion del codigo es vacio.");
-			}
-		} catch (ParametroException e) {
+			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}",
+					"¿Desea eliminar el registro?");
+			;
+		} catch (LoadAppFxmlException e) {
 			error(e);
+		}
+	}
+
+	public final void setDelete(Boolean val) {
+		if (val) {
+			load();
+			try {
+				if (StringUtils.isNotBlank(registro.getCodigo())) {
+					if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getCodigo())) {
+						parametroSvc.delete(parametroGrupo, userLogin);
+					}
+					parametroSvc.delete(registro, userLogin);
+					notificar("El parametro fue eliminado correctamente.");
+					cancelBtn();
+				} else {
+					error("La eliminacion del codigo es vacio.");
+				}
+			} catch (ParametroException e) {
+				error(e);
+			}
 		}
 	}
 
@@ -277,6 +295,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	 */
 	public void cancelBtn() {
 		getController(ParametrosBean.class);
+		destroy();
 	}
 
 }
