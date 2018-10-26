@@ -16,7 +16,6 @@ import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.ValidateValueException;
 
-import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
@@ -114,16 +113,11 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 		try {
 			DetalleDTO detalle = new DetalleDTO();
 			detalle.setCodigoDocumento(registro.getCodigo());
-			DetalleConceptoDTO detalleConcepto = new DetalleConceptoDTO();
-			detalleConcepto.setCodigoDocumento(registro.getCodigo());
 			DetalleContableDTO detalleContable = new DetalleContableDTO();
 			detalleContable.setCodigoDocumento(registro.getCodigo());
 			List<DetalleDTO> listDetalles = documentosSvc.getAllDetalles(detalle);
 			suma = suma.add(suma(listDetalles, "valorNeto"));
-			List<DetalleConceptoDTO> listDetConcepto = documentosSvc.getAllDetalles(detalleConcepto);
-			suma = suma.add(suma(listDetConcepto, "valor"));
 			List<DetalleContableDTO> listDetContable = documentosSvc.getAllDetalles(detalleContable);
-			suma = suma.add(suma(listDetConcepto, "valor"));
 		} catch (DocumentosException e) {
 			error(e);
 		}

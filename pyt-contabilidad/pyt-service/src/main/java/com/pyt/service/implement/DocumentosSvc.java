@@ -12,7 +12,6 @@ import org.pyt.common.exceptions.QueryException;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ConceptoDTO;
-import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
@@ -87,77 +86,6 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 			throw new DocumentosException("El objeto documento se encuentra vacio.");
 		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new DocumentosException("El codigo del documento se encuentra vacio.");
-		try {
-			querySvc.del(dto, user);
-		} catch (QueryException e) {
-			throw new DocumentosException(e.getMensage(), e);
-		}
-	}
-	@co.com.arquitectura.annotation.proccessor.Services(alcance = co.com.arquitectura.annotation.proccessor.Services.scope.EJB, tipo = co.com.arquitectura.annotation.proccessor.Services.kind.PUBLIC, alias = "Detalle concepto", descripcion = "Se encarga de obtner todos los detalles de concepto asociados al documento.")
-	public List<DetalleConceptoDTO> getAllDetalles(DetalleConceptoDTO dto) throws DocumentosException {
-		List<DetalleConceptoDTO> lista = new ArrayList<DetalleConceptoDTO>();
-		if (dto == null)
-			throw new DocumentosException("El objeto detalle concepto se encuentra vacio.");
-		try {
-			lista = querySvc.gets(dto);
-		} catch (QueryException e) {
-			throw new DocumentosException(e.getMensage(), e);
-		}
-		return lista;
-	}
-
-	public List<DetalleConceptoDTO> getDetalles(DetalleConceptoDTO dto, Integer init, Integer end)
-			throws DocumentosException {
-		List<DetalleConceptoDTO> lista = new ArrayList<DetalleConceptoDTO>();
-		if (dto == null)
-			throw new DocumentosException("El objeto detalle concepto se encuentra vacio.");
-		try {
-			lista = querySvc.gets(dto, init, end);
-		} catch (QueryException e) {
-			throw new DocumentosException(e.getMensage(), e);
-		}
-		return lista;
-	}
-
-	public DetalleConceptoDTO getDetalle(DetalleConceptoDTO dto) throws DocumentosException {
-		if (dto == null)
-			throw new DocumentosException("El objeto detalle concepto se encuentra vacio.");
-		try {
-			return querySvc.get(dto);
-		} catch (QueryException e) {
-			throw new DocumentosException(e.getMensage(), e);
-		}
-	}
-
-	public void update(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
-		if (dto == null)
-			throw new DocumentosException("El objeto detalle de concepto se encuentra vacio.");
-		if (StringUtils.isBlank(dto.getCodigo()))
-			throw new DocumentosException("El codigo del detalle de concepto se encuentra vacio.");
-		try {
-			querySvc.set(dto, user);
-		} catch (QueryException e) {
-			throw new DocumentosException(e.getMensage(), e);
-		}
-	}
-
-	public DetalleConceptoDTO insert(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
-		if (dto == null)
-			throw new DocumentosException("El objeto detalle concepto se encuentra vacio.");
-		if (StringUtils.isNotBlank(dto.getCodigo()))
-			throw new DocumentosException("El codigo del detalle concepto no se encuentra vacio.");
-		try {
-			return querySvc.set(dto, user);
-		} catch (QueryException e) {
-			throw new DocumentosException(e.getMensage(), e);
-		}
-	}
-
-	public void delete(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException {
-		if (dto == null)
-			throw new DocumentosException("El objeto detalle concepto se encuentra vacio.");
-		if (StringUtils.isBlank(dto.getCodigo()))
-			throw new DocumentosException("El codigo detalle del concepto se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
 		} catch (QueryException e) {
@@ -509,15 +437,5 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 		}
 	}
 
-	@Override
-	public Integer getTotalCount(DetalleConceptoDTO dto) throws DocumentosException {
-		if (dto == null)
-			throw new DocumentosException("No se suministro el detalle concepto.");
-		try {
-			return querySvc.countRow(dto);
-		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en el conteo de los detalles concepto.", e);
-		}
-	}
 
 }

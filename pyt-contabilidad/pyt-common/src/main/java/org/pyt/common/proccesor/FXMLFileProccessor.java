@@ -41,6 +41,7 @@ public class FXMLFileProccessor extends AbstractProccessorGeneric<FXMLFileVerifi
 	protected Boolean verifiedTypeElement(RoundEnvironment roundEnv) {
 		FXMLFileVerified veryfied = null;
 		for (Element clase : roundEnv.getElementsAnnotatedWith(annotation)) {
+			if(clase.toString().contains("Template"))continue;
 			if (clase.getKind() == ElementKind.CLASS ) {
 				info(null,"clase "+clase.getSimpleName());
 				veryfied = proccessAnnotation(clase);
@@ -53,24 +54,19 @@ public class FXMLFileProccessor extends AbstractProccessorGeneric<FXMLFileVerifi
 	}
 
 	@Override
-	protected FXMLFileVerified proccessAnnotation(Element method) {
-		info(method, "proccessAnotation "+method.getSimpleName()+" - "+method.getEnclosingElement().toString()+" - "+method.getKind().toString()+" "+method.asType());
+	protected FXMLFileVerified proccessAnnotation(Element clase) {
+		info(clase, "proccessAnotation "+clase.getSimpleName()+" - "+clase.getEnclosingElement().toString()+" - "+clase.getKind().toString()+" "+clase.asType());
 		FXMLFileVerified services = null;
 		try {
-//			error(null,"error "+method.getEnclosingElement().toString());
-			if(method.getEnclosingElement().toString().contains("dinamico")) {
-				return null;
-			}
-			services = new FXMLFileVerified(method);
-//			error(null,"fxmlfile");
-			info(method, "clases obtenidas");
+			services = new FXMLFileVerified(clase);
+			info(clase, "clases obtenidas");
 				if (!isValidClass(services)) {
 					return null;
 				}
-				info(method, "obteniendo grupo fxmlfile");
+				info(clase, "obteniendo grupo fxmlfile");
 				FXMLFileGrouped group = groupClass.get(services.getCanonicClass());
 			if (group == null) {
-				info(method, "Grupo encontrado");
+				info(clase, "Grupo encontrado");
 				String qualifiedGroupName = services.getCanonicClass();
 				group = new FXMLFileGrouped(qualifiedGroupName);
 //				error(null,"grupo");
@@ -80,9 +76,9 @@ public class FXMLFileProccessor extends AbstractProccessorGeneric<FXMLFileVerifi
 			group.add(services);
 			return services;
 		} catch (IllegalArgumentException e) {
-			error(method, e.getMessage());
+			error(clase,"Error::"+ e.getMessage());
 		} catch (Exception e) {
-			error(method, "Problema:: " + e.getMessage());
+			error(clase, "Problema:: " + e.getMessage());
 		}
 		return null;
 	}

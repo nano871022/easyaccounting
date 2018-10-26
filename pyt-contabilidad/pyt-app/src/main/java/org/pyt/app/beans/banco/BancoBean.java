@@ -76,8 +76,8 @@ public class BancoBean extends ABean<BancoDTO> {
 		ParametroDTO pTipoBanco = new ParametroDTO();
 		ParametroDTO pEstados = new ParametroDTO();
 		try {
-			listTipoCuenta = parametroSvc.getAllParametros(pTipoBanco, ParametroConstants.GRUPO_TIPO_CUENTA);
-			listTipoBanco = parametroSvc.getAllParametros(pTipoCuenta, ParametroConstants.GRUPO_TIPO_BANCO);
+			listTipoCuenta = parametroSvc.getAllParametros(pTipoCuenta, ParametroConstants.GRUPO_TIPO_CUENTA);
+			listTipoBanco = parametroSvc.getAllParametros(pTipoBanco, ParametroConstants.GRUPO_TIPO_BANCO);
 			listEstados = parametroSvc.getAllParametros(pEstados, ParametroConstants.GRUPO_ESTADO_BANCO);
 		} catch (ParametroException e) {
 			error(e);
