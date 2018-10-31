@@ -75,7 +75,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 			listTipoPlanContable = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
 			listNaturaleza = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_NATURALEZA);
 			listTipo = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO);
-			Log.logger("Se encontraron "+listTipo.size()+" registrosde tipo.");
+			logger.logger("Se encontraron "+listTipo.size()+" registrosde tipo.");
 			listEmpresa = empresaSvc.getAllEmpresas(new EmpresaDTO());
 		} catch (ParametroException e) {
 			error(e);

@@ -103,7 +103,21 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
 			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroConstants.MAPA_GRUPOS));
 		}
-		insert.setVisible(true);
+		buttones_update();
+	}
+	/**
+	 * Verifica si un boton se muestra o no
+	 */
+	private final void buttones_update() {
+		if(StringUtils.isBlank(registro.getCodigo())) {
+			insert.setVisible(true);
+			update.setVisible(false);
+			delete.setVisible(false);
+		}else {
+			insert.setVisible(false);
+			update.setVisible(true);
+			delete.setVisible(true);
+		}
 	}
 
 	/**
@@ -220,6 +234,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		load();
 		try {
 			if (valid()) {
+				validParametroGrupo();
 				registro = parametroSvc.insert(registro, userLogin);
 				if (StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
@@ -232,6 +247,45 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			}
 		} catch (ParametroException e) {
 			error(e);
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	/**
+	 * Se encarga de validar el parametro grupo
+	 * 
+	 * @throws {@link
+	 *             Exception}
+	 */
+	private final void validParametroGrupo() throws Exception {
+		if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
+			ParametroGrupoDTO pGrupo = new ParametroGrupoDTO();
+			pGrupo.setGrupo(parametroGrupo.getGrupo());
+			List<ParametroGrupoDTO> lista = parametroSvc.getParametroGrupo(pGrupo);
+			if (lista.size() > 0) {
+				for (ParametroGrupoDTO grupo : lista) {
+					if(StringUtils.isBlank(grupo.getParametro()))continue;
+					ParametroDTO parametro = new ParametroDTO();
+					parametro.setCodigo(grupo.getParametro());
+					if (grupo != null && registro != null && StringUtils.isNotBlank(registro.getCodigo())
+							&& grupo.getParametro().contains(registro.getCodigo())) {
+						continue;
+					}
+					List<ParametroDTO> parametros = parametroSvc.getAllParametros(parametro);
+					for(ParametroDTO paramet : parametros) {
+						System.out.println(paramet.getCodigo()+" "+paramet.getNombre());
+					}
+					System.out.println(parametro.toStringAll());//Parametroekuv40
+					System.out.println(parametros.toString());
+					if (parametros.size() > 0) {
+						throw new Exception("Ya se encuentra asignado este Grupo " + parametroGrupo.getGrupo() + " a "
+								+ parametros.get(0).getNombre());
+					} else {
+						parametroSvc.delete(grupo, userLogin);
+					}
+				}
+			}
 		}
 	}
 
@@ -242,6 +296,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		load();
 		try {
 			if (valid()) {
+				validParametroGrupo();
 				parametroSvc.update(registro, userLogin);
 				if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
@@ -252,6 +307,8 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 				error("Se encontro problema en la validacion.");
 			}
 		} catch (ParametroException e) {
+			error(e);
+		} catch (Exception e) {
 			error(e);
 		}
 	}

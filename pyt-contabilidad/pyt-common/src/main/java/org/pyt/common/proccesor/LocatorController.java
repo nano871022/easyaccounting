@@ -23,6 +23,7 @@ public class LocatorController {
 	public final static String PACKAGE_CONTROLLER_LAST = "Controller";
 	@SuppressWarnings("rawtypes")
 	private Class clase;
+	private Log logger = Log.Log(this.getClass());
 
 	private LocatorController() {
 
@@ -36,15 +37,16 @@ public class LocatorController {
 	 */
 	@SuppressWarnings({ "unchecked", "static-access", "rawtypes" })
 	private final <T extends FXMLFileController> T getController(String nombre) throws Exception {
-		String clase = PACKAGE_CONTROLLER_PRE + nombre + PACKAGE_CONTROLLER_LAST;
-		Class clases = null;
-		if (this.clase == null) {
-			clases = Class.forName(clase);
-		} else {
-			clases = this.clase.forName(clase);
-		}
-		T instancia = (T) clases.getDeclaredConstructor().newInstance();
-		return instancia;
+			String clase = PACKAGE_CONTROLLER_PRE + nombre + PACKAGE_CONTROLLER_LAST;
+			Class clases = null;
+			logger.info("Clase a cargar :: "+clase);
+			if (this.clase == null) {
+				clases = Class.forName(clase);
+			} else {
+				clases = this.clase.forName(clase);
+			}
+			T instancia = (T) clases.getDeclaredConstructor().newInstance();
+			return instancia;
 	}
 
 	/**
@@ -60,6 +62,7 @@ public class LocatorController {
 	public <T extends Object, S extends Object, L extends FXMLFileController, I extends ABean> T call(String caller,
 			S valor) {
 		try {
+//			logger.info("Buscando "+caller);
 			I bean = null;
 			Pattern patron = Pattern.compile(REGEX);
 			Matcher cruce = patron.matcher(caller);
@@ -78,18 +81,22 @@ public class LocatorController {
 					if (StringUtils.isNotBlank(split[1])) {
 						if (valor != null) {
 							String setName = "set" + split[1].substring(0, 1).toUpperCase() + split[1].substring(1);
+//							logger.info(setName);
 							Method metodo = claseBean.getDeclaredMethod(setName, valor.getClass());
 							metodo.invoke(bean, valor);
 						} else {
 							String getName = "get" + split[1].substring(0, 1).toUpperCase() + split[1].substring(1);
+//							logger.info(getName);
 							Method metodo = claseBean.getDeclaredMethod(getName);
 							return (T) metodo.invoke(bean);
 						}
 					}
 				}
+			}else {
+				logger.error("Se encontro problema con "+caller+" ya que no cruza con "+REGEX);
 			}
 		} catch (Exception e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return null;
 	}
@@ -107,8 +114,10 @@ public class LocatorController {
 	private final <T extends ABean, L extends FXMLFileController> L locator(Class<T> controller) throws Exception {
 		FXMLFile fxml = controller.getAnnotation(FXMLFile.class);
 		try {
-			return getController(fxml.name());
-		} catch (ClassNotFoundException e) {
+			if(StringUtils.isNotBlank(fxml.name()))
+				return getController(fxml.name());
+			else throw new Exception("Buscar otro");
+		} catch (Exception e) {
 			try {
 				return getController(controller.getSimpleName());
 			} catch (ClassNotFoundException e1) {

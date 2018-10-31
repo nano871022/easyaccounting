@@ -10,7 +10,7 @@ import org.pyt.common.common.ABean;
  */
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -24,7 +24,7 @@ public class PopupBean extends ABean {
 	};
 
 	@FXML
-	private Label mensaje;
+	private TextArea mensaje;
 	@FXML
 	private ImageView imagen;
 	@FXML

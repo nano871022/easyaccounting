@@ -11,24 +11,20 @@ import java.time.format.DateTimeFormatter;
  * @since 2018-05-24
  */
 public final class Log {
-	private static Log logger;
-	private WriteFile writer;
-	private final static String properties = "properties/log4j.properties";
-	private final static String propertie = "properties/data.properties";
+	
+	private String nameClase;
 	private final static String INFO = "INFO";
 	private final static String WARN = "WARN";
 	private final static String ERROR = "ERROR";
+	private LogWriter logWriter;
 
-	private Log() {
-		writer = new WriteFile();
-		writer.file("./logger/logger.log");
+	private Log(Class clase) {
+		nameClase = clase.getName();
+		logWriter = LogWriter.getInstance();
 	}
 
-	private final static Log Log() {
-		if (logger == null) {
-			logger = new Log();
-		}
-		return logger;
+	public final static Log Log(Class clase) {
+		return new Log(clase);
 	}
 
 	private final String now() {
@@ -40,8 +36,8 @@ public final class Log {
 	}
 
 	public final void msnBuild(String msn, String type) {
-		String line = String.format("%s %s %s", now(), type, msn);
-		Log().getWriteFile().writer(line);
+		String line = String.format("%s %s : %s : %s", now(), nameClase, type, msn);
+		logWriter.addImpresion(line);
 	}
 
 	/**
@@ -50,8 +46,8 @@ public final class Log {
 	 * @param mensaje
 	 *            {@link String}
 	 */
-	public final static void warn(String mensaje) {
-		Log().msnBuild(mensaje, WARN);
+	public final  void warn( String mensaje) {
+		msnBuild(mensaje, WARN);
 	}
 
 	/**
@@ -60,8 +56,8 @@ public final class Log {
 	 * @param mensaje
 	 *            {@link String}
 	 */
-	public final static void logger(String mensaje) {
-		Log().msnBuild(mensaje, INFO);
+	public final  void logger( String mensaje) {
+		msnBuild(mensaje, INFO);
 	}
 
 	/**
@@ -70,38 +66,41 @@ public final class Log {
 	 * @param error
 	 *            {@link Exception}
 	 */
-	public final static <T extends Exception> void logger(T error) {
+	public final  <T extends Exception> void logger( T error) {
 		if (error.getCause() instanceof NullPointerException) {
-			Log().msnBuild("Null pointer exception", ERROR);
+			msnBuild("Null pointer exception", ERROR);
 		} else {
-			Log().msnBuild(error.getMessage(), ERROR);
+			msnBuild(error.getMessage(), ERROR);
 		}
+	}
+
+	/**
+	 * Se encarga de cargar un error en el log
+	 * 
+	 * @param error
+	 *            {@link Exception}
+	 */
+	public final <T extends Throwable> void logger( T error) {
+		if (error.getCause() instanceof NullPointerException) {
+			msnBuild("Null pointer exception", ERROR);
+		} else {
+			msnBuild(error.getMessage(), ERROR);
+		}
+	}
+
+	/**
+	 * Se encarga de cargar un error en el log
+	 * 
+	 * @param error
+	 *            {@link Exception}
+	 */
+	public final <T extends Exception> void error( String error) {
+		msnBuild(error, ERROR);
 	}
 	
-	/**
-	 * Se encarga de cargar un error en el log
-	 * 
-	 * @param error
-	 *            {@link Exception}
-	 */
-	public final static <T extends Throwable> void logger(T error) {
-		if (error.getCause() instanceof NullPointerException) {
-			Log().msnBuild("Null pointer exception", ERROR);
-		} else {
-			Log().msnBuild(error.getMessage(), ERROR);
-		}
+	public final void info(String mensaje) {
+		msnBuild(mensaje, INFO);
 	}
-
-	/**
-	 * Se encarga de cargar un error en el log
-	 * 
-	 * @param error
-	 *            {@link Exception}
-	 */
-	public final static <T extends Exception> void error(String error) {
-		Log().msnBuild(error, ERROR);
-	}
-
 	/**
 	 * Se encarga de cargar un error en el log con mensaje adicional
 	 * 
@@ -110,11 +109,7 @@ public final class Log {
 	 * @param error
 	 *            {@link Exception}
 	 */
-	public final static <T extends Exception> void logger(String mensaje, T error) {
-		Log().msnBuild(mensaje, ERROR);
-	}
-
-	public final WriteFile getWriteFile() {
-		return writer;
+	public final <T extends Exception> void logger(String mensaje, T error) {
+		msnBuild(mensaje, ERROR);
 	}
 }

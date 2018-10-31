@@ -22,6 +22,8 @@ public abstract class ABin {
 	private String path_split = "/";
 	private final static String file_properties = "properties/data.properties";
 	private final static String default_file_data = "./systemFile";
+	private Log logger = Log.Log(this.getClass());
+
 	public ABin() {
 		path_split = System.getProperty("file.separator");
 	}
@@ -67,12 +69,12 @@ public abstract class ABin {
 					}
 				}
 			} catch (FileNotFoundException e) {
-				Log.logger(e);
+				logger.logger(e);
 			} catch (IOException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}else {
-			Log.logger("No existe archivo de propiedades para datos.");
+			logger.logger("No existe archivo de propiedades para datos.");
 		}
 		return default_file_data;
 	}

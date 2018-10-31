@@ -10,5 +10,6 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface UpdClass {
 	@SuppressWarnings("rawtypes")
-	public Class clase();
+	public Class clase() default Class.class;
+	public String nombre() default "";
 }

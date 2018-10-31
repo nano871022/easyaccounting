@@ -40,6 +40,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	private List<S> list;
 	private javafx.scene.control.TableView<S> table;
 	private ValidateValues validate = new ValidateValues();
+	private Log logger = Log.Log(this.getClass());
 
 	public DataTableFXML() {
 		currentPage = 1;
@@ -124,7 +125,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 					if(dto.get(nombreCampo) == null)continue;
 					cant = cant.add(validate.cast(dto.get(nombreCampo),BigDecimal.class));
 				} catch (ReflectionException | ValidateValueException e) {
-					Log.logger(e);
+					logger.logger(e);
 				}
 			}
 		}

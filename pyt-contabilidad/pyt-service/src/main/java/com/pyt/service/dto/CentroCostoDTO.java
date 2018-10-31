@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -8,6 +10,9 @@ import org.pyt.common.common.ADto;
  * @author alejando parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.CentroCostoDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.CentroCostoUpdDTO")
+
 public class CentroCostoDTO extends ADto{
 	private static final long serialVersionUID = -7537599944970961982L;
 	private String codigo;

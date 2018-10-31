@@ -2,12 +2,17 @@ package com.pyt.service.dto;
 
 import java.util.Date;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 /**
  * Datos basicos de una persona
  * @author alejandro parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.PersonaDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.PersonaUpdDTO")
+
 public class PersonaDTO extends ADto{
 	private static final long serialVersionUID = 5798223959158769375L;
 	private String nombre;

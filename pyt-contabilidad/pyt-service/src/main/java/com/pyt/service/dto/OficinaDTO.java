@@ -1,7 +1,10 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
-
+@DelClass(nombre="com.pyt.service.dto.dels.OficinaDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.OficinaUpdDTO")
 public class OficinaDTO extends ADto {
 	private static final long serialVersionUID = -1103952032633883291L;
 	private String nombre;

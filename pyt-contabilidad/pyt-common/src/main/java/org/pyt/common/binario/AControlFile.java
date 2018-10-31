@@ -12,6 +12,8 @@ import org.pyt.common.common.Log;
  */
 public abstract class AControlFile {
 	private String path_split = "/";
+	private Log logger = Log.Log(this.getClass());
+
 	public AControlFile() {
 		path_split = System.getProperty("file.separator");
 	}
@@ -32,10 +34,10 @@ public abstract class AControlFile {
 					
 					split = file.split(path_split+path_split);
 				}catch(Exception e1) {
-					Log.logger(e1);
+					logger.logger(e1);
 				}
 			}catch(Exception e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}
 		String path = "";

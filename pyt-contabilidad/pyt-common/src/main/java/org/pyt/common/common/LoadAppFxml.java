@@ -30,6 +30,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	private static LoadAppFxml app;
 	private P lastLayout;
 	private C lastContro;
+	private static Log logger = Log.Log(LoadAppFxml.class);
 
 	private LoadAppFxml() {
 	}
@@ -297,7 +298,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (IllegalStateException e) {
 			throw new LoadAppFxmlException("Problema en cargar load", e);
 		} catch (LoadException e) {
-			Log.error("Archivo no puede ser cargado. ");
+			logger.error("Archivo no puede ser cargado. ");
 			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);

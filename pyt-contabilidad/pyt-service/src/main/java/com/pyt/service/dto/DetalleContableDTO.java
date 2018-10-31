@@ -2,7 +2,11 @@ package com.pyt.service.dto;
 
 import java.math.BigDecimal;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
+@DelClass(nombre="com.pyt.service.dto.dels.DetalleContableDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.DetalleContableUpdDTO")
 
 public class DetalleContableDTO extends ADto {
 	private static final long serialVersionUID = -501193270090048865L;

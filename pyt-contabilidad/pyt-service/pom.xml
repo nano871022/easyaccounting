@@ -57,6 +57,13 @@
 						<annotationProcessor>
 							co.com.arquitectura.proccessor.implement.ServiceProccessor
 						</annotationProcessor>
+						<annotationProcessor>
+							org.pyt.common.proccesor.DelClassProccessor
+						</annotationProcessor>
+						<annotationProcessor>
+							org.pyt.common.proccesor.UpdClassProccessor
+						</annotationProcessor>
+
 					</annotationProcessors>
 				</configuration>
 			</plugin>

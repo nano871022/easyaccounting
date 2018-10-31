@@ -35,6 +35,7 @@ public class DocX extends Poi {
 	private XWPFDocument docx;
 	private List<TableBookmark> listBookmarks;
 	private Bookmark bookmarks;
+	private Log logger = Log.Log(this.getClass());
 
 	/**
 	 * Se encarga de generar la conversion de los marcadores por los valores en
@@ -59,10 +60,10 @@ public class DocX extends Poi {
 				writeFileOut();
 				convertToPdf();
 			} else {
-				Log.error("Se presento error en la validacion del archivo.");
+				logger.error("Se presento error en la validacion del archivo.");
 			}
 		} catch (IOException | ValidateValueException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 	}
 
@@ -147,7 +148,7 @@ public class DocX extends Poi {
 			}
 			rowUsar = null;
 		} catch (ValidateValueException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 	}
 

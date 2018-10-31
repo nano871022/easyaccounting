@@ -13,12 +13,14 @@ import org.pyt.common.reflection.Reflection;
  * @since 22-06-2018
  */
 public abstract class Services extends Reflection {
+	private Log logger = Log.Log(this.getClass());
+
 	@PostConstructor
 	public void load() {
 		try {
 			inject();
 		} catch (ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 	}
 

@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
@@ -26,6 +28,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 /**
  * Bean encargado de crear las empresas
@@ -69,7 +72,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		registro.setNaturaleza(new ParametroDTO());
 		registro.setTipoPlanContable(new ParametroDTO());
 		registro.setTipo(new ParametroDTO());
-		registro.setEmpresa(new  EmpresaDTO());
+		registro.setEmpresa(new EmpresaDTO());
 		ParametroDTO pEstado = new ParametroDTO();
 		try {
 			listTipoCuentas = parametroSvc.getAllParametros(pEstado, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
@@ -78,9 +81,10 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		}
 		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
 		tipoCuentaContables.getSelectionModel().selectFirst();
-		tipoCuentaContable.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
-		tipo.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getTipo().getNombre()));
-		naturaleza.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getNaturaleza().getNombre()));
+		tipoCuentaContable
+				.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
+		tipo.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipo().getNombre()));
+		naturaleza.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getNaturaleza().getNombre()));
 		lazy();
 	}
 
@@ -93,7 +97,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 			public List<CuentaContableDTO> getList(CuentaContableDTO filter, Integer page, Integer rows) {
 				List<CuentaContableDTO> lista = new ArrayList<CuentaContableDTO>();
 				try {
-					lista = cuentaContableSvc.getCuentaContables(filter, page-1, rows);
+					lista = cuentaContableSvc.getCuentaContables(filter, page - 1, rows);
 				} catch (CuentaContableException e) {
 					error(e);
 				}
@@ -104,7 +108,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 			public Integer getTotalRows(CuentaContableDTO filter) {
 				Integer count = 0;
 				try {
-					count = cuentaContableSvc.getTotalRows(filter);  
+					count = cuentaContableSvc.getTotalRows(filter);
 				} catch (CuentaContableException e) {
 					error(e);
 				}
@@ -157,6 +161,17 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	}
 
 	public void set() {
+		try {
+			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{CuentaContableBean.delete}",
+				"¿Desea eliminar los registros seleccionados?");
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		if (!valid)
+			return;
 		registro = dt.getSelectedRow();
 		if (registro != null) {
 			getController(CuentaContableCRUBean.class).load(registro);

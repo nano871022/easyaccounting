@@ -57,7 +57,7 @@ public class Template extends Reflection implements IComunicacion {
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_INFO)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_ERROR)
 	private Comunicacion comunicacion;
-
+private Log logger = Log.Log(this.getClass());
 	@FXML
 	public void initialize() {
 		try {
@@ -67,9 +67,9 @@ public class Template extends Reflection implements IComunicacion {
 			centerMessage.setText("");
 			progressBar.setProgress(0.0);
 			new MenuItems(menu, scroller).load();
-			Log.logger("Cargando ventana principal");
+			logger.logger("Cargando ventana principal");
 		} catch (ReflectionException e1) {
-			Log.logger(e1);
+			logger.logger(e1);
 		}
 	}
 

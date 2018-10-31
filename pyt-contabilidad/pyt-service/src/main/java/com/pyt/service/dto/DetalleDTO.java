@@ -3,10 +3,12 @@ package com.pyt.service.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.pyt.common.annotations.DelClass;
 import org.pyt.common.annotations.Increment;
 import org.pyt.common.annotations.NoEdit;
 import org.pyt.common.annotations.Operacion;
 import org.pyt.common.annotations.Operar;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -15,6 +17,9 @@ import org.pyt.common.common.ADto;
  * @author alejandro parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.DetalleDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.DetalleUpdDTO")
+
 public class DetalleDTO extends ADto {
 	private static final long serialVersionUID = -3773810908869511818L;
 	private String codeDocumento;

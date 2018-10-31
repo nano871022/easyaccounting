@@ -1,6 +1,7 @@
 package org.pyt.app.components;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.PopupBean.TIPOS;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.common.ABean;
 /**
@@ -10,7 +11,7 @@ import org.pyt.common.common.ABean;
  */
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -20,7 +21,7 @@ import javafx.stage.Stage;
 public class ConfirmPopupBean extends ABean {
 
 	@FXML
-	private Label mensaje;
+	private TextArea mensaje;
 	@FXML
 	private ImageView imagen;
 	@FXML

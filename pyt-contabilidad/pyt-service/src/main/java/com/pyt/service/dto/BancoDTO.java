@@ -2,6 +2,8 @@ package com.pyt.service.dto;
 
 import java.time.LocalDate;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -10,6 +12,8 @@ import org.pyt.common.common.ADto;
  * @author Alejandro Parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.BancoDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.BancoUpdDTO")
 public class BancoDTO extends ADto{
 	/**
 	 * 

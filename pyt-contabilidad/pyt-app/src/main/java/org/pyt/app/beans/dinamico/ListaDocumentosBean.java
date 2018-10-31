@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
+import org.pyt.app.components.PopupBean;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
@@ -40,6 +43,7 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> {
 		registro = new DocumentoDTO();
 		lazy();
 	}
+
 	public void lazy() {
 		dataTable = new DataTableFXML<DocumentoDTO, DocumentoDTO>(paginador, tabla) {
 
@@ -80,13 +84,28 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> {
 		registro = dataTable.getSelectedRow();
 		if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 			getController(PanelBean.class).load(registro);
-		}else {
+		} else {
 			error("No se ha seleccionado ningun documento.");
 		}
 	}
 
 	public final void eliminar() {
+		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{ListaDocumentosBean.delete}",
+					"¿Desea eliminar este registro?");
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
 
+	public final void setDelete(Boolean valid) {
+		if (valid) {
+			try {
+				controllerPopup(PopupBean.class).load("Esta funcionalidad no esta activada.", PopupBean.TIPOS.WARNING);
+			} catch (LoadAppFxmlException e) {
+				error(e);
+			}
+		}
 	}
 
 }

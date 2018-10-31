@@ -20,6 +20,8 @@ import org.pyt.common.exceptions.ValidateValueException;
  * @since 22-06-2018
  */
 public final class ValidateValues {
+	private Log logger = Log.Log(this.getClass());
+
 	/**
 	 * Se encarga de validar dos valores que son de tipo Integer
 	 * 
@@ -430,7 +432,7 @@ public final class ValidateValues {
 				}
 			}
 		} catch (ValidateValueException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return null;
 	}
@@ -453,7 +455,7 @@ public final class ValidateValues {
 				}
 			}
 		} catch (ValidateValueException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return null;
 	}

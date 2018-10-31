@@ -59,7 +59,7 @@ public class MenuItems {
 	private final static String BTN_LIST_DOCUMENTO= "Documentos";
 	private final static String BTN_LIST_INGRESOS= "Ingresos";
 	private final static String BTN_CONFG_PRINT = "Lista Configuracion Servicio Marcadores";
-
+	private Log logger = Log.Log(this.getClass());
 	public MenuItems(MenuBar menu, ScrollPane scroll) {
 		mapaMenu = new HashMap<String, Menu>();
 		this.menu = menu;
@@ -116,14 +116,14 @@ public class MenuItems {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ListaDocumentosBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_LIST_INGRESOS, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ListIngresosBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		add(modulo);
@@ -136,84 +136,84 @@ public class MenuItems {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, EmpresaBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_EMPLEADOS, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, TrabajadorBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_PARAMETRO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ParametrosBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_CENTRO_COSTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, CentroCostoBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_ACTIVIDAD_ICA, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ActividadIcaBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_BANCO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, BancoBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_CONCEPTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ConceptoBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_REPUESTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, RepuestoBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_CUENTA_CONTABLE, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, CuentaContableBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_SERVICIO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ServicioBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_DOCUMENTO_DINAMICO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, FormularioBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		items.add(addItem(BTN_CONFG_PRINT, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ListConfigBean.class);
 			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}));
 		add(admin);

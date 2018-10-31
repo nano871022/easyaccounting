@@ -3,6 +3,8 @@ package com.pyt.service.dto;
 import java.util.Date;
 import java.util.List;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -12,6 +14,9 @@ import org.pyt.common.common.ADto;
  * @author alejandro parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.IngresoDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.IngresoUpdDTO")
+
 public class IngresoDTO extends ADto{
 	private static final long serialVersionUID = -199744420238673033L;
 	private String placaVehiculo;

@@ -21,6 +21,8 @@ import javafx.util.StringConverter;
  * @since 2018-05-23
  */
 public final class SelectList {
+	private static Log logger = Log.Log(SelectList.class);
+
 	/**
 	 * Se encarga de ponder los datos en el choice box con obserble list
 	 * 
@@ -49,7 +51,7 @@ public final class SelectList {
 				}
 			}
 		} catch (ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		try {
 			choiceBox.getSelectionModel().selectFirst();
@@ -180,7 +182,7 @@ public final class SelectList {
 				}
 			}
 		} catch (ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return null;
 	}
@@ -223,9 +225,9 @@ public final class SelectList {
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		} catch (ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		} catch (ValidateValueException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 	}
 
@@ -258,7 +260,7 @@ public final class SelectList {
 					}
 				}
 			} catch (ReflectionException | ValidateValueException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		} // end for
 	}
@@ -295,7 +297,7 @@ public final class SelectList {
 						}
 					}
 			} catch (ReflectionException | ValidateValueException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		} // end for
 	}
@@ -327,7 +329,7 @@ public final class SelectList {
 					break;
 				}
 			} catch (ValidateValueException e) {
-				Log.logger("Se presento problema en la busqueda del objeto seleccionado.", e);
+				logger.logger("Se presento problema en la busqueda del objeto seleccionado.", e);
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		}

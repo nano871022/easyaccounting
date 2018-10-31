@@ -82,7 +82,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			NoEdit noEdit = field.getDeclaredAnnotation(NoEdit.class);
 			return noEdit != null;
 		} catch (NoSuchFieldException | SecurityException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return false;
 	}
@@ -110,7 +110,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 				}
 			}
 		} catch (NoSuchFieldException | SecurityException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 	}
 
@@ -221,7 +221,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			try {
 				registro.set(nombre, validateValue.cast(valor, registro.getType(nombre)));
 			} catch (ReflectionException | ValidateValueException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}
 	}

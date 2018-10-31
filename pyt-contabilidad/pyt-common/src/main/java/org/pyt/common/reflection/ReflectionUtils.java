@@ -25,6 +25,7 @@ public final class ReflectionUtils {
 	private ValidateValues valid;
 	private static ReflectionUtils instancia;
 	private final static String FIELD_CLONE = "clone";
+	private Log logger = Log.Log(this.getClass());
 
 	private ReflectionUtils() {
 		valid = new ValidateValues();
@@ -64,7 +65,7 @@ public final class ReflectionUtils {
 			return out;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return null;
 	}

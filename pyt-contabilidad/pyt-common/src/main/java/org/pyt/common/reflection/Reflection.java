@@ -26,6 +26,8 @@ import org.pyt.common.interfaces.IComunicacion;
  *
  */
 public abstract class Reflection {
+	private Log logger = Log.Log(this.getClass());
+
 	/**
 	 * Se encarga de verificar la cclase y objeter la anotacion inject, con la ccual
 	 * por medio del recurso puesto dentro de la anotacion se obtiene una instancia
@@ -154,7 +156,7 @@ public abstract class Reflection {
 						obj.subscriber((N) instance, sub.comando());
 					}
 				} else {
-					Log.error("El objeto " + clase.getName() + " no tiene la implementacion de "
+					logger.error("El objeto " + clase.getName() + " no tiene la implementacion de "
 							+ IComunicacion.class.getName());
 				}
 			} else if (subsc != null) {
@@ -162,7 +164,7 @@ public abstract class Reflection {
 				if (obj != null && (this) instanceof IComunicacion) {
 					obj.subscriber((N) instance, subsc.comando());
 				} else {
-					Log.error("El objeto " + clase.getName() + " no tiene la implementacion de "
+					logger.error("El objeto " + clase.getName() + " no tiene la implementacion de "
 							+ IComunicacion.class.getName());
 				}
 			}

@@ -3,12 +3,17 @@ package com.pyt.service.dto;
 import java.util.Date;
 import java.util.List;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 /**
  * Se encarga de almacenar la factura que se genera por uno o varios trabajos realizados
  * @author alejandro parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.FacturaDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.FacturaUpdDTO")
+
 public class FacturaDTO extends ADto{
 	private static final long serialVersionUID = -1911681512925350489L;
 	private String codigo;

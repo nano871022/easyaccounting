@@ -25,11 +25,7 @@
     </HBox>
   </bottom>
   <center>
-    <Label fx:id="mensaje" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="80.0" prefWidth="391.0" text="Label">
-      <BorderPane.margin>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-      </BorderPane.margin>
-    </Label>
+    <TextArea fx:id="mensaje" disable="false" editable="false" opacity="1.0" prefWidth="200.0" style="-fx-background-color: transparent;" styleClass="null" wrapText="true" />
   </center>
   <left>
     <ImageView fx:id="imagen" fitHeight="99.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" x="0.0" />

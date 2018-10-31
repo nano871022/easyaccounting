@@ -9,6 +9,7 @@ import org.pyt.common.proccesor.LocatorController;
 import org.pyt.common.reflection.Reflection;
 
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 /**
  * bstracto bean para heredar todos los bean y tener objetos pre creados y
@@ -25,17 +26,18 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	@SuppressWarnings("rawtypes")
 	@Inject
 	protected Comunicacion comunicacion;
+	protected Log logger = Log.Log(this.getClass());
 
 	public ABean() {
 		try {
 			userLogin = new UsuarioDTO();
 			userLogin.setNombre("nano871022");
 			inject();
-			LocatorController.getInstance().putLoadInController(this);
+			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);
 		} catch (ReflectionException e) {
-			System.err.println(e);
+			logger.logger(e);
 		} catch (Exception e) {
-			System.err.println(e);
+			logger.logger(e);
 		}
 	}
 
@@ -50,7 +52,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		try {
 			return LoadAppFxml.BeanFxmlScroller(null, classOfBean);
 		} catch (LoadAppFxmlException e) {
-			Log.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
+			logger.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
 			error(e);
 		}
 		return null;
@@ -95,7 +97,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		try {
 			return LoadAppFxml.beanFxmlPane(layout, classOfBean);
 		} catch (LoadAppFxmlException e) {
-			Log.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
+			logger.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
 			error(e);
 		}
 		return null;
@@ -114,7 +116,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	@SuppressWarnings({ "hiding", "unchecked" })
 	public <T extends Exception> void error(T error) {
 		String mensaje = error.getMessage();
-		Log.logger(error);
+		logger.logger(error);
 		if (StringUtils.isNotBlank(mensaje)) {
 			comunicacion.setComando(AppConstants.COMMAND_POPUP_ERROR, mensaje);
 		}
@@ -122,14 +124,14 @@ public abstract class ABean<T extends ADto> extends Reflection {
 
 	@SuppressWarnings("unchecked")
 	public void error(String msn) {
-		Log.logger(msn);
+		logger.logger(msn);
 		comunicacion.setComando(AppConstants.COMMAND_POPUP_ERROR, msn);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void error(Throwable e) {
 		String mensaje = e.getMessage();
-		Log.logger(e);
+		logger.logger(e);
 		if (StringUtils.isNotBlank(mensaje)) {
 			comunicacion.setComando(AppConstants.COMMAND_POPUP_ERROR, mensaje);
 		}
@@ -138,7 +140,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	@SuppressWarnings({ "unchecked", "hiding" })
 	public final <T extends Exception> void mensajeIzquierdo(T error) {
 		String mensaje = error.getMessage();
-		Log.logger(error);
+		logger.logger(error);
 		if (StringUtils.isNotBlank(mensaje)) {
 			comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, mensaje);
 		}
@@ -147,7 +149,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	@SuppressWarnings({ "unchecked", "hiding" })
 	public final <T extends Throwable> void mensajeIzquierdo(T error) {
 		String mensaje = error.getMessage();
-		Log.logger(error);
+		logger.logger(error);
 		if (StringUtils.isNotBlank(mensaje)) {
 			comunicacion.setComando(AppConstants.COMMAND_MSN_IZQ, mensaje);
 		}
@@ -171,6 +173,16 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	@SuppressWarnings("unchecked")
 	public final void progreso(Double valor) {
 		comunicacion.setComando(AppConstants.COMMAND_PROGRESS, valor);
+	}
+	/**
+	 * Se encarga de cargar de crear una ventana con la informacion de un fxml y retorna el bean de despliegue creado
+	 * @param clase extends {@link ABean}
+	 * @return extends {@link ABean} object
+	 * @throws {@link LoadAppFxmlException}
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected final <T extends ABean> T controllerPopup(Class<T> clase) throws LoadAppFxmlException {
+			return (T) LoadAppFxml.loadBeanFxml(new Stage(), clase);
 	}
 
 	public T getRegistro() {
