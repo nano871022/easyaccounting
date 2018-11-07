@@ -12,8 +12,8 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.poi.docs.Bookmark;
-import org.pyt.common.poi.docs.DocX;
 import org.pyt.common.poi.docs.TableBookmark;
+import org.pyt.common.poi.gen.DocxToPDFGen;
 
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
@@ -24,7 +24,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -35,7 +34,7 @@ import javafx.stage.Stage;
  * @author Alejandro Parra
  * @since 16/10/2018
  */
-@FXMLFile(path = "view/config/servicios", file = "genConfig.fxml",nombreVentana="Generar Archivo de Servicios")
+@FXMLFile(path = "view/config/servicios", file = "genConfig.fxml", nombreVentana = "Generar Archivo de Servicios")
 public class GenConfigBean extends ABean {
 	@FXML
 	private BorderPane window;
@@ -54,18 +53,18 @@ public class GenConfigBean extends ABean {
 	private Map<String, Object> campos;
 	private GenConfigServices gcs;
 	private String nombreConfig;
-	private DocX doc;
+	private DocxToPDFGen doc;
 	public final static String PATH_DOCS = "./docs/";
-	public Map<String,TextField> camposAgregados;
+	public Map<String, TextField> camposAgregados;
 
 	@FXML
 	public void initialize() {
 		nombreCampos = new ArrayList<String>();
 		gcs = new GenConfigServices(configMarcadorServicio);
-		doc = new DocX();
+		doc = new DocxToPDFGen();
 		gridPane = new GridPane();
-		campos = new HashMap<String,Object>();
-		camposAgregados = new HashMap<String,TextField>();
+		campos = new HashMap<String, Object>();
+		camposAgregados = new HashMap<String, TextField>();
 		Content.getChildren().add(gridPane);
 	}
 
@@ -92,32 +91,35 @@ public class GenConfigBean extends ABean {
 			error(e);
 		}
 	}
+
 	/**
-	 * Se encarga de crear la grilla con los objetos puestos en lass posiciones correctas
+	 * Se encarga de crear la grilla con los objetos puestos en lass posiciones
+	 * correctas
 	 */
 	private void loadGrid() {
 		Integer columnIndex = 0;
 		Integer rowIndex = 0;
-		Integer maXRow = nombreCampos.size()<=5?nombreCampos.size():nombreCampos.size()<=16?nombreCampos.size()/2:nombreCampos.size()/3;
-		Integer maxCol = nombreCampos.size()<=5?2:nombreCampos.size()<=16?4:6;
+		Integer maXRow = nombreCampos.size() <= 5 ? nombreCampos.size()
+				: nombreCampos.size() <= 16 ? nombreCampos.size() / 2 : nombreCampos.size() / 3;
+		Integer maxCol = nombreCampos.size() <= 5 ? 2 : nombreCampos.size() <= 16 ? 4 : 6;
 		for (String nombreCampo : nombreCampos) {
-			camposAgregados.put(nombreCampo,new TextField());
+			camposAgregados.put(nombreCampo, new TextField());
 			camposAgregados.get(nombreCampo).setVisible(true);
 			camposAgregados.get(nombreCampo).setEditable(true);
 			camposAgregados.get(nombreCampo).setDisable(false);
-			gridPane.add(new Label(nombreCampo), columnIndex, rowIndex,1,1);
-			gridPane.add(camposAgregados.get(nombreCampo), columnIndex+1, rowIndex,1,1);
+			gridPane.add(new Label(nombreCampo), columnIndex, rowIndex, 1, 1);
+			gridPane.add(camposAgregados.get(nombreCampo), columnIndex + 1, rowIndex, 1, 1);
 			gridPane.setMargin(camposAgregados.get(nombreCampo), new Insets(5, 5, 5, 5));
-			gridPane.setPadding(new Insets(5,5,5,5));
+			gridPane.setPadding(new Insets(5, 5, 5, 5));
 			columnIndex += 2;
-			if(columnIndex>maxCol) {
-				columnIndex=0;
+			if (columnIndex > maxCol) {
+				columnIndex = 0;
 			}
-			if(columnIndex==0) {
+			if (columnIndex == 0) {
 				rowIndex += 1;
 			}
 		}
-		Content.setMinHeight(gridPane.getHeight()+50);
+		Content.setMinHeight(gridPane.getHeight() + 50);
 		gridPane.setMaxWidth(Content.getMaxWidth());
 	}
 
@@ -127,7 +129,7 @@ public class GenConfigBean extends ABean {
 	public void generar() {
 		List<Object> list = new ArrayList<Object>();
 		loadValueFields();
-		try {//DocumentotvgÑO0
+		try {// DocumentotvgÑO0
 			list = gcs.gen(nombreConfig, campos);
 			if (list.size() > 0) {
 				for (Object mark : list) {
@@ -139,25 +141,25 @@ public class GenConfigBean extends ABean {
 				}
 				String nameFile = gcs.getNameFile();
 				System.out.println("Nombre de archivo " + nameFile);
-				doc.setFile(PATH_DOCS + nameFile);
-				doc.setFileOut(PATH_DOCS + fileOut(nameFile));
-				doc.generar();
+				doc.setFileInput(PATH_DOCS + nameFile);
+				doc.setFileOutput(PATH_DOCS + fileOut(nameFile));
+				String output = doc.generate();
 				cancelar();
-				notificar("Se genero "+ nombreConfig +" con el nombre " + fileOut(nameFile));
+				notificar("Se genero " + nombreConfig + " con el nombre " + output);
 			}
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	private void loadValueFields() {
 		campos.clear();
 		Set<String> lcampos = camposAgregados.keySet();
-		for(String campo : lcampos) {
-			campos.put(campo,getValue(campo));
+		for (String campo : lcampos) {
+			campos.put(campo, getValue(campo));
 		}
 	}
-	
+
 	private final <S extends Node> String getValue(String nombreCampo) {
 		TextField campo = camposAgregados.get(nombreCampo);
 		return campo.getText();
