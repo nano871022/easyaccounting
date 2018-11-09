@@ -23,30 +23,41 @@ public final class DocxToPDFGen {
 	private ConvertToPDF pdf;
 	private String fileInput;
 	private String fileOutput;
+	private Boolean delFileLast;
 
 	public DocxToPDFGen() {
 		doc = new DocX();
 		pdf = new ConvertToPDF();
+		delFileLast = false;
 	}
+
 	/**
-	 * Se encarga de generar el el docx poner sus valores de los bookmark y ademas se creara el pdf
+	 * Se encarga de generar el el docx poner sus valores de los bookmark y ademas
+	 * se creara el pdf
+	 * 
 	 * @return {@link String} ruta y nombre del archivo de salida.
 	 */
-	public final synchronized String generate()throws POIException {
-		if(StringUtils.isBlank(fileOutput))throw new POIException("No se a ingresado el nombre del archivo de salida.");
-		if(StringUtils.isBlank(fileInput ))throw new POIException("No se a ingresado el nombre de la platilla para generar.");
-		if(!(new File(fileInput).exists())) {
+	public final synchronized String generate() throws POIException {
+		if (StringUtils.isBlank(fileOutput))
+			throw new POIException("No se a ingresado el nombre del archivo de salida.");
+		if (StringUtils.isBlank(fileInput))
+			throw new POIException("No se a ingresado el nombre de la platilla para generar.");
+		if (!(new File(fileInput).exists())) {
 			throw new POIException("La ruta o nombre del template suministrado para generar no existe.");
 		}
 		try {
 			doc.generar();
 			pdf.DocxToPDF();
-			logger.info("PDF generado "+pdf.getFilePdfOutput());
-			File file = new File(fileOutput);
-			if(file.exists()) file.delete();
-			else logger.error("No se logro eliminar el archivo "+fileOutput);
+			logger.info("PDF generado " + pdf.getFilePdfOutput());
+			if (delFileLast) {
+				File file = new File(fileOutput);
+				if (file.exists())
+					file.delete();
+				else
+					logger.error("No se logro eliminar el archivo " + fileOutput);
+			}
 			return pdf.getFilePdfOutput();
-		}catch(Exception e) {
+		} catch (Exception e) {
 			throw new POIException(e);
 		}
 	}
@@ -61,16 +72,19 @@ public final class DocxToPDFGen {
 		doc.setFileOut(fileOutput);
 		pdf.setFileNameOutput(fileOutput);
 	}
-	
+
 	public final void addTableBookmark(TableBookmark tableBookmarks) {
 		doc.addTableBookmark(tableBookmarks);
 	}
-	
+
 	public final void setBookmarks(Bookmark bookmarks) {
 		doc.setBookmarks(bookmarks);
 	}
 
-	
+	public final void setDelFileLast(Boolean del) {
+		delFileLast = del;
+	}
+
 	public final static void main(String... strings) {
 		Bookmark bookmark = Bookmark.instance().add("idTabla", 10).add("nombreTabla", "nombre del registro")
 				.add("valorTabla", "valor del registro");
@@ -84,9 +98,8 @@ public final class DocxToPDFGen {
 				.add("valorTabla2", 1000).add("subTotalTabla", 2000);
 		Bookmark bookmark6 = Bookmark.instance().add("cantidad", 3).add("descripcionTabla2", "descripcion tabla 3")
 				.add("valorTabla2", 2000).add("subTotalTabla", 6000);
-		TableBookmark tabla1 = TableBookmark.instance().add(bookmark).add(bookmark2).add(bookmark3);
+		TableBookmark tabla1 = TableBookmark.instance().add(bookmark).add(bookmark2).add(bookmark3).add(bookmark4);
 		TableBookmark tabla2 = TableBookmark.instance();
-		tabla2.add(bookmark4);
 		tabla2.add(bookmark5);
 		tabla2.add(bookmark6);
 		Bookmark bookmarks = Bookmark.instance().add("Prueba", " valor a cambiar ")
@@ -94,11 +107,11 @@ public final class DocxToPDFGen {
 				.add("totalTabla", 100000);
 		String nameFile = "";
 		DocxToPDFGen dtpdfg = new DocxToPDFGen();
+		dtpdfg.addTableBookmark(tabla1);
+		// dtpdfg.addTableBookmark(tabla2);
+		dtpdfg.setBookmarks(bookmarks);
 		dtpdfg.setFileInput("./docs/text.docx");
 		dtpdfg.setFileOutput("/home/alejo/Escritorio/reporte_test1.docx");
-		dtpdfg.addTableBookmark(tabla1);
-		dtpdfg.addTableBookmark(tabla2);
-		dtpdfg.setBookmarks(bookmarks);
 		try {
 			nameFile = dtpdfg.generate();
 		} catch (Exception e) {
