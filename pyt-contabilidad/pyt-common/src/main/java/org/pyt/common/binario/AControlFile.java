@@ -1,6 +1,9 @@
 package org.pyt.common.binario;
 
 import java.io.File;
+import java.util.regex.PatternSyntaxException;
+
+import org.pyt.common.common.Log;
 
 /**
  * Se encarga de realziar algunos controles sobre los archivos
@@ -17,7 +20,24 @@ public abstract class AControlFile {
 	 * @param file {@link String}
 	 */
 	protected void verifyPath(String file) {
-		String[] split = file.split(path_split);
+		String[] split = null;
+		if(file.contains("/")  && !"/".equalsIgnoreCase(path_split)) {
+			file = file.replace("/",path_split);
+		}
+		if(file.contains(path_split)) {
+			try {
+				split = file.split(path_split);
+			}catch(PatternSyntaxException e) {
+				try {
+					
+					split = file.split(path_split+path_split);
+				}catch(Exception e1) {
+					Log.logger(e1);
+				}
+			}catch(Exception e) {
+				Log.logger(e);
+			}
+		}
 		String path = "";
 		File paths = null;
 		String dir = "";

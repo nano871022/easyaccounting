@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>co.com.pyt</groupId>
 	<artifactId>pyt-app</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${project.version}</version>
 	<name>pyt-app</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -25,20 +25,20 @@
 		<dependency>
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-service</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>runtime</scope>
+			<version>${project.version}</version>
+			<scope>${project.scope}</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>runtime</scope>
+			<version>${project.version}</version>
+			<scope>${project.scope}</scope>
 		</dependency>
 		<dependency>
-			<groupId>co.com.pyt.query</groupId>
+			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-query</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>runtime</scope>
+			<version>${project.version}</version>
+			<scope>${project.scope}</scope>
 		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>com.oracle</groupId> -->

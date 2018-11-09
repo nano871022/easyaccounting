@@ -107,6 +107,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private List<EmpresaDTO> listEmpresas;
 	private List<ServicioDTO> listServicio;
 	private List<RepuestoDTO> listRepuesto;
+	@SuppressWarnings("unused")
 	private List<TrabajadorDTO> listTrabajador;
 	private final static String field_name = "nombre";
 	private final static String field_valor_venta = "valorVenta";

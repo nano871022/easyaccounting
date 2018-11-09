@@ -3,6 +3,7 @@ package com.pyt.service.dto;
 import org.pyt.common.common.ADto;
 
 public class DepartamentoDTO extends ADto {
+	private static final long serialVersionUID = 2988034817404294221L;
 	private String nombre;
 	private PaisDTO pais;
 	public String getNombre() {

@@ -50,6 +50,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	@FXML
 	private Label sumatoria;
 	private VBox panelCentral;
+	@SuppressWarnings("unused")
 	private DetalleDTO filtro;
 	private DetalleDTO registro;
 	private DataTableFXML<DetalleDTO, DetalleDTO> table;
