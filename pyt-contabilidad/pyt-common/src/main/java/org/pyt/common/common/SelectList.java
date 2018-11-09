@@ -8,9 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.reflection.ReflectionUtils;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
+import javafx.util.StringConverter;
 
 /**
  * Se encargo de cargar registros a un choicebox opcion seleccionable
@@ -19,6 +21,8 @@ import javafx.scene.control.ChoiceBox;
  * @since 2018-05-23
  */
 public final class SelectList {
+	private static Log logger = Log.Log(SelectList.class);
+
 	/**
 	 * Se encarga de ponder los datos en el choice box con obserble list
 	 * 
@@ -34,18 +38,75 @@ public final class SelectList {
 	public final static <S extends Object, T extends ADto> void put(ChoiceBox<S> choiceBox, List<T> lista,
 			String campoDto) {
 		try {
+			if(campoDto == null)return;
 			choiceBox.getItems().clear();
 			ObservableList<S> observable = choiceBox.getItems();
 			observable.add((S) AppConstants.SELECCIONE);
 			for (T obj : lista) {
-				observable.add(obj.get(campoDto));
+				if(obj != null) {
+					S v = obj.get(campoDto);
+					if(v != null) {
+						observable.add(v);
+					}
+				}
 			}
 		} catch (ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		try {
 			choiceBox.getSelectionModel().selectFirst();
 		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * Se encarga de limpiiar la lista de items y agrega string seleccione
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 */
+	public final static <S extends Object> void clear(ChoiceBox<S> choiceBox) {
+		choiceBox.getItems().clear();
+		choiceBox.getItems().add((S) AppConstants.SELECCIONE);
+	}
+
+	/**
+	 * Se encarga de cargar registro por registro e indicar que se seleccione el
+	 * primer registro por defecto
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param value
+	 *            {@link Object}
+	 */
+	public final static <S extends Object, V extends Object> void add(ChoiceBox<S> choiceBox, V value) {
+		ObservableList<S> observable = choiceBox.getItems();
+		observable.add((S) value);
+		try {
+			choiceBox.getSelectionModel().selectFirst();
+		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * Se encarga de poner una lista de tipo string dentro de un choicebox de tipo
+	 * string
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @param lista
+	 *            {@link List} of {@link String}
+	 */
+	@SuppressWarnings("unchecked")
+	public final static <S extends Object> void put(ChoiceBox<S> choiceBox, List<S> lista) {
+		choiceBox.getItems().clear();
+		if(lista==null || lista.size() == 0)return;
+		ObservableList<S> observable = choiceBox.getItems();
+		if (lista.get(0) instanceof String) {
+			observable.add((S) AppConstants.SELECCIONE);
+		}
+		for (S valor : lista) {
+			observable.add(valor);
 		}
 	}
 
@@ -89,6 +150,17 @@ public final class SelectList {
 		}
 		return null;
 	}
+	
+	/**
+	 * Se encarga de obtener la opcion seleccionada en el choice box
+	 * 
+	 * @param choiceBox
+	 *            {@link ChoiceBox}
+	 * @return {@link String}
+	 */
+	public final static <T extends Object> T get(ChoiceBox<T> choiceBox) {
+		return choiceBox.getValue();
+	}
 
 	/**
 	 * Se encarga de buscar dentro de una lista el valor seleccionado en choiceBox
@@ -110,7 +182,7 @@ public final class SelectList {
 				}
 			}
 		} catch (ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return null;
 	}
@@ -128,6 +200,7 @@ public final class SelectList {
 	public final static <S, L, N extends Object, T extends ADto, M extends ADto> void selectItem(ChoiceBox<S> choiceBox,
 			List<M> list, String nombreCampoList, T obj, String nombreCampoDto) {
 		Boolean select = false;
+		ValidateValues val = new ValidateValues();
 		try {
 			ObservableList<S> values = choiceBox.getItems();
 			if (obj != null) {
@@ -138,7 +211,7 @@ public final class SelectList {
 					fieldValue = dto.get(nombreCampoList);
 					fieldValueList = dto.get(nombreCampoList);
 					fieldValueDto = obj.get(nombreCampoDto);
-					if (fieldValueList == fieldValueDto) {
+					if (val.validate(fieldValueList, fieldValueDto)) {
 						for (S valuee : values) {
 							if (valuee == fieldValue) {
 								choiceBox.getSelectionModel().select(valuee);
@@ -152,7 +225,9 @@ public final class SelectList {
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		} catch (ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
+		} catch (ValidateValueException e) {
+			logger.logger(e);
 		}
 	}
 
@@ -185,7 +260,7 @@ public final class SelectList {
 					}
 				}
 			} catch (ReflectionException | ValidateValueException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		} // end for
 	}
@@ -222,7 +297,7 @@ public final class SelectList {
 						}
 					}
 			} catch (ReflectionException | ValidateValueException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		} // end for
 	}
@@ -254,13 +329,43 @@ public final class SelectList {
 					break;
 				}
 			} catch (ValidateValueException e) {
-				Log.logger("Se presento problema en la busqueda del objeto seleccionado.", e);
+				logger.logger("Se presento problema en la busqueda del objeto seleccionado.", e);
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		}
 		if (!select) {
 			choiceBox.getSelectionModel().selectFirst();
 		}
+	}
+	/**
+	 * Se encarga dde seleccionar el registro
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param value {@link Object}
+	 */
+	public final static <T extends Object> void selectItem(ChoiceBox<T> choiceBox,T value) {
+		choiceBox.getSelectionModel().select(value);
+	}
 
+	public final static <S> void addItems(ChoiceBox<S> choiceBox, List<S> list, String... campos) {
+		choiceBox.setConverter(new StringConverter<S>() {
+			private StringBuilder name;
+
+			@Override
+			public String toString(S object) {
+				name = new StringBuilder();
+				for (String campo : campos) {
+					try {
+						name.append(ReflectionUtils.getValueField(object, campo).toString());
+					} catch (ReflectionException e) {
+					}
+				}
+				return name.toString();
+			}
+
+			@Override
+			public S fromString(String string) {
+				return null;
+			}
+		});
 	}
 }

@@ -4,13 +4,18 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.pyt.common.annotations.DelClass;
 import org.pyt.common.annotations.NoEdit;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 /**
  * Es el documento que se encarga de realizar una nota credito,debito y otros tipo de documentos
  * @author alejandro parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.DocumentoDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.DocumentoUpdDTO")
+
 public class DocumentoDTO extends ADto{
 	private static final long serialVersionUID = 284440016164488458L;
 	private ParametroDTO tipoDocumento;
@@ -23,13 +28,20 @@ public class DocumentoDTO extends ADto{
 	private String numeroNota;
 	private Date fechaRegistro;
 	private Date fechaAnulacion;
-	private List<DetalleConceptoDTO> detalle;
+	private EmpresaDTO tercero;
+	private ParametroDTO moneda;
 	
-	public List<DetalleConceptoDTO> getDetalle() {
-		return detalle;
+	public EmpresaDTO getTercero() {
+		return tercero;
 	}
-	public void setDetalle(List<DetalleConceptoDTO> detalle) {
-		this.detalle = detalle;
+	public void setTercero(EmpresaDTO tercero) {
+		this.tercero = tercero;
+	}
+	public ParametroDTO getMoneda() {
+		return moneda;
+	}
+	public void setMoneda(ParametroDTO moneda) {
+		this.moneda = moneda;
 	}
 	public ParametroDTO getTipoDocumento() {
 		return tipoDocumento;

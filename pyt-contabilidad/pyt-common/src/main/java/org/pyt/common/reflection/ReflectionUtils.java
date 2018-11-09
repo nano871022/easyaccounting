@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -24,6 +25,7 @@ public final class ReflectionUtils {
 	private ValidateValues valid;
 	private static ReflectionUtils instancia;
 	private final static String FIELD_CLONE = "clone";
+	private Log logger = Log.Log(this.getClass());
 
 	private ReflectionUtils() {
 		valid = new ValidateValues();
@@ -63,7 +65,7 @@ public final class ReflectionUtils {
 			return out;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ReflectionException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return null;
 	}
@@ -106,4 +108,35 @@ public final class ReflectionUtils {
 			throw new ReflectionException("Error por copia de archivo por bytes.",e);
 		}
 	}
-}
+	/**
+	 * Se encarga de obtener el valor de un campo tipo get normal, segun el fieldname suministrado
+	 * @param object {@link Object}
+	 * @param fieldName {@link String}
+	 * @return {@link Object}
+	 * @throws {@link ReflectionException}
+	 */
+	@SuppressWarnings("unchecked")
+	public final static <T,S> S getValueField(T object, String fieldName) throws ReflectionException{
+		try {
+			Class<T> clase = (Class<T>) object.getClass();
+			Field field = clase.getDeclaredField(fieldName);
+			String nombre = field.getName();
+			nombre = nombre.substring(0, 1).toUpperCase()+nombre.substring(1);
+			Method metodo = clase.getDeclaredMethod("get"+nombre);
+			return (S) metodo.invoke(object);
+		} catch (NoSuchFieldException e) {
+			throw new ReflectionException("No se encuentro el campo "+e.getMessage(),e);
+		} catch(SecurityException e) {
+			throw new ReflectionException("Problema de seguridad en busca de campo "+e.getMessage(),e);
+		} catch (NoSuchMethodException e) {
+			throw new ReflectionException("No se encontro el metodo "+e.getMessage(),e);
+		} catch (IllegalAccessException e) {
+			throw new ReflectionException(e.getMessage(),e);
+		} catch (IllegalArgumentException e) {
+			throw new ReflectionException(e.getMessage(),e);
+		} catch (InvocationTargetException e) {
+			throw new ReflectionException(e.getMessage(),e);
+		}
+		}
+		
+	}

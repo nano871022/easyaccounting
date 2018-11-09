@@ -30,6 +30,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	private static LoadAppFxml app;
 	private P lastLayout;
 	private C lastContro;
+	private static Log logger = Log.Log(LoadAppFxml.class);
 
 	private LoadAppFxml() {
 	}
@@ -98,6 +99,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}
 	}
+
 
 	/**
 	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
@@ -204,6 +206,34 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		}
 	}
 
+	public final static <L extends Pane, S extends ADto, T extends ABean<S>> T BeanFxml(Class<T> bean)
+			throws LoadAppFxmlException {
+		String file;
+
+		try {
+			T lbean = bean.getDeclaredConstructor().newInstance();
+			file = lbean.pathFileFxml();
+			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
+				file = AppConstants.SLASH + file;
+			}
+			URL url = bean.getResource(file);
+			FXMLLoader loader = new FXMLLoader(url);
+			return loader.getController();
+		} catch (InstantiationException e) {
+			throw new LoadAppFxmlException("Problema en instanciacion.", e);
+		} catch (IllegalAccessException e) {
+			throw new LoadAppFxmlException("Acceso ilegal.", e);
+		} catch (IllegalArgumentException e) {
+			throw new LoadAppFxmlException("Argumento ilegal.", e);
+		} catch (InvocationTargetException e) {
+			throw new LoadAppFxmlException("Problema en el objetivo de invocacion.", e);
+		} catch (NoSuchMethodException e) {
+			throw new LoadAppFxmlException("No se encontro el metodo.", e);
+		} catch (SecurityException e) {
+			throw new LoadAppFxmlException("Problema de seguridad.", e);
+		}
+	}
+	
 	/**
 	 * Obtiene el fxml apartir del bean y la etiqueta FXMLBean
 	 * 
@@ -220,9 +250,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		try {
 			T lBean = bean.getDeclaredConstructor().newInstance();
 			file = lBean.pathFileFxml();
- 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
- 				file = AppConstants.SLASH + file;
- 			}
+			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
+				file = AppConstants.SLASH + file;
+			}
 			url = bean.getResource(file);
 			return new FXMLLoader(url);
 		} catch (InstantiationException e) {
@@ -239,7 +269,6 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
 		}
 	}
-
 
 	/**
 	 * Se encarga de cargar un fxml de controlador
@@ -266,23 +295,28 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			root = loader.load();
 			((ScrollPane) loadApp().getLastContro()).setContent(root);
 			return loader.getController();
-		} catch(IllegalStateException e) {
-			throw new LoadAppFxmlException("Problema en cargar load",e);
-		}catch (LoadException e) {
-			Log.error("Archivo no puede ser cargado. ");
+		} catch (IllegalStateException e) {
+			throw new LoadAppFxmlException("Problema en cargar load", e);
+		} catch (LoadException e) {
+			logger.error("Archivo no puede ser cargado. ");
 			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}
 	}
-		/**
+
+	/**
 	 * Se encarga de cargar un archivo fxml dentro de un panel indicado
-	 * @param layout 
-	 * @param bean {@link Class}
+	 * 
+	 * @param layout
+	 * @param bean
+	 *            {@link Class}
 	 * @return {@link ABean}
-	 * @throws {@link LoadAppFxmlException}
+	 * @throws {@link
+	 *             LoadAppFxmlException}
 	 */
-	public final static <L extends Pane, S extends ADto, T extends ABean<S>> T beanFxmlPane(L layout, Class<T> bean)throws LoadAppFxmlException {
+	public final static <L extends Pane, S extends ADto, T extends ABean<S>> T beanFxmlPane(L layout, Class<T> bean)
+			throws LoadAppFxmlException {
 		FXMLLoader loader = loadFxml(bean);
 		try {
 			Parent root = loader.load();

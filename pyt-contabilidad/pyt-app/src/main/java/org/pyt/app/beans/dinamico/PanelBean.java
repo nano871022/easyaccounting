@@ -15,7 +15,6 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.interfaces.IComunicacion;
 
-import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
@@ -74,7 +73,8 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 			dto.setDoctype(registro.getTipoDocumento());
 			List<DocumentosDTO> lista = documentosSvc.getDocumentos(dto);
 			for (DocumentosDTO doc : lista) {
-				mapa.put(doc.getClaseControlar().getSimpleName(), doc.getClaseControlar());
+				if (!doc.getClaseControlar().getSimpleName().contains("DetalleConceptoDTO"))
+					mapa.put(doc.getClaseControlar().getSimpleName(), doc.getClaseControlar());
 			}
 		} catch (DocumentosException e) {
 			error(e);
@@ -101,42 +101,33 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 				btn.onActionProperty().set(e -> {
 					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 						try {
-							getController(central, ListaDetalleBean.class).load(central,registro.getTipoDocumento(),registro.getCodigo());
+							getController(central, ListaDetalleBean.class).load(central, registro.getTipoDocumento(),
+									registro.getCodigo());
 						} catch (Exception e1) {
 							error("No se logro cargar la lista de detalle.");
 						}
-					} 
-				});
-			}
-			if (mapa.get(key) == DetalleConceptoDTO.class) {
-				btn.onActionProperty().set(e -> {
-					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
-						try {
-							getController(central, ListaDetalleConceptoBean.class).load(central,registro.getTipoDocumento(),registro.getCodigo());
-						} catch (Exception e1) {
-							error("No se logro cargar la lista de detalle concepto.");
-						}
-					} 
+					}
 				});
 			}
 			if (mapa.get(key) == DetalleContableDTO.class) {
 				btn.onActionProperty().set(e -> {
 					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 						try {
-							getController(central, ListaDetalleContableBean.class).load(central,registro.getTipoDocumento(),registro.getCodigo());
+							getController(central, ListaDetalleContableBean.class).load(central,
+									registro.getTipoDocumento(), registro.getCodigo());
 						} catch (Exception e1) {
 							error("No se logro cargar la lista de detalle contable.");
 						}
-					} 
+					}
 				});
 			}
 			if (left != null) {
 				left.getChildren().add(btn);
 			}
-		}//end for
+		} // end for
 		Button regresar = new Button("<-Regresar");
 		regresar.setMaxWidth(Double.MAX_VALUE);
-		regresar.onActionProperty().set(e->{
+		regresar.onActionProperty().set(e -> {
 			getController(ListaDocumentosBean.class);
 		});
 		left.getChildren().add(regresar);

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="717.0"
+	prefWidth="599.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+	fx:controller="org.pyt.app.beans.GuiaIngresos.IngresosCRUBean">
+	<bottom>
+		<FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER">
+			<children>
+				<Button mnemonicParsing="false" onAction="#add" text="Guardar" />
+				<Button mnemonicParsing="false" onAction="#cancel" text="Cancelar">
+					<FlowPane.margin>
+						<Insets left="10.0" />
+					</FlowPane.margin>
+				</Button>
+			</children>
+			<BorderPane.margin>
+				<Insets bottom="5.0" top="5.0" />
+			</BorderPane.margin>
+		</FlowPane>
+	</bottom>
+	<center>
+		<GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+			minWidth="-Infinity" prefHeight="110.0" prefWidth="469.0" vgap="5.0" BorderPane.alignment="CENTER">
+			<children>
+				<Label alignment="CENTER_LEFT" prefHeight="33.0" prefWidth="88.0" text="Codigo" textAlignment="LEFT" />
+				<Label fx:id="codigo" alignment="CENTER" contentDisplay="CENTER" prefHeight="38.0" prefWidth="163.0" textAlignment="CENTER"
+					GridPane.columnIndex="1" />
+				<Label alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="70.0" text="Placa" textAlignment="CENTER" GridPane.columnIndex="2" />
+				<TextField fx:id="placa" GridPane.columnIndex="3" />
+				<Label alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="Conductor Entrada"
+					GridPane.rowIndex="1" />
+				<TextField fx:id="conductorEntrada" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+				<Label alignment="CENTER_LEFT" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="76.0"
+					text="Conductor Salida" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+				<TextField fx:id="conductorSalida" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+				<Label maxWidth="1.7976931348623157E308" text="Doc. Entrada" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+				<Label maxWidth="1.7976931348623157E308" text="Doc. Salida" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+				<TextField fx:id="docEntrada" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+				<TextField fx:id="docSalida" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+				<Label maxWidth="1.7976931348623157E308" text="Fecha Entrada" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+				<Label maxWidth="1.7976931348623157E308" text="Fecha Salida" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+				<Label maxWidth="1.7976931348623157E308" text="Propietario" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+				<Label maxWidth="1.7976931348623157E308" text="Tel:. Contacto" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+				<TextField fx:id="propietario" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+				<TextField fx:id="telContacto" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+				<Label maxWidth="1.7976931348623157E308" text="Empresa" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+				<ChoiceBox fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+				<Label maxWidth="1.7976931348623157E308" text="Tiempo Estimado" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+				<Label maxWidth="1.7976931348623157E308" text="Tiempo Trabajo" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+				<TextField fx:id="tiempoEstimado" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+				<TextField fx:id="tiempoTrabajo" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+				<Label maxWidth="1.7976931348623157E308" text="Servicio" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+				<Label maxWidth="1.7976931348623157E308" text="Repuesto" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+				<ChoiceBox fx:id="servicio" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+				<ChoiceBox fx:id="repuesto" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+				<Button mnemonicParsing="false" onAction="#addServicio" text="Agregar" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+				<Button mnemonicParsing="false" onAction="#addRepuesto" text="Agregar" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+				<TableView fx:id="tablaServicio" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="2"
+					GridPane.rowIndex="9">
+					<columns>
+						<TableColumn id="nombre" maxWidth="5000.0" minWidth="10.0" prefWidth="191.0" text="Nombre">
+							<cellValueFactory>
+								<PropertyValueFactory property="nombre" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn id="valorManoObra" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Valor">
+							<cellValueFactory>
+								<PropertyValueFactory property="valorManoObra" />
+							</cellValueFactory>
+						</TableColumn>
+					</columns>
+				</TableView>
+				<TableView fx:id="tablaRepuesto" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2"
+					GridPane.rowIndex="9">
+					<columns>
+						<TableColumn id="nombre" maxWidth="5000.0" minWidth="10.0" prefWidth="186.0" text="Nombre">
+							<cellValueFactory>
+								<PropertyValueFactory property="nombre" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn id="valorVenta" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Valor">
+							<cellValueFactory>
+								<PropertyValueFactory property="valorVenta" />
+							</cellValueFactory>
+						</TableColumn>
+					</columns>
+				</TableView>
+				<Label maxWidth="1.7976931348623157E308" text="Trabajador" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+				<ChoiceBox fx:id="trabajador" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+				<Label maxWidth="1.7976931348623157E308" text="Descripcion" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+				<TextArea fx:id="descripcion" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="11"
+					GridPane.rowSpan="2" />
+				<Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Total" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+				<Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Total" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+				<Label fx:id="totalServicio" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="-" GridPane.columnIndex="1"
+					GridPane.rowIndex="10">
+					<GridPane.margin>
+						<Insets right="10.0" fx:id="x1" />
+					</GridPane.margin>
+				</Label>
+				<Label fx:id="totalRepuesto" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="-" GridPane.columnIndex="3"
+					GridPane.margin="$x1" GridPane.rowIndex="10" />
+				<DatePicker fx:id="fechaEntrada" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+				<DatePicker fx:id="fechaSalida" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+			</children>
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="151.0" minWidth="10.0" prefWidth="137.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="178.0" minWidth="10.0" prefWidth="152.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="172.0" minWidth="10.0" prefWidth="123.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="162.0" />
+			</columnConstraints>
+			<padding>
+				<Insets bottom="10.0" />
+			</padding>
+			<rowConstraints>
+				<RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="64.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="73.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="88.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="128.0" minHeight="4.0" prefHeight="28.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="127.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="135.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="206.0" minHeight="10.0" prefHeight="206.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="84.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="84.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="116.0" minHeight="10.0" prefHeight="116.0" vgrow="SOMETIMES" />
+			</rowConstraints>
+			<BorderPane.margin>
+				<Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+			</BorderPane.margin>
+		</GridPane>
+	</center>
+	<top>
+		<FlowPane alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+			<children>
+				<Label fx:id="titulo" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+					text="Guia de Ingresos" textAlignment="CENTER">
+					<font>
+						<Font name="System Bold Italic" size="18.0" />
+					</font>
+				</Label>
+			</children>
+			<BorderPane.margin>
+				<Insets bottom="5.0" top="5.0" />
+			</BorderPane.margin>
+		</FlowPane>
+	</top>
+</BorderPane>

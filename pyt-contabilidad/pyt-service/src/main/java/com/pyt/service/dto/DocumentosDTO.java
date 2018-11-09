@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -9,6 +11,7 @@ import org.pyt.common.common.ADto;
  * @author Alejandro Parra
  * @since  30-06-2018
  */
+
 public class DocumentosDTO extends ADto {
 	private static final long serialVersionUID = -8417260332275892148L;
 	private String fieldLabel;

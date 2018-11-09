@@ -22,7 +22,6 @@ import org.pyt.common.exceptions.ParametroException;
 import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.dto.BancoDTO;
 import com.pyt.service.dto.CentroCostoDTO;
-import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
@@ -172,7 +171,6 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 
 	private final void claseControl() {
 		mapa_controlar.put("Documentos", DocumentoDTO.class);
-		mapa_controlar.put("Detalle Concepto", DetalleConceptoDTO.class);
 		mapa_controlar.put("Detalle Documento", DetalleDTO.class);
 		mapa_controlar.put("Detalle Contable", DetalleContableDTO.class);
 	}

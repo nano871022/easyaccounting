@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.exceptions.IngresoException;
 
 import com.pyt.service.dto.IngresoDTO;
@@ -19,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 /**
  * Bean encargado de crear los ingresos
@@ -42,6 +45,8 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
+	@FXML
+	private Button eliminar;
 	private DataTableFXML<IngresoDTO, IngresoDTO> dt;
 
 	@FXML
@@ -55,6 +60,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 			});
 		lazy();
 		search();
+		eliminar.setVisible(false);
 	}
 
 	/**
@@ -66,7 +72,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 			public List<IngresoDTO> getList(IngresoDTO filter, Integer page, Integer rows) {
 				List<IngresoDTO> lista = new ArrayList<IngresoDTO>();
 				try {
-					lista = ingresosSvc.getIngresos(filter, page, rows);
+					lista = ingresosSvc.getIngresos(filter, page-1, rows);
 				} catch (IngresoException e) {
 					error(e);
 				}
@@ -100,6 +106,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		eliminar.setVisible(isSelected());
 	}
 
 	public void add() {
@@ -112,6 +119,14 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 
 	public void del() {
 		try {
+			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ListIngresosBean.delete}", "¿Desea eliminar los registros seleccionados?");
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+	public void setDelete(Boolean valid) {
+		try {
+			if(!valid)return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				ingresosSvc.delete(registro, userLogin);

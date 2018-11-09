@@ -3,6 +3,7 @@ package com.pyt.service.implement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpresasException;
@@ -54,7 +55,7 @@ public class EmpresaSvc extends Services implements IEmpresasSvc {
 	public void update(EmpresaDTO dto, UsuarioDTO user) throws EmpresasException {
 		if (dto == null)
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new EmpresasException("El id de empresa se encuentra vacia.");
 		try {
 			querySvc.set(dto, user);
@@ -68,7 +69,7 @@ public class EmpresaSvc extends Services implements IEmpresasSvc {
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
 		if(user == null)
 			throw new EmpresasException("El usuario no fue suinistrado.");
-		if (dto.getCodigo() != null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new EmpresasException("El codigo de empresa no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
@@ -80,7 +81,7 @@ public class EmpresaSvc extends Services implements IEmpresasSvc {
 	public void delete(EmpresaDTO dto, UsuarioDTO user) throws EmpresasException {
 		if (dto == null)
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
-		if (dto.getCodigo() == null)
+		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new EmpresasException("El codigo empresa se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);

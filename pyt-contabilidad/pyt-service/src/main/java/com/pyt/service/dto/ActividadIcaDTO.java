@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -7,13 +9,24 @@ import org.pyt.common.common.ADto;
  * @author Alejandro Parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.ActividadIcaDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.ActividadIcaUpdDTO")
+
 public class ActividadIcaDTO extends ADto{
 	private static final long serialVersionUID = 5006959473201225898L;
 	private String codigo;
+	private String codigoIca;
 	private String nombre;
 	private String descripcion;
 	private String base;
 	private String tarifa;
+	
+	public String getCodigoIca() {
+		return codigoIca;
+	}
+	public void setCodigoIca(String codigoIca) {
+		this.codigoIca = codigoIca;
+	}
 	public String getCodigo() {
 		return codigo;
 	}

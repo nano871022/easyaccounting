@@ -3,10 +3,12 @@ package com.pyt.service.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.pyt.common.annotations.DelClass;
 import org.pyt.common.annotations.Increment;
 import org.pyt.common.annotations.NoEdit;
 import org.pyt.common.annotations.Operacion;
 import org.pyt.common.annotations.Operar;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -15,6 +17,9 @@ import org.pyt.common.common.ADto;
  * @author alejandro parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.DetalleDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.DetalleUpdDTO")
+
 public class DetalleDTO extends ADto {
 	private static final long serialVersionUID = -3773810908869511818L;
 	private String codeDocumento;
@@ -38,7 +43,70 @@ public class DetalleDTO extends ADto {
 	private ActividadIcaDTO actividadIca;
 	private String codigoDocumento;
 	private IngresoDTO ingreso;
+	private Long porcentajeDescuento;
+	private BigDecimal valorDescuento;
+	private BigDecimal tarifaActividadIca;
+	private ParametroDTO tipoConcepto;
+	private String observaciones;
+	private String descripcion;
+	private EmpresaDTO tercero;
 	
+	public Long getPorcentajeDescuento() {
+		return porcentajeDescuento;
+	}
+
+	public void setPorcentajeDescuento(Long porcentajeDescuento) {
+		this.porcentajeDescuento = porcentajeDescuento;
+	}
+
+	public EmpresaDTO getTercero() {
+		return tercero;
+	}
+
+	public void setTercero(EmpresaDTO tercero) {
+		this.tercero = tercero;
+	}
+
+	public BigDecimal getValorDescuento() {
+		return valorDescuento;
+	}
+
+	public void setValorDescuento(BigDecimal valorDescuento) {
+		this.valorDescuento = valorDescuento;
+	}
+
+	public BigDecimal getTarifaActividadIca() {
+		return tarifaActividadIca;
+	}
+
+	public void setTarifaActividadIca(BigDecimal tarifaActividadIca) {
+		this.tarifaActividadIca = tarifaActividadIca;
+	}
+
+	public ParametroDTO getTipoConcepto() {
+		return tipoConcepto;
+	}
+
+	public void setTipoConcepto(ParametroDTO tipoConcepto) {
+		this.tipoConcepto = tipoConcepto;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
 	public String getCodeDocumento() {
 		return codeDocumento;
 	}

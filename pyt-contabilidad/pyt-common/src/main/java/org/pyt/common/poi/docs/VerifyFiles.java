@@ -12,6 +12,8 @@ import org.pyt.common.common.Log;
 public abstract class VerifyFiles {
 	private final static String DOT = ".";
 	private final static String SLASH = "/";
+	private Log logger = Log.Log(this.getClass());
+
 	protected String separator = System.getProperty("file.separator");
 	/**
 	 * Se encarga de validar el archivo si existe y si no crearlo
@@ -60,7 +62,7 @@ public abstract class VerifyFiles {
 					}
 				}
 			} catch (IOException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}
 		return false;

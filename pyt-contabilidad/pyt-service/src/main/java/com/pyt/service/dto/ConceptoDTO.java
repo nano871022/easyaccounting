@@ -1,5 +1,7 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 /**
@@ -7,6 +9,9 @@ import org.pyt.common.common.ADto;
  * @author alejandro parra
  * @since 06/05/2018
  */
+@DelClass(nombre="com.pyt.service.dto.dels.ConceptoDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.ConceptoUpdDTO")
+
 public class ConceptoDTO extends ADto{
 	private static final long serialVersionUID = 8544091132270171494L;
 	private String codigo;
@@ -14,9 +19,38 @@ public class ConceptoDTO extends ADto{
 	private String descripcion;
 	private ParametroDTO estado;
 	private EmpresaDTO empresa;
+	private String subconcepto;
+	private CuentaContableDTO cuentaGasto;
+	private CuentaContableDTO cuentaXPagar;
+	
 	public String getCodigo() {
 		return codigo;
 	}
+	
+	public String getSubconcepto() {
+		return subconcepto;
+	}
+
+	public void setSubconcepto(String subconcepto) {
+		this.subconcepto = subconcepto;
+	}
+
+	public CuentaContableDTO getCuentaGasto() {
+		return cuentaGasto;
+	}
+
+	public void setCuentaGasto(CuentaContableDTO cuentaGasto) {
+		this.cuentaGasto = cuentaGasto;
+	}
+
+	public CuentaContableDTO getCuentaXPagar() {
+		return cuentaXPagar;
+	}
+
+	public void setCuentaXPagar(CuentaContableDTO cuentaXPagar) {
+		this.cuentaXPagar = cuentaXPagar;
+	}
+
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}

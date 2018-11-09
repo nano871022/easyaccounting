@@ -26,6 +26,7 @@ import com.pyt.query.interfaces.IQuerySvc;
 
 public class QuerySvc implements IQuerySvc {
 	private FileBin fb;
+	private Log logger = Log.Log(this.getClass());
 
 	public QuerySvc() {
 		fb = new FileBin();
@@ -142,7 +143,7 @@ public class QuerySvc implements IQuerySvc {
 		if (lista != null && lista.size() > 0) {
 			try {
 				fb.write(lista, (Class<T>) obj.getClass());
-				if(!nuevo)
+				if (!nuevo)
 					getDelUpd(obj, UpdClass.class, user.getNombre());
 			} catch (FileBinException e) {
 				throw new QueryException("Se presento problem aen el almacenamieto del registro.", e);
@@ -158,7 +159,7 @@ public class QuerySvc implements IQuerySvc {
 	 * @return
 	 */
 	private final <T extends ADto> String genConsecutivo(Class<T> dto, Integer size) {
-		String cadena = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnÑñOoPpQqRrSsTtUuVvWwXxYyZz1234567890*+{[]}-_.:,;/%$#!|?¡¿";
+		String cadena = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
 		Integer max = 15;
 		String name = dto.getSimpleName();
 		Integer lenSize = size.toString().length();
@@ -168,9 +169,16 @@ public class QuerySvc implements IQuerySvc {
 			name = name.substring(0, 7);
 			length = name.length();
 		}
-		Random aleatorio = new Random();
 		StringBuilder sb = new StringBuilder();
+		LocalDateTime fecha = LocalDateTime.now();
 		sb.append(name);
+		sb.append(fecha.getYear());
+		sb.append(fecha.getMonthValue());
+		sb.append(fecha.getDayOfMonth());
+		sb.append(fecha.getHour());
+		sb.append(fecha.getMinute());
+		sb.append(fecha.getSecond());
+		Random aleatorio = new Random();
 		for (int i = 0; i < max - length - lenSize; i++) {
 			Double valor = aleatorio.nextDouble() * (cadena.length() - 1 + 0);
 			sb.append(cadena.charAt(valor.intValue()));
@@ -179,8 +187,8 @@ public class QuerySvc implements IQuerySvc {
 		return sb.toString();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private <T extends ADto, S extends ADto> void getDelUpd(T obj, Class annotation,String user) {
+	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
+	private <T extends ADto, S extends ADto> void getDelUpd(T obj, Class annotation, String user) {
 		if (annotation == null)
 			return;
 		if (obj == null)
@@ -188,34 +196,60 @@ public class QuerySvc implements IQuerySvc {
 		try {
 			if (annotation == DelClass.class) {
 				DelClass del = obj.getClass().getDeclaredAnnotation(DelClass.class);
-				if (del != null && del.clase() != null) {
-					S bk = (S) ReflectionUtils.instanciar().copy(obj, del.clase());
-					((IDelClass)bk).setFechaElimina(LocalDateTime.now());
-					((IDelClass)bk).setUsuarioElimina(user);
-					List<S> list = fb.loadRead(del.clase());
-					if(list == null) {
+				if (del != null && (del.clase() != null || StringUtils.isNotBlank(del.nombre()))) {
+					Class clazz = null;
+					if (StringUtils.isNotBlank(del.nombre())) {
+						try {
+							clazz = obj.getClass().forName(del.nombre());
+						} catch (ClassNotFoundException e) {
+							logger.logger(e);
+							return;
+						}
+					} else {
+						clazz = del.clase();
+					}
+					S bk = (S) ReflectionUtils.instanciar().copy(obj, clazz);
+					((IDelClass) bk).setFechaElimina(LocalDateTime.now());
+					((IDelClass) bk).setUsuarioElimina(user);
+					List<S> list = fb.loadRead(clazz);
+					if (list == null) {
 						list = new ArrayList<S>();
 					}
 					list.add(bk);
-					fb.write(list, del.clase());
+					fb.write(list, clazz);
 				}
 			}
 			if (annotation == UpdClass.class) {
 				UpdClass upd = obj.getClass().getDeclaredAnnotation(UpdClass.class);
-				if (upd != null & upd.clase() != null) {
-					S bk = (S) ReflectionUtils.instanciar().copy(obj, upd.clase());
-					((IUpdClass)bk).setFechaActualizado(LocalDateTime.now());
-					((IUpdClass)bk).setUsuarioActualizo(user);
-					List<S> list = fb.loadRead(upd.clase());
-					if(list == null) {
-						list = new ArrayList<S>();
+				if (upd != null && (upd.clase() != null || StringUtils.isNotBlank(upd.nombre()))) {
+					Class clazz = null;
+					if (StringUtils.isNotBlank(upd.nombre())) {
+						try {
+							clazz = obj.getClass().forName(upd.nombre());
+						} catch (ClassNotFoundException e) {
+							logger.logger(e);
+							return;
+						}
+					} else {
+						clazz = upd.clase();
 					}
-					list.add(bk);
-					fb.write(list, upd.clase());
+					S bk = (S) ReflectionUtils.instanciar().copy(obj, upd.clase());
+					if (bk != null) {
+						((IUpdClass) bk).setFechaActualizado(LocalDateTime.now());
+						((IUpdClass) bk).setUsuarioActualizo(user);
+						List<S> list = fb.loadRead(upd.clase());
+						if (list == null) {
+							list = new ArrayList<S>();
+						}
+						list.add(bk);
+						fb.write(list, upd.clase());
+					}else {
+						logger.error("Se encontro problema con copia de "+obj.getClass().getName());
+					}
 				}
 			}
-		} catch (FileBinException| SecurityException e) {
-			Log.logger(e);
+		} catch (FileBinException | SecurityException e) {
+			logger.logger(e);
 		}
 	}
 

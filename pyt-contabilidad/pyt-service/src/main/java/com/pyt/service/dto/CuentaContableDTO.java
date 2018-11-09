@@ -1,19 +1,44 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotations.DelClass;
+import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
+@DelClass(nombre="com.pyt.service.dto.dels.CuentaContableDelDTO")
+@UpdClass(nombre="com.pyt.service.dto.upds.CuentaContableUpdDTO")
 
 public class CuentaContableDTO extends ADto{
 	private static final long serialVersionUID = -8350913912942141963L;
 	private String codigoCuenta;
+	private ParametroDTO tipoPlanContable;
+	private ParametroDTO tipo;
 	private String nombre;
-	private ParametroDTO tipoCuenta;
+	private ParametroDTO naturaleza;
+	private EmpresaDTO empresa;
 	private String asociado;
 	
-	public ParametroDTO getTipoCuenta() {
-		return tipoCuenta;
+	public ParametroDTO getTipoPlanContable() {
+		return tipoPlanContable;
 	}
-	public void setTipoCuenta(ParametroDTO tipoCuenta) {
-		this.tipoCuenta = tipoCuenta;
+	public void setTipoPlanContable(ParametroDTO tipoPlanContable) {
+		this.tipoPlanContable = tipoPlanContable;
+	}
+	public ParametroDTO getTipo() {
+		return tipo;
+	}
+	public void setTipo(ParametroDTO tipo) {
+		this.tipo = tipo;
+	}
+	public ParametroDTO getNaturaleza() {
+		return naturaleza;
+	}
+	public void setNaturaleza(ParametroDTO naturaleza) {
+		this.naturaleza = naturaleza;
+	}
+	public EmpresaDTO getEmpresa() {
+		return empresa;
+	}
+	public void setEmpresa(EmpresaDTO empresa) {
+		this.empresa = empresa;
 	}
 	public String getCodigoCuenta() {
 		return codigoCuenta;

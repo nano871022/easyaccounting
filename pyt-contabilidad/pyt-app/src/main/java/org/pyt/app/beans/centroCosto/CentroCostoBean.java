@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
@@ -26,6 +28,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 /**
  * Bean encargado de crear las empresas
@@ -51,6 +54,8 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	private ChoiceBox<String> estado;
 	@FXML
 	private Button btnMod;
+	@FXML
+	private Button btnDel;
 	@FXML
 	private HBox paginador;
 	@FXML
@@ -101,7 +106,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 			public List<CentroCostoDTO> getList(CentroCostoDTO filter, Integer page, Integer rows) {
 				List<CentroCostoDTO> lista = new ArrayList<CentroCostoDTO>();
 				try {
-					lista = centroCostoSvc.getCentroCostos(filter, page, rows);
+					lista = centroCostoSvc.getCentroCostos(filter, page-1, rows);
 				} catch (CentroCostosException e) {
 					error(e);
 				}
@@ -136,7 +141,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 						filtro.setOrden(Integer.valueOf(orden.getText()));
 					}
 				} catch (Exception e) {
-					Log.logger(e);
+					logger.logger(e);
 				}
 				return filtro;
 			}
@@ -145,6 +150,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {
@@ -157,6 +163,14 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 
 	public void del() {
 		try {
+			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{CentroCostoBean.delete}", "¿Desea eliminar los registros seleccionados?");
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+	public void setDelete(Boolean valid) {
+		try {
+			if(!valid)return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				centroCostoSvc.delete(registro, userLogin);

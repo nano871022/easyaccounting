@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.DetalleContableDTO;
@@ -22,6 +24,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * Se encargade crear la pantalla de lista de detalles
@@ -185,6 +188,14 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	 * Se encarga de llamar el bean para eliminar un registro
 	 */
 	public final void eliminar() {
+		try {
+			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ListaDetalleContableBean.delete}", "¿Desea eliminar los registros seleccionados?");
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+	public void setDelete(Boolean valid) {
+			if(!valid)return;
 		if (table.isSelected()) {
 			List<DetalleContableDTO> lista = table.getSelectedRows();
 			Integer i = 0;

@@ -1,11 +1,14 @@
 package org.pyt.app.load;
 
+import org.pyt.app.components.PopupBean;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IComunicacion;
 import org.pyt.common.reflection.Reflection;
@@ -16,6 +19,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * Se encarga del control del archivo de template
@@ -49,8 +53,11 @@ public class Template extends Reflection implements IComunicacion {
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_MSN_IZQ)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_MSN_DER)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_MSN_CTR)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_WARN)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_INFO)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_ERROR)
 	private Comunicacion comunicacion;
-
+private Log logger = Log.Log(this.getClass());
 	@FXML
 	public void initialize() {
 		try {
@@ -60,32 +67,52 @@ public class Template extends Reflection implements IComunicacion {
 			centerMessage.setText("");
 			progressBar.setProgress(0.0);
 			new MenuItems(menu, scroller).load();
-			Log.logger("Cargando ventana principal");
+			logger.logger("Cargando ventana principal");
 		} catch (ReflectionException e1) {
-			Log.logger(e1);
+			logger.logger(e1);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> void get(String comando, T valor) {
-		switch (comando) {
-		case AppConstants.COMMAND_MSN_CTR:
-			if (valor instanceof String)
-				centerMessage.setText((String) valor);
-			break;
-		case AppConstants.COMMAND_MSN_DER:
-			if (valor instanceof String)
-				rightMessage.setText((String) valor);
-			break;
-		case AppConstants.COMMAND_MSN_IZQ:
-			if (valor instanceof String)
-				leftMessage.setText((String) valor);
-			break;
-		case AppConstants.COMMAND_PROGRESS:
-			if (valor instanceof Double) {
-				progressBar.setProgress((Double) valor);
+		try {
+			switch (comando) {
+			case AppConstants.COMMAND_MSN_CTR:
+				if (valor instanceof String)
+					centerMessage.setText((String) valor);
+				break;
+			case AppConstants.COMMAND_MSN_DER:
+				if (valor instanceof String)
+					rightMessage.setText((String) valor);
+				break;
+			case AppConstants.COMMAND_MSN_IZQ:
+				if (valor instanceof String)
+					leftMessage.setText((String) valor);
+				break;
+			case AppConstants.COMMAND_PROGRESS:
+				if (valor instanceof Double) {
+					progressBar.setProgress((Double) valor);
+				}
+				break;
+			case AppConstants.COMMAND_POPUP_ERROR:
+				if (valor instanceof String) {
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
+				}
+				break;
+			case AppConstants.COMMAND_POPUP_INFO:
+				if (valor instanceof String) {
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.INFO);
+				}
+				break;
+			case AppConstants.COMMAND_POPUP_WARN:
+				if (valor instanceof String) {
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.WARNING);
+				}
+				break;
 			}
-			break;
+		} catch (LoadAppFxmlException e) {
+			centerMessage.setText((String) valor);
 		}
 	}
 }

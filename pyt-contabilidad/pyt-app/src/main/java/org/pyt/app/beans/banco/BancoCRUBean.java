@@ -73,6 +73,7 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		try {
 			tipoCuentas = parametrosSvc.getAllParametros(pCuentas,ParametroConstants.GRUPO_TIPO_CUENTA);
 			tipoBancos = parametrosSvc.getAllParametros(pBancos,ParametroConstants.GRUPO_TIPO_BANCO);
+			logger.logger("Se encontraron "+tipoBancos.size()+" registros de banco.");
 			estados = parametrosSvc.getAllParametros(pEstados,ParametroConstants.GRUPO_ESTADO_BANCO);
 		} catch (ParametroException e) {
 			error(e);

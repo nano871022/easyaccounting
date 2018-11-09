@@ -71,8 +71,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 		try {
 			ParametroDTO moneda = new ParametroDTO();
-			moneda.setGrupo(ParametroConstants.GRUPO_MONEDA);
-			lMoneda = parametroSvc.getAllParametros(moneda);
+			lMoneda = parametroSvc.getAllParametros(moneda,ParametroConstants.GRUPO_MONEDA);
 			SelectList.put(this.moneda, lMoneda, "descripcion");
 			pais.setText(AppConstants.DEFAULT_PAIS_COL);
 		} catch (ParametroException e) {

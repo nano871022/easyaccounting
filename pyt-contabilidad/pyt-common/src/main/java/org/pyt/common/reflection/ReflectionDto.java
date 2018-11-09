@@ -18,6 +18,8 @@ import org.pyt.common.exceptions.ReflectionException;
  * @since 2018-05-18
  */
 public abstract class ReflectionDto {
+	private Log logger = Log.Log(this.getClass());
+
 	/**
 	 * Se encarga de poder realiar set sobre los valores de los campos del dto por
 	 * medio de refleccion
@@ -190,7 +192,7 @@ public abstract class ReflectionDto {
 				campos += (campos.length() > 3 ? "," : "") + (field.getName() + "=" + this.get(field.getName()));
 			}
 		} catch (ReflectionException e) {
-			Log.error(e.getMensage());
+			logger.error(e.getMensage());
 		}
 		if (clase.getSuperclass() != ReflectionDto.class) {
 			campos += stringAll((Class<T>) clase.getSuperclass());

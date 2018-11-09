@@ -6,10 +6,10 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.beans.abstracts.AListBasicBean;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
@@ -129,7 +129,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 				try {
 					count = parametrosSvc.totalCount(getFilter());
 				} catch (ParametroException e) {
-					Log.logger(e);
+					logger.logger(e);
 					error(e);
 				}
 				return count;
@@ -141,7 +141,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 				try {
 					lista = parametrosSvc.getParametros(getFilter(), page - 1, rows);
 				} catch (ParametroException e) {
-					Log.logger(e);
+					logger.logger(e);
 					error(e);
 				}
 				return lista;
@@ -225,6 +225,14 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	@Override
 	public void deleteBtn() {
 		try {
+			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}", "¿Desea eliminar los registros seleccionados?");
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+	public void setDelete(Boolean valid) {
+		try {
+			if(!valid)return;
 			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				parametrosSvc.delete(registro, userLogin);

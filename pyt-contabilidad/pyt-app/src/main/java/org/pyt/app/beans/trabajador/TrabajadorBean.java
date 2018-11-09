@@ -3,10 +3,12 @@ package org.pyt.app.beans.trabajador;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.exceptions.EmpleadoException;
 
 import com.pyt.service.dto.PersonaDTO;
@@ -19,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 /**
  * Bean encargado de listar los trabajadores
@@ -95,7 +98,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			public List<TrabajadorDTO> getList(TrabajadorDTO filter, Integer page, Integer rows) {
 				List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
 				try {
-					lista = empleadosSvc.getTrabajadores(getFilter(), page, rows);
+					lista = empleadosSvc.getTrabajadores(getFilter(), page-1, rows);
 				} catch (EmpleadoException e) {
 					error(e);
 				}
@@ -139,6 +142,14 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 
 	public void del() {
 		try {
+			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{TrabajadorBean.delete}", "¿Desea eliminar los registros seleccionados?");
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+	public void setDelete(Boolean valid) {
+		try {
+			if(!valid)return;	
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				empleadosSvc.delete(registro, userLogin);

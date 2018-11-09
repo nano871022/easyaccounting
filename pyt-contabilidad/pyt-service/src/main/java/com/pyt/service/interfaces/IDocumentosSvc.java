@@ -8,7 +8,6 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.ConceptoDTO;
-import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
@@ -62,14 +61,6 @@ public interface IDocumentosSvc {
 	 * @throws {@link DocumentosException}
 	 */
 	public Integer getTotalCount(DocumentoDTO dto) throws DocumentosException;
-	
-	/**
-	 * Se encarga de obtener la cantidad de registros encontrados aplicando el filtro
-	 * @param dto {@link DetalleConceptoDTO}
-	 * @return {@link Integer}
-	 * @throws {@link DocumentosException}
-	 */
-	public Integer getTotalCount(DetalleConceptoDTO dto) throws DocumentosException;
 	
 	/**
 	 * Se encarga de actualizar un registro en la tabla de {@link DocumentoDTO}
@@ -183,81 +174,6 @@ public interface IDocumentosSvc {
 	 *             DocumentosException}
 	 */
 	public void delete(DetalleDTO dto, UsuarioDTO user) throws DocumentosException;
-	/**
-	 * Se encarga de obtener todos los regisros de {@link DetalleConceptoDTO}
-	 * 
-	 * @param dto
-	 *            {@link DetalleConceptoDTO}
-	 * @return {@link List} of {@link DetalleConceptoDTO}
-	 * @throws {@link
-	 *             DocumentosException}
-	 */
-	public List<DetalleConceptoDTO> getAllDetalles(DetalleConceptoDTO dto) throws DocumentosException;
-
-	/**
-	 * Se encarga de obtner todos los registro de {@link DetalleConceptoDTO}
-	 * paginados
-	 * 
-	 * @param dto
-	 *            {@link DetalleConceptoDTO}
-	 * @param init
-	 *            {@link Integer}
-	 * @param end
-	 *            {@link Integer}
-	 * @return {@link List} of {@link DetalleConceptoDTO}
-	 * @throws {@link
-	 *             DocumentosException}
-	 */
-	public List<DetalleConceptoDTO> getDetalles(DetalleConceptoDTO dto, Integer init, Integer end)
-			throws DocumentosException;
-
-	/**
-	 * Se encarga de obtener el registro de detalle {@link DetalleConceptoDTO}
-	 * 
-	 * @param dto
-	 *            {@link DetalleConceptoDTO}
-	 * @return {@link DetalleConceptoDTO}
-	 * @throws {@link
-	 *             DocumentosException}
-	 */
-	public DetalleConceptoDTO getDetalle(DetalleConceptoDTO dto) throws DocumentosException;
-
-	/**
-	 * Se encarga de actualizar un registro de {@link DetalleConceptoDTO}
-	 * 
-	 * @param dto
-	 *            {@link DetalleConceptoDTO}
-	 * @param user
-	 *            {@link UsuarioDTO}
-	 * @throws {@link
-	 *             DocumentosException}
-	 */
-	public void update(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException;
-
-	/**
-	 * Se encarga de insertar un registro en el {@link DetalleConceptoDTO}
-	 * 
-	 * @param dto
-	 *            {@link DetalleConceptoDTO}
-	 * @param user
-	 *            {@link UsuarioDTO}
-	 * @return {@link DetalleConceptoDTO}
-	 * @throws {@link
-	 *             DocumentosException}
-	 */
-	public DetalleConceptoDTO insert(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException;
-
-	/**
-	 * Se encarga de eliminar un registro del {@link DetalleConceptoDTO}
-	 * 
-	 * @param dto
-	 *            {@link DetalleConceptoDTO}
-	 * @param user
-	 *            {@link UsuarioDTO}
-	 * @throws {@link
-	 *             DocumentosException}
-	 */
-	public void delete(DetalleConceptoDTO dto, UsuarioDTO user) throws DocumentosException;
 
 	/**
 	 * Se encarga de obener todos los registros de {@link ConceptoDTO}

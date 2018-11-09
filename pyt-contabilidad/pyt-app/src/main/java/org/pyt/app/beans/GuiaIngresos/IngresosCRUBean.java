@@ -33,13 +33,16 @@ import com.pyt.service.interfaces.IIngresosSvc;
 import com.pyt.service.interfaces.IRepuestosSvc;
 import com.pyt.service.interfaces.IServiciosSvc;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -82,7 +85,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private ChoiceBox<String> repuesto;
 	@FXML
-	private ChoiceBox<String> trabajador;
+	private ChoiceBox<TrabajadorDTO> trabajador;
 	@FXML
 	private TextField tiempoEstimado;
 	@FXML
@@ -107,7 +110,6 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private List<EmpresaDTO> listEmpresas;
 	private List<ServicioDTO> listServicio;
 	private List<RepuestoDTO> listRepuesto;
-	@SuppressWarnings("unused")
 	private List<TrabajadorDTO> listTrabajador;
 	private final static String field_name = "nombre";
 	private final static String field_valor_venta = "valorVenta";
@@ -127,10 +129,37 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			SelectList.put(empresa, listEmpresas, field_name);
 			SelectList.put(servicio, listServicio, field_name);
 			SelectList.put(repuesto, listRepuesto, field_name);
-			// SelectList.put(trabajador, listTrabajador, "nombre");
+			configTrabajador();
+			SelectList.put(trabajador, listTrabajador);
 		} catch (EmpresasException | ServiciosException | RepuestoException | EmpleadoException e) {
 			error(e);
 		}
+	}
+
+	/**
+	 * Se encarga de configurar el trabajador
+	 */
+	private final void configTrabajador() {
+		trabajador.converterProperty().set(new StringConverter<TrabajadorDTO>() {
+
+			@Override
+			public String toString(TrabajadorDTO object) {
+				return String.format("%s : %s %s", object.getPersona().getDocumento(), object.getPersona().getNombre(),
+						object.getPersona().getApellido());
+			}
+
+			@Override
+			public TrabajadorDTO fromString(String string) {
+				for (TrabajadorDTO dto : listTrabajador) {
+					if (string.contentEquals(String.format("%s : %s %s", dto.getPersona().getDocumento(),
+							dto.getPersona().getNombre(), dto.getPersona().getApellido()))) {
+						return dto;
+					}
+				}
+				return null;
+			}
+		});
+
 	}
 
 	/**
@@ -154,11 +183,10 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			registro.setTelefonoContacto(telContacto.getText());
 			registro.setTiempoEstimado(valid.cast(tiempoEstimado.getText(), Long.class));
 			registro.setTiempoTrabajado(valid.cast(tiempoTrabajo.getText(), Long.class));
-			// registro.setTrabajador(SelectList.get(trabajador, listTrabajador,
-			// "persona.nombre"));
+			registro.setTrabajador(SelectList.get(trabajador));
 			registro.setEmpresa(SelectList.get(empresa, listEmpresas, field_name));
-			totalRepuesto.setText(sumar(registro.getRespuestos(),field_valor_venta).toString());
-			totalServicio.setText(sumar(registro.getServicios(),field_valor_mano_obra).toString());
+			totalRepuesto.setText(sumar(registro.getRespuestos(), field_valor_venta).toString());
+			totalServicio.setText(sumar(registro.getServicios(), field_valor_mano_obra).toString());
 		} catch (ValidateValueException e) {
 			error(e);
 		}
@@ -179,17 +207,28 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			fechaSalida.setValue(valid.cast(registro.getFechaSalida(), LocalDate.class));
 			propietario.setText(registro.getPropietario());
 			telContacto.setText(registro.getTelefonoContacto());
-			tiempoEstimado.setText(valid.cast(registro.getTiempoEstimado(),String.class));
-			tiempoTrabajo.setText(valid.cast(registro.getTiempoTrabajado(),String.class));
+			tiempoEstimado.setText(valid.cast(registro.getTiempoEstimado(), String.class));
+			tiempoTrabajo.setText(valid.cast(registro.getTiempoTrabajado(), String.class));
+			// SelectList.selectItem(trabajador, registro.getTrabajador());
+			selectTrabajador();
 			SelectList.selectItem(empresa, listEmpresas, field_name, registro.getEmpresa());
 			Table.put(tablaRepuesto, registro.getRespuestos());
 			Table.put(tablaServicio, registro.getServicios());
 			totalRepuesto.setText(sumar(registro.getRespuestos(), field_valor_venta).toString());
-			totalServicio.setText(sumar(registro.getServicios(),field_valor_mano_obra).toString());
-			// SelectList.selectItem(trabajador, listTrabajador, "persona.nombre",
-			// registro.getTrabajador());
+			totalServicio.setText(sumar(registro.getServicios(), field_valor_mano_obra).toString());
 		} catch (ValidateValueException e) {
 			error(e);
+		}
+	}
+
+	private void selectTrabajador() {
+		for (TrabajadorDTO obj : trabajador.getItems()) {
+			if (registro.getTrabajador() != null) {
+				if (obj.getPersona().getDocumento()
+						.contentEquals(registro.getTrabajador().getPersona().getDocumento())) {
+					trabajador.setValue(obj);
+				}
+			}
 		}
 	}
 
@@ -209,7 +248,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			for (T dto : lista) {
 				if (valid.isCast(dto.get(nombre), Long.class)) {
-					suma = suma.add(valid.cast(dto.get(nombre),BigDecimal.class));
+					suma = suma.add(valid.cast(dto.get(nombre), BigDecimal.class));
 				}
 			}
 		} catch (ReflectionException | ValidateValueException e) {
@@ -224,7 +263,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		}
 		registro.getServicios().add(SelectList.get(servicio, listServicio, field_name));
 		Table.put(tablaServicio, registro.getServicios());
-		totalServicio.setText(sumar(registro.getServicios(),"valorManoObra").toString());
+		totalServicio.setText(sumar(registro.getServicios(), "valorManoObra").toString());
 		servicio.getSelectionModel().selectFirst();
 	}
 
@@ -234,7 +273,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		}
 		registro.getRespuestos().add(SelectList.get(repuesto, listRepuesto, field_name));
 		Table.put(tablaRepuesto, registro.getRespuestos());
-		totalRepuesto.setText(sumar(registro.getRespuestos(),"valorVenta").toString());
+		totalRepuesto.setText(sumar(registro.getRespuestos(), "valorVenta").toString());
 		repuesto.getSelectionModel().selectFirst();
 	}
 

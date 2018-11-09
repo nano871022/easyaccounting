@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
+import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.DetalleDTO;
@@ -22,6 +24,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * Se encargade crear la pantalla de lista de detalles
@@ -71,7 +74,12 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 		});
 		categoria.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			o.setValue(e.getValue().getCategoriaGasto().getNombre());
+			if(e.getValue() != null && e.getValue().getCategoriaGasto() != null && e.getValue().getCategoriaGasto().getNombre() != null){ 
+			o.setValue(
+					e.getValue().
+						getCategoriaGasto().
+							getNombre());
+			}
 			return o;
 		});
 		concepto.setCellValueFactory(e -> {
@@ -140,7 +148,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 			throw new Exception("No se suministro el tipo de documento.");
 		if (panel == null)
 			throw new Exception("El panel de creacion no se suministro.");
-		if(StringUtils.isBlank(codigoDocumento))
+		if (StringUtils.isBlank(codigoDocumento))
 			throw new Exception("No se suministro el codigo del documento..");
 		this.tipoDocumento = tipoDocumento;
 		this.codigoDocumento = codigoDocumento;
@@ -192,6 +200,14 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 * Se encarga de llamar el bean para eliminar un registro
 	 */
 	public final void eliminar() {
+		try {
+			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ListaDetalleBean.delete}", "¿Desea eliminar los registros seleccionados?");
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+	public void setDelete(Boolean valid) {
+			if(!valid)return;
 		if (table.isSelected()) {
 			List<DetalleDTO> lista = table.getSelectedRows();
 			Integer i = 0;

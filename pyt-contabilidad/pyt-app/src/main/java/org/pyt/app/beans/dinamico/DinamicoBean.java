@@ -82,7 +82,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			NoEdit noEdit = field.getDeclaredAnnotation(NoEdit.class);
 			return noEdit != null;
 		} catch (NoSuchFieldException | SecurityException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 		return false;
 	}
@@ -110,7 +110,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 				}
 			}
 		} catch (NoSuchFieldException | SecurityException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 	}
 
@@ -159,7 +159,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 				}
 			}
 		} catch (ReflectionException | ValidateValueException e) {
-			error(e);
+			mensajeIzquierdo(e);
 		}
 	}
 	/**
@@ -175,7 +175,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 				((TextField) obj).setText(validateValue.cast(value, String.class));
 			}
 		} catch (ValidateValueException e) {
-			error(e);
+			mensajeIzquierdo(e);
 		}
 	}
 
@@ -221,7 +221,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 			try {
 				registro.set(nombre, validateValue.cast(valor, registro.getType(nombre)));
 			} catch (ReflectionException | ValidateValueException e) {
-				Log.logger(e);
+				logger.logger(e);
 			}
 		}
 	}
@@ -236,7 +236,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 	protected final <N, M extends ADto> GridPane loadGrid() {
 		Integer maxColumn = 2;
 		if (campos == null) {
-			error("No se encontraron los campos para procesar.");
+			mensajeIzquierdo("No se encontraron los campos para procesar.");
 			return new GridPane();
 		}
 		Integer countFields = campos.size();
@@ -273,13 +273,13 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 							}
 						} else {
 							if (docs != null) {
-								error("No se encontro lista para " + docs.getFieldName());
+								mensajeIzquierdo("No se encontro lista para " + docs.getFieldName());
 							} else {
-								error("No se encontro lista");
+								mensajeIzquierdo("No se encontro lista");
 							}
 						}
 					} catch (ReflectionException e1) {
-						error(e1);
+						mensajeIzquierdo(e1);
 					}
 				});
 				select.setMaxWidth(1.7976931348623157E308);
@@ -291,7 +291,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 					putList(docs.getFieldName(), select, classe, docs.getPutNameShow(), docs.getSelectNameGroup(),
 							registro.get(docs.getFieldName()), docs.getPutNameAssign());
 				} catch (ReflectionException e) {
-					error(e);
+					mensajeIzquierdo(e);
 				}
 				formulario.add(select, columnIndex + 1, rowIndex);
 				fields.put(docs.getFieldName(), select);
@@ -366,7 +366,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 					}
 				}
 			} catch (QueryException e) {
-				error(e);
+				mensajeIzquierdo(e);
 			}
 		}
 	}
@@ -561,7 +561,7 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T> {
 						valid &= false;
 					}
 				} catch (ReflectionException e) {
-					error(e);
+					mensajeIzquierdo(e);
 				}
 			}
 		}

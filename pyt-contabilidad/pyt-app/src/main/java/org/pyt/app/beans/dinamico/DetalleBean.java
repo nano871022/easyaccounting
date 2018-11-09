@@ -76,6 +76,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		tipoDocumento = tipoDoc;
 		panelCentral = panel;
 		this.codigoDocumento = codigoDocumento;
+		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -90,6 +91,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		tipoDocumento = tipoDoc;
 		codigoDocumento = registro.getCodigoDocumento();
 		panelCentral = panel;
+		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -138,35 +140,40 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 			getField("porcentajeIva");
 			Double iVa = null;
 			Double cons = null;
-			if(registro.getValorIva() == null) {
+			if (registro.getValorIva() == null) {
 				registro.setValorIva(new BigDecimal(0));
 			}
-			if(registro.getValorConsumo() == null) {
+			if (registro.getValorConsumo() == null) {
 				registro.setValorConsumo(new BigDecimal(0));
 			}
-			if(registro.getPorcentajeIva() == null) {
-				registro.setPorcentajeIva((long)0);
-			}else {
+			if (registro.getPorcentajeIva() == null) {
+				registro.setPorcentajeIva((long) 0);
+			} else {
 				iVa = registro.getPorcentajeIva().doubleValue();
-				if(iVa >= 1 && iVa <=100) {
-					iVa = iVa/100;
+				if (iVa >= 1 && iVa <= 100) {
+					iVa = iVa / 100;
 				}
-				registro.setValorIva(registro.getValorBruto()
-						.multiply(getValid().cast(iVa, BigDecimal.class)));
+				if (registro.getValorBruto() != null) {
+					registro.setValorIva(registro.getValorBruto().multiply(getValid().cast(iVa, BigDecimal.class)));
+				}
 			}
-			if(registro.getImpuestoConsumo() == null) {
-				registro.setImpuestoConsumo((long)0);
-			}else {
+			if (registro.getImpuestoConsumo() == null) {
+				registro.setImpuestoConsumo((long) 0);
+			} else {
 				cons = registro.getImpuestoConsumo().doubleValue();
-				if(cons >= 1 && cons <= 100) {
-					cons = cons/100;
+				if (cons >= 1 && cons <= 100) {
+					cons = cons / 100;
 				}
-				registro.setValorConsumo(registro.getValorBruto()
-						.multiply(getValid().cast(cons, BigDecimal.class)));
+				if (registro.getValorBruto() != null) {
+					registro.setValorConsumo(
+							registro.getValorBruto().multiply(getValid().cast(cons, BigDecimal.class)));
+				}
 			}
-			
-			registro.setValorNeto(registro.getValorConsumo().add(registro.getValorIva().add(registro.getValorBruto())));
-			
+			if (registro.getValorConsumo() != null && registro.getValorIva() != null
+					&& registro.getValorBruto() != null) {
+				registro.setValorNeto(
+						registro.getValorConsumo().add(registro.getValorIva().add(registro.getValorBruto())));
+			}
 			putValueField("valorIva", registro.getValorIva());
 			putValueField("valorConsumo", registro.getValorConsumo());
 			putValueField("valorNeto", registro.getValorNeto());

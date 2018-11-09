@@ -31,4 +31,9 @@ public @interface FXMLFile {
 	public String file();
 
 	public String nombreVentana() default "";
+	/**
+	 * Nombre del fxml file, si no se escribe se deberia tomar por defecto el nombre de la clase
+	 * @return {@link String}
+	 */
+	public String name() default "";
 }
