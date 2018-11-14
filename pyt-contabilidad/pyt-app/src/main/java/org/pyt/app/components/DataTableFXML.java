@@ -58,17 +58,19 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	}
 
 	private final void loadPaginator() {
-		paginas.getChildren().add(0, btnPrimer = new Button("<<"));
-		paginas.getChildren().add(1, btnAtras = new Button("<"));
-		paginas.getChildren().add(2, nPages = new HBox());
-		paginas.getChildren().add(paginas.getChildren().size(), btnSiguiente = new Button(">"));
-		paginas.getChildren().add(paginas.getChildren().size(), btnUltimo = new Button(">>"));
-		btnUltimo.setMinWidth(40);
-		btnPrimer.setMinWidth(40);
-		btnPrimer.onActionProperty().set(e -> first());
-		btnAtras.onActionProperty().set(e -> before());
-		btnSiguiente.onActionProperty().set(e -> next());
-		btnUltimo.onActionProperty().set(e -> last());
+		if (paginas != null) {
+			paginas.getChildren().add(0, btnPrimer = new Button("<<"));
+			paginas.getChildren().add(1, btnAtras = new Button("<"));
+			paginas.getChildren().add(2, nPages = new HBox());
+			paginas.getChildren().add(paginas.getChildren().size(), btnSiguiente = new Button(">"));
+			paginas.getChildren().add(paginas.getChildren().size(), btnUltimo = new Button(">>"));
+			btnUltimo.setMinWidth(40);
+			btnPrimer.setMinWidth(40);
+			btnPrimer.onActionProperty().set(e -> first());
+			btnAtras.onActionProperty().set(e -> before());
+			btnSiguiente.onActionProperty().set(e -> next());
+			btnUltimo.onActionProperty().set(e -> last());
+		}
 	}
 
 	/**
@@ -79,8 +81,8 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		if (table.isVisible()) {
 			T filter = getFilter();
 			Integer init = currentPage;
-			if(init > 1) {
-				init = (currentPage-1)*rows;
+			if (init > 1) {
+				init = (currentPage - 1) * rows;
 			}
 			list = getList(filter, init, rows);
 			total = getTotalRows(filter);
@@ -116,14 +118,15 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		btnAtras.setVisible(false);
 		btnPrimer.setVisible(false);
 	}
-	
-	public final BigDecimal sumatoria(List<T> list,String nombreCampo) {
+
+	public final BigDecimal sumatoria(List<T> list, String nombreCampo) {
 		BigDecimal cant = new BigDecimal(0);
-		if(list != null && list.size()>0) {
-			for(T dto : list) {
+		if (list != null && list.size() > 0) {
+			for (T dto : list) {
 				try {
-					if(dto.get(nombreCampo) == null)continue;
-					cant = cant.add(validate.cast(dto.get(nombreCampo),BigDecimal.class));
+					if (dto.get(nombreCampo) == null)
+						continue;
+					cant = cant.add(validate.cast(dto.get(nombreCampo), BigDecimal.class));
 				} catch (ReflectionException | ValidateValueException e) {
 					logger.logger(e);
 				}
@@ -188,7 +191,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		if (total > rows) {
 			d = (double) (total / rows);
 		}
-		cantidad = (long) Math.round(d+0.5);
+		cantidad = (long) Math.round(d + 0.5);
 		if (cantidad > 1) {
 			for (int i = 0; i < cantidad; i++) {
 				Label page = new Label(String.valueOf(i + 1));

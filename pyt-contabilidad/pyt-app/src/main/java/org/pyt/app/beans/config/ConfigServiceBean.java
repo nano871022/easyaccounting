@@ -41,10 +41,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -82,9 +84,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@FXML
 	private TextField nameFiler;
 	@FXML
+	private TextField nameFilerOut;
+	@FXML
 	private TextField columna;
 	@FXML
 	private TextField configuracion;
+	@FXML
+	private TextArea descripcion;
 	@FXML
 	private TableView<MarcadorDTO> lstMarcadores;
 	@FXML
@@ -115,7 +121,18 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private HBox paginatorAsociar;
 	@FXML
 	private TableColumn<MarcadorDTO, String> colInOut;
+	@FXML
+	private Label totalMarcador;
+	@FXML
+	private Label totalAsociar;
+	@FXML
+	private Label totalServicio;
+	@FXML
+	private Label lNameFiler;
+	@FXML
+	private Label lNameFilerOut;
 	private ToggleGroup group;
+	private ToggleGroup group2;
 	private List<MarcadorDTO> marcadores;
 	private List<String> servicios;
 	private List<String> campos;
@@ -136,6 +153,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private RadioButton rbIn;
 	@FXML
 	private RadioButton rbOut;
+	@FXML
+	private RadioButton rbCargues;
+	@FXML
+	private RadioButton rbReportes;
 
 	@FXML
 	public void initialize() {
@@ -148,14 +169,31 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		posicion = ConfigServiceConstant.TAB_MARCADOR;
 		max = ConfigServiceConstant.TAB_CONFIGURACION;
 		group = new ToggleGroup();
+		group2 = new ToggleGroup();
 		rbIn.setToggleGroup(group);
 		rbOut.setToggleGroup(group);
+		rbCargues.setToggleGroup(group2);
+		rbReportes.setToggleGroup(group2);
 		rbOut.setSelected(true);
+		rbReportes.setSelected(true);
+		rbCargues.onActionProperty().set(e -> {
+			rbOut.setVisible(false);
+			nameFiler.setVisible(false);
+			nameFilerOut.setVisible(false);
+			lNameFiler.setVisible(false);
+			lNameFilerOut.setVisible(false);
+		});
+		rbReportes.onActionProperty().set(e -> {
+			rbOut.setVisible(true);
+			nameFiler.setVisible(true);
+			nameFilerOut.setVisible(true);
+			lNameFiler.setVisible(true);
+			lNameFilerOut.setVisible(true);
+		});
 		hiddenTabs();
 		hiddenBtns();
 		configColmn();
 		loadServices();
-		// Table.put(lstServicioCampo, serviciosCampoBusqueda);
 		columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
 	}
 
@@ -176,6 +214,21 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 			if (StringUtils.isNotBlank(config.getArchivo())) {
 				this.nameFiler.setText(config.getArchivo());
+			}
+			if (StringUtils.isNotBlank(config.getArchivoSalida())) {
+				this.nameFilerOut.setText(config.getArchivoSalida());
+			}
+			if (config.getReport() == null) {
+				this.rbReportes.setSelected(true);
+			}
+			if (config.getReport() != null && config.getReport()) {
+				this.rbReportes.setSelected(true);
+			}
+			if (config.getReport() != null && !config.getReport()) {
+				this.rbCargues.setSelected(true);
+			}
+			if (StringUtils.isNotBlank(config.getDescripcion())) {
+				this.descripcion.setText(config.getDescripcion());
 			}
 			dataTable();
 		} catch (Exception e) {
@@ -221,6 +274,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				try {
 					cantidad = configMarcadorServicio.cantidadServiciosCampoBusqueda(filter.getConfiguracion());
 					cantidad += serviciosCampoBusqueda.size();
+					totalServicio.setText("Total: " + cantidad);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -257,6 +311,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				try {
 					cantidad = configMarcadorServicio.cantidadMarcadorServicio(filter.getConfiguracion());
 					cantidad += marcadoresServicios.size();
+					totalAsociar.setText("Total: " + cantidad);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -292,6 +347,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				try {
 					cantidad = configMarcadorServicio.cantidadMarcador(filter.getConfiguracion());
 					cantidad += marcadores.size();
+					totalMarcador.setText("Total: " + cantidad);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -383,7 +439,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private void tabView() {
 		tabMarcadores.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_MARCADOR) != 0);
 		tabServicios.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_SERVICIO_CAMPO) != 0);
-		tabAsociaciones.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) != 0);
+		if (rbReportes.isSelected())
+			tabAsociaciones.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) != 0);
 		tabConfigurar.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_CONFIGURACION) != 0);
 		if (posicion.compareTo(ConfigServiceConstant.TAB_MARCADOR) == 0) {
 			tabMarcadores.getTabPane().getSelectionModel().select(tabMarcadores);
@@ -689,6 +746,18 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				this.notificar("No se encontró el nombre del archivo.");
 				return;
 			}
+			if (StringUtils.isNotBlank(nameFilerOut.getText())) {
+				config.setArchivoSalida(nameFilerOut.getText());
+			}
+			if (StringUtils.isNotBlank(this.descripcion.getText())) {
+				config.setDescripcion(descripcion.getText());
+			}
+			if(rbReportes.isSelected()) {
+				config.setReport(true);
+			}
+			if(rbCargues.isSelected()) {
+				config.setReport(false);
+			}
 			for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
 				servicio.setConfiguracion(config.getConfiguracion());
 				if (StringUtils.isNotBlank(servicio.getCodigo())) {
@@ -777,6 +846,11 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (posicion > ConfigServiceConstant.TAB_MARCADOR) {
 			posicion--;
 		}
+		if (!rbReportes.isSelected()) {
+			if (posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) != 0) {
+				posicion--;
+			}
+		}
 		tabView();
 		mostratBotonesMov();
 	}
@@ -784,6 +858,11 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public void siguiente() {
 		if (posicion < max) {
 			posicion++;
+		}
+		if (!rbReportes.isSelected()) {
+			if (posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) != 0) {
+				posicion++;
+			}
 		}
 		tabView();
 		mostratBotonesMov();

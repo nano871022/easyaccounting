@@ -34,6 +34,8 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	@FXML
 	private TextField configuracion;
 	@FXML
+	private TextField descripcion;
+	@FXML
 	private Button btnMod;
 	@FXML
 	private Button btnDel;
@@ -57,7 +59,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public List<ConfiguracionDTO> getList(ConfiguracionDTO filter, Integer page, Integer rows) {
 				List<ConfiguracionDTO> lista = new ArrayList<ConfiguracionDTO>();
 				try {
-					lista = configMarcadorServicioSvc.getConfiguracion(filter, page-1, rows);
+					lista = configMarcadorServicioSvc.getConfiguracion(filter, page - 1, rows);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -68,7 +70,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public Integer getTotalRows(ConfiguracionDTO filter) {
 				Integer count = 0;
 				try {
-					count = configMarcadorServicioSvc.count(filter);  
+					count = configMarcadorServicioSvc.count(filter);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -79,7 +81,10 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public ConfiguracionDTO getFilter() {
 				ConfiguracionDTO filtro = new ConfiguracionDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					filtro.setConfiguracion(configuracion.getText());
+					filtro.setConfiguracion("%"+configuracion.getText()+"%");
+				}
+				if (StringUtils.isNotBlank(descripcion.getText())) {
+					filtro.setDescripcion("%"+descripcion.getText()+"%");
 				}
 				return filtro;
 			}
@@ -97,6 +102,11 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 
 	public void search() {
 		dt.search();
+	}
+
+	public final void limpiar() {
+		descripcion.setText("");
+		configuracion.setText("");
 	}
 
 	public void del() {
