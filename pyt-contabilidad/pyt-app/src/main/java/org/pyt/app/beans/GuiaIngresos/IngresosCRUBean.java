@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
@@ -33,6 +32,7 @@ import com.pyt.service.interfaces.IIngresosSvc;
 import com.pyt.service.interfaces.IRepuestosSvc;
 import com.pyt.service.interfaces.IServiciosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;

@@ -1,11 +1,12 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.annotations.DelClass;
-import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 
 import com.pyt.service.dto.dels.ParametroDelDTO;
 import com.pyt.service.dto.upds.ParametroUpdDTO;
+
+import co.com.arquitectura.annotation.proccessor.DelClass;
+import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 /**
  * Se almacenan todos los parametros que se van a utilizar en la aplicacion y se

@@ -72,26 +72,26 @@
 					<generatedSourcesDirectory>${project.build.directory}/generated-resources/</generatedSourcesDirectory>
 					<annotationProcessors>
 						<annotationProcessor>
-							org.pyt.common.proccesor.FXMLFileProccessor
+							co.com.arquitectura.proccessor.implement.FXMLFileProccessor
 						</annotationProcessor>
 					</annotationProcessors>
 				</configuration>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-jar-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<archive> -->
-<!-- 						<manifest> -->
-<!-- 							<addClasspath>true</addClasspath> -->
-<!-- 							<classpathPrefix>lib/</classpathPrefix> -->
-<!-- 							<mainClass> -->
-<!-- 								org.pyt.app.load.App -->
-<!-- 							</mainClass> -->
-<!-- 						</manifest> -->
-<!-- 					</archive> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>
+								org.pyt.app.load.App
+							</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>

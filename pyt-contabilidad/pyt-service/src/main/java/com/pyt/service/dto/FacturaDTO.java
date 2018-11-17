@@ -3,9 +3,10 @@ package com.pyt.service.dto;
 import java.util.Date;
 import java.util.List;
 
-import org.pyt.common.annotations.DelClass;
-import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
+
+import co.com.arquitectura.annotation.proccessor.DelClass;
+import co.com.arquitectura.annotation.proccessor.UpdClass;
 /**
  * Se encarga de almacenar la factura que se genera por uno o varios trabajos realizados
  * @author alejandro parra

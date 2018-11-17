@@ -46,24 +46,37 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<version>3.3.3</version>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>process</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.1</version>
 				<configuration>
 					<source>${project.build.compile.version}</source>
 					<target>${project.build.compile.version}</target>
-					<generatedSourcesDirectory>${project.build.directory}/generated-resources/</generatedSourcesDirectory>
+					<generatedSourcesDirectory>${project.build.directory}/src/main/java/</generatedSourcesDirectory>
 					<annotationProcessors>
 						<annotationProcessor>
 							co.com.arquitectura.proccessor.implement.ServiceProccessor
 						</annotationProcessor>
 						<annotationProcessor>
-							org.pyt.common.proccesor.DelClassProccessor
+							co.com.arquitectura.proccessor.implement.DelClassProccessor
 						</annotationProcessor>
 						<annotationProcessor>
-							org.pyt.common.proccesor.UpdClassProccessor
+							co.com.arquitectura.proccessor.implement.UpdClassProccessor
 						</annotationProcessor>
-
 					</annotationProcessors>
 				</configuration>
 			</plugin>

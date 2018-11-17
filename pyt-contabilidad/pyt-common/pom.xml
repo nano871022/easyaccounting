@@ -42,10 +42,9 @@
 			<version>3.17</version>
 		</dependency>
 		<dependency>
-			<groupId>co.com.arquitectura.proccessor</groupId>
-			<artifactId>arquitectura-proccessor</artifactId>
+			<groupId>co.com.arquitectura.anotaciones</groupId>
+  			<artifactId>arquitetura-anotaciones</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>

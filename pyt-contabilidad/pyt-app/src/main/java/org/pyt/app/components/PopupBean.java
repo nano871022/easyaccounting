@@ -1,7 +1,6 @@
 package org.pyt.app.components;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.common.ABean;
 /**
  * Se encarga de controlar el popup de errores, notificaciones y warning
@@ -9,6 +8,7 @@ import org.pyt.common.common.ABean;
  * @since 18/10/2018
  */
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;

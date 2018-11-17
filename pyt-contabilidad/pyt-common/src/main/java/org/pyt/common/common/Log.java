@@ -67,7 +67,7 @@ public final class Log {
 	 *            {@link Exception}
 	 */
 	public final  <T extends Exception> void logger( T error) {
-		if (error.getCause() instanceof NullPointerException) {
+		if (error.getCause() instanceof NullPointerException || error instanceof NullPointerException) {
 			msnBuild("Null pointer exception", ERROR);
 		} else {
 			msnBuild(error.getMessage(), ERROR);

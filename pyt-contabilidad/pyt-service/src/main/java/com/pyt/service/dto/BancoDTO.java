@@ -2,9 +2,10 @@ package com.pyt.service.dto;
 
 import java.time.LocalDate;
 
-import org.pyt.common.annotations.DelClass;
-import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
+
+import co.com.arquitectura.annotation.proccessor.DelClass;
+import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 /**
  * Son los bancos que la empresa usa para mover el dinero

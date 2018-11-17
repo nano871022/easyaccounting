@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.DelClass;
-import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.Compare;
 import org.pyt.common.common.Log;
@@ -23,6 +21,9 @@ import org.pyt.common.interfaces.IUpdClass;
 import org.pyt.common.reflection.ReflectionUtils;
 
 import com.pyt.query.interfaces.IQuerySvc;
+
+import co.com.arquitectura.annotation.proccessor.DelClass;
+import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 public class QuerySvc implements IQuerySvc {
 	private FileBin fb;

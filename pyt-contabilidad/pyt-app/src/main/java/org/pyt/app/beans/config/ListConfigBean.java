@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.MarcadorServicioException;
@@ -13,6 +12,7 @@ import org.pyt.common.exceptions.MarcadorServicioException;
 import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
@@ -117,7 +117,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 				notificar("Se ha eliminado la configuración.");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una cuenta contable.");
+				notificar("No se ha seleccionado una registro.");
 			}
 		} catch (MarcadorServicioException e) {
 			error(e);

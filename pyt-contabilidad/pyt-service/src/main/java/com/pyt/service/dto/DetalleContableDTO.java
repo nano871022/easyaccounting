@@ -2,9 +2,10 @@ package com.pyt.service.dto;
 
 import java.math.BigDecimal;
 
-import org.pyt.common.annotations.DelClass;
-import org.pyt.common.annotations.UpdClass;
 import org.pyt.common.common.ADto;
+
+import co.com.arquitectura.annotation.proccessor.DelClass;
+import co.com.arquitectura.annotation.proccessor.UpdClass;
 @DelClass(nombre="com.pyt.service.dto.dels.DetalleContableDelDTO")
 @UpdClass(nombre="com.pyt.service.dto.upds.DetalleContableUpdDTO")
 

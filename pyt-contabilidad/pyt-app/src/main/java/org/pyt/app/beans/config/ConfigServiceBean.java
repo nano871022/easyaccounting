@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
@@ -34,6 +33,8 @@ import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.arquitectura.annotation.proccessor.Services;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 import javafx.beans.property.SimpleStringProperty;
@@ -143,7 +144,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private Integer max;
 
 	private AbstractListFromProccess<ServicePOJO> listServices;
-	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
+//	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configMarcadorServicio;
 	private ConfiguracionDTO config;
 	private DataTableFXML<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO> tbServicioCampoBusqueda;
@@ -178,6 +179,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		rbReportes.setSelected(true);
 		rbCargues.onActionProperty().set(e -> {
 			rbOut.setVisible(false);
+			rbIn.setSelected(true);
 			nameFiler.setVisible(false);
 			nameFilerOut.setVisible(false);
 			lNameFiler.setVisible(false);
@@ -185,6 +187,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		});
 		rbReportes.onActionProperty().set(e -> {
 			rbOut.setVisible(true);
+			rbOut.setSelected(true);
 			nameFiler.setVisible(true);
 			nameFilerOut.setVisible(true);
 			lNameFiler.setVisible(true);
@@ -194,7 +197,6 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		hiddenBtns();
 		configColmn();
 		loadServices();
-		columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
 	}
 
 	/**
@@ -204,6 +206,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 *            {@link ConfiguracionDTO}
 	 */
 	public final void load(ConfiguracionDTO configuracion) {
+		logger.info("Load cargado");
 		try {
 			if (configuracion == null) {
 				configuracion = new ConfiguracionDTO();
@@ -275,6 +278,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 					cantidad = configMarcadorServicio.cantidadServiciosCampoBusqueda(filter.getConfiguracion());
 					cantidad += serviciosCampoBusqueda.size();
 					totalServicio.setText("Total: " + cantidad);
+					columna.setText(String.valueOf(cantidad + 1));
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -375,6 +379,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				return dto;
 			}
 		};
+		
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
@@ -411,12 +416,35 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			lstServicios.getSelectionModel().selectedItemProperty()
 					.addListener((ObservableValue<? extends ServicePOJO> observable, ServicePOJO oldVal,
 							ServicePOJO newVal) -> putCamposServicio(newVal));
-			SelectList.put(lstServicios, listServices.getList());
+			Services.Type type = null;
+			if(rbCargues.isSelected()) {
+				type = Services.Type.CREATE;
+			}else if(rbReportes.isSelected()) {
+				type = Services.Type.DOWNLOAD;
+			}else {
+				type = Services.Type.UPLOAD;
+			}
+			SelectList.put(lstServicios, listFilter(type));
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-
+	/**
+	 * Se encarga de filtrar la lista y obtener los registros que se necesitan segun el typo del servicio {@link Services#Type}
+	 * @return
+	 * @throws Exception
+	 */
+	private final List<ServicePOJO> listFilter(Services.Type type)throws Exception{
+		List<ServicePOJO> listOut = new ArrayList<ServicePOJO>();
+		List<ServicePOJO> list = listServices.getList();
+		for(ServicePOJO sp : list) {
+			if(sp.getType() == type) {
+				listOut.add(sp);
+			}
+		}
+		return listOut;
+	}
+	
 	private void configColmn() {
 		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getMarcador()));
 		colInOut.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoInOut()));
