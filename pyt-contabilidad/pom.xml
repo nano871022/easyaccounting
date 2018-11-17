@@ -38,10 +38,15 @@
 
 	</dependencies>
 	<modules>
+		<module>ea-constantes</module>
+		<module>ea-anotaciones</module>
+		<module>ea-exceptions</module>
+		<module>ea-dto</module>
+		<module>ea-poi</module>
 		<module>pyt-common</module>
-		<module>pyt-app</module>
-		<module>pyt-service</module>
 		<module>pyt-query</module>
+		<module>pyt-service</module>
+		<module>pyt-app</module>
 	</modules>
 	<build>
 		<plugins>

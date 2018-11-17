@@ -11,6 +11,7 @@ import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
 
 
+
 /**
  * Clase abstracta que se encarga de tener funcionalidades para usar el entre
  * escritura y lectura de archivos binarios

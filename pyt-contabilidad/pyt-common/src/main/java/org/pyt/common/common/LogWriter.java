@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 
+
 /**
  * Se encarga de escribir en el archivo
  * 
