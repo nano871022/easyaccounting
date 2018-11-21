@@ -20,7 +20,6 @@ import org.pyt.common.annotations.Operaciones;
 import org.pyt.common.annotations.Operar;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
-import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.QueryException;

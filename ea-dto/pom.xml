@@ -18,6 +18,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-loader</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>${project.scope}</scope> -->
+		</dependency>
+		<dependency>
 			<groupId>co.com.arquitectura.anotaciones</groupId>
 			<artifactId>arquitetura-anotaciones</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
@@ -38,6 +44,20 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<version>3.3.3</version>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>process</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.1</version>
@@ -45,6 +65,7 @@
 					<source>${project.build.compile.version}</source>
 					<target>${project.build.compile.version}</target>
 					<generatedSourcesDirectory>${project.build.directory}/src/main/java/</generatedSourcesDirectory>
+					<!-- <generatedSourcesDirectory>${project.build.directory}/classes/</generatedSourcesDirectory> -->
 					<annotationProcessors>
 						<annotationProcessor>
 							co.com.arquitectura.proccessor.implement.DelClassProccessor

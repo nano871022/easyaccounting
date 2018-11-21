@@ -13,6 +13,10 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.interfaces.ICuentaContableSvc;
 
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
+
 public class CuentaContableSvc extends Services implements ICuentaContableSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
@@ -52,6 +56,7 @@ public class CuentaContableSvc extends Services implements ICuentaContableSvc {
 		}
 	}
 
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso cuenta contable", descripcion = "Ingreso de servicios de cuenta contables", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
 	public CuentaContableDTO insert(CuentaContableDTO dto, UsuarioDTO user) throws CuentaContableException {
 		if (user == null)

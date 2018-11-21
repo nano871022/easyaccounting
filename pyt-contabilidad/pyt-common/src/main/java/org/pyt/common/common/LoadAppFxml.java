@@ -302,6 +302,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (IllegalStateException e) {
 			throw new LoadAppFxmlException("Problema en cargar load", e);
 		} catch (LoadException e) {
+			e.printStackTrace();
 			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);

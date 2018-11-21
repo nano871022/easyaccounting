@@ -42,8 +42,8 @@ public abstract class Reflection {
 		try {
 			Class<S> clase = (Class<S>) this.getClass();
 			Field[] fields = null;
-
-			if (clase.getFields() != null && clase.getFields().length > 0) {
+			fields = getFields(clase);
+			if (fields != null && fields.length > 0) {
 				inject((S) this, fields, clase);
 				subscriberInject(this, fields, clase);
 			} else {
@@ -58,6 +58,21 @@ public abstract class Reflection {
 		} catch (Exception e) {
 			throw new ReflectionException(e.getMessage(), e);
 		}
+	}
+	/**
+	 * Obtiene los campos obtenidos de las clases
+	 * @param clazz {@link Class}
+	 * @return {@link Field}
+	 * @throws {@link Exception}
+	 */
+	private <T extends Object> Field[] getFields(Class<T> clazz) throws Exception {
+		Field[] fields = null;
+		try {
+			fields = clazz.getDeclaredFields();
+		} catch (Exception e) {
+			fields = clazz.getFields();
+		}
+		return fields;
 	}
 
 	@SuppressWarnings("unchecked")

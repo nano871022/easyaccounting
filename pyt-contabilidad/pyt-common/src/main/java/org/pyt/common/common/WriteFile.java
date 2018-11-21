@@ -67,7 +67,7 @@ public final class WriteFile {
 				if (!f.exists()) {
 					if (!path.toString().contains(DOT_LOG)) {
 						f.mkdirs();
-						System.out.println("Ruta log::"+f.getAbsolutePath());
+//						System.out.println("Ruta log::"+f.getAbsolutePath());
 					} else {
 						try {
 							OutputStream os = new FileOutputStream(f);

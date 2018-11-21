@@ -20,6 +20,12 @@
 		</dependency>
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-loader</artifactId>
+			<version>${project.version}</version>
+<!-- 			<scope>${project.scope}</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-anotaciones</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -90,13 +96,7 @@
 					<generatedSourcesDirectory>${project.build.directory}/src/main/java/</generatedSourcesDirectory>
 					<annotationProcessors>
 						<annotationProcessor>
-							co.com.arquitectura.proccessor.implement.DelClassProccessor
-						</annotationProcessor>
-						<annotationProcessor>
 							co.com.arquitectura.proccessor.implement.ServiceProccessor
-						</annotationProcessor>
-						<annotationProcessor>
-							co.com.arquitectura.proccessor.implement.UpdClassProccessor
 						</annotationProcessor>
 					</annotationProcessors>
 				</configuration>
