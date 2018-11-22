@@ -1,5 +1,6 @@
 package com.pyt.service.interfaces;
 
+import org.pyt.common.common.ADto;
 import org.pyt.common.exceptions.CargueException;
 
 import co.com.japl.ea.loader.pojo.FilePOJO;
@@ -18,5 +19,5 @@ public interface ICargue {
 	 * @return {@link FilePOJO}
 	 * @throws {@link Exception}
 	 */
-	public FilePOJO cargue(String nameConfig,FilePOJO file)throws CargueException;
+	public <T extends ADto> FilePOJO cargue(String nameConfig,FilePOJO file)throws CargueException;
 }

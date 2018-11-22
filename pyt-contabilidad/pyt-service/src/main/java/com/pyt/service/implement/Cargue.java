@@ -3,6 +3,7 @@ package com.pyt.service.implement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
@@ -16,6 +17,7 @@ import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.ICargue;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 import com.pyt.service.pojo.ProccessPOJO;
+import com.pyt.service.proccess.AnalizedAnnotationProcces;
 import com.pyt.service.proccess.ProccesConfigService;
 
 import co.com.japl.ea.loader.implement.FileLoadText;
@@ -26,8 +28,9 @@ public class Cargue implements ICargue {
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configMarkService;
 	private final static String DOUBLE_2_DOT = "::";
+	@SuppressWarnings("unchecked")
 	@Override
-	public FilePOJO cargue(String nameConfig, FilePOJO file) throws CargueException {
+	public <T extends ADto>FilePOJO cargue(String nameConfig, FilePOJO file) throws CargueException {
 		try {
 			Map<String, ProccessPOJO> mapa = new HashMap<String, ProccessPOJO>();
 			ProccesConfigService proccess = new ProccesConfigService();
@@ -52,6 +55,7 @@ public class Cargue implements ICargue {
 						mapa.put(marcador.getServicio(), new ProccessPOJO());
 						mapa.get(marcador.getServicio()).setServicio(marcador.getServicio());
 						mapa.get(marcador.getServicio()).setService(proccess.getService(marcador.getServicio()));
+						mapa.get(marcador.getServicio()).setMethod(proccess.getMetodo(marcador.getServicio()));
 					}
 					if(mapa.get(marcador.getServicio()).get((marcador.getMarcador().split(DOUBLE_2_DOT))[0]) != null) {
 						mapa.get(marcador.getServicio()).add(proccess.getDTOService(marcador.getServicio(), marcador.getCampo()));
@@ -80,7 +84,11 @@ public class Cargue implements ICargue {
 					column++;
 				}
 			});
-
+			AnalizedAnnotationProcces aap = new AnalizedAnnotationProcces();
+			Set<String> sets = mapa.keySet();
+			for(String key : sets) {
+				mapa.get(key).setService(aap.valid((T) mapa.get(key).getService()));
+			}
 		} catch (MarcadorServicioException e) {
 			throw new CargueException("Se presento problema con la obtencion de la configuracion.", e);
 		} catch (Exception e) {

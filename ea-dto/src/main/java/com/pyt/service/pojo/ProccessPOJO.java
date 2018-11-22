@@ -1,5 +1,6 @@
 package com.pyt.service.pojo;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -11,6 +12,7 @@ public class ProccessPOJO {
 	private Object service;
 	private String servicio;
 	private Map<String, Object> parameters;
+	private Method method;
 
 	public final <T extends Object> void add(T parameter) {
 		if (parameters == null) {
@@ -40,5 +42,11 @@ public class ProccessPOJO {
 	}
 	public final String getServicio() {
 		return this.servicio;
+	}
+	public final void setMethod(Method method) {
+		this.method = method;
+	}
+	public final Method getMethod() {
+		return this.method;
 	}
 }
