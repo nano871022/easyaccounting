@@ -1,6 +1,5 @@
 package org.pyt.common.common;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -32,9 +31,6 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	private P lastLayout;
 	private C lastContro;
 	private static Log logger = Log.Log(LoadAppFxml.class);
-
-	private LoadAppFxml() {
-	}
 
 	/**
 	 * Se encarga de contruir el objeto loadappfxml como singleton

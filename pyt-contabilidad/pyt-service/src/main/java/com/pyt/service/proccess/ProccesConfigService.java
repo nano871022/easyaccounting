@@ -162,8 +162,10 @@ public final class ProccesConfigService {
 		try {
 			if (parameters != null && parameters.length > 0) {
 				clazz = new Class[parameters.length];
+				int i = 0;
 				for (String parameter : parameters) {
-					clazz[clazz.length] = Class.forName(parameter);
+					clazz[i] = Class.forName(parameter);
+					i++;
 				}
 			}
 		} catch (ClassNotFoundException e) {

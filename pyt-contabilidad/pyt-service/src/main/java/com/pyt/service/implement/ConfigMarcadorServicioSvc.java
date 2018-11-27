@@ -1,8 +1,5 @@
 package com.pyt.service.implement;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.UsuarioDTO;
-import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.ProccesConfigServiceException;
@@ -28,9 +24,6 @@ import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 import com.pyt.service.proccess.ProccesConfigService;
-
-import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
-import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 
 public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcadorServicio {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

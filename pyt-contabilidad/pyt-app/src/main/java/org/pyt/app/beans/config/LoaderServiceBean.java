@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.stream.Stream;
 
-import org.apache.commons.lang3.CharSet;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 
-import com.lowagie.text.pdf.codec.Base64.InputStream;
 import com.pyt.service.dto.ConfiguracionDTO;
+import com.pyt.service.interfaces.ICargue;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -33,7 +31,6 @@ import javafx.stage.Stage;
 @SuppressWarnings("rawtypes")
 @FXMLFile(path = "view/config/servicios", file = "loaderConfig.fxml", nombreVentana = "cargue de Archivo sobre Servicios")
 public class LoaderServiceBean extends ABean {
-	@FXML
 	private FileChooser loadFile;
 	@FXML
 	private BorderPane window;
@@ -46,11 +43,14 @@ public class LoaderServiceBean extends ABean {
 	private File fileLoad;
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configServicio;
+	@Inject(resource="com.pyt.service.implement.CargueSvc")
+	private ICargue loader;
 	private ConfiguracionDTO configuracion;
 
 	@FXML
 	public void initialize() {
 		configuracion = new ConfiguracionDTO();
+		loadFile = new FileChooser();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -105,6 +105,7 @@ public class LoaderServiceBean extends ABean {
 			file.setSize(fileLoad.length());
 			file.setSeparate(";");
 			// llamando al servicio de cargue de datos.
+			loader.cargue(configuracion.getConfiguracion(), file, userLogin);
 		} catch (Exception e) {
 			error(e);
 		}

@@ -6,5 +6,5 @@ package co.com.japl.ea.loader.interfaces;
  * @since 18/11/2018
  */
 public interface ILineRead {
-	void getRow(String line)throws Exception;
+	void getRow(String line,Integer numLine)throws Exception;
 }

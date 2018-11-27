@@ -200,11 +200,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		configColmn();
 		loadServices();
 	}
+
 	public final void load() {
 		logger.info("Nuevo config service.");
 		config = new ConfiguracionDTO();
 		dataTable();
 	}
+
 	/**
 	 * Se carga de realizar busqueda de los registros y carga las data tablas
 	 * 
@@ -314,7 +316,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(configuracion.getText());
-				}else {
+				} else {
 					dto.setConfiguracion(".");
 				}
 				return dto;
@@ -353,7 +355,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				MarcadorServicioDTO dto = new MarcadorServicioDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(configuracion.getText());
-				}else {
+				} else {
 					dto.setConfiguracion(".");
 				}
 				return dto;
@@ -391,7 +393,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				MarcadorDTO dto = new MarcadorDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(configuracion.getText());
-				}else {
+				} else {
 					dto.setConfiguracion(".");
 				}
 				return dto;
@@ -779,22 +781,23 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			// logger.info("Clase a procesar "+service.getClasss()+" metodo a procesar
 			// "+service.getName()+" parametros "+service.getParameters());
 			Method metodoUso = getMethod(service.getClasss(), service.getName(), service.getParameter());
-//			logger.info("El metodo obtenido " + metodoUso);
+			// logger.info("El metodo obtenido " + metodoUso);
 			if (metodoUso != null) {
 				Class[] parametros = metodoUso.getParameterTypes();
 				Parameter[] parameters = metodoUso.getParameters();
-//				logger.info("Parametos obtenidos " + parametros.length + " " + parameters.length);
+				// logger.info("Parametos obtenidos " + parametros.length + " " +
+				// parameters.length);
 				if (parametros != null && parametros.length > 0) {
 					Arrays.asList(parametros).forEach(parametro -> addCampos(listaCampos, parametro));
 				} else if (parameters != null && parameters.length > 0) {
 					List<Class> lstParametros = new ArrayList<Class>();
-					Arrays.asList(parameters).forEach(parameter->{
+					Arrays.asList(parameters).forEach(parameter -> {
 						lstParametros.add(parameter.getType());
 					});
 					parametros = lstParametros.toArray(new Class[lstParametros.size()]);
 					if (parametros != null && parametros.length > 0) {
 						Arrays.asList(parametros).forEach(parametro -> addCampos(listaCampos, parametro));
-					}else{
+					} else {
 						error("Imposible obtener los campos de entrada de los servicios.");
 					}
 				} else {
@@ -858,7 +861,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 			if (StringUtils.isNotBlank(nameFiler.getText())) {
 				config.setArchivo(nameFiler.getText());
-			} else if(rbReportes.isSelected()){
+			} else if (rbReportes.isSelected()) {
 				this.notificar("No se encontró el nombre del archivo.");
 				return;
 			}
@@ -912,8 +915,30 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/**
 	 * Se encarga de generar la consulta de la factura
 	 */
-	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void generar() {
+		if (rbCargues.isSelected()) {
+			loaders();
+		} else if (rbReportes.isSelected()) {
+			reports();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public final <T extends Object, M extends Object> void loaders() {
+		LoaderServiceBean lsb;
+		try {
+			lsb = LoadAppFxml.loadBeanFxml(new Stage(), LoaderServiceBean.class);
+			lsb.load(config.getConfiguracion());
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
+
+	/**
+	 * Se encarga de generar los repores
+	 */
+	@SuppressWarnings("unchecked")
+	public final <T extends Object, M extends Object> void reports() {
 		GenConfigBean gcb;
 		try {
 			gcb = LoadAppFxml.loadBeanFxml(new Stage(), GenConfigBean.class);

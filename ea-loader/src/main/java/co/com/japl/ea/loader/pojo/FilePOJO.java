@@ -1,6 +1,10 @@
 package co.com.japl.ea.loader.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * Se encarga de tener la informacion del archivo a cargar o procesar
@@ -30,18 +34,18 @@ public class FilePOJO implements Serializable {
 	
 	public byte[] getByte() {
 		byte[] bits = new byte[bytes.length];
-		for(Byte vbyte : bytes) {
-			bits[bits.length] = vbyte;
-		}
+		bits = ArrayUtils.toPrimitive(bytes);
 		return bits;
 	}
 
 	public void setBytes(byte[] bytes) {
+		List<Byte> lista = new ArrayList<Byte>();
 		if (bytes != null && bytes.length > 0) {
 			Byte[] Bytes = new Byte[bytes.length];
 			for (byte y : bytes) {
-				Bytes[Bytes.length] = y;
+				lista.add(y);
 			}
+			this.bytes = lista.toArray(new Byte[bytes.length]);
 		}
 	}
 
