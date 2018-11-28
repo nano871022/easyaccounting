@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,24 +42,20 @@ public class CargueSvc extends Services implements ICargue {
 	public <T extends ADto> FilePOJO cargue(String nameConfig, FilePOJO file, UsuarioDTO user) throws CargueException {
 		FilePOJO output_file = null;
 		try {
+			List<ProccessPOJO> listRows = new ArrayList<ProccessPOJO>();
 			Map<String, ProccessPOJO> mapa = new HashMap<String, ProccessPOJO>();
 			ProccesConfigService proccess = new ProccesConfigService();
-			if (StringUtils.isBlank(nameConfig))
-				throw new CargueException("El nombre de la configuracion no se suministro.");
-			if (file == null || file.getByte() == null)
-				throw new CargueException("El archivo suministrado no fue cargado correctamente.");
+			if (StringUtils.isBlank(nameConfig))throw new CargueException("El nombre de la configuracion no se suministro.");
+			if (file == null || file.getByte() == null)	throw new CargueException("El archivo suministrado no fue cargado correctamente.");
 			ConfiguracionDTO dto = new ConfiguracionDTO();
 			dto.setConfiguracion(nameConfig);
 			List<ConfiguracionDTO> list = configMarkService.getConfiguraciones(dto);
-			if (list == null)
-				throw new CargueException("No se encontro registros.");
-			if (list.size() > 1)
-				throw new CargueException("Se encontraron varios registros con el nombre de la configuracion.");
+			if (list == null)throw new CargueException("No se encontro registros.");
+			if (list.size() > 1)throw new CargueException("Se encontraron varios registros con el nombre de la configuracion.");
 			dto = list.get(0);
 			List<ServicioCampoBusquedaDTO> marcadores = configMarkService.getServicioCampo(nameConfig);
-			if (marcadores == null || marcadores.size() == 0)
-				throw new CargueException("No se encontraron marcadores.");
-			for(ServicioCampoBusquedaDTO marcador : marcadores ){
+			if (marcadores == null || marcadores.size() == 0)throw new CargueException("No se encontraron marcadores.");
+			for (ServicioCampoBusquedaDTO marcador : marcadores) {
 				try {
 					if (mapa.get(marcador.getServicio()) == null) {
 						mapa.put(marcador.getServicio(), new ProccessPOJO());
@@ -66,7 +63,7 @@ public class CargueSvc extends Services implements ICargue {
 						mapa.get(marcador.getServicio()).setService(proccess.getService(marcador.getServicio()));
 						mapa.get(marcador.getServicio()).setMethod(proccess.getMetodo(marcador.getServicio()));
 					}
-					if (mapa.get(marcador.getServicio()).get((marcador.getMarcador().split(DOUBLE_2_DOT))[0]) != null) {
+					if (mapa.get(marcador.getServicio()).get((marcador.getMarcador().split(DOUBLE_2_DOT))[0]) == null) {
 						mapa.get(marcador.getServicio())
 								.add(proccess.getDTOService(marcador.getServicio(), marcador.getCampo()));
 					}
@@ -77,7 +74,7 @@ public class CargueSvc extends Services implements ICargue {
 
 			IFileLoader fileLoader = new FileLoadText();
 			fileLoader.setFile(file);
-			fileLoader.load((line,numLine) -> {
+			fileLoader.load((line, numLine) -> {
 				AnalizedAnnotationProcces aap = new AnalizedAnnotationProcces();
 				String[] columnas = line.split(file.getSeparate());
 				if (marcadores.size() != columnas.length)
@@ -96,8 +93,9 @@ public class CargueSvc extends Services implements ICargue {
 										|| field.getType() == LocalDateTime.class) {
 									inst = aap.DateTime((ADto) inst, field.getName(), columna);
 								}
-								aap.size((ADto) inst, columna);
 								((ADto) inst).set((marcador.getCampo().split(DOUBLE_2_DOT))[1], columna);
+								aap.size((ADto) inst, field.getName());
+								break;
 							}
 
 						}
@@ -141,16 +139,21 @@ public class CargueSvc extends Services implements ICargue {
 
 						Object result = method.invoke(mapa.get(set).getService(), params);
 						if (!Void.TYPE.isAssignableFrom(method.getReturnType())) {
-							mapa.get(set).setService(result);
+							mapa.get(set).add(result);
 						}
 					} catch (Exception e) {
 						mapa.get(set).addError(e.getMessage());
 					}
 				}
 			}
-			for(String set : sets) {
-				String[] errores = mapa.get(set).getErrores().toArray(new String[mapa.get(set).getErrores().size()]);
-				fileLoader.addResults(mapa.get(set).getNumLine(), errores);
+			for (String set : sets) {
+				if (mapa.get(set).getErrores() != null && mapa.get(set).getErrores().size() > 0) {
+					String[] errores = mapa.get(set).getErrores()
+							.toArray(new String[mapa.get(set).getErrores().size()]);
+					fileLoader.addResults(mapa.get(set).getNumLine(), errores);
+				}else {
+					fileLoader.addResults(mapa.get(set).getNumLine(), "OK");
+				}
 			}
 			output_file = fileLoader.genFileOut();
 		} catch (MarcadorServicioException e) {

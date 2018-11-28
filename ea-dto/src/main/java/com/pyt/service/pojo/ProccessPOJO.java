@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.pyt.service.abstracts.Services;
+
 /**
  * Se encargo de almacenar el grupo de procesos con parameteros
  * 
@@ -65,6 +67,9 @@ public class ProccessPOJO {
 	}
 
 	public final void setService(Object service) {
+		if(service instanceof Services) {//si es un servicio configurado por la aplicacion se realiza una instancia por medio de load anotado por postcontructor.
+			((Services)service).load();
+		}
 		this.service = service;
 	}
 

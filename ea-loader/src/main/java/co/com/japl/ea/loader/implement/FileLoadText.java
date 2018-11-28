@@ -50,8 +50,6 @@ public class FileLoadText implements IFileLoader {
 			throw new Exception("No se ha cargado los resultados del ingreso de registros.");
 		FilePOJO fileOutput = new FilePOJO();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OutputStream os = baos;
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os, charset));
 		ByteArrayInputStream bais = new ByteArrayInputStream(file.getByte());
 		InputStream is = bais;
 		BufferedReader bf = new BufferedReader(new InputStreamReader(is, charset));
@@ -64,12 +62,13 @@ public class FileLoadText implements IFileLoader {
 							+ (resultado.getErrores() == null || resultado.getErrores().size() == 0 ? "OK"
 									: String.join(file.getSeparate(),
 											resultado.getErrores().toArray(new String[resultado.getErrores().size()])));
-					bw.write(line);
+					baos.write(line.getBytes());
 					break;
 				}
 			}
 			numLine++;
 		}
+		baos.close();
 		fileOutput.setBytes(baos.toByteArray());
 		fileOutput.setNameFile("output_" + file.getNameFile());
 		fileOutput.setSeparate(file.getSeparate());

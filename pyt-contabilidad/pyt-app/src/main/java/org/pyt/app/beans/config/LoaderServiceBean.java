@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
@@ -46,7 +47,6 @@ public class LoaderServiceBean extends ABean {
 	@Inject(resource="com.pyt.service.implement.CargueSvc")
 	private ICargue loader;
 	private ConfiguracionDTO configuracion;
-
 	@FXML
 	public void initialize() {
 		configuracion = new ConfiguracionDTO();
@@ -105,13 +105,21 @@ public class LoaderServiceBean extends ABean {
 			file.setSize(fileLoad.length());
 			file.setSeparate(";");
 			// llamando al servicio de cargue de datos.
-			loader.cargue(configuracion.getConfiguracion(), file, userLogin);
+			FilePOJO out = loader.cargue(configuracion.getConfiguracion(), file, userLogin);
+			File fileo = new File(out.getNameFile());
+			FileUtils.writeByteArrayToFile(fileo, out.getByte());
+			this.notificar("Se genero el archivo de resultados en "+fileo.getAbsolutePath());
+			cancel();
 		} catch (Exception e) {
 			error(e);
 		}
 	}
 
 	public final void cancel() {
+		fileLoad = null;
+		nameFile.setText("");
+		sizeFile.setText("");
+		typeFile.setText("");
 		Stage stage = (Stage) window.getScene().getWindow();
 		stage.close();
 	}

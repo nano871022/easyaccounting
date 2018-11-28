@@ -8,8 +8,10 @@ import java.util.List;
 
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
+import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.exceptions.ValidateValueException;
 
 
 /**
@@ -43,8 +45,9 @@ public abstract class ReflectionDto {
 			field = searchField(nombreCampo,this.getClass());
 			nameMethod = ReflectionConstants.SET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
-			Method method = clase.getMethod(nameMethod, value.getClass());
-			method.invoke(this, value);
+			Method method = clase.getMethod(nameMethod, field.getType());
+			ValidateValues vv = new ValidateValues();
+			method.invoke(this, vv.cast(value, field.getType()));
 		} catch (SecurityException e) {
 			throw new ReflectionException("Problema de seguridad.", e);
 		} catch (NoSuchMethodException e) {
@@ -66,6 +69,8 @@ public abstract class ReflectionDto {
 			throw new ReflectionException("Problema argumento ilegal.", e);
 		} catch (InvocationTargetException e) {
 			throw new ReflectionException("Problema objeto invocacion.", e);
+		} catch (ValidateValueException e) {
+			throw new ReflectionException("Problema en casting al campo ingreso de informacion.",e);
 		}
 	}
 
