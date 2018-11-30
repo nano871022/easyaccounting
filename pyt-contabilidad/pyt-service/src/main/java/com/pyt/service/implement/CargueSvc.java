@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
@@ -37,40 +36,29 @@ public class CargueSvc extends Services implements ICargue {
 	private IConfigMarcadorServicio configMarkService;
 	private final static String DOUBLE_2_DOT = "::";
 
-	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
 	@Override
 	public <T extends ADto> FilePOJO cargue(String nameConfig, FilePOJO file, UsuarioDTO user) throws CargueException {
 		FilePOJO output_file = null;
 		try {
 			List<ProccessPOJO> listRows = new ArrayList<ProccessPOJO>();
 			Map<String, ProccessPOJO> mapa = new HashMap<String, ProccessPOJO>();
-			ProccesConfigService proccess = new ProccesConfigService();
-			if (StringUtils.isBlank(nameConfig))throw new CargueException("El nombre de la configuracion no se suministro.");
-			if (file == null || file.getByte() == null)	throw new CargueException("El archivo suministrado no fue cargado correctamente.");
+			if (StringUtils.isBlank(nameConfig))
+				throw new CargueException("El nombre de la configuracion no se suministro.");
+			if (file == null || file.getByte() == null)
+				throw new CargueException("El archivo suministrado no fue cargado correctamente.");
 			ConfiguracionDTO dto = new ConfiguracionDTO();
 			dto.setConfiguracion(nameConfig);
 			List<ConfiguracionDTO> list = configMarkService.getConfiguraciones(dto);
-			if (list == null)throw new CargueException("No se encontro registros.");
-			if (list.size() > 1)throw new CargueException("Se encontraron varios registros con el nombre de la configuracion.");
+			if (list == null)
+				throw new CargueException("No se encontro registros.");
+			if (list.size() > 1)
+				throw new CargueException("Se encontraron varios registros con el nombre de la configuracion.");
 			dto = list.get(0);
 			List<ServicioCampoBusquedaDTO> marcadores = configMarkService.getServicioCampo(nameConfig);
-			if (marcadores == null || marcadores.size() == 0)throw new CargueException("No se encontraron marcadores.");
-			for (ServicioCampoBusquedaDTO marcador : marcadores) {
-				try {
-					if (mapa.get(marcador.getServicio()) == null) {
-						mapa.put(marcador.getServicio(), new ProccessPOJO());
-						mapa.get(marcador.getServicio()).setServicio(marcador.getServicio());
-						mapa.get(marcador.getServicio()).setService(proccess.getService(marcador.getServicio()));
-						mapa.get(marcador.getServicio()).setMethod(proccess.getMetodo(marcador.getServicio()));
-					}
-					if (mapa.get(marcador.getServicio()).get((marcador.getMarcador().split(DOUBLE_2_DOT))[0]) == null) {
-						mapa.get(marcador.getServicio())
-								.add(proccess.getDTOService(marcador.getServicio(), marcador.getCampo()));
-					}
-				} catch (ProccesConfigServiceException e) {
-					e.printStackTrace();
-				}
-			}
+			if (marcadores == null || marcadores.size() == 0)
+				throw new CargueException("No se encontraron marcadores.");
+			
+			servicioMarcadores(marcadores,mapa);
 
 			IFileLoader fileLoader = new FileLoadText();
 			fileLoader.setFile(file);
@@ -102,59 +90,14 @@ public class CargueSvc extends Services implements ICargue {
 					}
 					column++;
 				}
+				for (String servicio : mapa.keySet()) {
+					ProccessPOJO pojo = mapa.get(servicio).copy(); 
+					loading(pojo, user);
+					listRows.add(pojo);
+				}
 
 			});
-			AnalizedAnnotationProcces aap = new AnalizedAnnotationProcces();
-			Set<String> sets = mapa.keySet();
-			for (String set : sets) {
-				for (String parameter : mapa.get(set).parameters()) {
-					if (!aap.isNotBlank((ADto) mapa.get(set).get(parameter))) {
-						mapa.get(set).addError("Uno de los campos se encuentra vacio.");
-					}
-					try {
-						T valid = aap.valid((T) mapa.get(set).get(parameter));
-					} catch (Exception e) {
-						mapa.get(set).add(e.getMessage());
-					}
-				}
-			}
-
-			for (String set : sets) {
-				for (String parameter : mapa.get(set).parameters()) {
-					Method method = mapa.get(set).getMethod();
-					Object[] params = new Object[method.getParameterTypes().length];
-					int i = 0;
-					for (Class clazz : method.getParameterTypes()) {
-						if (clazz == UsuarioDTO.class) {
-							params[i] = user;
-						} else {
-							Object param = mapa.get(set).get(clazz.getSimpleName());
-							if (param != null) {
-								params[i] = param;
-							}
-						}
-						i++;
-					}
-					try {
-
-						Object result = method.invoke(mapa.get(set).getService(), params);
-						if (!Void.TYPE.isAssignableFrom(method.getReturnType())) {
-							mapa.get(set).add(result);
-						}
-					} catch (Exception e) {
-						mapa.get(set).addError(e.getMessage());
-					}
-				}
-			}
-			for (String set : sets) {
-				if (mapa.get(set).getErrores() != null && mapa.get(set).getErrores().size() > 0) {
-					String[] errores = mapa.get(set).getErrores()
-							.toArray(new String[mapa.get(set).getErrores().size()]);
-					fileLoader.addResults(mapa.get(set).getNumLine(), errores);
-				}else {
-					fileLoader.addResults(mapa.get(set).getNumLine(), "OK");
-				}
-			}
+			fileLoaderOut(listRows, fileLoader);
 			output_file = fileLoader.genFileOut();
 		} catch (MarcadorServicioException e) {
 			throw new CargueException("Se presento problema con la obtencion de la configuracion.", e);
@@ -162,5 +105,94 @@ public class CargueSvc extends Services implements ICargue {
 			throw new CargueException("Se presento un problema.", e);
 		}
 		return output_file;
+	}
+	/**
+	 * Se encarga de cargar los marcadores  dentro de un mapa
+	 * @param marcadores {@link List} extends {@link ServicioCampoBusquedaDTO}
+	 * @param mapa {@link Map} < {@link String} , {@link ProccessPOJO} >
+	 */
+	public final void servicioMarcadores(List<ServicioCampoBusquedaDTO> marcadores,Map<String, ProccessPOJO> mapa) {
+		ProccesConfigService proccess = new ProccesConfigService();
+		for (ServicioCampoBusquedaDTO marcador : marcadores) {
+			try {
+				if (mapa.get(marcador.getServicio()) == null) {
+					mapa.put(marcador.getServicio(), new ProccessPOJO());
+					mapa.get(marcador.getServicio()).setServicio(marcador.getServicio());
+					mapa.get(marcador.getServicio()).setService(proccess.getService(marcador.getServicio()));
+					mapa.get(marcador.getServicio()).setMethod(proccess.getMetodo(marcador.getServicio()));
+				}
+				if (mapa.get(marcador.getServicio()).get((marcador.getMarcador().split(DOUBLE_2_DOT))[0]) == null) {
+					mapa.get(marcador.getServicio())
+					.add(proccess.getDTOService(marcador.getServicio(), marcador.getCampo()));
+				}
+			} catch (ProccesConfigServiceException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Se encarga de cargar el resultado de los archivos de salida
+	 * @param list
+	 * @param fileLoader
+	 * @throws Exception
+	 */
+	public final void fileLoaderOut(List<ProccessPOJO> list,IFileLoader fileLoader ) throws Exception{
+		for (ProccessPOJO procces : list) {
+			if (procces.getErrores() != null && procces.getErrores().size() > 0) {
+				String[] errores = procces.getErrores().toArray(new String[procces.getErrores().size()]);
+				fileLoader.addResults(procces.getNumLine(), errores);
+			} else {
+				fileLoader.addResults(procces.getNumLine(), "OK");
+			}
+		}
+	}
+	/**
+	 * Se encarga de cargar cada registro en la base de datos y realizar las alidaciones necesarias 
+	 * @param procces {@link ProccessPOJO}
+	 * @param user {@link UsuarioDTO}
+	 */
+	@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
+	public final <T extends ADto>void loading(ProccessPOJO procces,UsuarioDTO user) {
+		AnalizedAnnotationProcces aap = new AnalizedAnnotationProcces();
+		Boolean error = false;
+		Method method = procces.getMethod();
+		Object[] params = new Object[method.getParameterTypes().length];
+		for (String parameter : procces.parameters()) {
+			int i = 0;
+			for (Class clazz : method.getParameterTypes()) {
+				if (clazz == UsuarioDTO.class) {
+					params[i] = user;
+				} else {
+					Object param = procces.get(clazz.getSimpleName());
+					if (param instanceof ADto)
+						if (StringUtils.isNotBlank(((ADto) param).getCodigo()))
+							break;
+					if (param != null) {
+						params[i] = param;
+					}
+				}
+				i++;
+			}
+			try {
+				if (!aap.isNotBlank((ADto) procces.get(parameter))) {
+					procces.addError("Uno de los campos se encuentra vacio.");
+				}
+				T valid = aap.valid((T) procces.get(parameter));
+				error = false;
+			} catch (Exception e) {
+				procces.addError(e);
+				error = true;
+			}
+		}
+		try {
+			if (error)return;
+			Object result = method.invoke(procces.getService(), params);
+			if (!Void.TYPE.isAssignableFrom(method.getReturnType())) {
+				procces.add(result);
+			}
+		} catch (Exception e) {
+			procces.addError(e);
+		}
 	}
 }

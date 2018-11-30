@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pyt.common.common.ADto;
+import org.pyt.common.reflection.ReflectionUtils;
+
 import com.pyt.service.abstracts.Services;
 
 /**
@@ -21,23 +24,58 @@ public class ProccessPOJO {
 	private Method method;
 	private List<String> errores;
 	private Integer numLine;
-	
+	public ProccessPOJO() {
+	}
+
+	public ProccessPOJO copy() {
+		ProccessPOJO pojo = new ProccessPOJO();
+		pojo.setServicio(servicio);
+		pojo.setService(service);
+		for (String parameter : parameters.keySet()) {
+			if (parameters.get(parameter) instanceof ADto) {
+				try {
+					pojo.add(ReflectionUtils.copy(parameters.get(parameter)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		pojo.setMethod(method);
+		pojo.setNumLine(numLine);
+		return pojo;
+	}
+
 	public void setNumLine(Integer num) {
 		numLine = num;
 	}
+
 	public Integer getNumLine() {
 		return numLine;
 	}
 
+	public final <T extends Exception> void addError(T error) {
+		if (errores == null) {
+			errores = new ArrayList<>();
+		}
+		if (error.getMessage() == null) {
+			errores.add(error.getStackTrace()[0].toString());
+			errores.add(error.getStackTrace()[1].toString());
+		} else {
+			errores.add(error.getMessage());
+		}
+	}
+
 	public void addError(String error) {
-		if(errores == null) {
+		if (errores == null) {
 			errores = new ArrayList<>();
 		}
 		errores.add(error);
 	}
+
 	public List<String> getErrores() {
 		return errores;
 	}
+
 	public final <T extends Object> void set(T parameter) {
 		if (parameter != null) {
 			parameters.put(parameter.getClass().getSimpleName(), parameter);
@@ -67,8 +105,9 @@ public class ProccessPOJO {
 	}
 
 	public final void setService(Object service) {
-		if(service instanceof Services) {//si es un servicio configurado por la aplicacion se realiza una instancia por medio de load anotado por postcontructor.
-			((Services)service).load();
+		if (service instanceof Services) {// si es un servicio configurado por la aplicacion se realiza una instancia
+											// por medio de load anotado por postcontructor.
+			((Services) service).load();
 		}
 		this.service = service;
 	}
@@ -91,5 +130,9 @@ public class ProccessPOJO {
 
 	public final Method getMethod() {
 		return this.method;
+	}
+
+	public final Map<String, Object> getParameters() {
+		return parameters;
 	}
 }

@@ -62,6 +62,7 @@ public class FileLoadText implements IFileLoader {
 							+ (resultado.getErrores() == null || resultado.getErrores().size() == 0 ? "OK"
 									: String.join(file.getSeparate(),
 											resultado.getErrores().toArray(new String[resultado.getErrores().size()])));
+					line += "\n";
 					baos.write(line.getBytes());
 					break;
 				}
