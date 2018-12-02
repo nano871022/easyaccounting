@@ -1,0 +1,40 @@
+package com.pyt.service.dto.inventario;
+
+import java.math.BigDecimal;
+
+import org.pyt.common.common.ADto;
+
+import com.pyt.service.dto.ParametroDTO;
+
+public class MovimientoDto extends ADto {
+	private static final long serialVersionUID = -4793142919555790830L;
+	private ProductoDto producto;
+	private BigDecimal precioCompra;
+	private Integer cantidad;
+	private BigDecimal valor;
+	private ParametroDTO tipo;
+	public ProductoDto getProducto() {
+		return producto;
+	}
+	public void setProducto(ProductoDto producto) {
+		this.producto = producto;
+	}
+	public BigDecimal getPrecioCompra() {
+		return precioCompra;
+	}
+	public void setPrecioCompra(BigDecimal precioCompra) {
+		this.precioCompra = precioCompra;
+	}
+	public Integer getCantidad() {
+		return cantidad;
+	}
+	public void setCantidad(Integer cantidad) {
+		this.cantidad = cantidad;
+	}
+	public ParametroDTO getTipo() {
+		return tipo;
+	}
+	public void setTipo(ParametroDTO tipo) {
+		this.tipo = tipo;
+	}
+}
