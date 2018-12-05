@@ -76,5 +76,4 @@ public class ParametroDTO extends ADto{
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
-
 }

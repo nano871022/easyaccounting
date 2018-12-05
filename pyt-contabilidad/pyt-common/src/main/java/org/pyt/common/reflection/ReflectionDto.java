@@ -241,4 +241,11 @@ public abstract class ReflectionDto {
 		}
 		return list;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ADto) {
+			return ((ADto) obj).getCodigo().equals(((ADto)this).getCodigo());
+		}
+		return false;
+	}
 }

@@ -1,5 +1,7 @@
 package com.pyt.service.dto.inventario;
 
+import java.math.BigDecimal;
+
 import org.pyt.common.common.ADto;
 
 import com.pyt.service.dto.ParametroDTO;
@@ -9,10 +11,28 @@ public class ResumenProductoDto extends ADto {
 	private ProductoDto producto;
 	private Integer cantidad;
 	private ParametroDTO ivaPercentAplicarVenta;
-	private ParametroDTO gananciaPercentVenta;
+	private Long gananciaPercentVenta;
+	private BigDecimal valorVenta;
+	private BigDecimal valorCompra;
 	public ProductoDto getProducto() {
 		return producto;
 	}
+	public BigDecimal getValorVenta() {
+		return valorVenta;
+	}
+
+	public void setValorVenta(BigDecimal valorVenta) {
+		this.valorVenta = valorVenta;
+	}
+
+	public BigDecimal getValorCompra() {
+		return valorCompra;
+	}
+
+	public void setValorCompra(BigDecimal valorCompra) {
+		this.valorCompra = valorCompra;
+	}
+
 	public void setProducto(ProductoDto producto) {
 		this.producto = producto;
 	}
@@ -28,10 +48,10 @@ public class ResumenProductoDto extends ADto {
 	public void setIvaPercentAplicarVenta(ParametroDTO ivaPercentAplicarVenta) {
 		this.ivaPercentAplicarVenta = ivaPercentAplicarVenta;
 	}
-	public ParametroDTO getGananciaPercentVenta() {
+	public Long getGananciaPercentVenta() {
 		return gananciaPercentVenta;
 	}
-	public void setGananciaPercentVenta(ParametroDTO gananciaPercentVenta) {
+	public void setGananciaPercentVenta(Long gananciaPercentVenta) {
 		this.gananciaPercentVenta = gananciaPercentVenta;
 	}
 }

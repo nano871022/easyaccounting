@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.pyt.common.common.ADto;
 
+import com.pyt.service.dto.inventario.ResumenProductoDto;
+
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
 
@@ -23,7 +25,7 @@ public class IngresoDTO extends ADto{
 	private String placaVehiculo;
 	private String descripcion;
 	private List<ServicioDTO> servicios;
-	private List<RepuestoDTO> respuestos;
+	private List<ResumenProductoDto> respuestos;
 	private String propietario;
 	private String conductorEntrada;
 	private String conductorSalida;
@@ -61,10 +63,10 @@ public class IngresoDTO extends ADto{
 	public void setServicios(List<ServicioDTO> servicios) {
 		this.servicios = servicios;
 	}
-	public List<RepuestoDTO> getRespuestos() {
+	public List<ResumenProductoDto> getRespuestos() {
 		return respuestos;
 	}
-	public void setRespuestos(List<RepuestoDTO> respuestos) {
+	public void setRespuestos(List<ResumenProductoDto> respuestos) {
 		this.respuestos = respuestos;
 	}
 	public String getPropietario() {

@@ -12,6 +12,7 @@ import org.pyt.common.reflection.ReflectionUtils;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.util.StringConverter;
 
 /**

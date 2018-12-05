@@ -272,6 +272,9 @@ public final class ValidateValues {
 				if (clase == Short.class) {
 					return (T) Short.valueOf((String) value);
 				}
+				if(clase == BigDecimal.class) {
+					return (T) new BigDecimal((String)value);
+				}
 			}
 			if (value.getClass() == Integer.class) {
 				if (clase == BigDecimal.class) {

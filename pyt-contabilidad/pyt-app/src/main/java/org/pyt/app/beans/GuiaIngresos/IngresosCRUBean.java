@@ -17,26 +17,28 @@ import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.IngresoException;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.RepuestoException;
 import org.pyt.common.exceptions.ServiciosException;
 import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.IngresoDTO;
-import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
+import com.pyt.service.dto.inventario.ResumenProductoDto;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IIngresosSvc;
-import com.pyt.service.interfaces.IRepuestosSvc;
 import com.pyt.service.interfaces.IServiciosSvc;
+import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -52,8 +54,8 @@ import javafx.util.StringConverter;
 public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@Inject(resource = "com.pyt.service.implement.ServiciosSvc")
 	private IServiciosSvc serviciosSvc;
-	@Inject(resource = "com.pyt.service.implement.RepuestosSvc")
-	private IRepuestosSvc repuestosSvc;
+	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
+	private IProductosSvc repuestosSvc;
 	@Inject(resource = "com.pyt.service.implement.IngresosSvc")
 	private IIngresosSvc ingresosSvc;
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
@@ -81,7 +83,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private ChoiceBox<String> servicio;
 	@FXML
-	private ChoiceBox<String> repuesto;
+	private ChoiceBox<ResumenProductoDto> repuesto;
 	@FXML
 	private ChoiceBox<TrabajadorDTO> trabajador;
 	@FXML
@@ -103,11 +105,13 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private TableView<ServicioDTO> tablaServicio;
 	@FXML
-	private TableView<RepuestoDTO> tablaRepuesto;
+	private TableView<ResumenProductoDto> tablaRepuesto;
+	@FXML
+	private TableColumn<ResumenProductoDto, String> nombre;
 	private ValidateValues valid;
 	private List<EmpresaDTO> listEmpresas;
 	private List<ServicioDTO> listServicio;
-	private List<RepuestoDTO> listRepuesto;
+	private List<ResumenProductoDto> listRepuesto;
 	private List<TrabajadorDTO> listTrabajador;
 	private final static String field_name = "nombre";
 	private final static String field_valor_venta = "valorVenta";
@@ -122,14 +126,30 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			listEmpresas = empresaSvc.getAllEmpresas(new EmpresaDTO());
 			listServicio = serviciosSvc.getAllServicios(new ServicioDTO());
-			listRepuesto = repuestosSvc.getAllRepuestos(new RepuestoDTO());
+			listRepuesto = repuestosSvc.resumenProductos(new ResumenProductoDto());
 			listTrabajador = empleadosSvc.getAllTrabajadores(new TrabajadorDTO());
 			SelectList.put(empresa, listEmpresas, field_name);
 			SelectList.put(servicio, listServicio, field_name);
-			SelectList.put(repuesto, listRepuesto, field_name);
+			SelectList.put(repuesto, listRepuesto);
 			configTrabajador();
 			SelectList.put(trabajador, listTrabajador);
-		} catch (EmpresasException | ServiciosException | RepuestoException | EmpleadoException e) {
+			repuesto.converterProperty().set(new StringConverter<ResumenProductoDto>() {
+				@Override
+				public String toString(ResumenProductoDto object) {
+					return object.getProducto().getNombre();
+				}
+				@Override
+				public ResumenProductoDto fromString(String string) {
+					for(ResumenProductoDto rp : listRepuesto) {
+						if(rp.getProducto().getNombre().equals(string)) {
+							return rp;
+						}
+					}
+					return null;
+				}
+			});
+			nombre.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getProducto().getNombre()));
+		} catch (EmpresasException | ServiciosException | ResumenProductoException | EmpleadoException e) {
 			error(e);
 		}
 	}
@@ -267,9 +287,9 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public final void addRepuesto() {
 		if (registro.getRespuestos() == null) {
-			registro.setRespuestos(new ArrayList<RepuestoDTO>());
+			registro.setRespuestos(new ArrayList<ResumenProductoDto>());
 		}
-		registro.getRespuestos().add(SelectList.get(repuesto, listRepuesto, field_name));
+		registro.getRespuestos().add(SelectList.get(repuesto));
 		Table.put(tablaRepuesto, registro.getRespuestos());
 		totalRepuesto.setText(sumar(registro.getRespuestos(), "valorVenta").toString());
 		repuesto.getSelectionModel().selectFirst();

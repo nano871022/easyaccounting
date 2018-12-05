@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ParametroConstants {
+	public final static String GRUPO_IVA = "Iva";
 	public final static String GRUPO_MONEDA = "Moneda";
 	public final static String GRUPO_TIPO_PAGO = "TipoPago";
 	public final static String GRUPO_TIPO_DOCUMENTO = "TipoDocumento";
@@ -16,6 +17,7 @@ public class ParametroConstants {
 		mapa_grupo.put("Tipo Pago",GRUPO_TIPO_PAGO);
 		mapa_grupo.put("TIpo Documento",GRUPO_TIPO_DOCUMENTO);
 		mapa_grupo.put("Estado Empleado",GRUPO_ESTADO_EMPLEADO);
+		mapa_grupo.put("Iva", GRUPO_IVA);
 	}
 	public final static String DESC_ESTADO_PARAMETRO_ACTIVO = "Activo";
 	public final static String DESC_ESTADO_PARAMETRO_INACTIVO = "Inactivo";
@@ -52,5 +54,6 @@ public class ParametroConstants {
 		MAPA_GRUPOS.put(GRUPO_TIPO, GRUPO_TIPO);
 		MAPA_GRUPOS.put(GRUPO_NATURALEZA, GRUPO_NATURALEZA);
 		MAPA_GRUPOS.put(GRUPO_TIPO_PLAN_CONTABLE, GRUPO_TIPO_PLAN_CONTABLE);
+		MAPA_GRUPOS.put(GRUPO_IVA,GRUPO_IVA);
 	}
 }

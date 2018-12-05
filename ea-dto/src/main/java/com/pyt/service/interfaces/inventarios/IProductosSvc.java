@@ -31,6 +31,13 @@ public interface IProductosSvc {
 	 */
 	public ResumenProductoDto insert(ResumenProductoDto resument,UsuarioDTO usuario)throws ResumenProductoException;
 	/**
+	 * Se encarga de contar los registros encontrados con el filtro aplicado
+	 * @param dto {@link ProductoDto}
+	 * @return {@link Integer}
+	 * @throws {@link ProductosException}
+	 */
+	public Integer getTotalRows(ProductoDto dto)throws ProductosException;
+	/**
 	 * Se encargade actualizar los productos
 	 * @param producto  {@link ProductoDto}
 	 * @param usuario {@link UsuarioDTO}
@@ -58,6 +65,13 @@ public interface IProductosSvc {
 	 * @throws {@link ResumenProductoException}
 	 */
 	public ResumenProductoDto resumenProducto(ResumenProductoDto resumentProducto)throws ResumenProductoException;
+	/**
+	 * Se encarga de obtener un resumen del producto apartir del producto asociado
+	 * @param producto {@link ProductoDto}
+	 * @return {@link ResumenProductoDto}
+	 * @throws {@link ResumenProductoException}
+	 */
+	public ResumenProductoDto resumenProducto(ProductoDto producto)throws ResumenProductoException;
 	/**
 	 * Se encarga de obtener listado de productos 
 	 * @param producto {@link ProductoDto}
