@@ -79,7 +79,7 @@ public class RepuestoBean extends ABean<ProductoDto> {
 			public ProductoDto getFilter() {
 				ProductoDto filtro = new ProductoDto();
 				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre(nombre.getText());
+					filtro.setNombre("%"+nombre.getText()+"%");
 				}
 				return filtro;
 			}

@@ -96,6 +96,28 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDto> {
 				return null;
 			}
 		});
+		percentGanancia.focusedProperty().addListener((obs,oldval,newval)->{
+			try {
+				BigDecimal ganancia = vv.cast(percentGanancia.getText(), BigDecimal.class);
+				BigDecimal percent = ganancia.divide(new BigDecimal(100));
+				BigDecimal valor = registro.getValorCompra().multiply(percent);
+				BigDecimal venta = registro.getValorCompra().add(valor);
+				valorVenta.setText(venta.toString());
+			} catch (Exception ex) {
+				error(ex);
+			}
+		});
+		valorVenta.focusedProperty().addListener((obs,oldval,newval)->{
+			try {
+				BigDecimal valor = vv.cast(valorVenta.getText(), BigDecimal.class);
+				BigDecimal dif = valor.subtract(registro.getValorCompra());
+				BigDecimal percent = dif.divide(registro.getValorCompra());
+				percent = percent.multiply(new BigDecimal(100));
+				percentGanancia.setText(percent.toString());
+			}catch(Exception ex) {
+				error(ex);
+			}
+		});
 	}
 
 	/**
@@ -199,6 +221,14 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDto> {
 		}
 	}
 
+	public final void agregarMovimiento() {
+		try {
+			controllerPopup(PopupAgregarMovimientoBean.class).load(registro.getProducto());
+		}catch(Exception e) {
+			error(e);
+		}
+	}
+	
 	public void cancel() {
 		getController(RepuestoBean.class);
 	}
