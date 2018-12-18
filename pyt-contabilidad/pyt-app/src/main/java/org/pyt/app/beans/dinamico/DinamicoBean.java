@@ -24,7 +24,7 @@ import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;

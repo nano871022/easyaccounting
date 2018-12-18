@@ -14,7 +14,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.pyt.common.common.Log;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 /**
  * Se encarga de realizar y obtener y agregar la table dentro del los archivos

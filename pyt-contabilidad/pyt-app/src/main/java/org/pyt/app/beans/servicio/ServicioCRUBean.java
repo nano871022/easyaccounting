@@ -5,7 +5,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.ServiciosException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.interfaces.IServiciosSvc;

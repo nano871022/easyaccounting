@@ -15,7 +15,7 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.FileBinException;
 import org.pyt.common.exceptions.QueryException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.interfaces.IDelClass;
 import org.pyt.common.interfaces.IUpdClass;
 import org.pyt.common.reflection.ReflectionUtils;

@@ -4,15 +4,13 @@ import java.math.BigDecimal;
 
 import org.pyt.common.common.ADto;
 
-import com.pyt.service.dto.ParametroDTO;
-
 public class MovimientoDto extends ADto {
 	private static final long serialVersionUID = -4793142919555790830L;
 	private ProductoDto producto;
 	private BigDecimal precioCompra;
 	private Integer cantidad;
 	private BigDecimal valor;
-	private ParametroDTO tipo;
+	private ParametroInventarioDTO tipo;
 	public ProductoDto getProducto() {
 		return producto;
 	}
@@ -31,10 +29,16 @@ public class MovimientoDto extends ADto {
 	public void setCantidad(Integer cantidad) {
 		this.cantidad = cantidad;
 	}
-	public ParametroDTO getTipo() {
+	public ParametroInventarioDTO getTipo() {
 		return tipo;
 	}
-	public void setTipo(ParametroDTO tipo) {
+	public void setTipo(ParametroInventarioDTO tipo) {
 		this.tipo = tipo;
+	}
+	public BigDecimal getValor() {
+		return valor;
+	}
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
 	}
 }

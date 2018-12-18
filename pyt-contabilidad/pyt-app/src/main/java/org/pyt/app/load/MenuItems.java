@@ -13,6 +13,7 @@ import org.pyt.app.beans.cuentaContable.CuentaContableBean;
 import org.pyt.app.beans.dinamico.FormularioBean;
 import org.pyt.app.beans.dinamico.ListaDocumentosBean;
 import org.pyt.app.beans.empresa.EmpresaBean;
+import org.pyt.app.beans.parametroInventario.ParametrosInventariosBean;
 import org.pyt.app.beans.parametros.ParametrosBean;
 import org.pyt.app.beans.repuesto.RepuestoBean;
 import org.pyt.app.beans.servicio.ServicioBean;
@@ -48,6 +49,7 @@ public class MenuItems {
 	private final static String BTN_PROVEEDOR = "Terceros";
 	private final static String BTN_EMPLEADOS = "Empleados";
 	private final static String BTN_PARAMETRO = "Parametros";
+	private final static String BTN_PARAMETRO_INVENTARIO = "Parametros Inventario";
 	private final static String BTN_CENTRO_COSTO = "Centro de Costos";
 	private final static String BTN_ACTIVIDAD_ICA = "Actividad Ica";
 	private final static String BTN_BANCO = "Banco";
@@ -165,6 +167,14 @@ public class MenuItems {
 				logger.logger(e);
 			}
 		}));
+		items.add(addItem(BTN_PARAMETRO_INVENTARIO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, ParametrosInventariosBean.class);
+			} catch (LoadAppFxmlException e) {
+				logger.logger(e);
+			}
+		}));
+
 		items.add(addItem(BTN_CENTRO_COSTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, CentroCostoBean.class);

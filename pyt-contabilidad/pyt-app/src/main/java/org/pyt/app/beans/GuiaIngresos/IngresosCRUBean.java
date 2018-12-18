@@ -18,7 +18,7 @@ import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.IngresoException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.ServiciosException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import com.pyt.service.dto.EmpresaDTO;

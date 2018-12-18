@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 /**
  * Se encarga de validar dos valores si son iguales o uno esta contenido en el
@@ -272,8 +272,8 @@ public final class ValidateValues {
 				if (clase == Short.class) {
 					return (T) Short.valueOf((String) value);
 				}
-				if(clase == BigDecimal.class) {
-					return (T) new BigDecimal((String)value);
+				if (clase == BigDecimal.class) {
+					return (T) new BigDecimal((String) value);
 				}
 			}
 			if (value.getClass() == Integer.class) {
@@ -356,6 +356,14 @@ public final class ValidateValues {
 				if (value != null && value instanceof BigDecimal) {
 					return true;
 				}
+				if (value instanceof String) {
+					try {
+						new BigDecimal((String) value);
+						return true;
+					} catch (Exception e) {
+						return false;
+					}
+				}
 			}
 			if (clase == BigInteger.class) {
 				if (value != null && value instanceof BigInteger) {
@@ -399,15 +407,15 @@ public final class ValidateValues {
 				if (value != null && value instanceof String && StringUtils.isNotBlank((String) value))
 					return true;
 			if (clase.getConstructor().newInstance() instanceof ADto) {
-				if(value instanceof ADto) {
+				if (value instanceof ADto) {
 					try {
 						clase.cast(value);
 						return true;
-					}catch(ClassCastException cast) {
+					} catch (ClassCastException cast) {
 						try {
 							clase.asSubclass(value.getClass());
 							return true;
-						}catch(ClassCastException e1) {
+						} catch (ClassCastException e1) {
 							return false;
 						}
 					}

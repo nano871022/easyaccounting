@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.DocumentosException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentosDTO;

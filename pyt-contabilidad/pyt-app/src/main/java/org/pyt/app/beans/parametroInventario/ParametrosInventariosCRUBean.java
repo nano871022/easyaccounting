@@ -1,4 +1,4 @@
-package org.pyt.app.beans.parametros;
+package org.pyt.app.beans.parametroInventario;
 
 import java.util.List;
 
@@ -10,13 +10,14 @@ import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.ParametroInventarioConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
-import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.ParametroGrupoDTO;
-import com.pyt.service.interfaces.IParametrosSvc;
+import com.pyt.service.dto.inventario.ParametroGrupoInventarioDTO;
+import com.pyt.service.dto.inventario.ParametroInventarioDTO;
+import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
@@ -32,10 +33,10 @@ import javafx.stage.Stage;
  * @author Alejandro Parra
  * @since 22-06-2018
  */
-@FXMLFile(path = "view/parametros", file = "parametro.fxml", nombreVentana = "Parametro CRUD")
-public class ParametrosCRUBean extends ABean<ParametroDTO> {
-	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
-	private IParametrosSvc parametroSvc;
+@FXMLFile(path = "view/parametroInventarios", file = "parametroInventarios.fxml", nombreVentana = "Parametro CRUD")
+public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> {
+	@Inject(resource = "com.pyt.service.implement.inventario.ParametroInventariosSvc")
+	private IParametroInventariosSvc parametroSvc;
 	@FXML
 	private Label codigo;
 	@FXML
@@ -58,8 +59,8 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	private Label lGrupo;
 	@FXML
 	private ChoiceBox<String> estado;
-	private ParametroDTO registro;
-	private ParametroGrupoDTO parametroGrupo;
+	private ParametroInventarioDTO registro;
+	private ParametroGrupoInventarioDTO parametroGrupo;
 	@FXML
 	private Button insert;
 	@FXML
@@ -71,9 +72,9 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	@FXML
 	public void initialize() {
 		validate = new ValidateValues();
-		registro = new ParametroDTO();
+		registro = new ParametroInventarioDTO();
 		SelectList.put(estado, ParametroConstants.mapa_estados_parametros);
-		SelectList.put(cGrupo, ParametroConstants.MAPA_GRUPOS);
+		SelectList.put(cGrupo, ParametroInventarioConstants.mapa_grupo);
 		estado.getSelectionModel().selectFirst();
 		cGrupo.getSelectionModel().selectFirst();
 		lGrupo.setVisible(false);
@@ -101,7 +102,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		}
 		registro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
 		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
-			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroConstants.MAPA_GRUPOS));
+			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroInventarioConstants.mapa_grupo));
 		}
 		buttones_update();
 	}
@@ -124,11 +125,11 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	 * Se encarga de cargar el parametro para poder realizar crud sobre el registro
 	 * 
 	 * @param dto
-	 *            {@link ParametroDTO}
+	 *            {@link ParametroInventarioDTO}
 	 */
-	public void load(ParametroDTO dto) {
+	public void load(ParametroInventarioDTO dto) {
 		if (StringUtils.isBlank(dto.getGrupo()) && (dto == null || StringUtils.isBlank(dto.getCodigo()))) {
-			registro = new ParametroDTO();
+			registro = new ParametroInventarioDTO();
 			insert.setVisible(true);
 		}
 		lGrupo.setVisible(false);
@@ -149,10 +150,10 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			delete.setVisible(true);
 		} else {
 			if (StringUtils.isNotBlank(dto.getCodigo())) {
-				parametroGrupo = new ParametroGrupoDTO();
+				parametroGrupo = new ParametroGrupoInventarioDTO();
 				parametroGrupo.setParametro(dto.getCodigo());
 				try {
-					List<ParametroGrupoDTO> list = parametroSvc.getParametroGrupo(parametroGrupo);
+					List<ParametroGrupoInventarioDTO> list = parametroSvc.getParametroGrupo(parametroGrupo);
 					if (list != null && list.size() > 0) {
 						parametroGrupo = list.get(0);
 					}
@@ -163,7 +164,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 					error(e);
 				}
 			} else {
-				parametroGrupo = new ParametroGrupoDTO();
+				parametroGrupo = new ParametroGrupoInventarioDTO();
 			}
 			registro = dto;
 			grupo.setEditable(false);
@@ -203,7 +204,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		SelectList.selectItem(estado, ParametroConstants.mapa_estados_parametros, registro.getEstado());
 		if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getCodigo())) {
 			if (cGrupo.isVisible() && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
-				SelectList.selectItem(cGrupo, ParametroConstants.MAPA_GRUPOS, parametroGrupo.getGrupo());
+				SelectList.selectItem(cGrupo, ParametroInventarioConstants.mapa_grupo, parametroGrupo.getGrupo());
 			}
 		}
 		grupo.setEditable(false);
@@ -260,24 +261,19 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	 */
 	private final void validParametroGrupo() throws Exception {
 		if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
-			ParametroGrupoDTO pGrupo = new ParametroGrupoDTO();
+			ParametroGrupoInventarioDTO pGrupo = new ParametroGrupoInventarioDTO();
 			pGrupo.setGrupo(parametroGrupo.getGrupo());
-			List<ParametroGrupoDTO> lista = parametroSvc.getParametroGrupo(pGrupo);
+			List<ParametroGrupoInventarioDTO> lista = parametroSvc.getParametroGrupo(pGrupo);
 			if (lista.size() > 0) {
-				for (ParametroGrupoDTO grupo : lista) {
+				for (ParametroGrupoInventarioDTO grupo : lista) {
 					if(StringUtils.isBlank(grupo.getParametro()))continue;
-					ParametroDTO parametro = new ParametroDTO();
+					ParametroInventarioDTO parametro = new ParametroInventarioDTO();
 					parametro.setCodigo(grupo.getParametro());
 					if (grupo != null && registro != null && StringUtils.isNotBlank(registro.getCodigo())
 							&& grupo.getParametro().contains(registro.getCodigo())) {
 						continue;
 					}
-					List<ParametroDTO> parametros = parametroSvc.getAllParametros(parametro);
-					for(ParametroDTO paramet : parametros) {
-						System.out.println(paramet.getCodigo()+" "+paramet.getNombre());
-					}
-					System.out.println(parametro.toStringAll());//Parametroekuv40
-					System.out.println(parametros.toString());
+					List<ParametroInventarioDTO> parametros = parametroSvc.getAllParametros(parametro);
 					if (parametros.size() > 0) {
 						throw new Exception("Ya se encuentra asignado este Grupo " + parametroGrupo.getGrupo() + " a "
 								+ parametros.get(0).getNombre());
@@ -351,7 +347,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	 * Se encarga de cancelar el registro y devolverse al bean principal
 	 */
 	public void cancelBtn() {
-		getController(ParametrosBean.class);
+		getController(ParametrosInventariosBean.class);
 		destroy();
 	}
 

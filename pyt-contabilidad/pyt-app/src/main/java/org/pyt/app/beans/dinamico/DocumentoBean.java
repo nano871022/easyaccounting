@@ -13,7 +13,7 @@ import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;

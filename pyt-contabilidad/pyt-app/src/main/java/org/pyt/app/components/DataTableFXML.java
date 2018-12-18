@@ -9,7 +9,7 @@ import org.pyt.common.common.Log;
 import org.pyt.common.common.Table;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;

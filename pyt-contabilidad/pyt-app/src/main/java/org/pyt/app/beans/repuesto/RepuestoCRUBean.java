@@ -10,7 +10,7 @@ import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.exceptions.inventario.ProductosException;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
 

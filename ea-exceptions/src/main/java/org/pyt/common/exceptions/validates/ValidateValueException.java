@@ -1,4 +1,6 @@
-package org.pyt.common.exceptions;
+package org.pyt.common.exceptions.validates;
+
+import org.pyt.common.exceptions.AExceptions;
 
 /**
  * Se encarga del control de errores de la clase de validacion de valores
