@@ -9,12 +9,13 @@ import org.pyt.common.common.ABean;
 import org.pyt.common.common.ValidFields;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroInventarioConstants;
+import org.pyt.common.exceptions.inventario.InventarioException;
 
 import com.pyt.service.dto.inventario.MovimientoDto;
 import com.pyt.service.dto.inventario.ParametroInventarioDTO;
 import com.pyt.service.dto.inventario.ProductoDto;
+import com.pyt.service.interfaces.inventarios.IInventarioSvc;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
-import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
@@ -30,8 +31,8 @@ import javafx.stage.Stage;
  */
 @FXMLFile(path = "view/repuesto", file = "addmovimiento.fxml", nombreVentana = "Agregar Producto")
 public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
-	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
-	private IProductosSvc productosSvc;
+	@Inject(resource = "com.pyt.service.implement.inventario.InventarioSvc")
+	private IInventarioSvc inventarioSvc;
 	@Inject(resource = "com.pyt.service.implement.inventario.ParametroInventariosSvc")
 	private IParametroInventariosSvc parametroSvc;
 	@FXML
@@ -48,6 +49,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
 	private BorderPane panel;
 	@Inject
 	private ValidateValues vv;
+	private String caller;
 
 	@FXML
 	public void initialize() {
@@ -68,13 +70,16 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
 		try {
 			ParametroInventarioDTO parametro = new ParametroInventarioDTO();
 			parametro.setNombre("entrada");
-			List<ParametroInventarioDTO> parametros = parametroSvc.getAllParametros(parametro, ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
-			if(parametros == null || parametros.size() == 0) throw new Exception("No se encontro tipos de movimientos.");
-			if(parametros.size() > 1) throw new Exception("Se encontro varios registros.");
-			if(parametros.size() == 1) {
+			List<ParametroInventarioDTO> parametros = parametroSvc.getAllParametros(parametro,
+					ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
+			if (parametros == null || parametros.size() == 0)
+				throw new Exception("No se encontro tipos de movimientos.");
+			if (parametros.size() > 1)
+				throw new Exception("Se encontro varios registros.");
+			if (parametros.size() == 1) {
 				registro.setTipo(parametros.get(0));
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			error(e);
 		}
 		cantidad.setText("");
@@ -82,7 +87,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
 		valorUnidad.setText("");
 	}
 
-	public final void load(ProductoDto producto) throws Exception {
+	public final void load(String llamar, ProductoDto producto) throws Exception {
 		if (producto == null)
 			throw new Exception("El producto suministrado esta vacio.");
 		if (StringUtils.isBlank(producto.getCodigo()))
@@ -90,6 +95,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
 		registro.setProducto(producto);
 		nombre.setText(producto.getNombre());
 		ref.setText(producto.getReferencia());
+		caller = llamar;
 	}
 
 	private final void loadFxml() {
@@ -103,8 +109,18 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
 	}
 
 	public final void agregar() {
-		if (valid()) {
-			loadFxml();
+		try {
+			if (valid()) {
+				loadFxml();
+				inventarioSvc.agregarInventario(registro, userLogin);
+				notificar("Se agrego la cantidad de productos al inventario.");
+				caller(caller, true);
+				cancelar();
+			}
+		} catch (InventarioException e) {
+			error(e);
+		} catch (Exception e) {
+			error(e);
 		}
 	}
 

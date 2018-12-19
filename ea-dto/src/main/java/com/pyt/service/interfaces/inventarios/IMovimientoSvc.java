@@ -6,6 +6,7 @@ import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.inventario.MovimientoException;
 
 import com.pyt.service.dto.inventario.MovimientoDto;
+import com.pyt.service.dto.inventario.RestarCantidadDto;
 import com.pyt.service.dto.inventario.saldoDto;
 
 /**
@@ -15,6 +16,15 @@ import com.pyt.service.dto.inventario.saldoDto;
  */
 public interface IMovimientoSvc {
 	/**
+	 * Se encarga de ingresar un restar cantidad
+	 * @param movimiento {@link RestarCantidadDto}
+	 * @param usuario {@link UsuarioDTO}
+	 * @return {@link RestarCantidadDto}
+	 * @throws {@link MovimientoException}
+	 */
+	public RestarCantidadDto insert(RestarCantidadDto restar,UsuarioDTO usuario)throws MovimientoException;
+	/**
+	 * 
 	 * Se encarga de ingresar un movimiento
 	 * @param movimiento {@link MovimientoDto}
 	 * @param usuario {@link UsuarioDTO}
@@ -30,6 +40,13 @@ public interface IMovimientoSvc {
 	 * @throws {@link MovimientoException}
 	 */
 	public saldoDto insert(saldoDto saldo,UsuarioDTO usuario)throws MovimientoException;
+	/**
+	 * Se encarga de actualizar para restar la cantidad
+	 * @param movimiento {@link RestarCantidadDto}
+	 * @param usuario {@link UsuarioDTO}
+	 * @throws {@link MovimientoException}
+	 */
+	public void update(RestarCantidadDto restar, UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga de actualizar unn movimiento 
 	 * @param movimiento {@link MovimientoDto}
@@ -65,6 +82,14 @@ public interface IMovimientoSvc {
 	 * @throws {@link MovimientoException}
 	 */
 	public List<MovimientoDto> movimientos(MovimientoDto movimiento)throws MovimientoException;
+	/**
+	 * Se encarga de otener los restar cantidad
+	 * @param movimiento {@link RestarCantidadDto}
+	 * @return  {@link List} of {@link RestarCantidadDto}
+	 * @throws {@link MovimientoException}
+	 */
+	public List<RestarCantidadDto> restarCantidad(RestarCantidadDto restar)throws MovimientoException;
+
 	/**
 	 * Se encarga de obtener los saldos
 	 * @param saldo {@link saldoDto}
@@ -104,5 +129,12 @@ public interface IMovimientoSvc {
 	 * @throws {@link MovimientoException}
 	 */
 	public void del(saldoDto saldo,UsuarioDTO usuario)throws MovimientoException;
+	/**
+	 * Se encarga dde eliminar un restar cantidad
+	 * @param saldo {@link RestarCantidadDto}
+	 * @param usuario {@link UsuarioDTO}
+	 * @throws {@link MovimientoException}
+	 */
+	public void del(RestarCantidadDto saldo,UsuarioDTO usuario)throws MovimientoException;
 
 }
