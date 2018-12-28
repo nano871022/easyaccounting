@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -222,12 +223,12 @@ public final class ReflectionUtils {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <P extends Object> Class[] getParameters(P... values) throws ReflectionException {
+		List<Class> listClazz = new ArrayList<Class>();
 		if (values != null && values.length > 0) {
-			Class[] clazz = new Class[values.length];
 			for (P value : values) {
-				clazz[clazz.length] = value.getClass();
+				listClazz.add(value.getClass());
 			}
-			return clazz;
+			return listClazz.toArray(new Class[listClazz.size()]);
 		}
 		return null;
 	}

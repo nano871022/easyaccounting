@@ -55,6 +55,11 @@
 			<artifactId>ea-anotaciones</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>co.com.arquitectura.librerias</groupId>
+			<artifactId>arquitecrura-librerias</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

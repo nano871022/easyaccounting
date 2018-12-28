@@ -15,10 +15,15 @@ import com.pyt.service.dto.inventario.ProductoDto;
 import com.pyt.service.dto.inventario.ResumenProductoDto;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
+
 public class ProductosSvc extends Services implements IProductosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
-
+	
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso Productos", descripcion = "Servicio generico para ingreso de productos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
 	public ProductoDto insert(ProductoDto producto, UsuarioDTO usuario) throws ProductosException {
 		if (producto == null)

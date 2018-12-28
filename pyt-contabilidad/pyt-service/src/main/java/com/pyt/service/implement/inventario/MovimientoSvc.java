@@ -15,10 +15,15 @@ import com.pyt.service.dto.inventario.RestarCantidadDto;
 import com.pyt.service.dto.inventario.saldoDto;
 import com.pyt.service.interfaces.inventarios.IMovimientoSvc;
 
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
+
 public class MovimientoSvc extends Services implements IMovimientoSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Agregar unidades", descripcion = "Agregar unidades asociados a los productos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
 	public MovimientoDto insert(MovimientoDto movimiento, UsuarioDTO usuario) throws MovimientoException {
 		if(movimiento == null )throw new MovimientoException("No se encontro movimiento suministrado.");

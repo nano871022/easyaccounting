@@ -2,14 +2,22 @@ package com.pyt.service.dto.inventario;
 
 import java.math.BigDecimal;
 
+import org.pyt.common.annotation.proccess.IsNotBlank;
+import org.pyt.common.annotation.proccess.Valid;
 import org.pyt.common.common.ADto;
 
 public class MovimientoDto extends ADto {
 	private static final long serialVersionUID = -4793142919555790830L;
+	@IsNotBlank
+	@Valid(dto=ProductoDto.class,fieldIn="nombre")
 	private ProductoDto producto;
+	@IsNotBlank
 	private BigDecimal precioCompra;
+	@IsNotBlank
 	private Integer cantidad;
 	private BigDecimal valor;
+	@IsNotBlank
+	@Valid(dto=ParametroInventarioDTO.class,fieldIn="nombre")
 	private ParametroInventarioDTO tipo;
 	public ProductoDto getProducto() {
 		return producto;

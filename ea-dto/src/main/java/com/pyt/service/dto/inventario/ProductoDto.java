@@ -1,9 +1,11 @@
 package com.pyt.service.dto.inventario;
 
+import org.pyt.common.annotation.proccess.IsNotBlank;
 import org.pyt.common.common.ADto;
 
 public class ProductoDto extends ADto {
 	private static final long serialVersionUID = -5885260384830867325L;
+	@IsNotBlank
 	private String nombre;
 	private String descripcion;
 	private String referencia;

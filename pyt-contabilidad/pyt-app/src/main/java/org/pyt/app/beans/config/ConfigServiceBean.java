@@ -1,10 +1,7 @@
 package org.pyt.app.beans.config;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -17,11 +14,15 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.LoadAppFxml;
+import org.pyt.common.common.SearchService;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
+import org.pyt.common.constants.DtoConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
+import org.pyt.common.exceptions.SearchServicesException;
+import org.pyt.common.reflection.ReflectionUtils;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -141,7 +142,6 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private List<String> campos;
 	private List<ServicioCampoBusquedaDTO> serviciosCampoBusqueda;
 	private List<MarcadorServicioDTO> marcadoresServicios;
-	private List<ServicePOJO> serviciosPOJO;
 	private Integer posicion;
 	private Integer max;
 
@@ -460,7 +460,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		List<ServicePOJO> listOut = new ArrayList<ServicePOJO>();
 		List<ServicePOJO> list = listServices.getList();
 		for (ServicePOJO sp : list) {
-			logger.info(type + " " + sp.getType());
+			// logger.info(type + " " + sp.getType());
 			if (sp.getType() == type) {
 				listOut.add(sp);
 			}
@@ -543,78 +543,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				String oldval, String newVal) -> putCamposServicio(newVal));
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T extends Object, S extends ADto> void putCamposServicio(String service) {
 		try {
 			if (service.contentEquals(AppConstants.SELECCIONE))
 				return;
-			Class[] parametros = null;
 			campos.clear();
-			for (ServicePOJO servicio : listServices.getList()) {
-				if ((servicio.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + servicio.getAlias())
-						.contentEquals(service)) {
-					try {
-						parametros = new Class[servicio.getParameter().length];
-						int i = 0;
-						for (String parametro : servicio.getParameter()) {
-							parametros[i] = Class.forName(parametro);
-							i++;
-						}
-						Method metodo = servicio.getClasss().getDeclaredMethod(servicio.getName(), parametros);
-						Class retorno = metodo.getReturnType();
-
-						if (retorno == List.class) {
-
-							Type tipoRetorno = metodo.getGenericReturnType();
-							if (tipoRetorno instanceof ParameterizedType) {
-								ParameterizedType type = (ParameterizedType) tipoRetorno;
-								Type[] typeArguments = type.getActualTypeArguments();
-								for (Type typeArgument : typeArguments) {
-									Class clase = (Class) typeArgument;
-									T obj = (T) clase.getDeclaredConstructor().newInstance();
-									if (obj instanceof ADto) {
-										List<String> campos = (List<String>) clase
-												.getMethod(AppConstants.GET_NAME_FIELDS)
-												.invoke(clase.getConstructor().newInstance());
-										for (String campo : campos) {
-											this.campos.add(clase.getSimpleName() + "::" + campo);
-										}
-									} else {
-										campos.add(retorno.getSimpleName());
-									}
-								}
-							}
-
-						} else {
-							T obj = (T) retorno.getDeclaredConstructor().newInstance();
-							if (obj instanceof ADto) {
-								List<String> campos = (List<String>) retorno.getMethod(AppConstants.GET_NAME_FIELDS)
-										.invoke(retorno.getConstructor().newInstance());
-								for (String campo : campos) {
-									this.campos.add(retorno.getSimpleName() + ConfigServiceConstant.SEP_2_DOTS + campo);
-								}
-							} else {
-								campos.add(retorno.getSimpleName());
-							}
-						}
-					} catch (ClassNotFoundException e) {
-						throw new Exception(e);
-					} catch (NoSuchMethodException e) {
-						throw new Exception(e);
-					} catch (SecurityException e) {
-						throw new Exception(e);
-					} catch (InstantiationException e) {
-						throw new Exception(e);
-					} catch (IllegalAccessException e) {
-						throw new Exception(e);
-					} catch (IllegalArgumentException e) {
-						throw new Exception(e);
-					} catch (InvocationTargetException e) {
-						throw new Exception(e);
-					}
-					break;
-				}
-			}
+			campos.addAll(SearchService.getInstance().getCampos(service));
 			SelectList.put(campo, campos);
 		} catch (Exception e) {
 			mensajeIzquierdo(e);
@@ -720,135 +654,18 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		marcador.getSelectionModel().selectFirst();
 		tbMarcadorSerivicio.search();
 	}
-
 	/**
-	 * Se encarga de obtener el metodo del servicio segun los datos suministrados
-	 * 
-	 * @param cservice
-	 *            {@link Class}
-	 * @param nombre
-	 *            {@link String}
-	 * @param parametros
-	 *            {@link String}[]
-	 * @return {@link Method}
+	 * Se encarga de poner los campos del servicio usado.
+	 * @param service {@link ServicePOJO}
 	 */
-	@SuppressWarnings("unused")
-	private <S extends Object> Method getMethod(Class<S> cservice, String nombre, String... parametros) {
-		Boolean valid = true;
-		if (cservice != null) {
-			List<String> listaCampos = new ArrayList<String>();
-			Method[] metodos = cservice.getDeclaredMethods();
-			for (Method metodo : metodos) {
-				if (metodo.getName().equalsIgnoreCase(nombre)) {
-					valid = true;
-					Class<?>[] clases = metodo.getParameterTypes();
-					for (Class<?> clase : clases) {
-						valid = hasParametro(clase, parametros);
-					}
-					if (valid) {
-						return metodo;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Valida si la calse suministrada el canonical name se encuentra en los
-	 * parametros de texto suministtrado
-	 * 
-	 * @param clazz
-	 *            {@link Class}
-	 * @param parametros
-	 *            {@link String}
-	 * @return Boolean
-	 */
-	private final Boolean hasParametro(Class clazz, String... parametros) {
-		for (String parametro : parametros) {
-			// logger.info(clazz.getCanonicalName()+" "+parametro);
-			if (clazz.getCanonicalName().equalsIgnoreCase(parametro)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@SuppressWarnings({ "rawtypes", })
 	public <T extends Object> void putCamposServicio(ServicePOJO service) {
 		try {
 			List<String> listaCampos = new ArrayList<String>();
-			// logger.info("Clase a procesar "+service.getClasss()+" metodo a procesar
-			// "+service.getName()+" parametros "+service.getParameters());
-			Method metodoUso = getMethod(service.getClasss(), service.getName(), service.getParameter());
-			// logger.info("El metodo obtenido " + metodoUso);
-			if (metodoUso != null) {
-				Class[] parametros = metodoUso.getParameterTypes();
-				Parameter[] parameters = metodoUso.getParameters();
-				// logger.info("Parametos obtenidos " + parametros.length + " " +
-				// parameters.length);
-				if (parametros != null && parametros.length > 0) {
-					Arrays.asList(parametros).forEach(parametro -> addCampos(listaCampos, parametro));
-				} else if (parameters != null && parameters.length > 0) {
-					List<Class> lstParametros = new ArrayList<Class>();
-					Arrays.asList(parameters).forEach(parameter -> {
-						lstParametros.add(parameter.getType());
-					});
-					parametros = lstParametros.toArray(new Class[lstParametros.size()]);
-					if (parametros != null && parametros.length > 0) {
-						Arrays.asList(parametros).forEach(parametro -> addCampos(listaCampos, parametro));
-					} else {
-						error("Imposible obtener los campos de entrada de los servicios.");
-					}
-				} else {
-					logger.error("No se encontraron parametros para " + metodoUso);
-				}
-			}
+			listaCampos = SearchService.getInstance().putCamposServicios(service);
 			SelectList.put(lstCampos, listaCampos);
-		} catch (SecurityException | ClassNotFoundException | IllegalArgumentException e) {
+		} catch (SecurityException | SearchServicesException | IllegalArgumentException e) {
 			error(e);
 		}
-	}
-
-	/**
-	 * Se encarga de agregar los campos a la lsita e campos a usar
-	 * 
-	 * @param listaCampos
-	 *            {@link List} of {@link String}
-	 * @param parametro
-	 *            {@link Class} clase en la cual se buscan los cmpos
-	 */
-	@SuppressWarnings("rawtypes")
-	private final void addCampos(List<String> listaCampos, Class parametro) {
-		List<String> campos = allFields(parametro);
-		campos.forEach(campo -> listaCampos.add(parametro.getSimpleName() + ConfigServiceConstant.SEP_2_DOTS + campo));
-	}
-
-	/**
-	 * Se encarga de obtener tod slos nombre de los campos dentro de la clase
-	 * suministrada
-	 * 
-	 * @param parametro
-	 *            {@link Class}
-	 * @return {@link List} of {@link String}
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private final <T extends Object> List<String> allFields(Class parametro) {
-		List<String> list = new ArrayList<String>();
-		T instance = null;
-		try {
-			instance = (T) parametro.getConstructor().newInstance();
-			if (instance instanceof ADto) {
-				getMethod(parametro, "getNameFields");
-				return ((ADto) instance).getNameFields();
-			} else {
-				list.add(parametro.getName());
-				return list;
-			}
-		} catch (Exception e) {
-			error(e);
-		}
-		return list;
 	}
 
 	public final void saveAll() {
