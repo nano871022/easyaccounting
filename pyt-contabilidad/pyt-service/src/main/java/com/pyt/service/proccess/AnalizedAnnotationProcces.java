@@ -2,19 +2,22 @@ package com.pyt.service.proccess;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.annotation.proccess.DateTime;
 import org.pyt.common.annotation.proccess.IsNotBlank;
 import org.pyt.common.annotation.proccess.Size;
 import org.pyt.common.annotation.proccess.Unique;
 import org.pyt.common.annotation.proccess.Valid;
+import org.pyt.common.annotation.proccess.ValueInObject;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.reflection.Reflection;
+import org.pyt.common.reflection.ReflectionUtils;
 
 import com.pyt.query.interfaces.IQuerySvc;
 
@@ -28,15 +31,44 @@ public class AnalizedAnnotationProcces extends Reflection {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 	private Log log = Log.Log(AnalizedAnnotationProcces.class);
-
+	private List<String> markBlank;
+	private ValidateValues vv;
 	public AnalizedAnnotationProcces() {
 		try {
 			inject();
+			markBlank = new ArrayList<String>();
+			vv = new ValidateValues();
 		} catch (Exception e) {
 			log.logger(e);
 		}
 	}
-
+	/**
+	 * Se encarga de validar si en el campo dentro del dto suministrrado es de tipo {@link ADto} debe verificar si contiene la anotacion {@link ValueInObject}
+	 * si es de esta manera se debe crear una instancia de ese campo y buscar en la instancia el campo que se encuentra en la anotacion, y ingresar ddentro de
+	 * esta instancia el valor en el campo anotado yy despues esa instancia ponerla en el dto suministrado y retornar en dto.
+	 * En el caso que no contenga la anotacion en el campo, lo que se dene es ingresar el valor dentro del campo indicado.
+	 * @param dto {@link ADto} extends
+	 * @param field {@link String} nombre de campo original
+	 * @param value {@link Object} valor a ingresar
+	 * @return {@link ADto} el mismo que el ingresado en los parametros pero con los valores ingresados
+	 * @throws {@link Exception}
+	 */
+	@SuppressWarnings("unchecked")
+	public final <T extends ADto, V extends Object,I extends ADto> T valueInObject(T dto,String field,V value)throws Exception{
+		Field campo = ReflectionUtils.instanciar().getField(dto.getClass(), field);
+		if(campo.isAnnotationPresent(ValueInObject.class)) {
+			ValueInObject vio = campo.getAnnotation(ValueInObject.class);
+			if(StringUtils.isNotBlank(vio.field())) {
+				I inst = (I) campo.getType().getConstructor().newInstance();
+				inst.set(vio.field(), vv.cast(value, inst.typeField(vio.field())));
+				dto.set(field, inst);
+			}
+		}else {
+			dto.set(field, vv.cast(value, dto.typeField(field)));
+		}
+		return dto;
+	}
+	
 	/**
 	 * Se encarga derealizar todas las validaciones sobre los campoos del dto
 	 * verificando si los campos con anotacion {@link IsNotBlank} el campo con la
@@ -51,24 +83,27 @@ public class AnalizedAnnotationProcces extends Reflection {
 	@SuppressWarnings("unchecked")
 	public final <T extends ADto, V extends Object> Boolean isNotBlank(T dto) throws Exception {
 		Boolean valid = true;
+		markBlank.clear();
 		Class<T> clazz = (Class<T>) dto.getClass();
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.isAnnotationPresent(IsNotBlank.class)) {
 				if (field.trySetAccessible()) {
 					V value = (V) field.get(dto);
 					if (field.getType() == String.class) {
-						if (value == null || StringUtils.isNotBlank(String.class.cast(value))) {
+						if (value == null || StringUtils.isBlank(vv.cast(value, String.class))) {
 							valid &= false;
+							markBlank.add(clazz.getName()+":"+field.getName());
 						}
 					} else if (value == null) {
 						valid &= false;
+						markBlank.add(clazz.getName()+":"+field.getName());
 					}
 				}
 			}
 		}
 		return valid;
 	}
-
+	
 	/**
 	 * Se encarga de validar en el dto el campo fecha anotado con {@link DateTime}
 	 * 
@@ -82,7 +117,7 @@ public class AnalizedAnnotationProcces extends Reflection {
 	 * @throws {@link
 	 *             Exception}
 	 */
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked"})
 	public final <T extends ADto, V extends Object> T DateTime(T dto, String fieldName, V value) throws Exception {
 		Class<T> clazz = (Class<T>) dto.getClass();
 		Field field = clazz.getDeclaredField(fieldName);
@@ -105,7 +140,7 @@ public class AnalizedAnnotationProcces extends Reflection {
 	 * @param fieldName {@link String}
 	 * @throws {@link Exception}
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	public final <T extends ADto> void size(T dto,String fieldName)throws Exception{
 		Class<T> clazz = (Class<T>) dto.getClass();
 		Field field = clazz.getDeclaredField(fieldName);
@@ -151,9 +186,12 @@ public class AnalizedAnnotationProcces extends Reflection {
 				fieldOut = "";
 				fieldName = field.getName();
 				Valid valid = field.getAnnotation(Valid.class);
+				I instancewait = (I) field.get(dto);
 				if (valid.dto() != Object.class) {
 					instance = (I) valid.dto().getConstructor().newInstance();
-				} else {
+				} else if(instancewait != null && instancewait.getClass().isAssignableFrom(ADto.class)){
+					instance = instancewait;
+				}else{
 					instance = (I) dto.getClass().getConstructor().newInstance();
 				}
 				if (StringUtils.isNotBlank(valid.fieldIn())) {
@@ -166,7 +204,9 @@ public class AnalizedAnnotationProcces extends Reflection {
 				} else {
 					fieldOut = fieldName;
 				}
-				instance.set(fieldIn, dto.get(fieldName));
+				if(!(instancewait != null && instancewait.getClass().isAssignableFrom(ADto.class))) {
+					instance.set(fieldIn, dto.get(fieldName));
+				}
 				List<I> list = querySvc.gets(instance);
 				if (list == null || list.size() == 0)
 					throw new Exception("No se encontro datos " + instance.getClass().getCanonicalName()
@@ -191,5 +231,8 @@ public class AnalizedAnnotationProcces extends Reflection {
 			}
 		}
 		return dto;
+	}
+	public final List<String> getMarkBlank(){
+		return markBlank;
 	}
 }

@@ -1,9 +1,6 @@
 package org.pyt.app.beans.config;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,11 +15,9 @@ import org.pyt.common.common.SearchService;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
-import org.pyt.common.constants.DtoConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.SearchServicesException;
-import org.pyt.common.reflection.ReflectionUtils;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -40,6 +35,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.arquitectura.annotation.proccessor.Services;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -99,6 +95,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private TableView<MarcadorDTO> lstMarcadores;
 	@FXML
 	private TableColumn<MarcadorDTO, String> colMarcador;
+	@FXML
+	private TableColumn<MarcadorDTO, Integer> orden;
 	@FXML
 	private TableView<ServicioCampoBusquedaDTO> lstServicioCampo;
 	@FXML
@@ -471,6 +469,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private void configColmn() {
 		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getMarcador()));
 		colInOut.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoInOut()));
+		orden.setCellValueFactory(e -> new SimpleIntegerProperty(e.getValue().getOrden()).asObject());
+		
 	}
 
 	private void hiddenTabs() {
@@ -562,6 +562,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (StringUtils.isNotBlank(marcador)) {
 			MarcadorDTO marca = new MarcadorDTO();
 			marca.setMarcador(marcador);
+			marca.setOrden(tbMarcador.getTotal()+1);
 			RadioButton toggle = (RadioButton) group.getSelectedToggle();
 			marca.setTipoInOut(toggle.getText());
 			marcadores.add(marca);
@@ -795,7 +796,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
-	private void mostratBotonesMov() {
+	private void mostrarBotonesMov() {
 		btnSiguiente.setVisible(posicion < max);
 		btnAnterior.setVisible(posicion > ConfigServiceConstant.TAB_MARCADOR);
 	}
@@ -810,7 +811,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 		}
 		tabView();
-		mostratBotonesMov();
+		mostrarBotonesMov();
 	}
 
 	public void siguiente() {
@@ -823,7 +824,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 		}
 		tabView();
-		mostratBotonesMov();
+		mostrarBotonesMov();
 	}
 
 	public void cancelar() {

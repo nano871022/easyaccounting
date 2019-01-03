@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 
 import org.pyt.common.annotation.proccess.IsNotBlank;
 import org.pyt.common.annotation.proccess.Valid;
+import org.pyt.common.annotation.proccess.ValueInObject;
 import org.pyt.common.common.ADto;
 
 public class MovimientoDto extends ADto {
 	private static final long serialVersionUID = -4793142919555790830L;
 	@IsNotBlank
-	@Valid(dto=ProductoDto.class,fieldIn="nombre")
+	@Valid
+	@ValueInObject(field="nombre")
 	private ProductoDto producto;
 	@IsNotBlank
 	private BigDecimal precioCompra;

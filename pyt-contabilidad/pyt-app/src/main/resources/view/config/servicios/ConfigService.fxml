@@ -47,6 +47,7 @@
                   <children>
                     <TableView fx:id="lstMarcadores" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#marcadorSelect" prefHeight="187.0" prefWidth="468.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                       <columns>
+                      	<TableColumn minWidth="0.0" prefWidth="80.0" text="Orden" fx:id="orden" />
                         <TableColumn maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="426.0" text="Marcador" fx:id="colMarcador" />
                         <TableColumn prefWidth="120.0" text="Entrada/Salida" fx:id="colInOut" />
                       </columns>

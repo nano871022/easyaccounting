@@ -232,4 +232,22 @@ public final class ReflectionUtils {
 		}
 		return null;
 	}
+	
+	/**
+	 * Se encarga de buscar un campo dentro del objeto y retornarlo
+	 * @param clazz {@link Class} clase de inicio de busqueda
+	 * @param nameField {@link String} nombre del campo
+	 * @return {@link Field}
+	 * @throws {@link ReflectionException}
+	 */
+	public final <C extends Object> Field getField(Class<C> clazz,String nameField)throws ReflectionException{
+		if(clazz == Object.class)return null;
+		Field field = null;
+		try {
+			field = clazz.getDeclaredField(nameField);
+		} catch (NoSuchFieldException | SecurityException e) {
+			field = getField(clazz.getSuperclass(),nameField);
+		}
+		return field;
+	}
 }

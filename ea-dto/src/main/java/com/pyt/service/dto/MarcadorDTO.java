@@ -8,6 +8,7 @@ import org.pyt.common.common.ADto;
  */
 public class MarcadorDTO extends ADto {
 	private static final long serialVersionUID = 4555138682411497766L;
+	private Integer orden;
 	private String marcador;
 	private String tipoInOut;
 	private String configuracion;
@@ -28,5 +29,11 @@ public class MarcadorDTO extends ADto {
 	}
 	public void setTipoInOut(String tipoInOut) {
 		this.tipoInOut = tipoInOut;
+	}
+	public Integer getOrden() {
+		return orden;
+	}
+	public void setOrden(Integer orden) {
+		this.orden = orden;
 	}
 }
