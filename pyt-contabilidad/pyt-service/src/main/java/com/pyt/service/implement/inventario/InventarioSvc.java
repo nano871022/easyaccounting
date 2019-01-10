@@ -21,12 +21,16 @@ import com.pyt.service.interfaces.inventarios.IInventarioSvc;
 import com.pyt.service.interfaces.inventarios.IMovimientoSvc;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
+
 public class InventarioSvc extends Services implements IInventarioSvc {
 	@Inject(resource = "com.pyt.service.implement.inventario.MovimientoSvc")
 	private IMovimientoSvc movimientoSvc;
 	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
 	private IProductosSvc productosSvc;
-
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Agregar unidades", descripcion = "Agregar unidades asociados a los productos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
 	public void agregarInventario(MovimientoDto dto, UsuarioDTO usuario) throws InventarioException {
 		if (dto == null)

@@ -12,7 +12,7 @@ public class ResultsPOJO {
 	
 	public ResultsPOJO(Integer numLine,String... errores) {
 		this.numLine = numLine;
-		this.errores = Arrays.asList(errores);
+		setErrores(errores);
 	}
 	public Integer getNumLine() {
 		return numLine;
@@ -24,12 +24,21 @@ public class ResultsPOJO {
 		return errores;
 	}
 	public void setErrores(String... errores) {
-		this.errores = Arrays.asList(errores);
+		if(errores.length == 0)return;
+		this.errores = new ArrayList<String>();
+		Arrays.asList(errores).forEach(e->this.errores.add(e));
 	}
 	public void addErrores(String errores) {
 		if(this.errores == null) {
 			this.errores = new ArrayList<String>();
 		}
 		this.errores.add(errores);
+	}
+	public void addAllErrores(String... errores) {
+		if(errores.length == 0)return;
+		if(this.errores == null) {
+			setErrores(errores);
+		}else
+		Arrays.asList(errores).forEach(e->this.errores.add(e));
 	}
 }

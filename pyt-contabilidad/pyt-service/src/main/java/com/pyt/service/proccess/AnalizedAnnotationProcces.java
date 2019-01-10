@@ -186,10 +186,12 @@ public class AnalizedAnnotationProcces extends Reflection {
 				fieldOut = "";
 				fieldName = field.getName();
 				Valid valid = field.getAnnotation(Valid.class);
+				field.canAccess(dto);
+				field.trySetAccessible();
 				I instancewait = (I) field.get(dto);
 				if (valid.dto() != Object.class) {
 					instance = (I) valid.dto().getConstructor().newInstance();
-				} else if(instancewait != null && instancewait.getClass().isAssignableFrom(ADto.class)){
+				} else if(instancewait != null && instancewait instanceof ADto ){
 					instance = instancewait;
 				}else{
 					instance = (I) dto.getClass().getConstructor().newInstance();
@@ -204,7 +206,7 @@ public class AnalizedAnnotationProcces extends Reflection {
 				} else {
 					fieldOut = fieldName;
 				}
-				if(!(instancewait != null && instancewait.getClass().isAssignableFrom(ADto.class))) {
+				if(!(instancewait != null && instancewait instanceof ADto )) {
 					instance.set(fieldIn, dto.get(fieldName));
 				}
 				List<I> list = querySvc.gets(instance);

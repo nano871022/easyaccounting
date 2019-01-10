@@ -42,7 +42,21 @@ public class FileLoadText implements IFileLoader {
 		if (resultados == null) {
 			resultados = new ArrayList<ResultsPOJO>();
 		}
-		resultados.add(new ResultsPOJO(num, errores));
+		ResultsPOJO results = search(num);
+		if(results == null) {
+			resultados.add(new ResultsPOJO(num, errores));
+		}else {
+			results.addAllErrores(errores);
+		}
+	}
+	
+	private final ResultsPOJO search(Integer num) {
+		for(ResultsPOJO results : resultados) {
+			if(results.getNumLine().compareTo(num)==0) {
+				return results;
+			}
+		}
+		return null;
 	}
 
 	public FilePOJO genFileOut() throws Exception {

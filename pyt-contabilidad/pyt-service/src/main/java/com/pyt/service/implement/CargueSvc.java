@@ -152,7 +152,7 @@ public class CargueSvc extends Services implements ICargue {
 				}
 				for (String servicio : mapa.keySet()) {
 					ProccessPOJO pojo = mapa.get(servicio).copy();
-					loading(pojo, user);
+					pojo = loading(pojo, user);
 					listRows.add(pojo);
 				}
 
@@ -223,7 +223,7 @@ public class CargueSvc extends Services implements ICargue {
 	 *            {@link UsuarioDTO}
 	 */
 	@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
-	public final <T extends ADto> void loading(ProccessPOJO procces, UsuarioDTO user) {
+	public final <T extends ADto> ProccessPOJO loading(ProccessPOJO procces, UsuarioDTO user) {
 		AnalizedAnnotationProcces aap = new AnalizedAnnotationProcces();
 		Boolean error = false;
 		Method method = procces.getMethod();
@@ -257,7 +257,7 @@ public class CargueSvc extends Services implements ICargue {
 		}
 		try {
 			if (error)
-				return;
+				return procces;
 			Object result = method.invoke(procces.getService(), params);
 			if (!Void.TYPE.isAssignableFrom(method.getReturnType())) {
 				procces.add(result);
@@ -265,5 +265,6 @@ public class CargueSvc extends Services implements ICargue {
 		} catch (Exception e) {
 			procces.addError(e);
 		}
+		return procces;
 	}
 }
