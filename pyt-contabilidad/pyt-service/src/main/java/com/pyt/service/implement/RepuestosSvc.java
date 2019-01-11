@@ -14,6 +14,10 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.interfaces.IRepuestosSvc;
 
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
+
 public class RepuestosSvc extends Services implements IRepuestosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
@@ -64,6 +68,7 @@ public class RepuestosSvc extends Services implements IRepuestosSvc {
 		}
 	}
 
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso Repuestos", descripcion = "Servicio generico para ingreso de repuestos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	public RepuestoDTO insert(RepuestoDTO dto, UsuarioDTO user) throws RepuestoException {
 		if (dto == null)
 			throw new RepuestoException("El objeto repuesto se encuentra vacio.");
@@ -91,7 +96,8 @@ public class RepuestosSvc extends Services implements IRepuestosSvc {
 
 	@Override
 	public Integer getTotalRows(RepuestoDTO dto) throws RepuestoException {
-		if(dto == null)throw new RepuestoException("El repuesto se encuentra vacio.");
+		if (dto == null)
+			throw new RepuestoException("El repuesto se encuentra vacio.");
 		try {
 			return querySvc.countRow(dto);
 		} catch (QueryException e) {

@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.PostConstructor;
 import org.pyt.common.annotations.Singleton;
@@ -16,6 +15,8 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IComunicacion;
+
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 
 /**
  * Se encargad e realizar el codigo de refleccion para tener informacion o
@@ -40,16 +41,38 @@ public abstract class Reflection {
 			throws ReflectionException {
 		try {
 			Class<S> clase = (Class<S>) this.getClass();
-			Field[] fields = clase.getDeclaredFields();
-			inject((S) this, fields, clase);
-			subscriberInject(this, fields, clase);
+			Field[] fields = null;
+			fields = getFields(clase);
+			if (fields != null && fields.length > 0) {
+				inject((S) this, fields, clase);
+				subscriberInject(this, fields, clase);
+			} else {
+				logger.warn("No se encontraron campos en la clase.");
+			}
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
+		} catch (NullPointerException e) {
+			logger.logger(e);
 		} catch (Exception e) {
 			throw new ReflectionException(e.getMessage(), e);
 		}
+	}
+	/**
+	 * Obtiene los campos obtenidos de las clases
+	 * @param clazz {@link Class}
+	 * @return {@link Field}
+	 * @throws {@link Exception}
+	 */
+	private <T extends Object> Field[] getFields(Class<T> clazz) throws Exception {
+		Field[] fields = null;
+		try {
+			fields = clazz.getDeclaredFields();
+		} catch (Exception e) {
+			fields = clazz.getFields();
+		}
+		return fields;
 	}
 
 	@SuppressWarnings("unchecked")

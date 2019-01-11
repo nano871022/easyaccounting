@@ -1,13 +1,13 @@
 package org.pyt.app.beans.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.constants.ConfigServiceConstant;
@@ -17,6 +17,7 @@ import org.pyt.common.poi.gen.DocxToPDFGen;
 
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -34,6 +35,7 @@ import javafx.stage.Stage;
  * @author Alejandro Parra
  * @since 16/10/2018
  */
+@SuppressWarnings("rawtypes")
 @FXMLFile(path = "view/config/servicios", file = "genConfig.fxml", nombreVentana = "Generar Archivo de Servicios")
 public class GenConfigBean extends ABean {
 	@FXML
@@ -71,6 +73,7 @@ public class GenConfigBean extends ABean {
 	/**
 	 * Se encarga de inicializar
 	 */
+	@SuppressWarnings("unchecked")
 	public void load(String nameGen) {
 		if (StringUtils.isNotBlank(nameGen)) {
 			this.nameGen.setText(nameGen);
@@ -82,9 +85,7 @@ public class GenConfigBean extends ABean {
 		try {
 			nombreCampos = gcs.getConfigAsociar();
 			if (nombreCampos == null || nombreCampos.length > 0) {
-				for (String nombreCampo : nombreCampos) {
-					this.nombreCampos.add(nombreCampo);
-				}
+				Arrays.asList(nombreCampos).forEach(nombreCampo -> this.nombreCampos.add(nombreCampo));
 			}
 			loadGrid();
 		} catch (Exception e) {
@@ -96,6 +97,7 @@ public class GenConfigBean extends ABean {
 	 * Se encarga de crear la grilla con los objetos puestos en lass posiciones
 	 * correctas
 	 */
+	@SuppressWarnings({ "static-access", "unused" })
 	private void loadGrid() {
 		Integer columnIndex = 0;
 		Integer rowIndex = 0;

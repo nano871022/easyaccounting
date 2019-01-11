@@ -13,6 +13,7 @@ import org.pyt.app.beans.cuentaContable.CuentaContableBean;
 import org.pyt.app.beans.dinamico.FormularioBean;
 import org.pyt.app.beans.dinamico.ListaDocumentosBean;
 import org.pyt.app.beans.empresa.EmpresaBean;
+import org.pyt.app.beans.parametroInventario.ParametrosInventariosBean;
 import org.pyt.app.beans.parametros.ParametrosBean;
 import org.pyt.app.beans.repuesto.RepuestoBean;
 import org.pyt.app.beans.servicio.ServicioBean;
@@ -43,10 +44,12 @@ public class MenuItems {
 	private final static String MENU_PRINCIPAL = "Principal";
 	private final static String MENU_ADMINISTRADOR = "Administrador";
 	private final static String MENU_MODULOS = "Modulos";
+	private final static String MENU_INVENTARIOS = "Inventario";
 	private final static String BTN_CERRAR = "Cerrar";
 	private final static String BTN_PROVEEDOR = "Terceros";
 	private final static String BTN_EMPLEADOS = "Empleados";
 	private final static String BTN_PARAMETRO = "Parametros";
+	private final static String BTN_PARAMETRO_INVENTARIO = "Parametros Inventario";
 	private final static String BTN_CENTRO_COSTO = "Centro de Costos";
 	private final static String BTN_ACTIVIDAD_ICA = "Actividad Ica";
 	private final static String BTN_BANCO = "Banco";
@@ -56,6 +59,7 @@ public class MenuItems {
 	private final static String BTN_CUENTA_CONTABLE = "Cuenta Contable";
 	private final static String BTN_DOCUMENTO_DINAMICO = "Documento Dinamico";
 	private final static String BTN_FORMULARIO_DOCUMENTO= "Documento";
+	private final static String BTN_PRODUCTOS = "Productos";
 	private final static String BTN_LIST_DOCUMENTO= "Documentos";
 	private final static String BTN_LIST_INGRESOS= "Ingresos";
 	private final static String BTN_CONFG_PRINT = "Lista Configuracion Servicio Marcadores";
@@ -71,6 +75,7 @@ public class MenuItems {
 		mapaMenu.put("Principal", new Menu(MENU_PRINCIPAL));
 		mapaMenu.put("Administrador", new Menu(MENU_ADMINISTRADOR));
 		mapaMenu.put("Modulos", new Menu(MENU_MODULOS));
+		mapaMenu.put("Inventarios", new Menu(MENU_INVENTARIOS));
 	}
 
 	private final Menu getMenu(String key) {
@@ -111,7 +116,16 @@ public class MenuItems {
 	private final void loadModulos() {
 		Menu modulo = getMenu(MENU_MODULOS);
 		ObservableList<MenuItem> items = getItems(modulo);
-		items.add(addItem(MENU_MODULOS, event -> System.out.println("sin config.")));
+		Menu inventario = getMenu(MENU_INVENTARIOS);
+		items.add(inventario);
+		getItems(inventario).add(addItem(BTN_REPUESTO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, RepuestoBean.class);
+			} catch (LoadAppFxmlException e) {
+				logger.logger(e);
+			}
+		}));
+
 		items.add(addItem(BTN_LIST_DOCUMENTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ListaDocumentosBean.class);
@@ -153,6 +167,14 @@ public class MenuItems {
 				logger.logger(e);
 			}
 		}));
+		items.add(addItem(BTN_PARAMETRO_INVENTARIO, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, ParametrosInventariosBean.class);
+			} catch (LoadAppFxmlException e) {
+				logger.logger(e);
+			}
+		}));
+
 		items.add(addItem(BTN_CENTRO_COSTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, CentroCostoBean.class);
@@ -177,13 +199,6 @@ public class MenuItems {
 		items.add(addItem(BTN_CONCEPTO, event -> {
 			try {
 				LoadAppFxml.BeanFxmlScroller(scroll, ConceptoBean.class);
-			} catch (LoadAppFxmlException e) {
-				logger.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_REPUESTO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, RepuestoBean.class);
 			} catch (LoadAppFxmlException e) {
 				logger.logger(e);
 			}

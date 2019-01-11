@@ -3,9 +3,9 @@ package org.pyt.common.common;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.AppConstants;
+import org.pyt.common.controller.LocatorController;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.proccesor.LocatorController;
 import org.pyt.common.reflection.Reflection;
 
 import javafx.scene.layout.Pane;
@@ -35,7 +35,7 @@ public abstract class ABean<T extends ADto> extends Reflection {
 			inject();
 			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);
 		} catch (ReflectionException e) {
-			logger.logger(e);
+			logger.logger("Reflection: ",e);
 		} catch (Exception e) {
 			logger.logger(e);
 		}
@@ -52,32 +52,38 @@ public abstract class ABean<T extends ADto> extends Reflection {
 		try {
 			return LoadAppFxml.BeanFxmlScroller(null, classOfBean);
 		} catch (LoadAppFxmlException e) {
-			logger.logger("El bean " + classOfBean.getName() + " no puede ser cargado.", e);
+			logger.error("El bean " + classOfBean.getName() + " no puede ser cargado.");
 			error(e);
 		}
 		return null;
 	}
+
 	/**
-	 * Se encarga de realizar la invoicacion para obtener o introducir datos a un bean que se encuentre en uso
-	 * @param caller {@link String} anotacion bean . metodo
-	 * @param value {@link Object} valores que se desean inyectar en el metodo
+	 * Se encarga de realizar la invoicacion para obtener o introducir datos a un
+	 * bean que se encuentre en uso
+	 * 
+	 * @param caller
+	 *            {@link String} anotacion bean . metodo
+	 * @param value
+	 *            {@link Object} valores que se desean inyectar en el metodo
 	 * @return {@link Object} valor retornado cuando es un get
-	 * @throws {@link Exception}
+	 * @throws {@link
+	 *             Exception}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes", "hiding" })
-	protected <T extends Object,S extends Object> S caller(String caller,T...value) throws Exception{
-			S returns = null;
-			Class clase = this.getClass();
-			if(value.length == 0) {
-				returns = LocatorController.getInstance().setClass(clase).call(caller, null);
-			}else if(value.length == 1){
-				LocatorController.getInstance().setClass(clase).call(caller, value[0]);
-			}else {
-				throw new Exception("Se suministraron varios objetos, solo se necesita uno.");
-			}
-			return returns;
+	protected <T extends Object, S extends Object> S caller(String caller, T... value) throws Exception {
+		S returns = null;
+		Class clase = this.getClass();
+		if (value.length == 0) {
+			returns = LocatorController.getInstance().setClass(clase).call(caller, null);
+		} else if (value.length == 1) {
+			LocatorController.getInstance().setClass(clase).call(caller, value[0]);
+		} else {
+			throw new Exception("Se suministraron varios objetos, solo se necesita uno.");
+		}
+		return returns;
 	}
-	
+
 	protected final void destroy() {
 		try {
 			LocatorController.getInstance().removeLoadInController(this);
@@ -174,15 +180,20 @@ public abstract class ABean<T extends ADto> extends Reflection {
 	public final void progreso(Double valor) {
 		comunicacion.setComando(AppConstants.COMMAND_PROGRESS, valor);
 	}
+
 	/**
-	 * Se encarga de cargar de crear una ventana con la informacion de un fxml y retorna el bean de despliegue creado
-	 * @param clase extends {@link ABean}
+	 * Se encarga de cargar de crear una ventana con la informacion de un fxml y
+	 * retorna el bean de despliegue creado
+	 * 
+	 * @param clase
+	 *            extends {@link ABean}
 	 * @return extends {@link ABean} object
-	 * @throws {@link LoadAppFxmlException}
+	 * @throws {@link
+	 *             LoadAppFxmlException}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected final <T extends ABean> T controllerPopup(Class<T> clase) throws LoadAppFxmlException {
-			return (T) LoadAppFxml.loadBeanFxml(new Stage(), clase);
+		return (T) LoadAppFxml.loadBeanFxml(new Stage(), clase);
 	}
 
 	public T getRegistro() {

@@ -1,7 +1,6 @@
 package org.pyt.app.load;
 
 import org.pyt.app.components.PopupBean;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
@@ -13,6 +12,7 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IComunicacion;
 import org.pyt.common.reflection.Reflection;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;

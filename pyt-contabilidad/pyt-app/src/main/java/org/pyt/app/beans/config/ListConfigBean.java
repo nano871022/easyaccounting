@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.MarcadorServicioException;
@@ -13,6 +12,7 @@ import org.pyt.common.exceptions.MarcadorServicioException;
 import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
@@ -33,6 +33,8 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	private TableView<ConfiguracionDTO> tabla;
 	@FXML
 	private TextField configuracion;
+	@FXML
+	private TextField descripcion;
 	@FXML
 	private Button btnMod;
 	@FXML
@@ -57,7 +59,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public List<ConfiguracionDTO> getList(ConfiguracionDTO filter, Integer page, Integer rows) {
 				List<ConfiguracionDTO> lista = new ArrayList<ConfiguracionDTO>();
 				try {
-					lista = configMarcadorServicioSvc.getConfiguracion(filter, page-1, rows);
+					lista = configMarcadorServicioSvc.getConfiguracion(filter, page - 1, rows);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -68,7 +70,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public Integer getTotalRows(ConfiguracionDTO filter) {
 				Integer count = 0;
 				try {
-					count = configMarcadorServicioSvc.count(filter);  
+					count = configMarcadorServicioSvc.count(filter);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -79,7 +81,10 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public ConfiguracionDTO getFilter() {
 				ConfiguracionDTO filtro = new ConfiguracionDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					filtro.setConfiguracion(configuracion.getText());
+					filtro.setConfiguracion("%"+configuracion.getText()+"%");
+				}
+				if (StringUtils.isNotBlank(descripcion.getText())) {
+					filtro.setDescripcion("%"+descripcion.getText()+"%");
 				}
 				return filtro;
 			}
@@ -92,11 +97,16 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	}
 
 	public void add() {
-		getController(ConfigServiceBean.class).load(null);
+		getController(ConfigServiceBean.class).load();
 	}
 
 	public void search() {
 		dt.search();
+	}
+
+	public final void limpiar() {
+		descripcion.setText("");
+		configuracion.setText("");
 	}
 
 	public void del() {
@@ -107,7 +117,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 				notificar("Se ha eliminado la configuración.");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una cuenta contable.");
+				notificar("No se ha seleccionado una registro.");
 			}
 		} catch (MarcadorServicioException e) {
 			error(e);

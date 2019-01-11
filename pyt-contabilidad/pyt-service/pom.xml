@@ -19,10 +19,37 @@
 			<scope>${project.scope}</scope>
 		</dependency>
 		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-loader</artifactId>
+			<version>${project.version}</version>
+<!-- 			<scope>${project.scope}</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-anotaciones</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-dto</artifactId>
+			<version>${project.version}</version>
+			<scope>${project.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-poi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-exceptions</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>co.com.pyt</groupId>
@@ -46,24 +73,31 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<version>3.3.3</version>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>process</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.1</version>
 				<configuration>
 					<source>${project.build.compile.version}</source>
 					<target>${project.build.compile.version}</target>
-					<generatedSourcesDirectory>${project.build.directory}/generated-resources/</generatedSourcesDirectory>
+					<generatedSourcesDirectory>${project.build.directory}/src/main/java/</generatedSourcesDirectory>
 					<annotationProcessors>
 						<annotationProcessor>
 							co.com.arquitectura.proccessor.implement.ServiceProccessor
 						</annotationProcessor>
-						<annotationProcessor>
-							org.pyt.common.proccesor.DelClassProccessor
-						</annotationProcessor>
-						<annotationProcessor>
-							org.pyt.common.proccesor.UpdClassProccessor
-						</annotationProcessor>
-
 					</annotationProcessors>
 				</configuration>
 			</plugin>

@@ -30,7 +30,7 @@
 		</FlowPane>
 	</bottom>
 	<center>
-		<BorderPane prefHeight="200.0" prefWidth="200.0">
+		<BorderPane minHeight="419.0" prefHeight="424.0" prefWidth="528.0">
 			<bottom>
 				<GridPane alignment="CENTER" gridLinesVisible="false" maxWidth="-1.0" minWidth="-1.0" padding="$x1" prefWidth="-1.0"
 					BorderPane.alignment="CENTER">
@@ -53,25 +53,30 @@
 				</GridPane>
 			</bottom>
 			<center>
-				<TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity"
+				<TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
 					minWidth="-Infinity" onMouseClicked="#clickTable" prefWidth="353.0" tableMenuButtonVisible="false" BorderPane.alignment="CENTER">
 					<columns>
-						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="349.0" text="Configuracion">
+						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="203.0" text="Configuracion">
 							<cellValueFactory>
 								<PropertyValueFactory property="configuracion" />
 							</cellValueFactory>
 						</TableColumn>
+						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="287.0" text="Descripción">
+							<cellValueFactory>
+								<PropertyValueFactory property="descripcion" />
+							</cellValueFactory>
+						</TableColumn>
 					</columns>
 					<BorderPane.margin>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+						<Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
 					</BorderPane.margin>
 				</TableView>
 			</center>
 		</BorderPane>
 	</center>
 	<top>
-		<GridPane cache="false" depthTest="INHERIT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-			minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefWidth="508.0" BorderPane.alignment="CENTER">
+		<GridPane cache="false" depthTest="INHERIT" hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+			minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefHeight="146.0" prefWidth="508.0" vgap="5.0" BorderPane.alignment="CENTER">
 			<children>
 				<Label alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="121.0" text="Configuración" textAlignment="LEFT" wrapText="true"
 					GridPane.rowIndex="1">
@@ -79,9 +84,10 @@
 						<Insets bottom="5.0" top="5.0" />
 					</GridPane.margin>
 				</Label>
-				<TextField fx:id="configuracion" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+				<TextField fx:id="configuracion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0"
+					GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
 					<GridPane.margin>
-						<Insets bottom="5.0" top="5.0" />
+						<Insets />
 					</GridPane.margin>
 				</TextField>
 				<Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
@@ -90,11 +96,18 @@
 						<Font name="System Bold Italic" size="18.0" />
 					</font>
 				</Label>
-				<Button mnemonicParsing="false" onAction="#search" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="2">
+				<Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Descripción" GridPane.columnIndex="0"
+					GridPane.rowIndex="2" />
+				<TextField fx:id="descripcion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0"
+					GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="1" />
+				<Button alignment="CENTER_RIGHT" contentDisplay="LEFT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false"
+					onAction="#search" text="Buscar" GridPane.columnIndex="1" GridPane.rowIndex="3">
 					<GridPane.margin>
-						<Insets bottom="5.0" left="10.0" top="5.0" />
+						<Insets left="10.0" />
 					</GridPane.margin>
 				</Button>
+				<Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#limpiar" text="Limpiar" GridPane.columnIndex="2"
+					GridPane.rowIndex="3" />
 			</children>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="135.0" />
@@ -103,6 +116,7 @@
 				<ColumnConstraints maxWidth="0.0" prefWidth="0.0" />
 			</columnConstraints>
 			<rowConstraints>
+				<RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 				<RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 				<RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 				<RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

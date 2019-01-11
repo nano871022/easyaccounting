@@ -8,7 +8,6 @@ import org.pyt.app.beans.abstracts.AListBasicBean;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
@@ -17,6 +16,7 @@ import org.pyt.common.exceptions.ParametroException;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;

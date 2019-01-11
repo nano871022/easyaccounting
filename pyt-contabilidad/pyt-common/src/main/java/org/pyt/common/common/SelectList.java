@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.reflection.ReflectionUtils;
 
 import javafx.collections.ObservableList;
@@ -165,19 +165,19 @@ public final class SelectList {
 	/**
 	 * Se encarga de buscar dentro de una lista el valor seleccionado en choiceBox
 	 * 
-	 * @param choiceBox
+	 * @param selects
 	 *            {@link ChoiceBox}
-	 * @param lista
+	 * @param list
 	 *            {@link List}
 	 * @param nombreCampoDto
 	 *            {@link String} nombre del campo en la lista a comparra
 	 * @return {@link Object} objeto de la lista resultante
 	 */
-	public final static <S extends Object, T extends ADto> T get(ChoiceBox<S> choiceBox, List<T> lista,
+	public final static <S extends Object, T extends ADto> T get(ChoiceBox<S> selects, List<T> list,
 			String nombreCampoDto) {
 		try {
-			for (T dto : lista) {
-				if (choiceBox.getValue() == dto.get(nombreCampoDto)) {
+			for (T dto : list) {
+				if (selects.getValue() == dto.get(nombreCampoDto)) {
 					return dto;
 				}
 			}

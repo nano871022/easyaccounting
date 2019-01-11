@@ -1,8 +1,5 @@
 package com.pyt.service.implement;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.UsuarioDTO;
-import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.MarcadorServicioException;
+import org.pyt.common.exceptions.ProccesConfigServiceException;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.poi.docs.Bookmark;
 import org.pyt.common.poi.docs.TableBookmark;
@@ -26,9 +23,7 @@ import com.pyt.service.dto.MarcadorDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
-
-import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
-import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
+import com.pyt.service.proccess.ProccesConfigService;
 
 public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcadorServicio {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
@@ -392,54 +387,59 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	public <T extends ADto, D extends ADto, S extends Object, L extends Object, N extends Object, K extends Services> N generar(
 			String nombreConfiguracion, String servicio, Map<String, Object> busqueda)
 			throws MarcadorServicioException {
-		Set<String> set = busqueda.keySet();
-		T dto = null;
-		for (String campo : set) {
-			if (dto == null) {
-				dto = getDTOService(servicio, campo);
-				if (dto != null) {
-					try {
-						String[] split = campo.split(ConfigServiceConstant.SEP_2_DOTS);
-						dto.set(split[1], busqueda.get(campo));
-					} catch (Exception e) {
-						throw new MarcadorServicioException(e);
+		try {
+			ProccesConfigService proccess = new ProccesConfigService();
+			Set<String> set = busqueda.keySet();
+			T dto = null;
+			for (String campo : set) {
+				if (dto == null) {
+					dto = proccess.getDTOService(servicio, campo);
+					if (dto != null) {
+						try {
+							String[] split = campo.split(ConfigServiceConstant.SEP_2_DOTS);
+							dto.set(split[1], busqueda.get(campo));
+						} catch (Exception e) {
+							throw new MarcadorServicioException(e);
+						}
+					} else {
+						return null;
 					}
-				}else {
+				}
+			}
+			Map<String, String> mapa = new HashMap<String, String>();
+			List<MarcadorServicioDTO> marcadores = getMarcadorServicio(nombreConfiguracion);
+			for (MarcadorServicioDTO marcador : marcadores) {
+				if (servicio.contains(marcador.getServicio())) {
+					mapa.put(marcador.getNombreCampo(), marcador.getMarcador());
+				}
+			}
+			S service = proccess.getService(servicio);
+			K servic = (K) service;
+			servic.load();
+			L resultado = proccess.getResultService(service, proccess.getMetodo(servicio).getName(), dto);
+
+			if (resultado instanceof List) {
+				List<D> lista = (List<D>) resultado;
+				if (lista != null && lista.size() > 0) {
+					TableBookmark tbm = new TableBookmark();
+					for (D d : lista) {
+						Bookmark bookmark = getAsociaciones(d, mapa);
+						if (bookmark != null) {
+							tbm.add(bookmark);
+						}
+					}
+					if (tbm.getSize() > 0) {
+						return (N) tbm;
+					}
 					return null;
 				}
+			} else if (resultado instanceof ADto) {
+				D d = (D) resultado;
+				Bookmark bookmark = getAsociaciones(d, mapa);
+				return (N) bookmark;
 			}
-		}
-		Map<String, String> mapa = new HashMap<String, String>();
-		List<MarcadorServicioDTO> marcadores = getMarcadorServicio(nombreConfiguracion);
-		for (MarcadorServicioDTO marcador : marcadores) {
-			if (servicio.contains(marcador.getServicio())) {
-				mapa.put(marcador.getNombreCampo(), marcador.getMarcador());
-			}
-		}
-		S service = getService(servicio);
-		K servic = (K) service;
-		servic.load();
-		L resultado = getResultService(service, getMetodo(servicio), dto);
-
-		if (resultado instanceof List) {
-			List<D> lista = (List<D>) resultado;
-			if (lista != null && lista.size() > 0) {
-				TableBookmark tbm = new TableBookmark();
-				for (D d : lista) {
-					Bookmark bookmark = getAsociaciones(d, mapa);
-					if (bookmark != null) {
-						tbm.add(bookmark);
-					}
-				}
-				if (tbm.getSize() > 0) {
-					return (N) tbm;
-				}
-				return null;
-			}
-		} else if (resultado instanceof ADto) {
-			D d = (D) resultado;
-			Bookmark bookmark = getAsociaciones(d, mapa);
-			return (N) bookmark;
+		} catch (ProccesConfigServiceException e) {
+			
 		}
 		return null;
 	}
@@ -461,7 +461,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 			Set<String> set = mapa.keySet();
 			Class<T> clase = (Class<T>) dto.getClass();
 			for (String campo : set) {
-				String[] split = campo.split("::");
+				String[] split = campo.split(ConfigServiceConstant.SEP_2_DOTS);
 				if (clase.getSimpleName().contains(split[0])) {
 					if (book == null) {
 						book = new Bookmark();
@@ -474,151 +474,4 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 			throw new MarcadorServicioException(e);
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	private <T extends Object, L extends Object, S extends ADto> T getResultService(L service, String metodo, S dto)
-			throws MarcadorServicioException {
-		try {
-			Method method = getMethod((Class<Services>) service.getClass(), dto, metodo);
-			if (method != null) {
-				return (T) method.invoke(service, dto);
-			}
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new MarcadorServicioException(e);
-		}
-		return null;
-	}
-
-	/**
-	 * Se encarga de obtener el metodo con el cual se necesita, para invoicar el
-	 * servicio correctamente.
-	 * 
-	 * @param service
-	 *            {@link Services} extends
-	 * @param dto
-	 *            {@link ADto} extends
-	 * @param name
-	 *            {@link String}
-	 * @return {@link Method}
-	 * @throws {@link
-	 *             MarcadorServicioException}
-	 */
-	@SuppressWarnings("unchecked")
-	private <T extends Services, L extends ADto, A extends ADto> Method getMethod(Class<T> service, L dto, String name)
-			throws MarcadorServicioException {
-		Method[] metodos = service.getDeclaredMethods();
-		for (Method metodo : metodos) {
-			if (metodo.getName().contains(name)) {
-				Class<A>[] parametros = (Class<A>[]) metodo.getParameterTypes();
-				if (parametros.length == 1) {
-					for (Class<A> parametro : parametros) {
-						if (parametro == dto.getClass()) {
-							return metodo;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
-	private String getMetodo(String servicio) throws MarcadorServicioException {
-		AbstractListFromProccess<ServicePOJO> listServices;
-		try {
-			listServices = (AbstractListFromProccess) this.getClass().forName(AppConstants.PATH_LIST_SERVICE)
-					.getConstructor().newInstance();
-			for (ServicePOJO service : listServices.getList()) {
-				if ((service.getClasss().getSimpleName() + ":" + service.getAlias()).contains(servicio)) {
-					return service.getName();
-				}
-			}
-			return null;
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-			throw new MarcadorServicioException(e);
-		}
-	}
-
-	@SuppressWarnings({ "static-access", "unchecked", "rawtypes" })
-	private <T extends Object> T getService(String servicio) throws MarcadorServicioException {
-		try {
-			AbstractListFromProccess<ServicePOJO> listServices = (AbstractListFromProccess) this.getClass()
-					.forName(AppConstants.PATH_LIST_SERVICE).getConstructor().newInstance();
-			for (ServicePOJO service : listServices.getList()) {
-				if ((service.getClasss().getSimpleName() + ":" + service.getAlias()).contains(servicio)) {
-					return (T) service.getClasss().getConstructor().newInstance();
-				}
-			}
-			return null;
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw new MarcadorServicioException(e);
-		} catch (ClassNotFoundException e) {
-			throw new MarcadorServicioException(e);
-		}
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
-	private <T extends Object, S extends ADto> S getDTOService(String servicio, String campo)
-			throws MarcadorServicioException {
-		try {
-			AbstractListFromProccess<ServicePOJO> listServices = (AbstractListFromProccess) this.getClass()
-					.forName(AppConstants.PATH_LIST_SERVICE).getConstructor().newInstance();
-			String[] split = campo.split("::");
-			Boolean valid = true;
-			for (ServicePOJO service : listServices.getList()) {
-				if ((service.getClasss().getSimpleName() + ":" + service.getAlias()).contains(servicio)) {
-					Method[] metodos = service.getClasss().getDeclaredMethods();
-					for (Method metodo : metodos) {
-						if (metodo.getName().contains(service.getName())) {
-							Parameter[] parametros = metodo.getParameters();
-							for (String parametro : service.getParameter()) {
-								for (Parameter parameter : parametros) {
-									System.out.println(parameter.getParameterizedType().getTypeName() + " - "
-											+ (parametro) + " - " + split[0]);
-									valid &= parameter.getParameterizedType().getTypeName().contains(parametro)
-											&& parametro.contains(split[0]);
-								}
-							}
-							if (valid) {
-								for (Parameter parametro : parametros) {
-									System.out.println(
-											parametro.getParameterizedType().getTypeName() + " - " + (split[0]));
-									if (parametro.getParameterizedType().getTypeName().contains(split[0])) {
-										Object obj = Class.forName(parametro.getParameterizedType().getTypeName())
-												.getConstructor().newInstance();
-										if (obj instanceof ADto) {
-											S ret = (S) obj;
-											return ret;
-										}
-										return (S) obj;
-									}
-								}
-							} else {
-								valid = true;
-							}
-
-						}
-					}
-				}
-			}
-		} catch (InstantiationException e) {
-			throw new MarcadorServicioException(e);
-		} catch (IllegalAccessException e) {
-			throw new MarcadorServicioException(e);
-		} catch (IllegalArgumentException e) {
-			throw new MarcadorServicioException(e);
-		} catch (InvocationTargetException e) {
-			throw new MarcadorServicioException(e);
-		} catch (NoSuchMethodException e) {
-			throw new MarcadorServicioException(e);
-		} catch (SecurityException e) {
-			throw new MarcadorServicioException(e);
-		} catch (ClassNotFoundException e) {
-			throw new MarcadorServicioException(e);
-		}
-		return null;
-	}
-
 }

@@ -10,18 +10,21 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="462.0" prefWidth="578.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.config.ConfigServiceBean">
+<BorderPane prefHeight="642.0" prefWidth="578.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.config.ConfigServiceBean">
   <bottom>
-    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="40.0" BorderPane.alignment="CENTER">
+    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="578.0" BorderPane.alignment="CENTER">
       <children>
-        <Button fx:id="btnAnterior" mnemonicParsing="false" onAction="#anterior" text="Anterior">
+        <Button fx:id="btnAnterior" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#anterior" text="Anterior">
           <HBox.margin>
             <Insets right="10.0" fx:id="x1" />
           </HBox.margin>
         </Button>
-        <Button fx:id="btnSiguiente" alignment="CENTER" mnemonicParsing="false" onAction="#siguiente" text="Siguiente" HBox.margin="$x1" />
-        <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cancelar" text="Cancelar" />
+        <Button fx:id="btnSiguiente" alignment="CENTER" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#siguiente" text="Siguiente" HBox.margin="$x1" />
+        <Button fx:id="btnCancelar" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancelar" text="Cancelar" />
       </children>
+      <padding>
+        <Insets bottom="5.0" />
+      </padding>
     </HBox>
   </bottom>
   <center>
@@ -40,41 +43,71 @@
                     </HBox>
                   </children>
                 </VBox>
-                <GridPane hgap="5.0" prefHeight="311.0" vgap="5.0" AnchorPane.bottomAnchor="38.5" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="7.5">
+                <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="364.5" prefWidth="566.0" vgap="5.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="7.5">
                   <children>
-                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <TextField fx:id="nameMarcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addMarcador" onMouseClicked="#addMarcador" text="Agregar" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                    <TableView fx:id="lstMarcadores" maxHeight="1.7976931348623157E308" maxWidth="374.0" onMouseClicked="#marcadorSelect" prefHeight="223.0" prefWidth="374.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                    <TableView fx:id="lstMarcadores" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#marcadorSelect" prefHeight="187.0" prefWidth="468.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                       <columns>
-                        <TableColumn maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="247.0" text="Marcador" fx:id="colMarcador" />
+                      	<TableColumn minWidth="0.0" prefWidth="80.0" text="Orden" fx:id="orden" />
+                        <TableColumn maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="426.0" text="Marcador" fx:id="colMarcador" />
                         <TableColumn prefWidth="120.0" text="Entrada/Salida" fx:id="colInOut" />
                       </columns>
+                      <GridPane.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                      </GridPane.margin>
                     </TableView>
-                    <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="479.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                    <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="479.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                       <children>
-                        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#delMarcador" text="Eliminar" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addMarcador" onMouseClicked="#addMarcador" text="Agregar">
+                          <HBox.margin>
+                            <Insets right="5.0" />
+                          </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnEliminar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#delMarcador" text="Eliminar">
+                          <HBox.margin>
+                            <Insets left="5.0" />
+                          </HBox.margin>
+                        </Button>
                       </children>
                     </HBox>
-                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Nombre Archivo" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <TextField fx:id="nameFiler" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="0" />
-                    <HBox fx:id="paginatorMarcadores" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                    <RadioButton fx:id="rbIn" mnemonicParsing="false" text="Entrada" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                    <RadioButton fx:id="rbOut" mnemonicParsing="false" text="Salida" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                    <Label fx:id="totalMarcador" alignment="CENTER_RIGHT" contentDisplay="LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Total: 0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                      <GridPane.margin>
+                        <Insets right="25.0" />
+                      </GridPane.margin>
+                    </Label>
+                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField fx:id="nameMarcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                      <GridPane.margin>
+                        <Insets right="15.0" />
+                      </GridPane.margin>
+                    </TextField>
+                    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                      <children>
+                        <RadioButton fx:id="rbIn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Entrada" />
+                        <RadioButton fx:id="rbOut" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Salida" />
+                      </children>
+                    </HBox>
+                    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                      <children>
+                        <RadioButton fx:id="rbReportes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Reportes" />
+                        <RadioButton fx:id="rbCargues" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Cargues" />
+                      </children>
+                    </HBox>
+                    <HBox id="paginatorMarcador" fx:id="paginatorMarcadores" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
                   </children>
                   <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="108.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="270.0" minWidth="10.0" prefWidth="201.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="76.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="76.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="77.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="93.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="270.0" minWidth="10.0" prefWidth="74.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="199.0" minWidth="10.0" prefWidth="99.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="277.0" minWidth="10.0" prefWidth="277.0" />
                   </columnConstraints>
                   <rowConstraints>
-                    <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="228.0" minHeight="10.0" prefHeight="223.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="342.0" minHeight="10.0" prefHeight="342.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                 </GridPane>
               </children>
@@ -118,15 +151,20 @@
                     </TableView>
                     <HBox alignment="CENTER" prefHeight="39.0" prefWidth="396.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6">
                       <children>
-                        <Button fx:id="btnDelServicio" contentDisplay="CENTER" mnemonicParsing="false" onAction="#delServicioCampo" text="Eliminar" />
+                        <Button fx:id="btnDelServicio" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#delServicioCampo" text="Eliminar" />
                       </children>
                     </HBox>
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Columna" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                    <TextField fx:id="columna" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                    <HBox fx:id="paginatorServicios" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                    <TextField fx:id="columna" maxHeight="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                    <ChoiceBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" fx:id="lstMarcadorIn"/>
+                    <ChoiceBox fx:id="lstMarcadorIn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addServicioCampo" text="Agregar" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                    <Label fx:id="totalServicio" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Total: 0" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                      <GridPane.margin>
+                        <Insets right="10.0" fx:id="x1" />
+                      </GridPane.margin>
+                    </Label>
+                    <HBox fx:id="paginatorServicios" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
                   </children>
                   <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="205.0" minWidth="10.0" prefWidth="106.0" />
@@ -135,13 +173,13 @@
                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="279.0" minWidth="10.0" prefWidth="99.0" />
                   </columnConstraints>
                   <rowConstraints>
-                    <RowConstraints maxHeight="105.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="187.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="189.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="191.0" minHeight="10.0" prefHeight="22.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="240.0" minHeight="10.0" prefHeight="221.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="107.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="107.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="105.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="187.0" minHeight="10.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="189.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="191.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="334.0" minHeight="10.0" prefHeight="329.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="107.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="107.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                 </GridPane>
               </children>
@@ -150,9 +188,9 @@
         </Tab>
         <Tab fx:id="tabAsociaciones" text="Asociar">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <AnchorPane id="Content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <GridPane hgap="5.0" vgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Servicio" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                     <ChoiceBox fx:id="servicio" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="0" />
@@ -161,14 +199,14 @@
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                     <ChoiceBox fx:id="marcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#agregar" text="Agregar" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                    <TableView fx:id="lstMarcadoresCampos" onMouseClicked="#servicioMarcador" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="2">
+                    <TableView fx:id="lstMarcadoresCampos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#servicioMarcador" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="2">
                       <columns>
                         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="236.0" text="Servicio">
                           <cellValueFactory>
                             <PropertyValueFactory property="servicio" />
                           </cellValueFactory>
                         </TableColumn>
-                        <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="189.0" text="Nombre Campo">
+                        <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="225.0" text="Nombre Campo">
                           <cellValueFactory>
                             <PropertyValueFactory property="nombreCampo" />
                           </cellValueFactory>
@@ -180,17 +218,22 @@
                         </TableColumn>
                       </columns>
                     </TableView>
-                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                       <children>
-                        <Button fx:id="btnSaveMarcador" contentDisplay="CENTER" mnemonicParsing="false" onAction="#guardar" text="Guardar">
+                        <Button fx:id="btnSaveMarcador" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#guardar" text="Guardar">
                           <HBox.margin>
                             <Insets right="10.0" fx:id="x1" />
                           </HBox.margin>
                         </Button>
-                        <Button fx:id="btnDelMarcador" contentDisplay="CENTER" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
+                        <Button fx:id="btnDelMarcador" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
                       </children>
                     </HBox>
-                    <HBox fx:id="paginatorAsociar" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                    <HBox fx:id="paginatorAsociar" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                    <Label fx:id="totalAsociar" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Total: 0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                      <GridPane.margin>
+                        <Insets right="15.0" />
+                      </GridPane.margin>
+                    </Label>
                   </children>
                   <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="10.0" prefWidth="64.0" />
@@ -201,10 +244,11 @@
                   </columnConstraints>
                   <rowConstraints>
                     <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="32.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="91.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="248.0" minHeight="10.0" prefHeight="248.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="91.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="375.0" minHeight="10.0" prefHeight="373.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="98.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                 </GridPane>
               </children>
@@ -218,31 +262,43 @@
           <content>
             <GridPane hgap="5.0" prefWidth="578.0001220703125" vgap="5.0">
               <children>
-                <Label id="Configuración" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Configuración" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="0">
+                <Label id="Configuración" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Configuración" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="0">
                   <font>
                     <Font size="15.0" />
                   </font>
                 </Label>
+                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#generar" text="Generar" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveAll" text="Guardar Todo" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label fx:id="lNameFiler" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Nombre Archivo Entrada" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                 <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="64.0" prefWidth="210.0" text="Nombre Configuración" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <TextField fx:id="configuracion" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="398.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
-                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveAll" text="Guardar Todo" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#generar" text="Generar" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Label fx:id="lNameFilerOut" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Nombre Archivo Salida" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <TextField fx:id="nameFilerOut" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="398.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4" />
+                <TextField fx:id="configuracion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="398.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                <TextField fx:id="nameFiler" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
+                <Label alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Descripción" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                  <GridPane.margin>
+                    <Insets top="5.0" />
+                  </GridPane.margin>
+                </Label>
+                <TextArea fx:id="descripcion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2" />
               </children>
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="10.0" prefWidth="164.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="126.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="144.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="144.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="174.0" minWidth="10.0" prefWidth="168.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="121.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="118.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="136.0" />
               </columnConstraints>
               <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
               </padding>
               <rowConstraints>
-                <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="86.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="101.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="118.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="141.0" minHeight="10.0" prefHeight="136.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="95.0" minHeight="10.0" prefHeight="87.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="86.0" minHeight="0.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="131.0" minHeight="10.0" prefHeight="129.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="107.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="101.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="119.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="201.0" minHeight="10.0" prefHeight="187.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
           </content>

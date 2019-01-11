@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.app.components.PopupBean;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.DocumentosException;
@@ -16,6 +15,7 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;

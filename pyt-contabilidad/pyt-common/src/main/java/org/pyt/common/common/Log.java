@@ -1,5 +1,9 @@
 package org.pyt.common.common;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -67,7 +71,8 @@ public final class Log {
 	 *            {@link Exception}
 	 */
 	public final  <T extends Exception> void logger( T error) {
-		if (error.getCause() instanceof NullPointerException) {
+		logWriter.printStrace(error);
+		if (error.getCause() instanceof NullPointerException || error instanceof NullPointerException) {
 			msnBuild("Null pointer exception", ERROR);
 		} else {
 			msnBuild(error.getMessage(), ERROR);

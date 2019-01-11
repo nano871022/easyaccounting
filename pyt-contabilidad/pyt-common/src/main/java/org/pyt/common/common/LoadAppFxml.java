@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
@@ -31,9 +31,6 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	private P lastLayout;
 	private C lastContro;
 	private static Log logger = Log.Log(LoadAppFxml.class);
-
-	private LoadAppFxml() {
-	}
 
 	/**
 	 * Se encarga de contruir el objeto loadappfxml como singleton
@@ -250,6 +247,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		try {
 			T lBean = bean.getDeclaredConstructor().newInstance();
 			file = lBean.pathFileFxml();
+			if(file == null) {
+				throw new LoadAppFxmlException("El archivo se encuentra en vacio.");
+			}
 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
 				file = AppConstants.SLASH + file;
 			}
@@ -262,7 +262,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (IllegalArgumentException e) {
 			throw new LoadAppFxmlException("Argumento ilegal.", e);
 		} catch (InvocationTargetException e) {
-			throw new LoadAppFxmlException("Problema en el objetivo de invocacion.", e);
+			throw new LoadAppFxmlException("Problema en el "+bean.getCanonicalName()+" de invocacion.", e);
 		} catch (NoSuchMethodException e) {
 			throw new LoadAppFxmlException("No se encontro el metodo.", e);
 		} catch (SecurityException e) {
@@ -298,7 +298,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (IllegalStateException e) {
 			throw new LoadAppFxmlException("Problema en cargar load", e);
 		} catch (LoadException e) {
-			logger.error("Archivo no puede ser cargado. ");
+			e.printStackTrace();
 			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
 		} catch (IOException e) {
 			throw new LoadAppFxmlException("Problema en I/O.", e);

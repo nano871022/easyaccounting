@@ -18,5 +18,10 @@
 			<version>${project.version}</version>
 			<scope>${project.scope}</scope>
 		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-exceptions</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

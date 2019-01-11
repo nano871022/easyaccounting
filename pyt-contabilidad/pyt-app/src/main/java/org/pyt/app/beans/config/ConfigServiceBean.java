@@ -1,9 +1,5 @@
 package org.pyt.app.beans.config;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,16 +7,17 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.LoadAppFxml;
+import org.pyt.common.common.SearchService;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
+import org.pyt.common.exceptions.SearchServicesException;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -34,17 +31,22 @@ import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.arquitectura.annotation.proccessor.Services;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -82,13 +84,19 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@FXML
 	private TextField nameFiler;
 	@FXML
+	private TextField nameFilerOut;
+	@FXML
 	private TextField columna;
 	@FXML
 	private TextField configuracion;
 	@FXML
+	private TextArea descripcion;
+	@FXML
 	private TableView<MarcadorDTO> lstMarcadores;
 	@FXML
 	private TableColumn<MarcadorDTO, String> colMarcador;
+	@FXML
+	private TableColumn<MarcadorDTO, Integer> orden;
 	@FXML
 	private TableView<ServicioCampoBusquedaDTO> lstServicioCampo;
 	@FXML
@@ -115,13 +123,23 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private HBox paginatorAsociar;
 	@FXML
 	private TableColumn<MarcadorDTO, String> colInOut;
+	@FXML
+	private Label totalMarcador;
+	@FXML
+	private Label totalAsociar;
+	@FXML
+	private Label totalServicio;
+	@FXML
+	private Label lNameFiler;
+	@FXML
+	private Label lNameFilerOut;
 	private ToggleGroup group;
+	private ToggleGroup group2;
 	private List<MarcadorDTO> marcadores;
 	private List<String> servicios;
 	private List<String> campos;
 	private List<ServicioCampoBusquedaDTO> serviciosCampoBusqueda;
 	private List<MarcadorServicioDTO> marcadoresServicios;
-	private List<ServicePOJO> serviciosPOJO;
 	private Integer posicion;
 	private Integer max;
 
@@ -136,6 +154,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private RadioButton rbIn;
 	@FXML
 	private RadioButton rbOut;
+	@FXML
+	private RadioButton rbCargues;
+	@FXML
+	private RadioButton rbReportes;
 
 	@FXML
 	public void initialize() {
@@ -148,15 +170,39 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		posicion = ConfigServiceConstant.TAB_MARCADOR;
 		max = ConfigServiceConstant.TAB_CONFIGURACION;
 		group = new ToggleGroup();
+		group2 = new ToggleGroup();
 		rbIn.setToggleGroup(group);
 		rbOut.setToggleGroup(group);
+		rbCargues.setToggleGroup(group2);
+		rbReportes.setToggleGroup(group2);
 		rbOut.setSelected(true);
+		rbReportes.setSelected(true);
+		rbCargues.onActionProperty().set(e -> {
+			rbOut.setVisible(false);
+			rbIn.setSelected(true);
+			nameFiler.setVisible(false);
+			nameFilerOut.setVisible(false);
+			lNameFiler.setVisible(false);
+			lNameFilerOut.setVisible(false);
+		});
+		rbReportes.onActionProperty().set(e -> {
+			rbOut.setVisible(true);
+			rbOut.setSelected(true);
+			nameFiler.setVisible(true);
+			nameFilerOut.setVisible(true);
+			lNameFiler.setVisible(true);
+			lNameFilerOut.setVisible(true);
+		});
 		hiddenTabs();
 		hiddenBtns();
 		configColmn();
 		loadServices();
-		// Table.put(lstServicioCampo, serviciosCampoBusqueda);
-		columna.setText(String.valueOf(serviciosCampoBusqueda.size() + 1));
+	}
+
+	public final void load() {
+		logger.info("Nuevo config service.");
+		config = new ConfiguracionDTO();
+		dataTable();
 	}
 
 	/**
@@ -166,6 +212,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 *            {@link ConfiguracionDTO}
 	 */
 	public final void load(ConfiguracionDTO configuracion) {
+		logger.info("Load cargado");
 		try {
 			if (configuracion == null) {
 				configuracion = new ConfiguracionDTO();
@@ -176,6 +223,27 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 			if (StringUtils.isNotBlank(config.getArchivo())) {
 				this.nameFiler.setText(config.getArchivo());
+			}
+			if (StringUtils.isNotBlank(config.getArchivoSalida())) {
+				this.nameFilerOut.setText(config.getArchivoSalida());
+			}
+			if (config.getReport() == null) {
+				this.rbReportes.setSelected(true);
+			}
+			if (config.getReport() != null && config.getReport()) {
+				this.rbReportes.setSelected(true);
+			}
+			if (config.getReport() != null && !config.getReport()) {
+				this.rbCargues.setSelected(true);
+				rbOut.setVisible(false);
+				rbIn.setSelected(true);
+				nameFiler.setVisible(false);
+				nameFilerOut.setVisible(false);
+				lNameFiler.setVisible(false);
+				lNameFilerOut.setVisible(false);
+			}
+			if (StringUtils.isNotBlank(config.getDescripcion())) {
+				this.descripcion.setText(config.getDescripcion());
 			}
 			dataTable();
 		} catch (Exception e) {
@@ -221,6 +289,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				try {
 					cantidad = configMarcadorServicio.cantidadServiciosCampoBusqueda(filter.getConfiguracion());
 					cantidad += serviciosCampoBusqueda.size();
+					totalServicio.setText("Total: " + cantidad);
+					columna.setText(String.valueOf(cantidad + 1));
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -244,6 +314,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(configuracion.getText());
+				} else {
+					dto.setConfiguracion(".");
 				}
 				return dto;
 			}
@@ -257,6 +329,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				try {
 					cantidad = configMarcadorServicio.cantidadMarcadorServicio(filter.getConfiguracion());
 					cantidad += marcadoresServicios.size();
+					totalAsociar.setText("Total: " + cantidad);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -280,6 +353,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				MarcadorServicioDTO dto = new MarcadorServicioDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(configuracion.getText());
+				} else {
+					dto.setConfiguracion(".");
 				}
 				return dto;
 			}
@@ -292,6 +367,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				try {
 					cantidad = configMarcadorServicio.cantidadMarcador(filter.getConfiguracion());
 					cantidad += marcadores.size();
+					totalMarcador.setText("Total: " + cantidad);
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -315,10 +391,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				MarcadorDTO dto = new MarcadorDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(configuracion.getText());
+				} else {
+					dto.setConfiguracion(".");
 				}
 				return dto;
 			}
 		};
+
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
@@ -355,15 +434,43 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			lstServicios.getSelectionModel().selectedItemProperty()
 					.addListener((ObservableValue<? extends ServicePOJO> observable, ServicePOJO oldVal,
 							ServicePOJO newVal) -> putCamposServicio(newVal));
-			SelectList.put(lstServicios, listServices.getList());
 		} catch (Exception e) {
 			error(e);
 		}
 	}
 
+	/**
+	 * Se encarga de filtrar la lista y obtener los registros que se necesitan segun
+	 * el typo del servicio {@link Services#Type}
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	private final List<ServicePOJO> listFilter() throws Exception {
+		Services.Type type = null;
+		if (rbCargues.isSelected()) {
+			type = Services.Type.CREATE;
+		} else if (rbReportes.isSelected()) {
+			type = Services.Type.DOWNLOAD;
+		} else {
+			type = Services.Type.UPLOAD;
+		}
+		List<ServicePOJO> listOut = new ArrayList<ServicePOJO>();
+		List<ServicePOJO> list = listServices.getList();
+		for (ServicePOJO sp : list) {
+			// logger.info(type + " " + sp.getType());
+			if (sp.getType() == type) {
+				listOut.add(sp);
+			}
+		}
+		return listOut;
+	}
+
 	private void configColmn() {
 		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getMarcador()));
 		colInOut.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoInOut()));
+		orden.setCellValueFactory(e -> new SimpleIntegerProperty(e.getValue().getOrden()).asObject());
+		
 	}
 
 	private void hiddenTabs() {
@@ -383,7 +490,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private void tabView() {
 		tabMarcadores.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_MARCADOR) != 0);
 		tabServicios.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_SERVICIO_CAMPO) != 0);
-		tabAsociaciones.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) != 0);
+		if (rbReportes.isSelected())
+			tabAsociaciones.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) != 0);
 		tabConfigurar.setDisable(posicion.compareTo(ConfigServiceConstant.TAB_CONFIGURACION) != 0);
 		if (posicion.compareTo(ConfigServiceConstant.TAB_MARCADOR) == 0) {
 			tabMarcadores.getTabPane().getSelectionModel().select(tabMarcadores);
@@ -403,12 +511,17 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	/** Se encarga de configurar la carga del tab del servicio de busqueda **/
 	private void loadTabServicioBusqueda() {
-		List<MarcadorDTO> markout = new ArrayList<MarcadorDTO>();
-		for (MarcadorDTO dto : tbMarcador.getList()) {
-			if (dto.getTipoInOut().equalsIgnoreCase(ConfigServiceConstant.TYPE_IN))
-				markout.add(dto);
+		try {
+			List<MarcadorDTO> markout = new ArrayList<MarcadorDTO>();
+			for (MarcadorDTO dto : tbMarcador.getList()) {
+				if (dto.getTipoInOut().equalsIgnoreCase(ConfigServiceConstant.TYPE_IN))
+					markout.add(dto);
+			}
+			SelectList.put(lstMarcadorIn, markout, ConfigServiceConstant.MARK);
+			SelectList.put(lstServicios, listFilter());
+		} catch (Exception e) {
+			error(e);
 		}
-		SelectList.put(lstMarcadorIn, markout, ConfigServiceConstant.MARK);
 	}
 
 	/** Se encarga de configurar la carga del tab de asociacion **/
@@ -430,78 +543,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				String oldval, String newVal) -> putCamposServicio(newVal));
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T extends Object, S extends ADto> void putCamposServicio(String service) {
 		try {
 			if (service.contentEquals(AppConstants.SELECCIONE))
 				return;
-			Class[] parametros = null;
 			campos.clear();
-			for (ServicePOJO servicio : listServices.getList()) {
-				if ((servicio.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + servicio.getAlias())
-						.contentEquals(service)) {
-					try {
-						parametros = new Class[servicio.getParameter().length];
-						int i = 0;
-						for (String parametro : servicio.getParameter()) {
-							parametros[i] = Class.forName(parametro);
-							i++;
-						}
-						Method metodo = servicio.getClasss().getDeclaredMethod(servicio.getName(), parametros);
-						Class retorno = metodo.getReturnType();
-
-						if (retorno == List.class) {
-
-							Type tipoRetorno = metodo.getGenericReturnType();
-							if (tipoRetorno instanceof ParameterizedType) {
-								ParameterizedType type = (ParameterizedType) tipoRetorno;
-								Type[] typeArguments = type.getActualTypeArguments();
-								for (Type typeArgument : typeArguments) {
-									Class clase = (Class) typeArgument;
-									T obj = (T) clase.getDeclaredConstructor().newInstance();
-									if (obj instanceof ADto) {
-										List<String> campos = (List<String>) clase
-												.getMethod(AppConstants.GET_NAME_FIELDS)
-												.invoke(clase.getConstructor().newInstance());
-										for (String campo : campos) {
-											this.campos.add(clase.getSimpleName() + "::" + campo);
-										}
-									} else {
-										campos.add(retorno.getSimpleName());
-									}
-								}
-							}
-
-						} else {
-							T obj = (T) retorno.getDeclaredConstructor().newInstance();
-							if (obj instanceof ADto) {
-								List<String> campos = (List<String>) retorno.getMethod(AppConstants.GET_NAME_FIELDS)
-										.invoke(retorno.getConstructor().newInstance());
-								for (String campo : campos) {
-									this.campos.add(retorno.getSimpleName() + ConfigServiceConstant.SEP_2_DOTS + campo);
-								}
-							} else {
-								campos.add(retorno.getSimpleName());
-							}
-						}
-					} catch (ClassNotFoundException e) {
-						throw new Exception(e);
-					} catch (NoSuchMethodException e) {
-						throw new Exception(e);
-					} catch (SecurityException e) {
-						throw new Exception(e);
-					} catch (InstantiationException e) {
-						throw new Exception(e);
-					} catch (IllegalAccessException e) {
-						throw new Exception(e);
-					} catch (IllegalArgumentException e) {
-						throw new Exception(e);
-					} catch (InvocationTargetException e) {
-						throw new Exception(e);
-					}
-					break;
-				}
-			}
+			campos.addAll(SearchService.getInstance().getCampos(service));
 			SelectList.put(campo, campos);
 		} catch (Exception e) {
 			mensajeIzquierdo(e);
@@ -515,6 +562,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (StringUtils.isNotBlank(marcador)) {
 			MarcadorDTO marca = new MarcadorDTO();
 			marca.setMarcador(marcador);
+			marca.setOrden(tbMarcador.getTotal()+1);
 			RadioButton toggle = (RadioButton) group.getSelectedToggle();
 			marca.setTipoInOut(toggle.getText());
 			marcadores.add(marca);
@@ -607,70 +655,16 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		marcador.getSelectionModel().selectFirst();
 		tbMarcadorSerivicio.search();
 	}
-
 	/**
-	 * Se encarga de obtener el metodo del servicio segun los datos suministrados
-	 * 
-	 * @param cservice
-	 *            {@link Class}
-	 * @param nombre
-	 *            {@link String}
-	 * @param parametros
-	 *            {@link String}[]
-	 * @return {@link Method}
+	 * Se encarga de poner los campos del servicio usado.
+	 * @param service {@link ServicePOJO}
 	 */
-	@SuppressWarnings("unused")
-	private <S extends Object> Method getMethod(Class<S> cservice, String nombre, String[] parametros) {
-		Boolean valid = true;
-		if (cservice != null) {
-			List<String> listaCampos = new ArrayList<String>();
-			Method[] metodos = cservice.getDeclaredMethods();
-			for (Method metodo : metodos) {
-				if (metodo.getName().equalsIgnoreCase(nombre)) {
-					Class<?>[] clases = metodo.getParameterTypes();
-					for (Class<?> clase : clases) {
-						for (String parametro : parametros) {
-							if (clase.getCanonicalName().equalsIgnoreCase(parametro)) {
-								valid &= true;
-							} else {
-								valid &= false;
-							}
-						}
-					}
-					if (valid) {
-						return metodo;
-					} else {
-						valid = true;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	@SuppressWarnings({ "unchecked", })
 	public <T extends Object> void putCamposServicio(ServicePOJO service) {
 		try {
 			List<String> listaCampos = new ArrayList<String>();
-			Method metodoUso = getMethod(service.getClasss(), service.getName(), service.getParameter());
-			if (metodoUso != null) {
-				Class<?>[] parametros = metodoUso.getParameterTypes();
-				for (Class<?> parametro : parametros) {
-					if (parametro.getConstructor().newInstance() instanceof ADto) {
-						List<String> campos = (List<String>) parametro.getMethod(AppConstants.GET_NAME_FIELDS)
-								.invoke(parametro.getConstructor().newInstance());
-						for (String campo : campos) {
-							listaCampos.add(parametro.getSimpleName() + ConfigServiceConstant.SEP_2_DOTS + campo);
-						}
-					} else {
-						listaCampos.add(parametro.getSimpleName());
-					}
-
-				}
-			}
+			listaCampos = SearchService.getInstance().putCamposServicios(service);
 			SelectList.put(lstCampos, listaCampos);
-		} catch (SecurityException | ClassNotFoundException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+		} catch (SecurityException | SearchServicesException | IllegalArgumentException e) {
 			error(e);
 		}
 	}
@@ -685,9 +679,21 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 			if (StringUtils.isNotBlank(nameFiler.getText())) {
 				config.setArchivo(nameFiler.getText());
-			} else {
+			} else if (rbReportes.isSelected()) {
 				this.notificar("No se encontró el nombre del archivo.");
 				return;
+			}
+			if (StringUtils.isNotBlank(nameFilerOut.getText())) {
+				config.setArchivoSalida(nameFilerOut.getText());
+			}
+			if (StringUtils.isNotBlank(this.descripcion.getText())) {
+				config.setDescripcion(descripcion.getText());
+			}
+			if (rbReportes.isSelected()) {
+				config.setReport(true);
+			}
+			if (rbCargues.isSelected()) {
+				config.setReport(false);
 			}
 			for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
 				servicio.setConfiguracion(config.getConfiguracion());
@@ -727,8 +733,30 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/**
 	 * Se encarga de generar la consulta de la factura
 	 */
-	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void generar() {
+		if (rbCargues.isSelected()) {
+			loaders();
+		} else if (rbReportes.isSelected()) {
+			reports();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public final <T extends Object, M extends Object> void loaders() {
+		LoaderServiceBean lsb;
+		try {
+			lsb = LoadAppFxml.loadBeanFxml(new Stage(), LoaderServiceBean.class);
+			lsb.load(config.getConfiguracion());
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
+
+	/**
+	 * Se encarga de generar los repores
+	 */
+	@SuppressWarnings("unchecked")
+	public final <T extends Object, M extends Object> void reports() {
 		GenConfigBean gcb;
 		try {
 			gcb = LoadAppFxml.loadBeanFxml(new Stage(), GenConfigBean.class);
@@ -768,7 +796,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
-	private void mostratBotonesMov() {
+	private void mostrarBotonesMov() {
 		btnSiguiente.setVisible(posicion < max);
 		btnAnterior.setVisible(posicion > ConfigServiceConstant.TAB_MARCADOR);
 	}
@@ -777,16 +805,26 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (posicion > ConfigServiceConstant.TAB_MARCADOR) {
 			posicion--;
 		}
+		if (!rbReportes.isSelected()) {
+			if (posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) == 0) {
+				posicion--;
+			}
+		}
 		tabView();
-		mostratBotonesMov();
+		mostrarBotonesMov();
 	}
 
 	public void siguiente() {
 		if (posicion < max) {
 			posicion++;
 		}
+		if (!rbReportes.isSelected()) {
+			if (posicion.compareTo(ConfigServiceConstant.TAB_ASOCIAR_MARCADOR) == 0) {
+				posicion++;
+			}
+		}
 		tabView();
-		mostratBotonesMov();
+		mostrarBotonesMov();
 	}
 
 	public void cancelar() {
@@ -797,6 +835,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		marcadores.clear();
 		servicios.clear();
 		campos.clear();
+		this.config = null;
 		serviciosCampoBusqueda.clear();
 		marcadoresServicios.clear();
 		tabView();

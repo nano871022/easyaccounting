@@ -11,6 +11,7 @@ import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
 
 
+
 /**
  * Clase abstracta que se encarga de tener funcionalidades para usar el entre
  * escritura y lectura de archivos binarios
@@ -20,7 +21,7 @@ import org.pyt.common.common.Log;
  */
 public abstract class ABin {
 	private String path_split = "/";
-	private final static String file_properties = "properties/data.properties";
+	private final static String file_properties = "./properties/data.properties";
 	private final static String default_file_data = "./systemFile";
 	private Log logger = Log.Log(this.getClass());
 
@@ -74,7 +75,7 @@ public abstract class ABin {
 				logger.logger(e);
 			}
 		}else {
-			logger.logger("No existe archivo de propiedades para datos.");
+			logger.error("No existe archivo de propiedades para datos.");
 		}
 		return default_file_data;
 	}
