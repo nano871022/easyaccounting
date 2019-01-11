@@ -33,6 +33,10 @@ public class ProductosSvc extends Services implements IProductosSvc {
 		if (StringUtils.isNotBlank(producto.getCodigo()))
 			throw new ProductosException("El producto ya se encuentra creado.");
 		try {
+			List<ProductoDto> list =  productos(producto);
+			if(list != null && list.size() > 0) {
+				throw new ProductosException("Se encontro otro producto con los mismos valores suministrados.");
+			}
 			return querySvc.set(producto, usuario);
 		} catch (QueryException e) {
 			throw new ProductosException("Se encontro problema en el ingreso del registro.", e);
