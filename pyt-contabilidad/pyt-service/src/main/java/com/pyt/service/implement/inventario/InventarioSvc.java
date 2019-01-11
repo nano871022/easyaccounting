@@ -7,18 +7,22 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.constants.ParametroInventarioConstants;
+import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.inventario.InventarioException;
 import org.pyt.common.exceptions.inventario.MovimientoException;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.inventario.MovimientoDto;
+import com.pyt.service.dto.inventario.ParametroInventarioDTO;
 import com.pyt.service.dto.inventario.ProductoDto;
 import com.pyt.service.dto.inventario.RestarCantidadDto;
 import com.pyt.service.dto.inventario.ResumenProductoDto;
 import com.pyt.service.dto.inventario.saldoDto;
 import com.pyt.service.interfaces.inventarios.IInventarioSvc;
 import com.pyt.service.interfaces.inventarios.IMovimientoSvc;
+import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.Services.Type;
@@ -30,6 +34,8 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 	private IMovimientoSvc movimientoSvc;
 	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
 	private IProductosSvc productosSvc;
+	@Inject(resource = "com.pyt.service.implement.inventario.ParametroInventariosSvc")
+	private IParametroInventariosSvc parametroSvc;
 	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Agregar unidades", descripcion = "Agregar unidades asociados a los productos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
 	public void agregarInventario(MovimientoDto dto, UsuarioDTO usuario) throws InventarioException {
@@ -42,12 +48,25 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 		if (StringUtils.isBlank(dto.getProducto().getCodigo()))
 			throw new InventarioException("El producto suministrado no se encuentra creado.");
 		try {
+			if(dto.getTipo() == null) {
+				ParametroInventarioDTO parametro = new ParametroInventarioDTO();
+				parametro.setEstado("A");
+				parametro.setNombre(ParametroInventarioConstants.DESC_TIPO_MOV_ENTRADA);
+				List<ParametroInventarioDTO> tipoMovs = parametroSvc.getAllParametros(parametro, ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
+				if(tipoMovs != null && tipoMovs.size() > 1) {
+					throw new InventarioException("Se encontraron varios registros para el parametro de tipo novedad de entrada.");
+				}
+				if(tipoMovs == null || tipoMovs.size() == 0) {
+					throw new InventarioException("No se encontro ningun registro para el parametro de tipo de novedad de entrada.");
+				}
+				dto.setTipo(tipoMovs.get(0));
+			}
 			dto = movimientoSvc.insert(dto, usuario);
 			ResumenProductoDto resumen = new ResumenProductoDto();
 			resumen.setProducto(dto.getProducto());
 			List<ResumenProductoDto> list = productosSvc.resumenProductos(resumen);
 			if (list == null || list.size() == 0) {
-				resumen.setCantidad(0);
+				resumen.setCantidad(dto.getCantidad());
 				resumen.setValorCompra(dto.getPrecioCompra());
 				resumen = productosSvc.insert(resumen, usuario);
 			} else if (list.size() > 1) {
@@ -55,7 +74,12 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 				throw new InventarioException("Se encontraron varios resumenes, contacte con el administrador.");
 			}
 			saldoDto saldoOld = ultimoSaldo(resumen.getProducto());
-			resumen = list.get(0);
+			if(list != null && list.size() > 0) {
+				resumen = list.get(0);
+			}
+			if(resumen == null || StringUtils.isBlank(resumen.getCodigo())) {
+				throw new InventarioException("No fue encontrado ningun resumen de movimientos.");
+			}
 			if(resumen.getCantidad() == null) {
 				resumen.setCantidad(0);
 			}
@@ -71,14 +95,9 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 			throw new InventarioException("Se presento error con el ingreso del movimiento.", e);
 		} catch (ResumenProductoException e) {
 			throw new InventarioException("Se presento error en la actualizacion del resumen del producto.", e);
+		} catch (ParametroException e) {
+			throw new InventarioException("Se presento error en la obtencion del parametro de invetarion de tipo movimiento de entrada.");
 		}
-		/**
-		 * Para agrar un movimeitno en el kardex se realiza: 1. se agrega el movimiento
-		 * a la tabla de movimientos 2. se busca en la tabla de productos el producto
-		 * anterior 3. se ajusta la cantidad de valores. 4. se ajusta el valor de compra
-		 * y venta para los valores segun si es fifo o lifo
-		 */
-
 	}
 
 	@Override

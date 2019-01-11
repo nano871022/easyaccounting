@@ -18,8 +18,6 @@ public class MovimientoDto extends ADto {
 	@IsNotBlank
 	private Integer cantidad;
 	private BigDecimal valor;
-	@IsNotBlank
-	@Valid(dto=ParametroInventarioDTO.class,fieldIn="nombre")
 	private ParametroInventarioDTO tipo;
 	public ProductoDto getProducto() {
 		return producto;

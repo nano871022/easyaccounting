@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.ValidateValues;
@@ -92,8 +93,11 @@ public abstract class ReflectionDto {
 		Field field = null;
 		try {
 			field = searchField(nombreCampo, this.getClass());
+			if(field.getName().length() > 1)
 			nameMethod = ReflectionConstants.GET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
+			else 
+				nameMethod = ReflectionConstants.GET + field.getName().toUpperCase();
 
 			Method method = clase.getMethod(nameMethod, value != null ? value.getClass() : null);
 			return (T) method.invoke(this, value);
@@ -153,6 +157,8 @@ public abstract class ReflectionDto {
 	 *             ReflectionException}
 	 */
 	private final <T extends Object> Field searchField(String nombreCampo, Class<T> clase) throws ReflectionException {
+		if(StringUtils.isBlank(nombreCampo)) return null;
+		if(clase == Object.class)return null;
 		Field campo = null;
 		try {
 			campo = clase.getDeclaredField(nombreCampo);
