@@ -1,18 +1,14 @@
 package org.pyt.app.components;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 
-import com.pyt.service.dto.ConceptoDTO;
-import com.sun.tools.javadoc.main.ParameterizedTypeImpl;
-
-import javafx.fxml.FXML;
+import com.pyt.service.interfaces.IQuerysPopup;
 
 /**
  * Esta clase se encarga de configurar un popup de consultas con el dto
@@ -21,15 +17,30 @@ import javafx.fxml.FXML;
  * 
  * @author Alejandro Parra
  *
- * @param <T>
- *            extends {@link ADto}
+ * @param <T> extends {@link ADto}
  */
 public class PopupGenBean<T extends ADto> extends ABean<T> {
 	private static final String FILTER_NAME = "filter";
 	private T filter;
+	private List<T> l = new ArrayList<T>();
 	private DataTableFXML<T, T> table;
+	private Class<T> clazz;
+	@Inject
+	private IQuerysPopup querys;
+	private Map<String,Object> filtros;
+	private Map<String,Object> columnas;
 
-	@FXML
+	/**
+	 * Se encarga de recibir la clase que implementa la paremitrizacion del objeto
+	 * 
+	 * @param clazz {@link Class}
+	 * @return {@link PopupGenBean}
+	 */
+	public final PopupGenBean<T> dtoClass(Class<T> clazz) {
+		this.clazz = clazz;
+		return this;
+	}
+
 	public void initialize() {
 		loadTable();
 		filter = instanceDto();
@@ -42,8 +53,7 @@ public class PopupGenBean<T extends ADto> extends ABean<T> {
 			public List<T> getList(T filter, Integer page, Integer rows) {
 				List<T> list = new ArrayList<T>();
 				try {
-					// TODO crear codigo de consulta
-					// list = servicio.gets(filter,page,rows);
+					list = querys.list(filter, page, rows, userLogin);
 				} catch (Exception e) {
 					error(e);
 				}
@@ -54,8 +64,7 @@ public class PopupGenBean<T extends ADto> extends ABean<T> {
 			public Integer getTotalRows(T filter) {
 				Integer cantidad = 0;
 				try {
-					// TODO crear codigo para obtener la cantidad de registros
-					// cantidad = servicio.rows(filter);
+					cantidad = querys.records(filter, userLogin);
 				} catch (Exception e) {
 					error(e);
 				}
@@ -75,24 +84,15 @@ public class PopupGenBean<T extends ADto> extends ABean<T> {
 	 * 
 	 * @return T extends {@link ADto}
 	 */
-	@SuppressWarnings("unchecked")
 	private T instanceDto() {
 		try {
-			Field field = this.getClass().getDeclaredField(FILTER_NAME);
-			Type type = field.getGenericType();
-			Class clases = field.getDeclaringClass();
-			TypeVariable[] vars = this.getClass().getTypeParameters();
-			TypeVariable[] varz = this.getClass().getSuperclass().getTypeParameters();
-			Class<T> clazz = (Class<T>) field.getType();
-			return (T) clazz.getConstructor().newInstance();
+			if (clazz == null)
+				throw new Exception("El Dto que se implementa no fue suministrado (Usar metodo PopupGenBean dtoClass(Class)).");
+			return clazz.getConstructor().newInstance();
 		} catch (Exception e) {
 			error(e);
 		}
 		return null;
 	}
-	
-	public static void main(String...strings) {
-		PopupGenBean<ConceptoDTO> popup = new PopupGenBean<ConceptoDTO>();
-		popup.initialize();
-	}
+
 }
