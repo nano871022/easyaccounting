@@ -63,6 +63,7 @@
 				<TextField fx:id="pais" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 				<Label alignment="CENTER" prefHeight="28.0" prefWidth="90.0" text="Moneda" GridPane.rowIndex="4" />
 				<ChoiceBox fx:id="moneda" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+				<Button  mnemonicParsing="false" onAction="#monedas" text="Monedas"/>
 				<Label alignment="CENTER" prefHeight="30.0" prefWidth="87.0" text="Contador" GridPane.rowIndex="5" />
 				<TextField fx:id="contador" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 				<Label alignment="CENTER" prefHeight="40.0" prefWidth="68.0" text="Tarjeta Contador" wrapText="true" GridPane.columnIndex="2"

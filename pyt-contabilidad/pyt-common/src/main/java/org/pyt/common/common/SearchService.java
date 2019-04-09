@@ -129,8 +129,6 @@ public class SearchService {
 						T obj = (T) retorno.getDeclaredConstructor().newInstance();
 						addCampos(obj, retorno, retorno.getSimpleName());
 					}
-				} catch (ClassNotFoundException e) {
-					throw new SearchServicesException("No se encontró clase.", e);
 				} catch (NoSuchMethodException e) {
 					throw new SearchServicesException("No se encontró método.", e);
 				} catch (SecurityException e) {
@@ -145,7 +143,10 @@ public class SearchService {
 					throw new SearchServicesException("Error en invocación.", e);
 				} catch (ReflectionException e) {
 					throw new SearchServicesException("Error en Reflection Utils.", e);
+				} catch (ClassNotFoundException e) {
+					throw new SearchServicesException("No se encontro clase.", e);
 				}
+				
 				break;
 			}
 		} // end for
@@ -194,7 +195,7 @@ public class SearchService {
 		} catch (ReflectionException e) {
 			throw new SearchServicesException("Se presento error con la reflección.", e);
 		} catch (ClassNotFoundException e) {
-			throw new SearchServicesException("No se encontro la clase.", e);
+			throw new SearchServicesException("No se encontro clase.", e);
 		}
 		return listaCampos;
 	}

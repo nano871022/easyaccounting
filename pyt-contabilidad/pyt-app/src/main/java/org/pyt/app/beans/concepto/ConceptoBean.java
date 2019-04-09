@@ -156,7 +156,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 
 	public void del() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ConceptoBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			controllerPopup(ConfirmPopupBean.class).load("#{ConceptoBean.delete}", "¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);
 		}

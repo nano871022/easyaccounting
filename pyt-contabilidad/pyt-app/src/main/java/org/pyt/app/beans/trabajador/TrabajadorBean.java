@@ -142,7 +142,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 
 	public void del() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{TrabajadorBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			controllerPopup(ConfirmPopupBean.class).load("#{TrabajadorBean.delete}", "¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);
 		}

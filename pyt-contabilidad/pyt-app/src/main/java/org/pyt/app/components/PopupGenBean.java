@@ -1,6 +1,9 @@
 package org.pyt.app.components;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +12,9 @@ import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
 
 import com.pyt.service.interfaces.IQuerysPopup;
+import com.pyt.service.pojo.GenericPOJO;
+
+import javafx.fxml.FXML;
 
 /**
  * Esta clase se encarga de configurar un popup de consultas con el dto
@@ -19,31 +25,31 @@ import com.pyt.service.interfaces.IQuerysPopup;
  *
  * @param <T> extends {@link ADto}
  */
-public class PopupGenBean<T extends ADto> extends ABean<T> {
+public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T> {
 	private static final String FILTER_NAME = "filter";
 	private T filter;
 	private List<T> l = new ArrayList<T>();
 	private DataTableFXML<T, T> table;
-	private Class<T> clazz;
-	@Inject
-	private IQuerysPopup querys;
-	private Map<String,Object> filtros;
-	private Map<String,Object> columnas;
-
+	
+	private Map<String, GenericPOJO> filtros;
+	private Map<String, GenericPOJO> columnas;
+	
 	/**
 	 * Se encarga de recibir la clase que implementa la paremitrizacion del objeto
 	 * 
 	 * @param clazz {@link Class}
 	 * @return {@link PopupGenBean}
 	 */
-	public final PopupGenBean<T> dtoClass(Class<T> clazz) {
+	public final GenericInterfacesReflection<T> dtoClass(Class<T> clazz) throws Exception{
 		this.clazz = clazz;
 		return this;
 	}
-
+	@FXML
 	public void initialize() {
 		loadTable();
 		filter = instanceDto();
+		filtros = new HashMap<String, GenericPOJO>();
+		columnas = new HashMap<String, GenericPOJO>();
 	}
 
 	private void loadTable() {
@@ -78,21 +84,49 @@ public class PopupGenBean<T extends ADto> extends ABean<T> {
 			}
 		};
 	}
-
 	/**
-	 * Se encarga de crear una instancia apartir del objeto configurado
-	 * 
-	 * @return T extends {@link ADto}
+	 * Se enmcarga de obtener el nombre del campo a mostrar como filtro
+	 * @param dto extends {@link ADto}
+	 * @param field {@link Field}
+	 * @return {@link String}
 	 */
-	private T instanceDto() {
-		try {
-			if (clazz == null)
-				throw new Exception("El Dto que se implementa no fue suministrado (Usar metodo PopupGenBean dtoClass(Class)).");
-			return clazz.getConstructor().newInstance();
-		} catch (Exception e) {
-			error(e);
+	private final <D extends ADto> String nameShow(D dto,Field field) {
+		return field.getName();
+	}
+	/**
+	 * Se encarga de retornar el valor o una instancia del valor del tipo del campo creado
+	 * @param field
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	private final <O extends Object> O objectByField(Field field)throws Exception {
+		if(field != null) {
+			O out = (O) field.get(filtros);
+			if(out != null) {
+				return out;
+			}else {
+				return (O)field.getGenericType().getClass().getConstructor().newInstance();
+			}
+		}else {
+			throw new Exception("El campo suministrado es nulo.");
 		}
-		return null;
+	}
+	
+	/**
+	 * Se encarga de cargar todos los campos del dto y se ponen como filtros de la
+	 * configuracion, segun el tipo de dato retorna un objeto que puede usar fx para
+	 * poner un campo de informacion para recibir informacion
+	 */
+	private final void loadFiltros() throws Exception{
+		Field[] fields = filtros.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isAbstract(field.getModifiers())
+					&& !Modifier.isFinal(field.getModifiers())) {
+				filtros.put(field.getName(),
+						new GenericPOJO<Object>(nameShow(filter,field), field, objectByField(field), GenericPOJO.Type.FILTER));
+			}
+		}
 	}
 
 }

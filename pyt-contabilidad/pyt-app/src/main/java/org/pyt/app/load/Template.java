@@ -97,7 +97,7 @@ private Log logger = Log.Log(this.getClass());
 				break;
 			case AppConstants.COMMAND_POPUP_ERROR:
 				if (valor instanceof String) {
-					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
+					LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
 				}
 				break;
 			case AppConstants.COMMAND_POPUP_INFO:

@@ -101,7 +101,7 @@ public class RepuestoBean extends ABean<ProductoDto> {
 	@SuppressWarnings("unchecked")
 	public void del() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{RepuestoBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			controllerPopup(ConfirmPopupBean.class).load("#{RepuestoBean.delete}", "¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);
 		}

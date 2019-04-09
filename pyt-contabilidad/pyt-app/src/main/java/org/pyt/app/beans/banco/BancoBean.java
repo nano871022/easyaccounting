@@ -164,7 +164,7 @@ public class BancoBean extends ABean<BancoDTO> {
 
 	public void del() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{BancoBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			controllerPopup( ConfirmPopupBean.class).load("#{BancoBean.delete}", "¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);
 		}

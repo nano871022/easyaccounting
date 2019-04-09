@@ -3,6 +3,7 @@ package org.pyt.app.beans.empresa;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
@@ -145,7 +146,13 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 			error(e);
 		}
 	}
-
+	public void monedas() {
+		try {
+		PopupGenBean<ParametroDTO> gen = new PopupGenBean<ParametroDTO>().dtoClass(ParametroDTO.class);
+		}catch(Exception e) {
+			error(e);
+		}
+	}
 	public void cancel() {
 		getController(EmpresaBean.class);
 	}

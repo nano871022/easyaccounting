@@ -743,10 +743,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void loaders() {
-		LoaderServiceBean lsb;
 		try {
-			lsb = LoadAppFxml.loadBeanFxml(new Stage(), LoaderServiceBean.class);
-			lsb.load(config.getConfiguracion());
+			controllerPopup(LoaderServiceBean.class).load(config.getConfiguracion());
 		} catch (LoadAppFxmlException e) {
 			error(e);
 		}
@@ -757,10 +755,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 */
 	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void reports() {
-		GenConfigBean gcb;
 		try {
-			gcb = LoadAppFxml.loadBeanFxml(new Stage(), GenConfigBean.class);
-			gcb.load(config.getConfiguracion());
+			controllerPopup( GenConfigBean.class).load(config.getConfiguracion());
 		} catch (LoadAppFxmlException e) {
 			error(e);
 		}
