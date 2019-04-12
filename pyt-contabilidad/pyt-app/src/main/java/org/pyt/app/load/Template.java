@@ -28,7 +28,7 @@ import javafx.stage.Stage;
  * @since 2018-05-24
  */
 @FXMLFile(path = "view", file = "Template.fxml", nombreVentana = "Contabilidad PyT")
-public class Template extends Reflection implements IComunicacion {
+public class Template implements IComunicacion,Reflection {
 	@FXML
 	private MenuBar menu;
 	@FXML
@@ -114,5 +114,10 @@ private Log logger = Log.Log(this.getClass());
 		} catch (LoadAppFxmlException e) {
 			centerMessage.setText((String) valor);
 		}
+	}
+
+	@Override
+	public Log logger() {
+		return logger;
 	}
 }

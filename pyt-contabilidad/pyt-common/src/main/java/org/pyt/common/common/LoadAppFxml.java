@@ -44,18 +44,15 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		}
 		return app;
 	}
+
 	/**
 	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
 	 * anotada el file fxml y el titulo de la ventana.
 	 * 
-	 * @param primaryStage
-	 *            {@link Stage}
-	 * @param class1
-	 *            extended of {@link ABean}
-	 * @param title
-	 *            {@link String} nombre de la ventana
-	 * @throws {@link
-	 *             LoadAppFxmlException}
+	 * @param primaryStage {@link Stage}
+	 * @param class1       extended of {@link ABean}
+	 * @param title        {@link String} nombre de la ventana
+	 * @throws {@link LoadAppFxmlException}
 	 */
 	public final static <S extends ADto, T extends ABean<S>> T loadBeanFxml(Stage primaryStage, Class<T> class1)
 			throws LoadAppFxmlException {
@@ -95,20 +92,39 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}
 	}
+	
+	public final static <T extends GenericToBean<D>, D extends ADto> T loadBeanFX(T genericBean) throws LoadAppFxmlException {
+		try {
+			genericBean.start(new Stage());
+			genericBean.initialize();
+		} catch (InstantiationException e) {
+			throw new LoadAppFxmlException("Problema en instanciacion.", e);
+		} catch (IllegalAccessException e) {
+			throw new LoadAppFxmlException("Acceso ilegal.", e);
+		} catch (IllegalArgumentException e) {
+			throw new LoadAppFxmlException("Argumento ilegal.", e);
+		} catch (InvocationTargetException e) {
+			throw new LoadAppFxmlException("Problema en el objetivo de invocacion.", e);
+		} catch (NoSuchMethodException e) {
+			throw new LoadAppFxmlException("No se encontro el metodo.", e);
+		} catch (SecurityException e) {
+			throw new LoadAppFxmlException("Problema de seguridad.", e);
+		} catch (Exception e) {
+			throw new LoadAppFxmlException("Problema al obtener el stage.", e);
+		}
+		return genericBean;
+	}
 
 	/**
 	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
 	 * anotada el file fxml y el titulo de la ventana.
 	 * 
-	 * @param primaryStage
-	 *            {@link Stage}
-	 * @param class1
-	 *            extended of {@link ABean}
-	 * @param title
-	 *            {@link String} nombre de la ventana
-	 * @throws {@link
-	 *             LoadAppFxmlException}
+	 * @param primaryStage {@link Stage}
+	 * @param class1       extended of {@link ABean}
+	 * @param title        {@link String} nombre de la ventana
+	 * @throws {@link LoadAppFxmlException}
 	 */
+	@SuppressWarnings("rawtypes")
 	public final static <S extends ADto, T extends ABean> T loadBeanFxml2(Stage primaryStage, Class<T> class1)
 			throws LoadAppFxmlException {
 		String file, title;
@@ -152,12 +168,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
 	 * anotada el file fxml y el titulo de la ventana.
 	 * 
-	 * @param primaryStage
-	 *            {@link Stage}
-	 * @param bean
-	 *            {@link Object}
-	 * @throws {@link
-	 *             LoadAppFxmlException}
+	 * @param primaryStage {@link Stage}
+	 * @param bean         {@link Object}
+	 * @throws {@link LoadAppFxmlException}
 	 */
 	public final static <S extends ADto, T extends Object> T loadFxml(Stage primaryStage, Class<T> controller)
 			throws LoadAppFxmlException {
@@ -203,12 +216,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
 	 * anotada el file fxml y el titulo de la ventana.
 	 * 
-	 * @param bean
-	 *            extended of {@link ABean}
-	 * @param title
-	 *            {@link String} nombre de la ventana
-	 * @throws {@link
-	 *             LoadAppFxmlException}
+	 * @param bean  extended of {@link ABean}
+	 * @param title {@link String} nombre de la ventana
+	 * @throws {@link LoadAppFxmlException}
 	 */
 	public final static <S extends ADto, T extends ABean<S>> T loadBeanFxml(Class<T> bean) throws LoadAppFxmlException {
 		return loadBeanFxml(null, bean);
@@ -280,15 +290,13 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
 		}
 	}
-	
+
 	/**
 	 * Obtiene el fxml apartir del bean y la etiqueta FXMLBean
 	 * 
-	 * @param bean
-	 *            {@link Class}
+	 * @param bean {@link Class}
 	 * @return {@link Parent}
-	 * @throws {@link
-	 *             LoadAppFxmlException}
+	 * @throws {@link LoadAppFxmlException}
 	 */
 	private final static <S extends ADto, T extends ABean<S>> FXMLLoader loadFxml(Class<T> bean)
 			throws LoadAppFxmlException {
@@ -297,7 +305,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		try {
 			T lBean = bean.getDeclaredConstructor().newInstance();
 			file = lBean.pathFileFxml();
-			if(file == null) {
+			if (file == null) {
 				throw new LoadAppFxmlException("El archivo se encuentra en vacio.");
 			}
 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
@@ -312,7 +320,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (IllegalArgumentException e) {
 			throw new LoadAppFxmlException("Argumento ilegal.", e);
 		} catch (InvocationTargetException e) {
-			throw new LoadAppFxmlException("Problema en el "+bean.getCanonicalName()+" de invocacion.", e);
+			throw new LoadAppFxmlException("Problema en el " + bean.getCanonicalName() + " de invocacion.", e);
 		} catch (NoSuchMethodException e) {
 			throw new LoadAppFxmlException("No se encontro el metodo.", e);
 		} catch (SecurityException e) {
@@ -323,13 +331,10 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	/**
 	 * Se encarga de cargar un fxml de controlador
 	 * 
-	 * @param layout
-	 *            {@link ScrollPane}
-	 * @param bean
-	 *            {@link Class}
+	 * @param layout {@link ScrollPane}
+	 * @param bean   {@link Class}
 	 * @return {@link ABean}
-	 * @throws {@link
-	 *             LoadAppFxmlException}
+	 * @throws {@link LoadAppFxmlException}
 	 */
 	public final static <L extends ScrollPane, S extends ADto, T extends ABean<S>> T BeanFxmlScroller(L layout,
 			Class<T> bean) throws LoadAppFxmlException {
@@ -359,11 +364,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	 * Se encarga de cargar un archivo fxml dentro de un panel indicado
 	 * 
 	 * @param layout
-	 * @param bean
-	 *            {@link Class}
+	 * @param bean   {@link Class}
 	 * @return {@link ABean}
-	 * @throws {@link
-	 *             LoadAppFxmlException}
+	 * @throws {@link LoadAppFxmlException}
 	 */
 	public final static <L extends Pane, S extends ADto, T extends ABean<S>> T beanFxmlPane(L layout, Class<T> bean)
 			throws LoadAppFxmlException {

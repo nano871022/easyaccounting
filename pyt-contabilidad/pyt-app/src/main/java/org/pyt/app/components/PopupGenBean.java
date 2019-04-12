@@ -1,20 +1,29 @@
 package org.pyt.app.components;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.common.ADto;
+import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.common.ValidateValues;
+import org.pyt.common.constants.StylesPrincipalConstant;
+import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
-import com.pyt.service.interfaces.IQuerysPopup;
 import com.pyt.service.pojo.GenericPOJO;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 /**
  * Esta clase se encarga de configurar un popup de consultas con el dto
@@ -25,35 +34,121 @@ import javafx.fxml.FXML;
  *
  * @param <T> extends {@link ADto}
  */
+@FXMLFile(path = "/", file = ".",nombreVentana="PopupGenericBean")
 public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T> {
-	private static final String FILTER_NAME = "filter";
+
 	private T filter;
-	private List<T> l = new ArrayList<T>();
 	private DataTableFXML<T, T> table;
-	
-	private Map<String, GenericPOJO> filtros;
-	private Map<String, GenericPOJO> columnas;
-	
-	/**
-	 * Se encarga de recibir la clase que implementa la paremitrizacion del objeto
-	 * 
-	 * @param clazz {@link Class}
-	 * @return {@link PopupGenBean}
-	 */
-	public final GenericInterfacesReflection<T> dtoClass(Class<T> clazz) throws Exception{
-		this.clazz = clazz;
-		return this;
+
+	private Map<String, GenericPOJO<T>> filtros;
+	private Map<String, GenericPOJO<T>> columnas;
+
+	private HBox paginador;
+	private GridPane gridFilter;
+	private TableView<T> tabla;
+
+	public PopupGenBean(Class<T> clazz) throws Exception {
+		super(clazz);
+		paginador = new HBox();
+		paginador.getStyleClass().add(StylesPrincipalConstant.CONST_HBOX_PAGINATOR_CUSTOM);
+		gridFilter = new GridPane();
+		tabla = new TableView<T>();
+		tabla.getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 	}
+
 	@FXML
 	public void initialize() {
 		loadTable();
-		filter = instanceDto();
-		filtros = new HashMap<String, GenericPOJO>();
-		columnas = new HashMap<String, GenericPOJO>();
+		try {
+			configFilters();
+			configColumnas();
+			panel.setTop(gridFilter);
+			panel.setCenter(tabla);
+			panel.setBottom(paginador);
+			filter = assingValuesParameterized(getInstaceOfGenericADto());
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	/**
+	 * Se encarga de configurar el mapa de filtros y agregar los campos de filtros a
+	 * la pantalla
+	 * 
+	 * @throws {@link IllegalAccessException}
+	 */
+	private final void configFilters() throws IllegalAccessException {
+		filtros = getMapFieldsByObject(filter, GenericPOJO.Type.FILTER);
+		final var indices = new Index();
+		var util = new UtilControlFieldFX();
+		filtros.forEach((key, value) -> {
+			Label label = new Label(value.getNameShow());
+			gridFilter.add(label, indices.columnIndex, indices.rowIndex);
+
+			var input = util.getFieldByField(value.getField());
+			util.inputListenerToAssingValue(input, (obj) -> assingsValueToField(value.getField().getName(), obj));
+
+			gridFilter.add(input, indices.columnIndex + 1, indices.rowIndex);
+			indices.columnIndex = indices.columnIndex == 4 ? 0 : indices.columnIndex + 2;
+			indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
+		});
+		gridFilter.getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
+		gridFilter.add(util.buttonGenericWithEventClicked(() -> table.search(), "Buscar"), 0, indices.rowIndex + 1);
+		gridFilter.add(util.buttonGenericWithEventClicked(() -> cleanFilter(), "Limpiar"), 1, indices.rowIndex + 1);
+
+	}
+
+	private final <O extends Object> void assingsValueToField(String nameField, O value) {
+		try {
+			filter.set(nameField, value);
+		} catch (ReflectionException e) {
+			logger().logger(e);
+		}
+	}
+
+	protected class Index {
+		Integer columnIndex = 0;
+		Integer rowIndex = 0;
+	}
+
+	private final void cleanFilter() {
+		try {
+			var util = new UtilControlFieldFX();
+			filter = assingValuesParameterized(getInstaceOfGenericADto());
+			gridFilter.getChildren().forEach(child -> util.cleanValueByFieldFX(child));
+		} catch (InvocationTargetException | IllegalAccessException | InstantiationException
+				| NoSuchMethodException e) {
+			logger().logger(e);
+		}
+
+	}
+
+	/**
+	 * Se encarga de ralizar la configuracion del mapa de columnas y agregar las
+	 * columnas a la tabla indicada
+	 * 
+	 * @throws {@link IllegalAccessException}
+	 */
+	private final void configColumnas() throws IllegalAccessException {
+		columnas = getMapFieldsByObject(filter, GenericPOJO.Type.FILTER);
+		var validateValues = new ValidateValues();
+		columnas.forEach((key, value) -> {
+			var tc = new TableColumn<T, String>(value.getNameShow());
+			tc.setCellValueFactory((CellDataFeatures<T, String> param) -> {
+				try {
+					return new ReadOnlyStringWrapper(
+							validateValues.cast(param.getValue().get(value.getField().getName()), String.class));
+				} catch (ReflectionException | ValidateValueException e) {
+					return null;
+				}
+			});
+			tabla.getColumns().add(tc);
+		});
+		tabla.setOnMouseClicked(event -> selectedRow(event));
 	}
 
 	private void loadTable() {
-		table = new DataTableFXML<T, T>() {
+		table = new DataTableFXML<T, T>(paginador, tabla,false) {
 
 			@Override
 			public List<T> getList(T filter, Integer page, Integer rows) {
@@ -79,53 +174,31 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 
 			@Override
 			public T getFilter() {
-				T filter = instanceDto();
 				return filter;
 			}
 		};
 	}
+
 	/**
-	 * Se enmcarga de obtener el nombre del campo a mostrar como filtro
-	 * @param dto extends {@link ADto}
-	 * @param field {@link Field}
-	 * @return {@link String}
+	 * Se le indica en el momento de la carga a quien le debe retornar al
+	 * seleccionar un registro
+	 * 
+	 * @param caller {@link String}
 	 */
-	private final <D extends ADto> String nameShow(D dto,Field field) {
-		return field.getName();
+	public final void load(String caller) {
+		this.caller = caller;
+		filter = assingValuesParameterized(filter);
 	}
-	/**
-	 * Se encarga de retornar el valor o una instancia del valor del tipo del campo creado
-	 * @param field
-	 * @return
-	 * @throws Exception
-	 */
+
 	@SuppressWarnings("unchecked")
-	private final <O extends Object> O objectByField(Field field)throws Exception {
-		if(field != null) {
-			O out = (O) field.get(filtros);
-			if(out != null) {
-				return out;
-			}else {
-				return (O)field.getGenericType().getClass().getConstructor().newInstance();
+	private void selectedRow(MouseEvent event) {
+		try {
+			if (event.getClickCount() > 0 && table.isSelected()) {
+				this.caller(caller, table.getSelectedRow());
+				this.closeWindow();
 			}
-		}else {
-			throw new Exception("El campo suministrado es nulo.");
-		}
-	}
-	
-	/**
-	 * Se encarga de cargar todos los campos del dto y se ponen como filtros de la
-	 * configuracion, segun el tipo de dato retorna un objeto que puede usar fx para
-	 * poner un campo de informacion para recibir informacion
-	 */
-	private final void loadFiltros() throws Exception{
-		Field[] fields = filtros.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isAbstract(field.getModifiers())
-					&& !Modifier.isFinal(field.getModifiers())) {
-				filtros.put(field.getName(),
-						new GenericPOJO<Object>(nameShow(filter,field), field, objectByField(field), GenericPOJO.Type.FILTER));
-			}
+		} catch (Exception e) {
+			error(e);
 		}
 	}
 

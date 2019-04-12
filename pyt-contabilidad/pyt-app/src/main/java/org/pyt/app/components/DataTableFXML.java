@@ -41,16 +41,26 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	private javafx.scene.control.TableView<S> table;
 	private ValidateValues validate = new ValidateValues();
 	private Log logger = Log.Log(this.getClass());
+	private Boolean firstSearch;
 
 	public DataTableFXML() {
 		currentPage = 1;
 		rows = 10;
 		total = 5;
 		page = 1;
+		firstSearch = true;
 	}
 
 	public DataTableFXML(HBox paginas, javafx.scene.control.TableView<S> table) {
 		this();
+		this.paginas = paginas;
+		this.table = table;
+		loadPaginator();
+		search();
+	}
+	public DataTableFXML(HBox paginas, javafx.scene.control.TableView<S> table,Boolean firstSearch) {
+		this();
+		this.firstSearch = firstSearch;
 		this.paginas = paginas;
 		this.table = table;
 		loadPaginator();
@@ -78,7 +88,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	 * de registros encontrados
 	 */
 	public final void search() {
-		if (table.isVisible()) {
+		if (table.isVisible() && firstSearch) {
 			T filter = getFilter();
 			Integer init = currentPage;
 			if (init > 1) {
@@ -88,6 +98,8 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 			total = getTotalRows(filter);
 			Table.put(table, list);
 			loadPages();
+		}else if(table.isVisible()) {
+			firstSearch = true;
 		}
 	}
 

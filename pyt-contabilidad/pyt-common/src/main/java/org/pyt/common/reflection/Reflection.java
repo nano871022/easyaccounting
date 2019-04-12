@@ -26,9 +26,9 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
  * @since 2018-05-19
  *
  */
-public abstract class Reflection {
-	private Log logger = Log.Log(this.getClass());
-
+public interface Reflection {
+	public Log logger();
+	
 	/**
 	 * Se encarga de verificar la cclase y objeter la anotacion inject, con la ccual
 	 * por medio del recurso puesto dentro de la anotacion se obtiene una instancia
@@ -37,24 +37,25 @@ public abstract class Reflection {
 	 * @return {@link Object}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected <L extends Comunicacion, N, T, S extends Object, M extends IComunicacion> void inject()
+	default <L extends Comunicacion, N, T, S extends Object, M extends IComunicacion> void inject()
 			throws ReflectionException {
 		try {
 			Class<S> clase = (Class<S>) this.getClass();
 			Field[] fields = null;
 			fields = getFields(clase);
 			if (fields != null && fields.length > 0) {
+				Inject injects = clase.getDeclaredAnnotation(Inject.class);
 				inject((S) this, fields, clase);
 				subscriberInject(this, fields, clase);
 			} else {
-				logger.warn("No se encontraron campos en la clase.");
+				logger().warn("No se encontraron campos en la clase.");
 			}
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (NullPointerException e) {
-			logger.logger(e);
+			logger().logger(e);
 		} catch (Exception e) {
 			throw new ReflectionException(e.getMessage(), e);
 		}
@@ -76,7 +77,7 @@ public abstract class Reflection {
 	}
 
 	@SuppressWarnings("unchecked")
-	private final <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase)
+	private  <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase)
 			throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;
@@ -131,7 +132,7 @@ public abstract class Reflection {
 	 * @param clase
 	 *            {@link Class}
 	 */
-	private final <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws ReflectionException {
+	private  <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws ReflectionException {
 		try {
 			if (clase == null)
 				return;
@@ -163,7 +164,7 @@ public abstract class Reflection {
 	 * @throws ReflectionException
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected final <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(
+	default <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(
 			M instance, Field[] fields, Class<S> clase) throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;
@@ -179,7 +180,7 @@ public abstract class Reflection {
 						obj.subscriber((N) instance, sub.comando());
 					}
 				} else {
-					logger.error("El objeto " + clase.getName() + " no tiene la implementacion de "
+					logger().error("El objeto " + clase.getName() + " no tiene la implementacion de "
 							+ IComunicacion.class.getName());
 				}
 			} else if (subsc != null) {
@@ -187,7 +188,7 @@ public abstract class Reflection {
 				if (obj != null && (this) instanceof IComunicacion) {
 					obj.subscriber((N) instance, subsc.comando());
 				} else {
-					logger.error("El objeto " + clase.getName() + " no tiene la implementacion de "
+					logger().error("El objeto " + clase.getName() + " no tiene la implementacion de "
 							+ IComunicacion.class.getName());
 				}
 			}
@@ -207,7 +208,7 @@ public abstract class Reflection {
 	 *             ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <T extends Reflection, S extends Object> S get(T obj, Field field) throws ReflectionException {
+	default <T extends Reflection, S extends Object> S get(T obj, Field field) throws ReflectionException {
 		try {
 			Class<T> clase = (Class<T>) obj.getClass();
 			String get = ReflectionConstants.GET + field.getName().substring(0, 1) + field.getName().substring(1);
@@ -246,7 +247,7 @@ public abstract class Reflection {
 	 */
 
 	@SuppressWarnings({ "unchecked" })
-	protected <T, S, A extends Object> void put(T obj, Field field, S valor) throws ReflectionException {
+	default <T, S, A extends Object> void put(T obj, Field field, S valor) throws ReflectionException {
 		Class<T> clase = (Class<T>) obj.getClass();
 		Method metodo;
 		String get;
@@ -282,7 +283,7 @@ public abstract class Reflection {
 	 * @return {@link String}
 	 */
 	@SuppressWarnings("unchecked")
-	public final <T extends Object> String pathFileFxml() {
+	default <T extends Object> String pathFileFxml() {
 		Class<T> clase = (Class<T>) this.getClass();
 		FXMLFile fxmlFile = clase.getDeclaredAnnotation(FXMLFile.class);
 		return String.format("%s/%s", fxmlFile.path(), fxmlFile.file());

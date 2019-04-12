@@ -156,5 +156,13 @@ public interface IParametrosSvc {
 	 *             ParametroException}
 	 */
 	public void delete(ParametroGrupoDTO dto, UsuarioDTO user) throws ParametroException;
+	
+	/**
+	 * Se encarga de obtener el id del parametro del grupo indicado
+	 * @param grupo {@link String} Grupo a buscar
+	 * @return {@link String} Id del grupo
+	 * @throws {@link ParametroException}
+	 */
+	public String getIdByParametroGroup(String grupo)throws ParametroException;
 
 }

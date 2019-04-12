@@ -8,7 +8,6 @@ import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
@@ -28,7 +27,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 /**
  * Bean encargado de crear las empresas
@@ -162,7 +160,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 
 	public void set() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{CuentaContableBean.delete}",
+			controllerPopup(ConfirmPopupBean.class).load("#{CuentaContableBean.delete}",
 				"¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);

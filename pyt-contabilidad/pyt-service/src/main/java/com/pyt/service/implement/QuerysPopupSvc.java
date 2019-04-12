@@ -10,10 +10,11 @@ import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.QuerysPopupException;
 
 import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 import com.pyt.service.interfaces.IQuerysPopup;
 
-public class QuerysPopupSvc implements IQuerysPopup {
-	@Inject
+public class QuerysPopupSvc extends Services implements IQuerysPopup {
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querys;
 	@Override
 	public <T extends ADto> List<T> list(T filter, UsuarioDTO user) throws QuerysPopupException {
@@ -40,6 +41,7 @@ public class QuerysPopupSvc implements IQuerysPopup {
 		if(cantidad < 0)throw new QuerysPopupException("La cantidad no puede ser menor a 0");
 		List<T> list = new ArrayList<T>();
 		try {
+			if(inicial == 1)inicial = 0;
 			list = querys.gets(filter,inicial,cantidad);
 		}catch(QueryException e) {
 			throw new QuerysPopupException(e);
