@@ -3,6 +3,7 @@ package org.pyt.common.common;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.pyt.common.interfaces.IAssingValueToField;
 import org.pyt.common.interfaces.ICaller;
 
@@ -77,6 +78,21 @@ public final class UtilControlFieldFX {
 		button.onMouseClickedProperty().set((event) -> caller.caller());
 		return button;
 	}
+	/**
+	 * Se crea para facilitar la creacion de boton fX con evento de click asignado, el evento se ejecuta segun el lambda ingresado
+	 * @param caller {@link ICaller} lambda para llamar accion
+	 * @param showName {@link String} valor que se mostrara en el boton
+	 * @param fontIconIkonli {@link String} icono de ikonli que se agrega al texto 
+	 * @return {@link Button}
+	 */
+	public Button buttonGenericWithEventClicked(ICaller caller, String showName,String fontIconIkonli) {
+		var button = new Button(showName);
+		button.onMouseClickedProperty().set((event) -> caller.caller());
+		FontIcon fi = new FontIcon(fontIconIkonli);
+		button.setGraphic(fi);
+		return button;
+	}
+
 	/**
 	 * Se encarga de limpiar el {@link Node campo} suministrado, dejar el valor por default
 	 * @param child {@link Node}

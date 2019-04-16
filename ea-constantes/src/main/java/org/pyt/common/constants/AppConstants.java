@@ -22,10 +22,12 @@ public final class AppConstants {
 	public final static String COMMAND_POPUP_INFO  = "POPUP_INFO";
 	public final static String COMMAND_POPUP_ERROR = "POPUP_ERROR";
 	
+	public final static String COMMAND_LANGUAGES = "I18n";
 	
 	public final static String COMMAND_PANEL_TIPO_DOC = "PanelTipoDocs";
 	
 	public final static String PATH_LIST_SERVICE = "com.pyt.service.implement.ServicesPackage.List"; 
 	
 	public final static String GET_NAME_FIELDS = "getNameFields";
+	public final static String RESOURCE_BUNDLE =  "languages/language";
 }

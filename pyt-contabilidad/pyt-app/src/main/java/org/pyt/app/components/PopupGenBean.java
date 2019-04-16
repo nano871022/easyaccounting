@@ -8,6 +8,8 @@ import java.util.Map;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.common.ValidateValues;
+import org.pyt.common.constants.IconFontConstant;
+import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
@@ -17,6 +19,7 @@ import com.pyt.service.pojo.GenericPOJO;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -54,8 +57,11 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		gridFilter = new GridPane();
 		tabla = new TableView<T>();
 		tabla.getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
+		tittleWindowI18n = LanguageConstant.GENERIC_WINDOW_POPUP_TITTLE+clazz.getSimpleName();
+		sizeWindow(750,500);
 	}
 
+	@SuppressWarnings("static-access")
 	@FXML
 	public void initialize() {
 		loadTable();
@@ -64,6 +70,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			configColumnas();
 			panel.setTop(gridFilter);
 			panel.setCenter(tabla);
+			panel.setAlignment(tabla,Pos.CENTER);
 			panel.setBottom(paginador);
 			filter = assingValuesParameterized(getInstaceOfGenericADto());
 		} catch (Exception e) {
@@ -82,7 +89,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		final var indices = new Index();
 		var util = new UtilControlFieldFX();
 		filtros.forEach((key, value) -> {
-			Label label = new Label(value.getNameShow());
+			Label label = new Label(i18n().valueBundle(LanguageConstant.GENERIC_FILTER_LBL+getClassParameterized().getSimpleName()+"."+value.getNameShow()));
 			gridFilter.add(label, indices.columnIndex, indices.rowIndex);
 
 			var input = util.getFieldByField(value.getField());
@@ -93,8 +100,8 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
 		});
 		gridFilter.getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
-		gridFilter.add(util.buttonGenericWithEventClicked(() -> table.search(), "Buscar"), 0, indices.rowIndex + 1);
-		gridFilter.add(util.buttonGenericWithEventClicked(() -> cleanFilter(), "Limpiar"), 1, indices.rowIndex + 1);
+		gridFilter.add(util.buttonGenericWithEventClicked(() -> table.search(), i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH),IconFontConstant.CONST_FONT_SEARCH), 0, indices.rowIndex + 1);
+		gridFilter.add(util.buttonGenericWithEventClicked(() -> cleanFilter(), i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN),IconFontConstant.CONST_FONT_REMOVE), 1, indices.rowIndex + 1);
 
 	}
 
@@ -133,7 +140,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		columnas = getMapFieldsByObject(filter, GenericPOJO.Type.FILTER);
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
-			var tc = new TableColumn<T, String>(value.getNameShow());
+			var tc = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN+getClassParameterized().getSimpleName()+"."+value.getNameShow()));
 			tc.setCellValueFactory((CellDataFeatures<T, String> param) -> {
 				try {
 					return new ReadOnlyStringWrapper(

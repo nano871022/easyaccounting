@@ -7,6 +7,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
 	prefWidth="489.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
@@ -64,7 +65,11 @@
 				<Label alignment="CENTER" prefHeight="28.0" prefWidth="90.0" text="Moneda" GridPane.rowIndex="4" />
 				<HBox alignment="CENTER" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
 				    <TextField fx:id="moneda" alignment="CENTER"  />
-					<Button  mnemonicParsing="false" onAction="#monedas" text="S"/>
+					<Button  mnemonicParsing="false" onAction="#monedas" >
+						<graphic>
+							<FontIcon iconLiteral="fa-search" iconColor="black"/>
+						</graphic>
+					</Button>
 				</HBox>
 				<!--
 				<ChoiceBox fx:id="moneda" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />

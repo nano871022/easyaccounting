@@ -189,5 +189,11 @@ public interface IBean<T extends ADto> extends Reflection {
 
 	@SuppressWarnings("hiding")
 	public <T extends Object> T meThis();
+	/**
+	 * Retorna los {@link I18n} configutrado para manejar la internacionalizacion
+	 * @return
+	 */
+	public I18n i18n();
+	
 
 }

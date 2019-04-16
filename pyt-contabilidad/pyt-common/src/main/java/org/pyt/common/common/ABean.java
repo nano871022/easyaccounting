@@ -17,6 +17,7 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
+	private I18n languages;
 
 	public ABean() {
 		try {
@@ -60,5 +61,10 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	public final Log logger() {
 		return logger;
 	}
-	
+	public I18n i18n() {
+		if(languages == null) {
+			languages = new I18n();
+		}
+	  return languages;
+	}
 }

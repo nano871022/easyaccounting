@@ -4,6 +4,7 @@ import org.pyt.app.components.PopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
@@ -56,8 +57,9 @@ public class Template implements IComunicacion,Reflection {
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_WARN)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_INFO)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_ERROR)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_LANGUAGES)
 	private Comunicacion comunicacion;
-private Log logger = Log.Log(this.getClass());
+	private Log logger = Log.Log(this.getClass());
 	@FXML
 	public void initialize() {
 		try {

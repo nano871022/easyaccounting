@@ -186,7 +186,7 @@ public class LocatorController {
 		this.clase = clase;
 		return locator;
 	}
-
+	
 	public final static void main(String... strings) {
 		String caller = "#{bean.metodo}";
 		Pattern patron = Pattern.compile(REGEX);

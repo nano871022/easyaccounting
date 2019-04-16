@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.controller.LocatorController;
 import org.pyt.common.exceptions.ReflectionException;
 
@@ -29,11 +30,15 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 	protected Stage primaryStage;
 	private Class<T> clazz;
 	protected String caller;
+	private Double width;
+	private Double height;
+	protected String tittleWindowI18n;
 	@SuppressWarnings("rawtypes")
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
 	private Map<String, Object> defaultValuesGenericParametrized;
+	private I18n languages;
 
 	public GenericToBean() {
 		try {
@@ -82,9 +87,15 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
-		primaryStage.setTitle(getClassParameterized().getSimpleName().replace("DTO", ""));
+		if (width != null) {
+			primaryStage.setWidth(width);
+		}
+		if (height != null) {
+			primaryStage.setHeight(height);
+		}
+		primaryStage.setTitle(i18n().valueBundle(tittleWindowI18n));
 		Scene scene = new Scene(panel);
-		scene.getStylesheets().add("styles/principal.css");
+		scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
@@ -140,8 +151,8 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 	}
 
 	protected T assingValuesParameterized(T dto) {
-		if(defaultValuesGenericParametrized == null) {
-			defaultValuesGenericParametrized = new HashMap<String,Object>();
+		if (defaultValuesGenericParametrized == null) {
+			defaultValuesGenericParametrized = new HashMap<String, Object>();
 		}
 		defaultValuesGenericParametrized.forEach((key, value) -> {
 			try {
@@ -151,6 +162,18 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 			}
 		});
 		return dto;
+	}
+	
+	protected void sizeWindow(Integer width,Integer height) {
+		this.width = width.doubleValue();
+		this.height = height.doubleValue();
+	}
+
+	public I18n i18n() {
+		if (languages == null) {
+			languages = new I18n();
+		}
+		return languages;
 	}
 
 }
