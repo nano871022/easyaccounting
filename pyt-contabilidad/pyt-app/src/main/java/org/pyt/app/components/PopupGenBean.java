@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.common.ValidateValues;
@@ -37,7 +38,7 @@ import javafx.scene.layout.HBox;
  *
  * @param <T> extends {@link ADto}
  */
-@FXMLFile(path = "/", file = ".",nombreVentana="PopupGenericBean")
+@FXMLFile(path = "/", file = ".", nombreVentana = "PopupGenericBean")
 public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T> {
 
 	private T filter;
@@ -57,8 +58,8 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		gridFilter = new GridPane();
 		tabla = new TableView<T>();
 		tabla.getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
-		tittleWindowI18n = LanguageConstant.GENERIC_WINDOW_POPUP_TITTLE+clazz.getSimpleName();
-		sizeWindow(750,500);
+		tittleWindowI18n = LanguageConstant.GENERIC_WINDOW_POPUP_TITTLE + clazz.getSimpleName();
+		sizeWindow(750, 500);
 	}
 
 	@SuppressWarnings("static-access")
@@ -70,7 +71,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			configColumnas();
 			panel.setTop(gridFilter);
 			panel.setCenter(tabla);
-			panel.setAlignment(tabla,Pos.CENTER);
+			panel.setAlignment(tabla, Pos.CENTER);
 			panel.setBottom(paginador);
 			filter = assingValuesParameterized(getInstaceOfGenericADto());
 		} catch (Exception e) {
@@ -89,19 +90,23 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		final var indices = new Index();
 		var util = new UtilControlFieldFX();
 		filtros.forEach((key, value) -> {
-			Label label = new Label(i18n().valueBundle(LanguageConstant.GENERIC_FILTER_LBL+getClassParameterized().getSimpleName()+"."+value.getNameShow()));
+			Label label = new Label(i18n().valueBundle(LanguageConstant.GENERIC_FILTER_LBL
+					+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
 			gridFilter.add(label, indices.columnIndex, indices.rowIndex);
 
 			var input = util.getFieldByField(value.getField());
 			util.inputListenerToAssingValue(input, (obj) -> assingsValueToField(value.getField().getName(), obj));
-
 			gridFilter.add(input, indices.columnIndex + 1, indices.rowIndex);
 			indices.columnIndex = indices.columnIndex == 4 ? 0 : indices.columnIndex + 2;
 			indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
 		});
 		gridFilter.getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
-		gridFilter.add(util.buttonGenericWithEventClicked(() -> table.search(), i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH),IconFontConstant.CONST_FONT_SEARCH), 0, indices.rowIndex + 1);
-		gridFilter.add(util.buttonGenericWithEventClicked(() -> cleanFilter(), i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN),IconFontConstant.CONST_FONT_REMOVE), 1, indices.rowIndex + 1);
+		gridFilter.add(util.buttonGenericWithEventClicked(() -> table.search(),
+				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH), IconFontConstant.CONST_FONT_SEARCH), 0,
+				indices.rowIndex + 1);
+		gridFilter.add(util.buttonGenericWithEventClicked(() -> cleanFilter(),
+				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN), IconFontConstant.CONST_FONT_REMOVE), 1,
+				indices.rowIndex + 1);
 
 	}
 
@@ -137,10 +142,11 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	 * @throws {@link IllegalAccessException}
 	 */
 	private final void configColumnas() throws IllegalAccessException {
-		columnas = getMapFieldsByObject(filter, GenericPOJO.Type.FILTER);
+		columnas = getMapFieldsByObject(filter, GenericPOJO.Type.COLUMN);
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
-			var tc = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN+getClassParameterized().getSimpleName()+"."+value.getNameShow()));
+			var tc = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN
+					+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
 			tc.setCellValueFactory((CellDataFeatures<T, String> param) -> {
 				try {
 					return new ReadOnlyStringWrapper(
@@ -155,7 +161,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	}
 
 	private void loadTable() {
-		table = new DataTableFXML<T, T>(paginador, tabla,false) {
+		table = new DataTableFXML<T, T>(paginador, tabla, false) {
 
 			@Override
 			public List<T> getList(T filter, Integer page, Integer rows) {
@@ -181,9 +187,24 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 
 			@Override
 			public T getFilter() {
-				return filter;
+				return validFilter();
 			}
+
 		};
+	}
+
+	public T validFilter() {
+		filtros.forEach((key, value) -> {
+			try {
+				if (((Class<?>) filter.getType(value.getField().getName())) == String.class
+						&& StringUtils.isNotBlank(filter.get(value.getField().getName()))) {
+					filter.set(value.getField().getName(), "%" + filter.get(value.getField().getName()) + "%");
+				}
+			} catch (ReflectionException e) {
+				logger().logger(e);
+			}
+		});
+		return filter;
 	}
 
 	/**
@@ -192,9 +213,20 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	 * 
 	 * @param caller {@link String}
 	 */
-	public final void load(String caller) {
+	@SuppressWarnings("unchecked")
+	public final void load(String caller) throws Exception {
 		this.caller = caller;
 		filter = assingValuesParameterized(filter);
+		var cantidad = table.getTotalRows(validFilter());
+		if (cantidad == 1) {
+			this.caller(caller,table.getList(validFilter(), 0, 1).get(0));
+			this.closeWindow();
+		} else if (cantidad == 0) {
+			this.closeWindow();
+			throw new Exception(String.format(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText),
+					i18n().valueBundle(LanguageConstant.GENERIC_DOT + getClassParameterized().getSimpleName())));
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")

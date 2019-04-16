@@ -1,6 +1,7 @@
 package org.pyt.app.beans.empresa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
@@ -47,9 +48,6 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@FXML
 	private javafx.scene.control.TextField pais;
 	@FXML
-	//private javafx.scene.control.ChoiceBox<String> moneda;
-	private javafx.scene.control.TextField moneda;
-	@FXML
 	private javafx.scene.control.TextField representante;
 	@FXML
 	private javafx.scene.control.TextField contador;
@@ -59,6 +57,8 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
+	@FXML
+	private PopupParametrizedControl moneda;
 
 	@FXML
 	public void initialize() {
@@ -66,6 +66,11 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
 		pais.setText(AppConstants.DEFAULT_PAIS_COL);
+		moneda.setPopupOpenAction(()->popupMonedas());
+		moneda.setCleanValue(()->{
+			registro.setMonedaDefecto(null);
+			this.moneda.setText("");
+		});
 	}
 
 	/**
@@ -134,16 +139,17 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		}
 	}
 
-	public void monedas() {
+	public void popupMonedas() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
-			.addDefaultValuesToGenericParametrized("grupo",parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_MONEDA)))
-			.load("#{EmpresaCRUBean.moneda}");
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_MONEDA)))
+			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
+			).load("#{EmpresaCRUBean.moneda}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-
+	
 	public void setMoneda(ParametroDTO moneda) {
 		registro.setMonedaDefecto(moneda);
 		this.moneda.setText(moneda.getDescripcion());

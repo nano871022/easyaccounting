@@ -1,5 +1,6 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.common.ADto;
 
 import com.pyt.service.dto.dels.ParametroDelDTO;
@@ -19,8 +20,12 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 @UpdClass(clase=ParametroUpdDTO.class)
 public class ParametroDTO extends ADto{
 	private static final long serialVersionUID = -5396836082089633791L;
+	
 	private Long orden;
+	@DefaultFieldToGeneric(simpleNameClazzBean="PopupGenBean",use = DefaultFieldToGeneric.Uses.FILTER)
+	@DefaultFieldToGeneric(simpleNameClazzBean="PopupGenBean",use = DefaultFieldToGeneric.Uses.COLUMN)
 	private String nombre;
+	@DefaultFieldToGeneric(simpleNameClazzBean="PopupGenBean",use = DefaultFieldToGeneric.Uses.COLUMN)
 	private String descripcion;
 	private String valor;
 	private String valor2;

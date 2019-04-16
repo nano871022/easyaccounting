@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ADto;
 import org.pyt.common.common.GenericToBean;
@@ -99,25 +100,46 @@ public abstract class GenericInterfacesReflection<T extends ADto> extends Generi
 			GenericPOJO.Type typeGeneric) throws IllegalAccessException {
 		Map<String, GenericPOJO<T>> maps = new HashMap<String, GenericPOJO<T>>();
 		Field[] fields = instance.getClass().getDeclaredFields();
-		Arrays.asList(fields).stream().filter(field -> !Modifier.isStatic(field.getModifiers())
-				&& !Modifier.isAbstract(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
-				.forEach(field ->agregarFieldIntoMap(maps, field, instance, typeGeneric) );
+		Arrays.asList(fields).stream()
+				.filter(field -> !Modifier.isStatic(field.getModifiers())
+						&& field.getAnnotationsByType(DefaultFieldToGeneric.class).length > 0
+						&& !Modifier.isAbstract(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
+				.forEach(field -> agregarFieldIntoMap(maps, field, instance, typeGeneric));
 		return maps;
 	}
+
 	/**
-	 * Se encarga de agregar el field dentro de un wrapper para para poder ser puesto en un mapa
-	 * @param maps {@link Map}
-	 * @param field {@link Field}
-	 * @param instance {@link Object}
+	 * Se encarga de agregar el field dentro de un wrapper para para poder ser
+	 * puesto en un mapa
+	 * 
+	 * @param maps        {@link Map}
+	 * @param field       {@link Field}
+	 * @param instance    {@link Object}
 	 * @param typeGeneric {@link GenericPOJO#Type}
 	 */
 	private final <O extends Object> void agregarFieldIntoMap(Map<String, GenericPOJO<T>> maps, Field field, O instance,
 			GenericPOJO.Type typeGeneric) {
 		try {
-			if (!field.canAccess(instance)) {
-				field.trySetAccessible();
+			Boolean valid = false;
+			if (GenericPOJO.Type.FILTER == typeGeneric) {
+				DefaultFieldToGeneric[] annotated = field.getAnnotationsByType(DefaultFieldToGeneric.class);
+				valid = Arrays.asList(annotated).stream()
+						.filter(annotate -> annotate.use() == DefaultFieldToGeneric.Uses.FILTER
+								&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName())
+						).toArray().length > 0;
+			} else if (GenericPOJO.Type.COLUMN == typeGeneric) {
+				DefaultFieldToGeneric[] annotated = field.getAnnotationsByType(DefaultFieldToGeneric.class);
+				valid = Arrays.asList(annotated).stream()
+						.filter(annotate -> annotate.use() == DefaultFieldToGeneric.Uses.COLUMN 
+						&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName())
+						).toArray().length > 0;
 			}
-			maps.put(field.getName(), fillGenericPOJO(instance, field, typeGeneric));
+			if (valid) {
+				if (!field.canAccess(instance)) {
+					field.trySetAccessible();
+				}
+				maps.put(field.getName(), fillGenericPOJO(instance, field, typeGeneric));
+			}
 		} catch (IllegalAccessException e) {
 			logger.logger(e);
 		}
