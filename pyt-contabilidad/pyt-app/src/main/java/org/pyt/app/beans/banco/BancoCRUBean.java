@@ -1,14 +1,12 @@
 package org.pyt.app.beans.banco;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.BancoException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.BancoDTO;
 import com.pyt.service.dto.ParametroDTO;
@@ -17,7 +15,6 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -32,6 +29,7 @@ import javafx.scene.layout.BorderPane;
  */
 @FXMLFile(path = "view/banco", file = "banco.fxml")
 public class BancoCRUBean extends ABean<BancoDTO> {
+	
 	@Inject(resource = "com.pyt.service.implement.BancoSvc")
 	private IBancosSvc bancoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -45,11 +43,11 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 	@FXML
 	private TextField numeroCuenta;
 	@FXML
-	private ChoiceBox<String> tipoBanco;
+	private PopupParametrizedControl tipoBanco;
 	@FXML
-	private ChoiceBox<String> tipoCuenta;
+	private PopupParametrizedControl tipoCuenta;
 	@FXML
-	private ChoiceBox<String> estado;
+	private PopupParametrizedControl estado;
 	@FXML
 	private DatePicker fechaApertura;
 	@FXML
@@ -58,32 +56,18 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
-	private List<ParametroDTO> estados;
-	private List<ParametroDTO> tipoBancos;
-	private List<ParametroDTO> tipoCuentas;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Agregando Nuevo Banco";
 		titulo.setText(NombreVentana);
 		registro = new BancoDTO();
-		ParametroDTO pCuentas = new ParametroDTO();
-		ParametroDTO pBancos = new ParametroDTO();
-		ParametroDTO pEstados = new ParametroDTO();
-		try {
-			tipoCuentas = parametrosSvc.getAllParametros(pCuentas,ParametroConstants.GRUPO_TIPO_CUENTA);
-			tipoBancos = parametrosSvc.getAllParametros(pBancos,ParametroConstants.GRUPO_TIPO_BANCO);
-			logger.logger("Se encontraron "+tipoBancos.size()+" registros de banco.");
-			estados = parametrosSvc.getAllParametros(pEstados,ParametroConstants.GRUPO_ESTADO_BANCO);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		tipoCuenta.getSelectionModel().selectFirst();
-		tipoBanco.getSelectionModel().selectFirst();
-		estado.getSelectionModel().selectFirst();
-		SelectList.put(tipoCuenta, tipoCuentas, "nombre");
-		SelectList.put(tipoBanco, tipoBancos, "nombre");
-		SelectList.put(estado, estados, "nombre");
+		tipoBanco.setPopupOpenAction(()->popupOpenTipoBanco());
+		tipoBanco.setCleanValue(()->{registro.setTipoBanco(null);tipoBanco.setText(null);});
+		tipoCuenta.setPopupOpenAction(()->popupOpenTipoCuentas());
+		tipoCuenta.setCleanValue(()->{registro.setTipoCuenta(null);tipoCuenta.setText(null);});
+		estado.setPopupOpenAction(()->popupOpenEstado());
+		estado.setCleanValue(()->{registro.setEstado(null);estado.setText(null);});
 	}
 
 	/**
@@ -103,9 +87,6 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		if (fechaCierre != null) {
 			registro.setFechaCierre(fechaCierre.getValue());
 		}
-		registro.setTipoBanco(SelectList.get(tipoBanco, tipoBancos, "nombre"));
-		registro.setTipoCuenta(SelectList.get(tipoCuenta, tipoCuentas, "nombre"));
-		registro.setEstado(SelectList.get(estado, estados, "nombre"));
 	}
 
 	private void loadFxml() {
@@ -117,9 +98,9 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		numeroCuenta.setText(registro.getNumeroCuenta());
 		fechaApertura.setValue(registro.getFechaApertura());
 		fechaCierre.setValue(registro.getFechaCierre());
-		SelectList.selectItem(tipoBanco, tipoBancos, "nombre", registro.getTipoBanco());
-		SelectList.selectItem(tipoCuenta, tipoCuentas, "nombre", registro.getTipoCuenta());
-		SelectList.selectItem(estado, estados, "nombre", registro.getEstado());
+		tipoBanco.setText(registro.getTipoBanco().getDescripcion());
+		tipoCuenta.setText( registro.getTipoCuenta().getDescripcion());
+		estado.setText(registro.getEstado().getDescripcion());
 	}
 
 	public void load(BancoDTO dto) {
@@ -149,6 +130,55 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		valid &= StringUtils.isNotBlank(registro.getEstado().getCodigo());
 		return valid;
 	}
+	
+	public final void popupOpenTipoBanco() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametrosSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_BANCO)))
+			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
+			).load("#{BancoCRUBean.tipoBanco}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setTipoBanco(ParametroDTO parametro) {
+		registro.setTipoBanco(parametro);
+		tipoBanco.setText(parametro.getDescripcion());
+	}
+
+	public final void popupOpenTipoCuentas() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametrosSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_CUENTA)))
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
+					).load("#{BancoCRUBean.tipoCuentas}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setTipoCuentas(ParametroDTO parametro) {
+		registro.setTipoCuenta(parametro);
+		tipoCuenta.setText(parametro.getDescripcion());
+	}
+	
+	public final void popupOpenEstado() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametrosSvc.getIdByParametroGroup(ParametroConstants.GRUPO_ESTADO_BANCO)))
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
+					).load("#{BancoCRUBean.estado}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setEstado(ParametroDTO parametro) {
+		registro.setEstado(parametro);
+		estado.setText(parametro.getDescripcion());
+	}
+	
 
 	public void add() {
 		load();

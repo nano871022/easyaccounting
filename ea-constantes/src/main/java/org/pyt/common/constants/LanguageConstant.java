@@ -14,6 +14,7 @@ public class LanguageConstant {
 	public final static String GENERIC_DOT = "generic.";
 	public final static String POPUP_PARAMETRIZED_ERROR_OPEN_POPUP = "popup-parametrized.error.open-popup";
 	public final static String POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE = "popup-parametrized.error.clean-value";
-	
+	public final static String LANGUAGE_KEY_NOT_FOUND = "languages.key.not-found";
+	public final static String LANGUAGE_FIELD_ASSIGN_EMPTY = "generic.field.assign.empty";
 }
 

@@ -7,12 +7,12 @@
 
 <fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml">  
     <TextField fx:id="value"  />
-	<Button  mnemonicParsing="false" onAction="#openPopup" >
+	<Button fx:id="btnOpen"  mnemonicParsing="false" onAction="#openPopup"   >
 		<graphic>
 			<FontIcon iconLiteral="fa-search" iconColor="black"/>
 		</graphic>
 	</Button>
-	<Button  mnemonicParsing="false" onAction="#cleanValue" >
+	<Button fx:id="btnClean" mnemonicParsing="false" onAction="#cleanValue">
 		<graphic>
 			<FontIcon iconLiteral="fa-remove" iconColor="black"/>
 		</graphic>

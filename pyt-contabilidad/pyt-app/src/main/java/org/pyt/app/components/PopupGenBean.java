@@ -112,8 +112,12 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 
 	private final <O extends Object> void assingsValueToField(String nameField, O value) {
 		try {
-			filter.set(nameField, value);
-		} catch (ReflectionException e) {
+			if(value == null) {
+				logger.warn(i18n().valueBundle(String.format(LanguageConstant.LANGUAGE_FIELD_ASSIGN_EMPTY,nameField,getInstaceOfGenericADto().getClass().getSimpleName())));
+			}else {
+				filter.set(nameField, value);
+			}
+		} catch (ReflectionException | InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
 			logger().logger(e);
 		}
 	}
@@ -145,17 +149,18 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		columnas = getMapFieldsByObject(filter, GenericPOJO.Type.COLUMN);
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
-			var tc = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN
-					+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
-			tc.setCellValueFactory((CellDataFeatures<T, String> param) -> {
-				try {
-					return new ReadOnlyStringWrapper(
-							validateValues.cast(param.getValue().get(value.getField().getName()), String.class));
-				} catch (ReflectionException | ValidateValueException e) {
-					return null;
-				}
-			});
-			tabla.getColumns().add(tc);
+				var tc = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN
+						+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
+
+				tc.setCellValueFactory((CellDataFeatures<T, String> param) -> {
+					try {
+						return new ReadOnlyStringWrapper(
+								validateValues.cast(param.getValue().get(value.getField().getName()), String.class));
+					} catch (ReflectionException | ValidateValueException e) {
+						return null;
+					}
+				});
+				tabla.getColumns().add(tc);
 		});
 		tabla.setOnMouseClicked(event -> selectedRow(event));
 	}
@@ -219,14 +224,15 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		filter = assingValuesParameterized(filter);
 		var cantidad = table.getTotalRows(validFilter());
 		if (cantidad == 1) {
-			this.caller(caller,table.getList(validFilter(), 0, 1).get(0));
+			this.caller(caller, table.getList(validFilter(), 0, 1).get(0));
 			this.closeWindow();
 		} else if (cantidad == 0) {
 			this.closeWindow();
 			throw new Exception(String.format(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText),
 					i18n().valueBundle(LanguageConstant.GENERIC_DOT + getClassParameterized().getSimpleName())));
+		}else {
+			showWindow();
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")

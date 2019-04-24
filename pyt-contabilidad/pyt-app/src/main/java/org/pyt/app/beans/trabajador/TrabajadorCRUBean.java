@@ -6,11 +6,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
-import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.ParametroException;
 
@@ -56,9 +57,9 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	@FXML
 	private javafx.scene.control.ChoiceBox<String> tipoDocumentos;
 	@FXML
-	private javafx.scene.control.ChoiceBox<String> tipoPagos;
+	private PopupParametrizedControl tipoPagos;
 	@FXML
-	private javafx.scene.control.ChoiceBox<String> centroCostos;
+	private PopupParametrizedControl centroCostos;
 	@FXML
 	private javafx.scene.control.ChoiceBox<String> estados;
 	@FXML
@@ -73,8 +74,6 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	private BorderPane pane;
 	private List<ParametroDTO> lTipoDocumentos;
 	private List<ParametroDTO> lEstados;
-	private List<ParametroDTO> lTipoPagos;
-	private List<CentroCostoDTO> lCentroCostos;
 	public final static String FIELD_NAME = "nombre";
 	public final static String FIELD_VALOR = "valor";
 
@@ -94,13 +93,13 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 			lEstados = parametroSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_ESTADO_EMPLEADO);
 			lTipoDocumentos = parametroSvc.getAllParametros(new ParametroDTO(),
 					ParametroConstants.GRUPO_TIPOS_DOCUMENTO_PERSONA);
-			lTipoPagos = parametroSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_TIPO_PAGO);
-			lCentroCostos = centroCostoSvc.getAllCentroCostos(new CentroCostoDTO());
 			SelectList.put(tipoDocumentos, lTipoDocumentos, FIELD_NAME);
 			SelectList.put(estados, lEstados, FIELD_NAME);
-			SelectList.put(tipoPagos, lTipoPagos, FIELD_NAME);
-			SelectList.put(centroCostos, lCentroCostos, FIELD_NAME);
-		} catch (ParametroException | CentroCostosException e) {
+			tipoPagos.setPopupOpenAction(()->popupOpenTipoPago());
+			tipoPagos.setCleanValue(()->{registro.setTipoPago(null);tipoPagos.setText(null);});
+			centroCostos.setPopupOpenAction(()->popupOpenCentroCostos());
+			centroCostos.setCleanValue(()->{registro.setCentroCosto(null);centroCostos.setText(null);});
+		} catch (ParametroException e) {
 			error(e);
 		}
 	}
@@ -128,11 +127,41 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		if (fechaRetiro.getValue() != null)
 			registro.setFechaRetiro(Date.from(fechaRetiro.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		registro.getPersona().setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME).getValor());
-		registro.setTipoPago(SelectList.get(tipoPagos, lTipoPagos, FIELD_NAME));
-		registro.setCentroCosto(SelectList.get(centroCostos, lCentroCostos, FIELD_NAME));
 		registro.setEstado(SelectList.get(estados, lEstados, FIELD_NAME).getValor());
 	}
-
+	
+	public final void popupOpenTipoPago() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_PAGO)))
+			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
+			).load("#{TrabajadorCRUBean.tipoPago}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setTipoPago(ParametroDTO parametro) {
+		registro.setTipoPago(parametro);
+		tipoPagos.setText(parametro.getDescripcion());
+	}
+	
+	public final void popupOpenCentroCostos() {
+		try {
+			((PopupGenBean<CentroCostoDTO>) controllerPopup(new PopupGenBean<CentroCostoDTO>(CentroCostoDTO.class))
+			.addDefaultValuesToGenericParametrized("estado", "A")
+			).load("#{TrabajadorCRUBean.centroCosto}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setCentroCosto(CentroCostoDTO centroCosto) {
+		registro.setCentroCosto(centroCosto);
+		centroCostos.setText(centroCosto.getDescripcion());
+	}
+	
+	
 	private void loadFxml() {
 		if (registro == null)
 			return;
@@ -151,9 +180,9 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 			fechaRetiro.setValue(LocalDate.ofInstant(registro.getFechaRetiro().toInstant(), ZoneId.systemDefault()));
 		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getPersona().getTipoDocumento(),
 				FIELD_VALOR);
-		SelectList.selectItem(centroCostos, lCentroCostos, FIELD_NAME, registro.getCentroCosto());
 		SelectList.selectItem(estados, lEstados, FIELD_NAME, registro.getEstado(), FIELD_VALOR);
-		SelectList.selectItem(tipoPagos, lTipoPagos, FIELD_NAME, registro.getTipoPago());
+		tipoPagos.setText(registro.getTipoPago().getDescripcion());
+		centroCostos.setText(registro.getCentroCosto().getDescripcion());
 	}
 
 	public void load(TrabajadorDTO dto) {

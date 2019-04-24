@@ -6,4 +6,5 @@ package org.pyt.common.constants;
  */
 public class CustomFXMLConstant {
 	public final static String POPUP_PARAMETRIZED = "/view/custom/popup_parametrized.fxml";
+	public final static String FIELD_PARAMETRIZED = "/view/custom/field_parametrized.fxml";
 }

@@ -26,33 +26,29 @@ public final class SelectList {
 	/**
 	 * Se encarga de ponder los datos en el choice box con obserble list
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param lista
-	 *            {@link List}
-	 * @param campoDto
-	 *            {@link String} nombre del campo del dto que se muestra en el
-	 *            objeto
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param lista     {@link List}
+	 * @param campoDto  {@link String} nombre del campo del dto que se muestra en el
+	 *                  objeto
 	 */
 	@SuppressWarnings("unchecked")
 	public final static <S extends Object, T extends ADto> void put(ChoiceBox<S> choiceBox, List<T> lista,
 			String campoDto) {
-		try {
-			if(campoDto == null)return;
-			choiceBox.getItems().clear();
-			ObservableList<S> observable = choiceBox.getItems();
-			observable.add((S) AppConstants.SELECCIONE);
-			for (T obj : lista) {
-				if(obj != null) {
-					S v = obj.get(campoDto);
-					if(v != null) {
-						observable.add(v);
-					}
+		if (campoDto == null)
+			return;
+		choiceBox.getItems().clear();
+		ObservableList<S> observable = choiceBox.getItems();
+		observable.add((S) AppConstants.SELECCIONE);
+		lista.stream().filter(obj -> obj != null).forEach(obj -> {
+			try {
+				S v = obj.get(campoDto);
+				if (v != null) {
+					observable.add(v);
 				}
+			} catch (ReflectionException e) {
+				logger.logger(e);
 			}
-		} catch (ReflectionException e) {
-			logger.logger(e);
-		}
+		});
 		try {
 			choiceBox.getSelectionModel().selectFirst();
 		} catch (Exception e) {
@@ -62,9 +58,9 @@ public final class SelectList {
 	/**
 	 * Se encarga de limpiiar la lista de items y agrega string seleccione
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
+	 * @param choiceBox {@link ChoiceBox}
 	 */
+	@SuppressWarnings("unchecked")
 	public final static <S extends Object> void clear(ChoiceBox<S> choiceBox) {
 		choiceBox.getItems().clear();
 		choiceBox.getItems().add((S) AppConstants.SELECCIONE);
@@ -74,11 +70,10 @@ public final class SelectList {
 	 * Se encarga de cargar registro por registro e indicar que se seleccione el
 	 * primer registro por defecto
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param value
-	 *            {@link Object}
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param value     {@link Object}
 	 */
+	@SuppressWarnings("unchecked")
 	public final static <S extends Object, V extends Object> void add(ChoiceBox<S> choiceBox, V value) {
 		ObservableList<S> observable = choiceBox.getItems();
 		observable.add((S) value);
@@ -92,32 +87,27 @@ public final class SelectList {
 	 * Se encarga de poner una lista de tipo string dentro de un choicebox de tipo
 	 * string
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param lista
-	 *            {@link List} of {@link String}
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param lista     {@link List} of {@link String}
 	 */
 	@SuppressWarnings("unchecked")
 	public final static <S extends Object> void put(ChoiceBox<S> choiceBox, List<S> lista) {
 		choiceBox.getItems().clear();
-		if(lista==null || lista.size() == 0)return;
+		if (lista == null || lista.size() == 0)
+			return;
 		ObservableList<S> observable = choiceBox.getItems();
 		if (lista.get(0) instanceof String) {
 			observable.add((S) AppConstants.SELECCIONE);
 		}
-		for (S valor : lista) {
-			observable.add(valor);
-		}
+		lista.forEach(valor -> observable.add(valor));
 	}
 
 	/**
 	 * Se encarga de configurar el choice box para agregar los registros a ser
 	 * seleccionados, se agrega es el nombre del mapa
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param mapa
-	 *            {@link Map}
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param mapa      {@link Map}
 	 */
 	@SuppressWarnings("unchecked")
 	public final static <S extends Object> void put(ChoiceBox<S> choiceBox, Map<S, Object> mapa) {
@@ -125,18 +115,14 @@ public final class SelectList {
 		ObservableList<S> observable = choiceBox.getItems();
 		observable.add((S) AppConstants.SELECCIONE);
 		Set<S> sets = mapa.keySet();
-		for (S key : sets) {
-			observable.add(key);
-		}
+		sets.forEach(key -> observable.add(key));
 	}
 
 	/**
 	 * Obtiene el valor asociado a la lista del mapa key
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param mapa
-	 *            {@link Map}
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param mapa      {@link Map}
 	 * @return {@link Object} extended
 	 */
 	@SuppressWarnings("unused")
@@ -150,12 +136,11 @@ public final class SelectList {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Se encarga de obtener la opcion seleccionada en el choice box
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
+	 * @param choiceBox {@link ChoiceBox}
 	 * @return {@link String}
 	 */
 	public final static <T extends Object> T get(ChoiceBox<T> choiceBox) {
@@ -165,12 +150,9 @@ public final class SelectList {
 	/**
 	 * Se encarga de buscar dentro de una lista el valor seleccionado en choiceBox
 	 * 
-	 * @param selects
-	 *            {@link ChoiceBox}
-	 * @param list
-	 *            {@link List}
-	 * @param nombreCampoDto
-	 *            {@link String} nombre del campo en la lista a comparra
+	 * @param selects        {@link ChoiceBox}
+	 * @param list           {@link List}
+	 * @param nombreCampoDto {@link String} nombre del campo en la lista a comparra
 	 * @return {@link Object} objeto de la lista resultante
 	 */
 	public final static <S extends Object, T extends ADto> T get(ChoiceBox<S> selects, List<T> list,
@@ -190,12 +172,9 @@ public final class SelectList {
 	/**
 	 * Se encarga de buscar un valor en la lista y seleccionarlo por defecto
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param obj
-	 *            {@link ADto} extends
-	 * @param nombreCampoDto
-	 *            {@link String}
+	 * @param choiceBox      {@link ChoiceBox}
+	 * @param obj            {@link ADto} extends
+	 * @param nombreCampoDto {@link String}
 	 */
 	public final static <S, L, N extends Object, T extends ADto, M extends ADto> void selectItem(ChoiceBox<S> choiceBox,
 			List<M> list, String nombreCampoList, T obj, String nombreCampoDto) {
@@ -234,16 +213,11 @@ public final class SelectList {
 	/**
 	 * Se encarga de seleccionar el registro seleccionado
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param list
-	 *            {@link List} of {@link ADto}
-	 * @param nombreShow
-	 *            {@link String}
-	 * @param value
-	 *            {@link Object}
-	 * @param nombreAssign
-	 *            {@link String}
+	 * @param choiceBox    {@link ChoiceBox}
+	 * @param list         {@link List} of {@link ADto}
+	 * @param nombreShow   {@link String}
+	 * @param value        {@link Object}
+	 * @param nombreAssign {@link String}
 	 */
 	public final static <S extends Object, M extends ADto, T extends Object> void selectItem(ChoiceBox<S> choiceBox,
 			List<M> list, String nombreShow, T value, String nombreAssign) {
@@ -270,14 +244,10 @@ public final class SelectList {
 	 * objeto tipo adto y es igual al tipo dela lista Se valida que el objeto se
 	 * encuentre dentro de la lista y despues se selecciona
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param list
-	 *            {@link List}
-	 * @param nombreShow
-	 *            {@link String}
-	 * @param adto
-	 *            {@link ADto} extends
+	 * @param choiceBox  {@link ChoiceBox}
+	 * @param list       {@link List}
+	 * @param nombreShow {@link String}
+	 * @param adto       {@link ADto} extends
 	 */
 	public final static <S extends Object, M extends ADto> void selectItem(ChoiceBox<S> choiceBox, List<M> list,
 			String nombreShow, M adto) {
@@ -305,10 +275,8 @@ public final class SelectList {
 	/**
 	 * Se encarga de buscar un valor en la lista y seleccionarlo por defecto
 	 * 
-	 * @param choiceBox
-	 *            {@link ChoiceBox}
-	 * @param mapa
-	 *            {@link Map}
+	 * @param choiceBox {@link ChoiceBox}
+	 * @param mapa      {@link Map}
 	 */
 	public final static <S, T, L extends Object> void selectItem(ChoiceBox<S> choiceBox, Map<S, T> mapa, T value) {
 		ValidateValues vv = new ValidateValues();
@@ -337,12 +305,14 @@ public final class SelectList {
 			choiceBox.getSelectionModel().selectFirst();
 		}
 	}
+
 	/**
 	 * Se encarga dde seleccionar el registro
+	 * 
 	 * @param choiceBox {@link ChoiceBox}
-	 * @param value {@link Object}
+	 * @param value     {@link Object}
 	 */
-	public final static <T extends Object> void selectItem(ChoiceBox<T> choiceBox,T value) {
+	public final static <T extends Object> void selectItem(ChoiceBox<T> choiceBox, T value) {
 		choiceBox.getSelectionModel().select(value);
 	}
 

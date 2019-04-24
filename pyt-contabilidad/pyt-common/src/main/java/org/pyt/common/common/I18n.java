@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.constants.AppConstants;
+import org.pyt.common.constants.LanguageConstant;
 
 /**
  * Archvios que se encarga de cargar la internacionalizacion de lenguage y
@@ -14,6 +15,7 @@ import org.pyt.common.constants.AppConstants;
  * @since 15/04/2019
  */
 public final class I18n {
+	private final Log logger = Log.Log(this.getClass());
 	private ResourceBundle bundle;
 	private String bundleNoDefault;
 
@@ -50,7 +52,12 @@ public final class I18n {
 	 * @return {@link String}
 	 */
 	public final String valueBundle(String key) {
-		return getLanguages().getString(key);
+		try {
+			return getLanguages().getString(key);
+		}catch(Exception exception) {
+			logger.logger(String.format(getLanguages().getString(LanguageConstant.LANGUAGE_KEY_NOT_FOUND),key));
+			return key;
+		}
 	}
 
 	public final void setBunde(String bundle) {

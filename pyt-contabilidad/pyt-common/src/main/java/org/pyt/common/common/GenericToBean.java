@@ -97,6 +97,10 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 		Scene scene = new Scene(panel);
 		scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
 		primaryStage.setScene(scene);
+		primaryStage.hide();
+	}
+	
+	protected void showWindow() {
 		primaryStage.show();
 	}
 
