@@ -4,26 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.ICuentaContableSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -38,8 +36,6 @@ import javafx.scene.layout.HBox;
 public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
-	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
-	private IParametrosSvc parametroSvc;
 	@FXML
 	private javafx.scene.control.TableView<CuentaContableDTO> tabla;
 	@FXML
@@ -47,7 +43,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private TextField asociado;
 	@FXML
-	private ChoiceBox<String> tipoCuentaContables;
+	private PopupParametrizedControl tipoCuentaContables;
 	@FXML
 	private Button btnMod;
 	@FXML
@@ -61,24 +57,19 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private TableColumn<CuentaContableDTO, String> tipoCuentaContable;
 	private DataTableFXML<CuentaContableDTO, CuentaContableDTO> dt;
-	private List<ParametroDTO> listTipoCuentas;
+	private CuentaContableDTO filter;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Lista de Cuenta Contable";
 		registro = new CuentaContableDTO();
+		filter = new CuentaContableDTO();
 		registro.setNaturaleza(new ParametroDTO());
 		registro.setTipoPlanContable(new ParametroDTO());
 		registro.setTipo(new ParametroDTO());
 		registro.setEmpresa(new EmpresaDTO());
-		ParametroDTO pEstado = new ParametroDTO();
-		try {
-			listTipoCuentas = parametroSvc.getAllParametros(pEstado, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
-		tipoCuentaContables.getSelectionModel().selectFirst();
+		tipoCuentaContables.setPopupOpenAction(()->popupTipoPlanContable());
+		tipoCuentaContables.setCleanValue(()->filter.setTipoPlanContable(null));
 		tipoCuentaContable
 				.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
 		tipo.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipo().getNombre()));
@@ -122,8 +113,8 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 				if (StringUtils.isNotBlank(asociado.getText())) {
 					filtro.setAsociado(asociado.getText());
 				}
-				if (StringUtils.isNotBlank(tipoCuentaContables.getValue())) {
-					filtro.setTipoPlanContable(SelectList.get(tipoCuentaContables, listTipoCuentas, "nombre"));
+				if (filter.getTipoPlanContable() != null) {
+					filtro.setTipoPlanContable(filter.getTipoPlanContable());
 				}
 				return filtro;
 			}
@@ -134,7 +125,23 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		btnMod.setVisible(isSelected());
 		btnDel.setVisible(isSelected());
 	}
-
+	
+	public final void popupTipoPlanContable() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE)
+					).load("#{CuentaContableBean.tipoPlanContable}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setTipoPlanContable(ParametroDTO tipoPlanContable) {
+		filter.setTipoPlanContable(tipoPlanContable);
+		tipoCuentaContables.setText(tipoPlanContable.getNombre());
+	}
+	
 	public void add() {
 		getController(CuentaContableCRUBean.class);
 	}

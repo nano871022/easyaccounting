@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
+<?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane fx:id="pane" maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="237.0"
 	prefWidth="600.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
@@ -42,8 +43,8 @@
 				<TextField fx:id="nombre" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 				<Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Codigo Cuenta" GridPane.columnIndex="2"
 					GridPane.rowIndex="0" />
-				<ChoiceBox id="empresa" fx:id="tipoPlanContable" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-				<ChoiceBox id="empresa" fx:id="naturaleza" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+				<PopupParametrizedControl  fx:id="tipoPlanContable" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+				<PopupParametrizedControl fx:id="naturaleza" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 				<Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="76.0" text="Naturaleza"
 					GridPane.columnIndex="0" GridPane.rowIndex="2" />
 				<Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Tipo Plan Contable"
@@ -52,8 +53,8 @@
 					GridPane.rowIndex="3" />
 				<Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Empresa" GridPane.columnIndex="2"
 					GridPane.rowIndex="3" />
-				<ChoiceBox id="empresa" fx:id="tipo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-				<ChoiceBox fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+				<PopupParametrizedControl  fx:id="tipo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+				<PopupParametrizedControl fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 				<TextField id="descripcion" fx:id="codigoCuenta" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 			</children>
 			<columnConstraints>

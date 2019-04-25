@@ -9,6 +9,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
 	style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
@@ -107,7 +108,7 @@
 						<Insets bottom="5.0" top="5.0" />
 					</GridPane.margin>
 				</Label>
-				<ChoiceBox fx:id="tipoCuentaContables" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+				<PopupParametrizedControl fx:id="tipoCuentaContables" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 				<Label maxWidth="1.7976931348623157E308" text="Asociado" GridPane.columnIndex="0" GridPane.rowIndex="2" />
 				<TextField fx:id="asociado" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 			</children>

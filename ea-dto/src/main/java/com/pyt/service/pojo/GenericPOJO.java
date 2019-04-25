@@ -24,6 +24,12 @@ public class GenericPOJO <O extends Object>{
 		this.type = type;
 		this.width = width;
 	}
+	public GenericPOJO(String nameShow, Field field, O fieldUse, Type type) {
+		this.nameShow = nameShow;
+		this.field = field;
+		this.fieldUse = fieldUse;
+		this.type = type;
+	}
 	public String getNameShow() {
 		return nameShow;
 	}

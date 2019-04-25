@@ -7,4 +7,5 @@ package org.pyt.common.constants;
 public class CuentaContableConstants {
 	public final static String CUENTA_GASTO = "";
 	public final static String CUENTA_X_PAGAR = "";
+	public final static String FIELD_ASOCIADO = "asociado";
 }

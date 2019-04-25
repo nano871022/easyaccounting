@@ -79,5 +79,6 @@ public class PopupParametrizedControl extends HBox   {
 			throw new Exception(languages.valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE));
 		}
 		cleanValue.caller();
+		setText(null);
 	}
 }

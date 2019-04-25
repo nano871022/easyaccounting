@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
+<?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane fx:id="pane" maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="243.0" prefWidth="622.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.concepto.ConceptoCRUBean">
   <bottom>
@@ -39,13 +40,13 @@
         <Label alignment="CENTER" prefHeight="31.0" prefWidth="90.0" text="Descripción" GridPane.rowIndex="1" />
         <TextField fx:id="descripcion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="1" />
         <Label alignment="CENTER" prefHeight="27.0" prefWidth="90.0" text="Estado" GridPane.rowIndex="3" />
-        <ChoiceBox fx:id="estado" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="3" />
+        <PopupParametrizedControl fx:id="estado" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="3" />
         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="29.0" prefWidth="76.0" text="Empresa" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-        <ChoiceBox fx:id="empresa" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="3" />
+        <PopupParametrizedControl fx:id="empresa" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="3" />
         <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="SubConcepto" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
         <TextField fx:id="subConcepto" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="1" />
-        <ChoiceBox id="estado" fx:id="cuentasGastos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="2" />
-        <ChoiceBox id="estado" fx:id="cuentasXPagar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="2" />
+        <PopupParametrizedControl id="estado" fx:id="cuentasGastos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="2" />
+        <PopupParametrizedControl id="estado" fx:id="cuentasXPagar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="2" />
         <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="90.0" text="Cuenta Gasto" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="76.0" text="Cuenta X Pagar" GridPane.columnIndex="2" GridPane.rowIndex="2" />
       </children>
