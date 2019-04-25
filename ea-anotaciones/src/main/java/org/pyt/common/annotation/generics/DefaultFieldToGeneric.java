@@ -35,5 +35,7 @@ public @interface DefaultFieldToGeneric {
 	/**
 	 * Indica el uso que se le puede dar a la anotacion {@link DefaultFieldToGeneric#Uses}
 	 */
-	public Uses use(); 
+	public Uses use();
+	
+	public double width() default 0;
 }

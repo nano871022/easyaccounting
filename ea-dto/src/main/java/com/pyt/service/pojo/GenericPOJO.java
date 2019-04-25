@@ -15,12 +15,14 @@ public class GenericPOJO <O extends Object>{
 	 private Field field;
 	 private O fieldUse;
 	 private Type type;
+	 private double width;
 	 
-	public GenericPOJO(String nameShow, Field field, O fieldUse, Type type) {
+	public GenericPOJO(String nameShow, Field field, O fieldUse, Type type,double width) {
 		this.nameShow = nameShow;
 		this.field = field;
 		this.fieldUse = fieldUse;
 		this.type = type;
+		this.width = width;
 	}
 	public String getNameShow() {
 		return nameShow;
@@ -45,6 +47,12 @@ public class GenericPOJO <O extends Object>{
 	}
 	public void setType(Type type) {
 		this.type = type;
+	}
+	public double getWidth() {
+		return width;
+	}
+	public void setWidth(double width) {
+		this.width = width;
 	}
 	
 }

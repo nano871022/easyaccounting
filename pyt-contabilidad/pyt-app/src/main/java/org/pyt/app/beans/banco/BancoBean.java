@@ -158,7 +158,6 @@ public class BancoBean extends ABean<BancoDTO> {
 		try {
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
 			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_BANCO)))
-			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
 			).load("#{BancoBean.tipoBanco}");
 		} catch (Exception e) {
 			error(e);
@@ -174,7 +173,7 @@ public class BancoBean extends ABean<BancoDTO> {
 		try {
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_CUENTA)))
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
+					.setWidth(350)
 					).load("#{BancoBean.tipoCuentas}");
 		} catch (Exception e) {
 			error(e);
@@ -190,7 +189,6 @@ public class BancoBean extends ABean<BancoDTO> {
 		try {
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_ESTADO_BANCO)))
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
 					).load("#{BancoBean.estado}");
 		} catch (Exception e) {
 			error(e);

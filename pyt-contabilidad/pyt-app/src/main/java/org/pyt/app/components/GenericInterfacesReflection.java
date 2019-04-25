@@ -84,7 +84,12 @@ public abstract class GenericInterfacesReflection<T extends ADto> extends Generi
 		if (field.canAccess(instance)) {
 			field.trySetAccessible();
 		}
-		return new GenericPOJO(field.getName(), field, field.get(instance), type);
+		DefaultFieldToGeneric dftg = field.getDeclaredAnnotation(DefaultFieldToGeneric.class);
+		double width = 0;
+		if(dftg != null) {
+			width = dftg.width();
+		}
+		return new GenericPOJO(field.getName(), field, field.get(instance), type,width);
 	}
 
 	/**

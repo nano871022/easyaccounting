@@ -1,9 +1,11 @@
 package org.pyt.common.common;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.controller.LocatorController;
@@ -103,6 +105,12 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 	protected void showWindow() {
 		primaryStage.show();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public final <S extends GenericToBean<T>> S setWidth(double width) {
+		primaryStage.setWidth(width);
+		return (S) this;
+	}
 
 	/**
 	 * Se encarhad e obtener una nueva instancia de la clase usada como generico de
@@ -164,6 +172,27 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 			} catch (ReflectionException e) {
 				logger().logger(e);
 			}
+		});
+		return assingValueAnnotations(dto);
+	}
+	/**
+	 * Se encarga asignar las anotaciones para poner los valores en el dto
+	 * @param dto extends {@link Object}
+	 * @return extends {@link Object}
+	 */
+	@SuppressWarnings("unchecked")
+	private final T assingValueAnnotations(T dto) {
+		Class<T> clazz = (Class<T>) dto.getClass();
+		Arrays.asList(clazz.getDeclaredFields()).stream()
+		.filter(field->field.getAnnotation(AssingValue.class)!=null)
+		.forEach(field->{
+			Arrays.asList(field.getAnnotationsByType(AssingValue.class)).forEach(annotation->{
+				try {
+					dto.set(annotation.nameField(), annotation.value());
+				} catch (ReflectionException e) {
+					logger().logger(e);
+				}
+			});
 		});
 		return dto;
 	}

@@ -95,6 +95,9 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			gridFilter.add(label, indices.columnIndex, indices.rowIndex);
 
 			var input = util.getFieldByField(value.getField());
+			if (value.getWidth() > 0) {
+				input.prefWidth(value.getWidth());
+			}
 			util.inputListenerToAssingValue(input, (obj) -> assingsValueToField(value.getField().getName(), obj));
 			gridFilter.add(input, indices.columnIndex + 1, indices.rowIndex);
 			indices.columnIndex = indices.columnIndex == 4 ? 0 : indices.columnIndex + 2;
@@ -112,12 +115,14 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 
 	private final <O extends Object> void assingsValueToField(String nameField, O value) {
 		try {
-			if(value == null) {
-				logger.warn(i18n().valueBundle(String.format(LanguageConstant.LANGUAGE_FIELD_ASSIGN_EMPTY,nameField,getInstaceOfGenericADto().getClass().getSimpleName())));
-			}else {
+			if (value == null) {
+				logger.warn(i18n().valueBundle(String.format(LanguageConstant.LANGUAGE_FIELD_ASSIGN_EMPTY, nameField,
+						getInstaceOfGenericADto().getClass().getSimpleName())));
+			} else {
 				filter.set(nameField, value);
 			}
-		} catch (ReflectionException | InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
+		} catch (ReflectionException | InvocationTargetException | IllegalAccessException | InstantiationException
+				| NoSuchMethodException e) {
 			logger().logger(e);
 		}
 	}
@@ -149,18 +154,20 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		columnas = getMapFieldsByObject(filter, GenericPOJO.Type.COLUMN);
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
-				var tc = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN
-						+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
-
-				tc.setCellValueFactory((CellDataFeatures<T, String> param) -> {
-					try {
-						return new ReadOnlyStringWrapper(
-								validateValues.cast(param.getValue().get(value.getField().getName()), String.class));
-					} catch (ReflectionException | ValidateValueException e) {
-						return null;
-					}
-				});
-				tabla.getColumns().add(tc);
+			var tableColumn = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN
+					+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
+			if (value.getWidth() > 0) {
+				tableColumn.setPrefWidth(value.getWidth());
+			}
+			tableColumn.setCellValueFactory((CellDataFeatures<T, String> param) -> {
+				try {
+					return new ReadOnlyStringWrapper(
+							validateValues.cast(param.getValue().get(value.getField().getName()), String.class));
+				} catch (ReflectionException | ValidateValueException e) {
+					return null;
+				}
+			});
+			tabla.getColumns().add(tableColumn);
 		});
 		tabla.setOnMouseClicked(event -> selectedRow(event));
 	}
@@ -230,7 +237,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			this.closeWindow();
 			throw new Exception(String.format(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText),
 					i18n().valueBundle(LanguageConstant.GENERIC_DOT + getClassParameterized().getSimpleName())));
-		}else {
+		} else {
 			showWindow();
 		}
 	}
