@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
+<?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane fx:id="pane" maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="232.0"
 	prefWidth="604.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
@@ -44,13 +45,13 @@
 					GridPane.rowIndex="2" />
 				<TextField fx:id="numeroCuenta" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 				<Label text="Tipo de Banco" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-				<ChoiceBox fx:id="tipoBanco" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-				<ChoiceBox fx:id="tipoCuenta" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+				<PopupParametrizedControl fx:id="tipoBanco"  GridPane.columnIndex="3" GridPane.rowIndex="1" />
+				<PopupParametrizedControl fx:id="tipoCuenta"  GridPane.columnIndex="1" GridPane.rowIndex="2" />
 				<Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Fecha Apertura" textAlignment="LEFT" GridPane.columnIndex="0"
 					GridPane.rowIndex="3" />
 				<Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Fecha Cierre" GridPane.columnIndex="2" GridPane.rowIndex="3" />
 				<Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Estado" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-				<ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+				<PopupParametrizedControl fx:id="estado"  GridPane.columnIndex="1" GridPane.rowIndex="4" />
 				<DatePicker fx:id="fechaCierre"  GridPane.columnIndex="3" GridPane.rowIndex="3"/>
 				<DatePicker fx:id="fechaApertura"  GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 			</children>

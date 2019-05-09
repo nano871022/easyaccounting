@@ -27,7 +27,7 @@ import com.pyt.query.interfaces.IQuerySvc;
  * @author Alejandro Parra
  * @since 21/11/2018
  */
-public class AnalizedAnnotationProcces extends Reflection {
+public class AnalizedAnnotationProcces implements Reflection {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 	private Log log = Log.Log(AnalizedAnnotationProcces.class);
@@ -262,5 +262,9 @@ public class AnalizedAnnotationProcces extends Reflection {
 
 	public final List<String> getMarkBlank() {
 		return markBlank;
+	}
+	
+	public final Log logger() {
+		return log;
 	}
 }

@@ -12,7 +12,7 @@ import org.pyt.common.reflection.Reflection;
  * @author Alejandro Parra
  * @since 22-06-2018
  */
-public abstract class Services extends Reflection {
+public abstract class Services implements Reflection {
 	private Log logger = Log.Log(this.getClass());
 
 	@PostConstructor
@@ -23,5 +23,8 @@ public abstract class Services extends Reflection {
 			logger.logger(e);
 		}
 	}
-
+ 
+	public final Log logger() {
+		return logger;
+	}
 }

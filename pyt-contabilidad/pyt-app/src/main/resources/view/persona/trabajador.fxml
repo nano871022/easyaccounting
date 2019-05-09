@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
+<?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="538.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.trabajador.TrabajadorCRUBean">
   <bottom>
@@ -43,10 +44,10 @@
         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="75.0" text="Email" GridPane.columnIndex="0" GridPane.rowIndex="4" />
         <TextField fx:id="email" GridPane.columnIndex="1" GridPane.rowIndex="4" />
         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="Tipo de Pago" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-        <ChoiceBox fx:id="tipoPagos" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+        <PopupParametrizedControl fx:id="tipoPagos"  GridPane.columnIndex="3" GridPane.rowIndex="4" />
         <DatePicker fx:id="fechaNacimiento" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="Centro de Costos" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-        <ChoiceBox fx:id="centroCostos" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+        <PopupParametrizedControl fx:id="centroCostos"  GridPane.columnIndex="3" GridPane.rowIndex="5" />
         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="75.0" text="Fecha de Ingreso" GridPane.columnIndex="0" GridPane.rowIndex="6" />
         <DatePicker fx:id="fechaIngreso" GridPane.columnIndex="1" GridPane.rowIndex="6" />
         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="75.0" text="Fecha de Retiro" GridPane.columnIndex="2" GridPane.rowIndex="6" />

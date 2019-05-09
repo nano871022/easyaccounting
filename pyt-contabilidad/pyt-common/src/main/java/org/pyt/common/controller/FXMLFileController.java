@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.ABean;
+import org.pyt.common.common.IBean;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 
@@ -17,7 +17,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
  * @param <T>
  */
 @SuppressWarnings("rawtypes")
-public abstract class FXMLFileController<T extends ABean> {
+public abstract class FXMLFileController<T extends IBean> {
 	protected Class<T> controller;
 	private static Map<String,Object> instancias;
 
@@ -68,7 +68,7 @@ public abstract class FXMLFileController<T extends ABean> {
 	 * @param instance {@link ABean} extends
 	 */
 	@SuppressWarnings({ "hiding" })
-	public final <T extends ABean> void put(T instance) {
+	public final <T extends IBean> void put(T instance) {
 		if(FXMLFileController.instancias == null) {
 			FXMLFileController.instancias = new HashMap<String,Object>();
 		}
@@ -78,7 +78,7 @@ public abstract class FXMLFileController<T extends ABean> {
 	 * Se encarga de limiar la instancia actual cargada
 	 */
 	@SuppressWarnings("hiding")
-	public final <T extends ABean> void destroy(Class<T> instancia) {
+	public final <T extends IBean> void destroy(Class<T> instancia) {
 		if(FXMLFileController.instancias != null) {
 			FXMLFileController.instancias.remove(instancia.getSimpleName());
 		}
@@ -88,7 +88,7 @@ public abstract class FXMLFileController<T extends ABean> {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "hiding" })
-	public final <T extends ABean> T getFXMLFile(Class<T> instancia) {
+	public final <T extends IBean> T getFXMLFile(Class<T> instancia) {
 		return (T) FXMLFileController.instancias.get(instancia.getSimpleName());
 	}
 }

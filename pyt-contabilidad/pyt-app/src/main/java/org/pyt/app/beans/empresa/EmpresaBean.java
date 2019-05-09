@@ -7,7 +7,6 @@ import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
@@ -18,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 /**
  * Bean encargado de crear las empresas
@@ -106,7 +104,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 
 	public void del() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{EmpresaBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			controllerPopup(ConfirmPopupBean.class).load("#{EmpresaBean.delete}", "¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);
 		}

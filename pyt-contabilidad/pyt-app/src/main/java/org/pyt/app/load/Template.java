@@ -4,6 +4,7 @@ import org.pyt.app.components.PopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
@@ -28,7 +29,7 @@ import javafx.stage.Stage;
  * @since 2018-05-24
  */
 @FXMLFile(path = "view", file = "Template.fxml", nombreVentana = "Contabilidad PyT")
-public class Template extends Reflection implements IComunicacion {
+public class Template implements IComunicacion,Reflection {
 	@FXML
 	private MenuBar menu;
 	@FXML
@@ -56,8 +57,9 @@ public class Template extends Reflection implements IComunicacion {
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_WARN)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_INFO)
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_POPUP_ERROR)
+	@SubcribirToComunicacion(comando = AppConstants.COMMAND_LANGUAGES)
 	private Comunicacion comunicacion;
-private Log logger = Log.Log(this.getClass());
+	private Log logger = Log.Log(this.getClass());
 	@FXML
 	public void initialize() {
 		try {
@@ -97,7 +99,7 @@ private Log logger = Log.Log(this.getClass());
 				break;
 			case AppConstants.COMMAND_POPUP_ERROR:
 				if (valor instanceof String) {
-					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
+					LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
 				}
 				break;
 			case AppConstants.COMMAND_POPUP_INFO:
@@ -114,5 +116,10 @@ private Log logger = Log.Log(this.getClass());
 		} catch (LoadAppFxmlException e) {
 			centerMessage.setText((String) valor);
 		}
+	}
+
+	@Override
+	public Log logger() {
+		return logger;
 	}
 }

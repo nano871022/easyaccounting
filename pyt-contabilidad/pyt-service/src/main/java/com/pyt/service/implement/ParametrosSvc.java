@@ -161,6 +161,17 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		if(dto == null) {
 			throw new ParametroException("No se suministro el parametro para aplicar el filtro de busqueda.");
 		}
+		String grupoP = getIdByParametroGroup(grupo);
+		if(StringUtils.isNotBlank(grupoP)) {
+			dto.setGrupo(grupoP);
+		}else {
+			dto.setGrupo(grupo);
+		}
+		return getAllParametros(dto);
+	}
+
+	@Override
+	public String getIdByParametroGroup(String grupo) throws ParametroException {
 		ParametroGrupoDTO pgrupo = new ParametroGrupoDTO();
 		if(StringUtils.isNotBlank(grupo)) {
 			pgrupo.setGrupo(grupo);
@@ -170,11 +181,9 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 			}
 		}
 		if(pgrupo != null && StringUtils.isNotBlank(pgrupo.getCodigo())) {
-			dto.setGrupo(pgrupo.getParametro());
-		}else {
-			dto.setGrupo(grupo);
+			return pgrupo.getParametro();
 		}
-		return getAllParametros(dto);
+		return null;
 	}
 
 }

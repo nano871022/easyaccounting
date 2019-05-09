@@ -2,7 +2,9 @@ package com.pyt.service.dto;
 
 import java.time.LocalDate;
 
+import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.common.ADto;
+import org.pyt.common.constants.ParametroConstants;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -16,9 +18,6 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 @DelClass(nombre="com.pyt.service.dto.dels.BancoDelDTO")
 @UpdClass(nombre="com.pyt.service.dto.upds.BancoUpdDTO")
 public class BancoDTO extends ADto{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5471821713015787406L;
 	private String codigo;
 	private String nombre;
@@ -26,8 +25,14 @@ public class BancoDTO extends ADto{
 	private String numeroCuenta;
 	private LocalDate fechaApertura;
 	private LocalDate fechaCierre;
+	@AssingValue(nameField=ParametroConstants.FIELD_NAME_GROUP,value=ParametroConstants.GRUPO_ESTADO_BANCO)
+	@AssingValue(nameField=ParametroConstants.FIELD_NAME_STATE,value=ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
 	private ParametroDTO estado;
+	@AssingValue(nameField=ParametroConstants.FIELD_NAME_GROUP,value=ParametroConstants.GRUPO_TIPO_CUENTA)
+	@AssingValue(nameField=ParametroConstants.FIELD_NAME_STATE,value=ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
 	private ParametroDTO tipoCuenta;
+	@AssingValue(nameField=ParametroConstants.FIELD_NAME_GROUP,value=ParametroConstants.GRUPO_TIPO_BANCO)
+	@AssingValue(nameField=ParametroConstants.FIELD_NAME_STATE,value=ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
 	private ParametroDTO tipoBanco;
 	public String getCodigo() {
 		return codigo;

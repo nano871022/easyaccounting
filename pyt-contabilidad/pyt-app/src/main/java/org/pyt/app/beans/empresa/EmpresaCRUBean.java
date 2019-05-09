@@ -1,15 +1,13 @@
 package org.pyt.app.beans.empresa;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpresasException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
@@ -50,8 +48,6 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@FXML
 	private javafx.scene.control.TextField pais;
 	@FXML
-	private javafx.scene.control.ChoiceBox<String> moneda;
-	@FXML
 	private javafx.scene.control.TextField representante;
 	@FXML
 	private javafx.scene.control.TextField contador;
@@ -61,22 +57,20 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
-	private List<ParametroDTO> lMoneda;
+	@FXML
+	private PopupParametrizedControl moneda;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Agregando Nueva Empresa";
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
-
-		try {
-			ParametroDTO moneda = new ParametroDTO();
-			lMoneda = parametroSvc.getAllParametros(moneda,ParametroConstants.GRUPO_MONEDA);
-			SelectList.put(this.moneda, lMoneda, "descripcion");
-			pais.setText(AppConstants.DEFAULT_PAIS_COL);
-		} catch (ParametroException e) {
-			error(e);
-		}
+		pais.setText(AppConstants.DEFAULT_PAIS_COL);
+		moneda.setPopupOpenAction(()->popupMonedas());
+		moneda.setCleanValue(()->{
+			registro.setMonedaDefecto(null);
+			this.moneda.setText("");
+		});
 	}
 
 	/**
@@ -94,7 +88,6 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		registro.setCorreoElectronico(email.getText());
 		registro.setTelefono(telefono.getText());
 		registro.setPais(pais.getText());
-		registro.setMonedaDefecto(SelectList.get(moneda, lMoneda, "descripcion"));
 		registro.setNombreRepresentante(representante.getText());
 		registro.setNombreContador(contador.getText());
 		registro.setTarjetaProfeccionalContador(nContador.getText());
@@ -111,7 +104,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		email.setText(registro.getCorreoElectronico());
 		telefono.setText(registro.getTelefono());
 		pais.setText(registro.getPais());
-		SelectList.selectItem(moneda, lMoneda, "descripcion", registro.getMonedaDefecto(), "descripcion");
+		this.moneda.setText(registro.getMonedaDefecto().getDescripcion());
 		representante.setText(registro.getNombreRepresentante());
 		contador.setText(registro.getNombreContador());
 		nContador.setText(registro.getTarjetaProfeccionalContador());
@@ -146,8 +139,23 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		}
 	}
 
+	public void popupMonedas() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_MONEDA)))
+			.setWidth(350)
+			).load("#{EmpresaCRUBean.moneda}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public void setMoneda(ParametroDTO moneda) {
+		registro.setMonedaDefecto(moneda);
+		this.moneda.setText(moneda.getDescripcion());
+	}
+
 	public void cancel() {
 		getController(EmpresaBean.class);
 	}
-
 }

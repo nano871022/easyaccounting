@@ -10,6 +10,8 @@ public class ParametroConstants {
 	public final static String GRUPO_TIPO_DOCUMENTO = "TipoDocumento";
 	public final static String GRUPO_TIPOS_DOCUMENTO_PERSONA = "TiposDocumentoPersona";
 	public final static String GRUPO_ESTADO_EMPLEADO= "EstadoEmpleado";
+	public final static String FIELD_NAME_STATE = "estado";
+	public final static String FIELD_NAME_GROUP = "grupo";
 	public final static Map<String,Object> mapa_grupo ;
 	static {
 		mapa_grupo = new HashMap<String,Object>();

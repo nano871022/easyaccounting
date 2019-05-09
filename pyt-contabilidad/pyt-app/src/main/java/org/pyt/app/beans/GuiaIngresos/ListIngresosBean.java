@@ -119,7 +119,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 
 	public void del() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ListIngresosBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			controllerPopup(ConfirmPopupBean.class).load("#{ListIngresosBean.delete}", "¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);
 		}

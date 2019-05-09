@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.ABean;
+import org.pyt.common.common.IBean;
 import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 
@@ -60,7 +60,7 @@ public class LocatorController {
 	 * @return {@link Object}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <T extends Object, S extends Object, L extends FXMLFileController, I extends ABean> T call(String caller,
+	public <T extends Object, S extends Object, L extends FXMLFileController, I extends IBean> T call(String caller,
 			S valor) {
 		try {
 //			logger.info("Buscando "+caller);
@@ -112,7 +112,7 @@ public class LocatorController {
 	 *             Exception}
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	private final <T extends ABean, L extends FXMLFileController> L locator(Class<T> controller) throws Exception {
+	private final <T extends IBean, L extends FXMLFileController> L locator(Class<T> controller) throws Exception {
 		FXMLFile fxml = controller.getAnnotation(FXMLFile.class);
 		try {
 			if(StringUtils.isNotBlank(fxml.name()))
@@ -137,7 +137,7 @@ public class LocatorController {
 	 *             Exception}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public final <T extends ABean, L extends FXMLFileController> void putLoadInController(T control) throws Exception {
+	public final <T extends IBean, L extends FXMLFileController> void putLoadInController(T control) throws Exception {
 		L instancia = locator(control.getClass());
 		if (instancia != null) {
 			instancia.put(control);
@@ -153,7 +153,7 @@ public class LocatorController {
 	 *             Exception}
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public final <T extends ABean, L extends FXMLFileController> void removeLoadInController(T controller)
+	public final <T extends IBean, L extends FXMLFileController> void removeLoadInController(T controller)
 			throws Exception {
 		L instancia = locator(controller.getClass());
 		if (instancia != null) {
@@ -186,7 +186,7 @@ public class LocatorController {
 		this.clase = clase;
 		return locator;
 	}
-
+	
 	public final static void main(String... strings) {
 		String caller = "#{bean.metodo}";
 		Pattern patron = Pattern.compile(REGEX);

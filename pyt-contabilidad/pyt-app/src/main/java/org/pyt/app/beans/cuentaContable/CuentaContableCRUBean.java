@@ -1,26 +1,20 @@
 package org.pyt.app.beans.cuentaContable;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
-import org.pyt.common.exceptions.EmpresasException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.ICuentaContableSvc;
-import com.pyt.service.interfaces.IEmpresasSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -35,10 +29,6 @@ import javafx.scene.layout.BorderPane;
 public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
-	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
-	private IParametrosSvc parametroSvc;
-	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
-	private IEmpresasSvc empresaSvc;
 	@FXML
 	private Label codigo;
 	@FXML
@@ -48,47 +38,31 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private TextField codigoCuenta;
 	@FXML
-	private ChoiceBox<String> naturaleza;
+	private PopupParametrizedControl naturaleza;
 	@FXML
-	private ChoiceBox<String> tipoPlanContable;
+	private PopupParametrizedControl tipoPlanContable;
 	@FXML
-	private ChoiceBox<String> tipo;
+	private PopupParametrizedControl tipo;
 	@FXML
-	private ChoiceBox<String> empresa;
+	private PopupParametrizedControl empresa;
 	@FXML
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
-	private List<ParametroDTO> listNaturaleza;
-	private List<ParametroDTO> listTipoPlanContable;
-	private List<EmpresaDTO> listEmpresa;
-	private List<ParametroDTO> listTipo;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Agregando Nueva Cuenta Contable";
 		titulo.setText(NombreVentana);
 		registro = new CuentaContableDTO();
-		ParametroDTO estados = new ParametroDTO();
-		try {
-			listTipoPlanContable = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
-			listNaturaleza = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_NATURALEZA);
-			listTipo = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO);
-			logger.logger("Se encontraron "+listTipo.size()+" registrosde tipo.");
-			listEmpresa = empresaSvc.getAllEmpresas(new EmpresaDTO());
-		} catch (ParametroException e) {
-			error(e);
-		} catch (EmpresasException e) {
-			error(e);
-		}
-		SelectList.put(tipoPlanContable, listTipoPlanContable, "nombre");
-		tipoPlanContable.getSelectionModel().selectFirst();
-		SelectList.put(tipo, listTipo, "nombre");
-		tipo.getSelectionModel().selectFirst();
-		SelectList.put(naturaleza, listNaturaleza, "nombre");
-		naturaleza.getSelectionModel().selectFirst();
-		SelectList.put(empresa, listEmpresa, "nombre");
-		empresa.getSelectionModel().selectFirst();
+		naturaleza.setPopupOpenAction(()->popupNaturaleza());
+		naturaleza.setCleanValue(()->registro.setNaturaleza(null));
+		tipoPlanContable.setPopupOpenAction(()->popupTipoPlanContable());
+		tipoPlanContable.setCleanValue(()->registro.setTipoPlanContable(null));
+		tipo.setPopupOpenAction(()->popupTipoCuentaContable());
+		tipo.setCleanValue(()->registro.setTipo(null));
+		empresa.setPopupOpenAction(()->popupEmpresa());
+		empresa.setCleanValue(()->registro.setEmpresa(null));
 	}
 
 	/**
@@ -101,10 +75,6 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		registro.setNombre(nombre.getText());
 		registro.setAsociado(asociado.getText());
 		registro.setCodigoCuenta(codigoCuenta.getText());
-		registro.setNaturaleza(SelectList.get(naturaleza, listNaturaleza, "nombre"));
-		registro.setTipoPlanContable(SelectList.get(tipoPlanContable, listTipoPlanContable, "nombre"));
-		registro.setTipo(SelectList.get(tipo, listTipo, "nombre"));
-		registro.setEmpresa(SelectList.get(empresa,listEmpresa,"nombre"));
 	}
 
 	private void loadFxml() {
@@ -114,14 +84,10 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		nombre.setText(registro.getNombre());
 		asociado.setText(registro.getAsociado());
 		codigoCuenta.setText(registro.getCodigoCuenta());
-		SelectList.put(tipoPlanContable, listTipoPlanContable, "nombre");
-		SelectList.selectItem(tipoPlanContable, listTipoPlanContable, "nombre", registro.getTipoPlanContable());
-		SelectList.put(naturaleza, listNaturaleza, "nombre");
-		SelectList.selectItem(naturaleza, listNaturaleza, "nombre", registro.getNaturaleza());
-		SelectList.put(tipo, listTipo, "nombre");
-		SelectList.selectItem(tipo, listTipo, "nombre", registro.getTipo());
-		SelectList.put(empresa, listEmpresa, "nombre");
-		SelectList.selectItem(empresa, listEmpresa, "nombre", registro.getEmpresa());
+		tipoPlanContable.setText(registro.getTipoPlanContable().getNombre());
+		naturaleza.setText(registro.getNaturaleza().getDescripcion());
+		tipo.setText(registro.getTipo().getDescripcion());
+		empresa.setText(registro.getEmpresa().getNombre());
 	}
 
 	public void load(CuentaContableDTO dto) {
@@ -143,7 +109,6 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	private Boolean valid() {
 		Boolean valid = true;
 		valid &= StringUtils.isNotBlank(registro.getNombre());
-//		valid &= StringUtils.isNotBlank(registro.getAsociado());
 		valid &= StringUtils.isNotBlank(registro.getCodigoCuenta());
 		valid &= StringUtils.isNotBlank(registro.getNaturaleza().getCodigo());
 		valid &= StringUtils.isNotBlank(registro.getTipoPlanContable().getCodigo());
@@ -174,6 +139,69 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public void cancel() {
 		getController(CuentaContableBean.class);
+	}
+	
+	public final void popupTipoPlanContable() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE)
+					).load("#{CuentaContableCRUBean.tipoPlanContable}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setTipoPlanContable(ParametroDTO tipoPlanContable) {
+		registro.setTipoPlanContable(tipoPlanContable);
+		this.tipoPlanContable.setText(tipoPlanContable.getNombre());
+	}
+
+	public final void popupNaturaleza() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_NATURALEZA)
+					).load("#{CuentaContableCRUBean.naturaleza}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setNaturaleza(ParametroDTO naturaleza) {
+		registro.setNaturaleza(naturaleza);
+		this.naturaleza.setText(naturaleza.getNombre());
+	}
+
+	public final void popupTipoCuentaContable() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_TIPO)
+					).load("#{CuentaContableCRUBean.tipoCuentaContable}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setTipoCuentaContable(ParametroDTO tipoCuentaContable) {
+		registro.setTipo(tipoCuentaContable);
+		tipo.setText(tipoCuentaContable.getDescripcion());
+	}
+	
+	public final void popupEmpresa() {
+		try {
+			((PopupGenBean<EmpresaDTO>) controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class))
+					.setWidth(350)
+					).load("#{CuentaContableCRUBean.empresa}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+	
+	public final void setEmpresa(EmpresaDTO empresa) {
+		registro.setEmpresa(empresa);
+		this.empresa.setText(empresa.getNombre());
 	}
 
 }

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.ABean;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroConstants;
@@ -25,7 +24,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 /**
  * Se encarga de controlar la pantalla de parametros cru
@@ -315,7 +313,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	@SuppressWarnings("unchecked")
 	public void deleteBtn() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}",
+			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}",
 					"¿Desea eliminar el registro?");
 			;
 		} catch (LoadAppFxmlException e) {

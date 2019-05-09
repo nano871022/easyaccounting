@@ -9,6 +9,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="601.0"
 	style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
@@ -117,9 +118,9 @@
 				<Label text="Tipo de Banco" GridPane.columnIndex="0" GridPane.rowIndex="3" />
 				<Label text="Tipo de Cuenta" GridPane.columnIndex="2" GridPane.rowIndex="3" />
 				<TextField fx:id="numeroCuenta" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-				<ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-				<ChoiceBox fx:id="tipoBanco" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-				<ChoiceBox fx:id="tipoCuenta" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+				<PopupParametrizedControl fx:id="estado"  GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+				<PopupParametrizedControl fx:id="tipoBanco"  GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+				<PopupParametrizedControl fx:id="tipoCuenta" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
 			</children>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="122.0" />

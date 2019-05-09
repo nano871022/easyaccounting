@@ -1,6 +1,9 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.annotation.generics.AssingValue;
+import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.common.ADto;
+import org.pyt.common.constants.ParametroConstants;
 
 import com.pyt.service.dto.dels.ParametroDelDTO;
 import com.pyt.service.dto.upds.ParametroUpdDTO;
@@ -19,12 +22,17 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 @UpdClass(clase=ParametroUpdDTO.class)
 public class ParametroDTO extends ADto{
 	private static final long serialVersionUID = -5396836082089633791L;
+	
 	private Long orden;
+	@DefaultFieldToGeneric(simpleNameClazzBean="PopupGenBean",use = DefaultFieldToGeneric.Uses.FILTER)
+	@DefaultFieldToGeneric(simpleNameClazzBean="PopupGenBean",use = DefaultFieldToGeneric.Uses.COLUMN)
 	private String nombre;
+	@DefaultFieldToGeneric(simpleNameClazzBean="PopupGenBean",use = DefaultFieldToGeneric.Uses.COLUMN,width=200)
 	private String descripcion;
 	private String valor;
 	private String valor2;
 	private String grupo;
+	@AssingValue(nameField=ParametroConstants.FIELD_NAME_STATE,value=ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
 	private String estado;
 
 	public Long getOrden() {

@@ -199,9 +199,10 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	/**
 	 * Se encarga de llamar el bean para eliminar un registro
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final void eliminar() {
 		try {
-			LoadAppFxml.loadBeanFxml(new Stage(), ConfirmPopupBean.class).load("#{ListaDetalleBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			((ConfirmPopupBean) LoadAppFxml.loadBeanFxml(new Stage(), (Class) ConfirmPopupBean.class)).load("#{ListaDetalleBean.delete}", "¿Desea eliminar los registros seleccionados?");
 		}catch(Exception e) {
 			error(e);
 		}
