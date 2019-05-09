@@ -113,6 +113,11 @@
 			<version>2.4.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-file-bin</artifactId>
+			<version>1.2.1-BETA</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
