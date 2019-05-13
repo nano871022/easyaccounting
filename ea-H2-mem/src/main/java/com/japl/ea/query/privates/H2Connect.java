@@ -16,11 +16,22 @@ import org.pyt.common.common.Log;
  * @author Alejando Parra
  * @since 09/05/2019
  */
-public final class H2Connect implements AutoCloseable{
+public final class H2Connect implements AutoCloseable {
 	private Log log = Log.Log(H2Connect.class);
 	private String connect = "jdbc:h2:~/account.db";
 	private Connection connection;
 	private Statement statement;
+	private static H2Connect db;
+
+	private H2Connect() {
+	}
+
+	public static H2Connect getInstance() {
+		if (db == null) {
+			db = new H2Connect();
+		}
+		return db;
+	}
 
 	/**
 	 * Obtiene una conection a la base de datos solo la crea una vez
@@ -36,7 +47,7 @@ public final class H2Connect implements AutoCloseable{
 	}
 
 	public Statement getStatement() throws SQLException {
-		if(statement == null) {
+		if (statement == null) {
 			statement = getConnection().createStatement();
 		}
 		return statement;
@@ -48,7 +59,6 @@ public final class H2Connect implements AutoCloseable{
 		return rs;
 	}
 
-	
 	/**
 	 * Se ejecuta cuando se raliza un insert, update o delete
 	 * 
@@ -60,7 +70,8 @@ public final class H2Connect implements AutoCloseable{
 	public Boolean executeIUD(String query) throws SQLException {
 		Statement st = getStatement();
 		int rs = st.executeUpdate(query);
-		if(query.contains("DELETE"))return true;
+		if (query.contains("DELETE"))
+			return true;
 		return rs == 1;
 	}
 
@@ -70,7 +81,7 @@ public final class H2Connect implements AutoCloseable{
 		connection = null;
 	}
 
-    protected void destroy()throws Exception{ 
+	protected void destroy() throws Exception {
 		try {
 			cleanConnection();
 		} catch (SQLException e) {

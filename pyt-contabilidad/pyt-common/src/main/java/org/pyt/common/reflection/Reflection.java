@@ -3,7 +3,9 @@ package org.pyt.common.reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ServiceLoader;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.PostConstructor;
 import org.pyt.common.annotations.Singleton;
@@ -15,6 +17,8 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IComunicacion;
+import org.pyt.common.properties.EjbHome;
+import org.pyt.common.properties.EjbRemote;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 
@@ -28,7 +32,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
  */
 public interface Reflection {
 	public Log logger();
-	
+
 	/**
 	 * Se encarga de verificar la cclase y objeter la anotacion inject, con la ccual
 	 * por medio del recurso puesto dentro de la anotacion se obtiene una instancia
@@ -36,7 +40,7 @@ public interface Reflection {
 	 * 
 	 * @return {@link Object}
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 	default <L extends Comunicacion, N, T, S extends Object, M extends IComunicacion> void inject()
 			throws ReflectionException {
 		try {
@@ -60,8 +64,10 @@ public interface Reflection {
 			throw new ReflectionException(e.getMessage(), e);
 		}
 	}
+
 	/**
 	 * Obtiene los campos obtenidos de las clases
+	 * 
 	 * @param clazz {@link Class}
 	 * @return {@link Field}
 	 * @throws {@link Exception}
@@ -76,9 +82,8 @@ public interface Reflection {
 		return fields;
 	}
 
-	@SuppressWarnings("unchecked")
-	private  <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase)
-			throws ReflectionException {
+	@SuppressWarnings({ "unchecked", "unused" })
+	private <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase) throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;
 		if (clase == Object.class || clase == Reflection.class)
@@ -86,23 +91,38 @@ public interface Reflection {
 		try {
 			for (Field field : fields) {
 				Inject inject = field.getAnnotation(Inject.class);
-				if (inject != null && inject.resource() != null && inject.resource().length() > 0) {
-					T obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
-					postConstructor(obj, obj.getClass());
-					put(object, field, obj);
-				} else if (inject != null && (inject.resource() == null || inject.resource().length() == 0)) {
+				if (inject == null)
+					continue;
+				var service = ServiceLoader.load(field.getType());
+				T obj = null;
+				T obj1 = null;
+				try {
+					obj1 = (T) EjbRemote.getInstance().getEjb(field.getType());
+				} catch (Exception e) {
+					try {
+						obj1 = (T) EjbHome.getInstance().getEjb(field.getType());
+					} catch (Exception e1) {
+					}
+				}
+				if (obj1 != null) {
+					obj = obj1;
+				} else if (service != null && service.findFirst() != null && service.findFirst().get() != null) {
+					obj = (T) service.findFirst().get();
+				} else if (StringUtils.isNotBlank(inject.resource())) {
+					obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
+				} else if (StringUtils.isBlank(inject.resource())) {
 					Class<T> classe = (Class<T>) field.getType();
 					Singleton singleton = classe.getAnnotation(Singleton.class);
 					if (singleton != null) {
-						Method method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
-						T obj = (T) method.invoke(classe);
-						postConstructor(obj, obj.getClass());
-						put(object, field, obj);
+						var method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
+						obj = (T) method.invoke(classe);
 					} else {
-						T obj = (T) field.getType().getConstructor().newInstance();
-						postConstructor(obj, obj.getClass());
-						put(object, field, obj);
+						obj = (T) field.getType().getConstructor().newInstance();
 					}
+				}
+				if (obj != null) {
+					postConstructor(obj, obj.getClass());
+					put(object, field, obj);
 				}
 			} // end for
 			inject(object, clase.getSuperclass().getDeclaredFields(), (Class<S>) clase.getSuperclass());
@@ -127,12 +147,10 @@ public interface Reflection {
 	 * Se encarga de buscar dentro de la instancia un metodo que este anotado con
 	 * poscontructor para cargar algo
 	 * 
-	 * @param instance
-	 *            {@link Object} extends
-	 * @param clase
-	 *            {@link Class}
+	 * @param instance {@link Object} extends
+	 * @param clase    {@link Class}
 	 */
-	private  <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws ReflectionException {
+	private <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws ReflectionException {
 		try {
 			if (clase == null)
 				return;
@@ -157,15 +175,13 @@ public interface Reflection {
 	 * Se encarga de procesar la clase en busqueda de anotacion de subscripcion a
 	 * sistema de mensajeria
 	 * 
-	 * @param fields
-	 *            Fields[]
-	 * @param clase
-	 *            Class
+	 * @param fields Fields[]
+	 * @param clase  Class
 	 * @throws ReflectionException
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(
-			M instance, Field[] fields, Class<S> clase) throws ReflectionException {
+	default <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(M instance,
+			Field[] fields, Class<S> clase) throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;
 		// procesado despues de injecciones
@@ -199,13 +215,10 @@ public interface Reflection {
 	/**
 	 * Se encarga de obtener el objeto que se encuentra en el campo indicado
 	 * 
-	 * @param obj
-	 *            {@link Object} instancia actual
-	 * @param field
-	 *            {@link Field}
+	 * @param obj   {@link Object} instancia actual
+	 * @param field {@link Field}
 	 * @return {@link Object} almacenado en field
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
 	default <T extends Reflection, S extends Object> S get(T obj, Field field) throws ReflectionException {
@@ -238,12 +251,9 @@ public interface Reflection {
 	/**
 	 * Se encarga de poner un valor dentro del campo indicando en el objeto
 	 * 
-	 * @param clase
-	 *            {@link Object}
-	 * @param obj
-	 *            {@link Field}
-	 * @param valor
-	 *            {@link Object}
+	 * @param clase {@link Object}
+	 * @param obj   {@link Field}
+	 * @param valor {@link Object}
 	 */
 
 	@SuppressWarnings({ "unchecked" })

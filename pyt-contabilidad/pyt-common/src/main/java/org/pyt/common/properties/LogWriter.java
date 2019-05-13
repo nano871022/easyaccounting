@@ -1,4 +1,4 @@
-package org.pyt.common.common;
+package org.pyt.common.properties;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.common.WriteFile;
+import org.pyt.common.constants.PropertiesConstants;
 
 /**
  * Se encarga de escribir en el archivo
@@ -61,18 +63,16 @@ public class LogWriter implements Runnable {
 	 */
 	private void loadProperties() {
 		try {
-			Properties properties = PropertiesUtils.getInstance().setNameProperties("log.properties").load()
+			Properties properties = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_LOG).load()
 					.getProperties();
 			String valor = properties.getProperty(NAME_PATH_PROPERTIES);
 			if (StringUtils.isNotBlank(valor)) {
-				System.out.println("Name Log:" + valor);
 				nameLogger = valor;
 			} else {
 				System.out.println("Se esta tomando el path por defecto " + nameLogger);
 			}
 			String trace = properties.getProperty(TRACT_PATH_PROPERTIES);
 			if (StringUtils.isNotBlank(trace)) {
-				System.out.println("Name Log:" + trace);
 				nameLoggerTrace = trace;
 			} else {
 				System.out.println("Se esta tomando el path por defecto " + nameLoggerTrace);

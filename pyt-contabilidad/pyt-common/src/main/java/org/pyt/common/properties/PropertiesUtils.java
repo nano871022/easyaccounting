@@ -1,4 +1,4 @@
-package org.pyt.common.common;
+package org.pyt.common.properties;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -7,6 +7,8 @@ import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.pyt.common.properties.LogWriter;
+
 /**
  * Se encarga de manejar el log de l aaplicacion y es transeversal a toda la
  * aplicacion.

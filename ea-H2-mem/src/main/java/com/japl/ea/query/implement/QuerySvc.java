@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,18 +15,20 @@ import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.japl.ea.query.privates.H2Connect;
-import com.japl.ea.query.utils.StatementQuerysUtil;
+import com.japl.ea.query.privates.utils.StatementQuerysUtil;
 import com.pyt.query.interfaces.IAdvanceQuerySvc;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ParametroDTO;
+
 
 public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 
 	private H2Connect db;
 	private StatementQuerysUtil squ;
-
+	
 	public QuerySvc() {
-		db = new H2Connect();
+		db = H2Connect.getInstance();
+		squ = new StatementQuerysUtil();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -39,9 +43,8 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 					init + "," + end);
 			rs = db.executeQuery(query);
 			while (rs.next()) {
-				T newInstance = null;
+				T newInstance = (T) obj.getClass().getConstructor().newInstance();
 				for (String name : names) {
-					newInstance = (T) obj.getClass().getConstructor().newInstance();
 					newInstance.set(name, rs.getObject(name));
 				}
 				list.add(newInstance);
@@ -116,6 +119,27 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		return list.get(0);
 	}
 
+	public <T extends ADto> void createTrigger(Class<T> obj,triggerOption to,triggerAction... ta) throws QueryException {
+		try {
+			if(ta.length == 0) {
+				throw new QueryException("No se puede crear trigger sin acciones a afectar.");
+			}
+			if(to == null) {
+				throw new QueryException("No se puede crear trigger sin option de cuando ejecutar el trigger.");
+			}
+			if(obj == null) {
+				throw new QueryException("No se puede crear trigger sin conocer la tabla a afectar.");
+			}
+			var actions = Arrays.toString(ta).replace("[", "").replace("]", "");
+			var table = squ.getTableName(obj.getConstructor().newInstance());
+			var query = "CREATE TRIGGER tgr_%s %s %s ON %s FOR EACH ROW CALL \"com.japl.ea.query.privates.triggers.%s\"";
+			query = String.format(query,table,to.toString(),actions,table,squ.getNameTriggerPOJO(obj, to, ta));
+			db.getStatement().executeUpdate(query);
+		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new QueryException("Error en la creacion de la tabla.", e);
+		}
+	}
+
 	public <T extends ADto> void createTableStandard(T obj) throws QueryException {
 		try {
 			String query = "create table %s (%s)";
@@ -129,13 +153,6 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 					fields += field + " " + squ.typeDataDB(type.getSimpleName()) + " NULL";
 				}
 			}
-			fields += (", codigo VARCHAR2(100) NULL");
-			fields += (", fechaCreacion DATETIME NULL");
-			fields += (", fechaActualizacion DATETIME NULL");
-			fields += (", fechaEliminacion DATETIME NULL");
-			fields += (", creador VARCHAR2(100)");
-			fields += (", actualizador VARCHAR2(100)");
-			fields += (", eliminador VARCHAR2(100)");
 			query = String.format(query, squ.getTableName(obj), fields);
 			db.getStatement().executeUpdate(query);
 		} catch (ReflectionException | SQLException e) {
@@ -155,15 +172,25 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 	@Override
 	public <T extends ADto> T set(T obj, UsuarioDTO user) throws QueryException {
 		var query = "INSERT INTO %s (%s) VALUES (%s)";
-		if (StringUtils.isNotBlank(obj.getCodigo())) {
-			query = "UPDATE %s SET %s WHERE %s";
-		}
 		try {
+			if (StringUtils.isNotBlank(obj.getCodigo())) {
+				query = "UPDATE %s SET %s WHERE %s";
+				obj.setActualizador(user.getNombre());
+				obj.setFechaActualizacion(new Date());
+			} else {
+				obj.setCreador(user.getNombre());
+				obj.setFechaCreacion(new Date());
+				obj.setCodigo(
+						squ.genConsecutivo(obj.getClass(), countRow(obj.getClass().getConstructor().newInstance())));
+			}
 			query = String.format(query, squ.getTableName(obj), squ.fieldToSelect(obj),
 					squ.fieldToWhere(obj, query.contains("INSERT")));
 			Boolean rs = db.executeIUD(query);
 			if (rs) {
-				return get(obj);
+				if(StringUtils.isNotBlank(obj.getCodigo())) {
+					return get(obj);
+				}
+				return obj;
 			} else {
 				throw new QueryException("No se logro ejecutar el query.");
 			}
@@ -174,6 +201,14 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		} catch (IllegalArgumentException e) {
 			throw new QueryException("Error en consulta", e);
 		} catch (SecurityException e) {
+			throw new QueryException("Error en consulta", e);
+		} catch (InstantiationException e) {
+			throw new QueryException("Error en consulta", e);
+		} catch (IllegalAccessException e) {
+			throw new QueryException("Error en consulta", e);
+		} catch (InvocationTargetException e) {
+			throw new QueryException("Error en consulta", e);
+		} catch (NoSuchMethodException e) {
 			throw new QueryException("Error en consulta", e);
 		}
 	}
@@ -203,6 +238,9 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		ResultSet rs;
 		try {
 			query = String.format(query, squ.getTableName(obj), squ.fieldToWhere(obj, false));
+			if(query.substring(query.indexOf("WHERE")).trim().replace("WHERE", "").length()==0) {
+				query += " 1";
+			}
 			rs = db.executeQuery(query);
 			while (rs.next()) {
 				return rs.getInt("size");
@@ -228,18 +266,30 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 	}
 
 	public final static void main(String... strings) {
+		var usuario = new UsuarioDTO();
+		usuario.setNombre("MASTER");
 		var query = new QuerySvc();
 		var dto = new ParametroDTO();
 		dto.setNombre("test1");
 		try {
-			// query.createTableStandard(dto);
+			//query.createTableStandard(dto);
 			// ResultSet rs = query.queryLaunch("select * from mem_parametro");
-			// query.del(dto, new UsuarioDTO());
-			// query.set(dto, new UsuarioDTO());
-			System.out.println(query.gets(dto, 2, 2).size());
+			 //query.del(dto, usuario);
+			//query.set(dto, usuario);
+			//query.createTableStandard(new ParametroDelDTO());
+			//query.createTrigger(ParametroDTO.class, triggerOption.BEFORE, triggerAction.DELETE);
+			System.out.println(query.gets(dto, 0, 2).size());
+			query.gets(dto, 1, 2).forEach(obj->{
+				try {
+					query.del(obj,usuario);
+				} catch (QueryException e) {
+					e.printStackTrace();
+				}
+			});
 			System.out.println(query.countRow(dto));
 		} catch (QueryException e) {
 			e.printStackTrace();
 		}
+		System.exit(0);
 	}
 }

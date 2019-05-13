@@ -45,7 +45,10 @@
 		<module>../ea-poi</module>
 		<module>pyt-common</module>
 		<module>pyt-query</module>
+		<module>../ea-H2-mem</module>
 		<module>../ea-file-bin</module>
+		<module>../ea-loader</module>
+		<module>../ea-write-logger</module>
 		<module>pyt-service</module>
 		<module>pyt-app</module>
 	</modules>

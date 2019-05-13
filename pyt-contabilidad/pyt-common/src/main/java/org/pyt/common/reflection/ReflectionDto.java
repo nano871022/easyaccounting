@@ -137,10 +137,10 @@ public abstract class ReflectionDto {
 	@SuppressWarnings("unchecked")
 	public final <T extends Object> Class<T> getType(String nombreCampo) throws ReflectionException {
 		try {
-			Field field = super.getClass().getDeclaredField(nombreCampo);
+			Field field = searchField(nombreCampo, this.getClass());
 			Class<T> clas = (Class<T>) field.getType();
 			return clas;
-		} catch (NoSuchFieldException | SecurityException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
