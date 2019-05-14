@@ -1,5 +1,6 @@
 /target/
 /classes/
 /target/classes/
+/target/classes/*
 *.class
 .class

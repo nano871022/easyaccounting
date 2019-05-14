@@ -1,10 +1,13 @@
 package org.pyt.common.properties;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -90,11 +93,36 @@ public class LogWriter implements Runnable {
 	private WriteFile loadWriter() {
 		return new WriteFile().file(nameLogger);
 	}
+	
+	/**
+	 * Se encarga de crear una copia del archivo con otra fecha.
+	 * @param file {@link File}
+	 */
+	private final void copyOldFile(File file) {
+		if (file.exists()) {
+			var d = new Date(file.lastModified());
+			var posDotEnd = file.getName().lastIndexOf(".");
+			var ext = file.getName().substring(posDotEnd);
+			d.setTime(0);
+			var now = new Date();
+			now.setTime(0);
+			var comp = d.before(now);
+			if (comp) {
+				var sdf = new SimpleDateFormat("yyyyMMdd");
+				file.renameTo(new File(nameLoggerTrace.replace(ext, sdf.format(d) + ext)));
+			}
+		}
+	}
 
 	private final <T extends Exception> void printTrace(T excepcion) {
 		try {
 			File file = new File(nameLoggerTrace);
-			OutputStream out = new FileOutputStream(file);
+			copyOldFile(file);
+			var newFile = false;
+			if(file.exists()) {
+				newFile = true;
+			}
+			OutputStream out = new FileOutputStream(file,newFile);
 			PrintStream s = new PrintStream(out);
 			excepcion.printStackTrace(s);
 			s.close();

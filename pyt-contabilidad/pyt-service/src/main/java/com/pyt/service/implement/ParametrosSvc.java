@@ -26,7 +26,7 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 			throw new ParametroException("El objeto empresa se encuentra vacio.");
 		try {
 			lista = querySvc.gets(dto, init, end);
-			if (dto.getGrupo().equalsIgnoreCase("*")) {
+			if ("*".equalsIgnoreCase(dto.getGrupo())) {
 				for (ParametroDTO dt : lista) {
 					if (dt.getGrupo() != null && dt.getGrupo().equalsIgnoreCase("*")) {
 						lista2.add(dt);

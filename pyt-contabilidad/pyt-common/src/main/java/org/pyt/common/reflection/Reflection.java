@@ -110,7 +110,7 @@ public interface Reflection {
 				}
 				if (obj1 != null) {
 					obj = obj1;
-				} else if (service != null && service.findFirst() != null && service.findFirst().get() != null) {
+				} else if (service != null && service.findFirst() != null && service.findFirst().isPresent()) {
 					obj = (T) service.findFirst().get();
 				} else if (StringUtils.isNotBlank(inject.resource())) {
 					obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();

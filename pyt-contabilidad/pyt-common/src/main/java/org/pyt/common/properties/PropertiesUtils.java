@@ -53,7 +53,7 @@ public final class PropertiesUtils {
 		if (file.exists()) {
 			return new FileInputStream(file);
 		} else {
-			throw new Exception("No se encontro el archivo de properties " + namePath + " en " + pathProperties);
+			throw new Exception("No se encontro el archivo de properties " + namePath + " en " + pathProperties+" en path "+file.getAbsolutePath());
 		}
 	}
 	/**
