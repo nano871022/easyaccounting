@@ -271,11 +271,6 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 						continue;
 					}
 					List<ParametroDTO> parametros = parametroSvc.getAllParametros(parametro);
-					for(ParametroDTO paramet : parametros) {
-						System.out.println(paramet.getCodigo()+" "+paramet.getNombre());
-					}
-					System.out.println(parametro.toStringAll());//Parametroekuv40
-					System.out.println(parametros.toString());
 					if (parametros.size() > 0) {
 						throw new Exception("Ya se encuentra asignado este Grupo " + parametroGrupo.getGrupo() + " a "
 								+ parametros.get(0).getNombre());

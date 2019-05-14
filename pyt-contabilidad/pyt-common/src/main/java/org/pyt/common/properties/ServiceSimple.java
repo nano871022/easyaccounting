@@ -20,7 +20,7 @@ public final class ServiceSimple {
 	protected Log log = Log.Log(ServiceSimple.class);
 
 	private ServiceSimple() throws Exception {
-		PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_SIMPLE_SERVICE).load().getProperties();
+		properties = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_SIMPLE_SERVICE).load().getProperties();
 	}
 
 	public static ServiceSimple getInstance() throws Exception {

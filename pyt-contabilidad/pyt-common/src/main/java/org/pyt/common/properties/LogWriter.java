@@ -1,7 +1,6 @@
 package org.pyt.common.properties;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -118,11 +117,7 @@ public class LogWriter implements Runnable {
 		try {
 			File file = new File(nameLoggerTrace);
 			copyOldFile(file);
-			var newFile = false;
-			if(file.exists()) {
-				newFile = true;
-			}
-			OutputStream out = new FileOutputStream(file,newFile);
+			OutputStream out = new FileOutputStream(file,file.exists());
 			PrintStream s = new PrintStream(out);
 			excepcion.printStackTrace(s);
 			s.close();
