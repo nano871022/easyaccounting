@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.proccess.DateTime;
 import org.pyt.common.annotation.proccess.IsNotBlank;
 import org.pyt.common.annotation.proccess.Size;
@@ -13,11 +14,10 @@ import org.pyt.common.annotation.proccess.Unique;
 import org.pyt.common.annotation.proccess.Valid;
 import org.pyt.common.annotation.proccess.ValueInObject;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.reflection.Reflection;
 import org.pyt.common.reflection.ReflectionUtils;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.query.interfaces.IQuerySvc;
 

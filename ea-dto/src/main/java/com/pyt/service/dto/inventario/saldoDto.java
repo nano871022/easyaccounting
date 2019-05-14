@@ -2,7 +2,7 @@ package com.pyt.service.dto.inventario;
 
 import java.math.BigDecimal;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 public class saldoDto extends ADto {
 	private static final long serialVersionUID = -4582108584069764218L;

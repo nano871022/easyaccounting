@@ -1,4 +1,4 @@
-package org.pyt.common.common;
+package org.pyt.common.abstracts;
 
 import java.io.Serializable;
 import java.util.Date;

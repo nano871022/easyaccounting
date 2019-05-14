@@ -1,4 +1,4 @@
-package org.pyt.common.binario;
+package org.pyt.common.abstracts;
 
 import java.io.File;
 import java.util.regex.PatternSyntaxException;

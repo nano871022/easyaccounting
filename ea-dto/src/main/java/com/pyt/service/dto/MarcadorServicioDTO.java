@@ -1,6 +1,6 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 public class MarcadorServicioDTO extends ADto {
 	private static final long serialVersionUID = 4348093849805335955L;

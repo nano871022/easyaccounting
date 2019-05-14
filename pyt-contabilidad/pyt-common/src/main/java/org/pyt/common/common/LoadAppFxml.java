@@ -6,6 +6,9 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.pyt.common.abstracts.ABean;
+import org.pyt.common.abstracts.ADto;
+import org.pyt.common.abstracts.AGenericToBean;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
@@ -95,7 +98,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		}
 	}
 	
-	public final static <T extends GenericToBean<D>, D extends ADto> T loadBeanFX(T genericBean) throws LoadAppFxmlException {
+	public final static <T extends AGenericToBean<D>, D extends ADto> T loadBeanFX(T genericBean) throws LoadAppFxmlException {
 		try {
 			Stage stg = new Stage();
 			genericBean.start(stg);

@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pyt.common.abstracts.ADto;
+import org.pyt.common.abstracts.AGenericToBean;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ADto;
-import org.pyt.common.common.GenericToBean;
 
 import com.pyt.service.interfaces.IQuerysPopup;
 import com.pyt.service.pojo.GenericPOJO;
@@ -21,7 +21,7 @@ import com.pyt.service.pojo.GenericPOJO;
  * @author Alejandro Parra
  * @since 09/04/2019
  */
-public abstract class GenericInterfacesReflection<T extends ADto> extends GenericToBean<T> {
+public abstract class GenericInterfacesReflection<T extends ADto> extends AGenericToBean<T> {
 
 	@Inject(resource = "com.pyt.service.implement.QuerysPopupSvc")
 	protected IQuerysPopup querys;

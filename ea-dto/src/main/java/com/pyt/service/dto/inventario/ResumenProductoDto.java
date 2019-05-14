@@ -2,7 +2,7 @@ package com.pyt.service.dto.inventario;
 
 import java.math.BigDecimal;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 import com.pyt.service.dto.ParametroDTO;
 

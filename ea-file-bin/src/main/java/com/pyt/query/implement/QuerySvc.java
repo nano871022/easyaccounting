@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Compare;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.UsuarioDTO;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.FileBinException;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.interfaces.IDelClass;
 import org.pyt.common.interfaces.IUpdClass;
 import org.pyt.common.reflection.ReflectionUtils;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.query.interfaces.IQuerySvc;
 

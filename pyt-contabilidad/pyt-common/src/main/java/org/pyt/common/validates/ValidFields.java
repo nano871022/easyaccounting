@@ -1,10 +1,12 @@
-package org.pyt.common.common;
+package org.pyt.common.validates;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.SelectList;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
@@ -32,6 +34,7 @@ public final class ValidFields {
 	 *            {@link Integer}
 	 * @return {@link Boolean}
 	 */
+	@SuppressWarnings("null")
 	public static final Boolean valid(TextField field, Boolean notEmpty, Integer min, Integer max,String msnError) {
 		Boolean valid = true;
 		if (field != null)
@@ -60,6 +63,7 @@ public final class ValidFields {
 	 *            {@link Integer}
 	 * @return {@link Boolean}
 	 */
+	@SuppressWarnings("null")
 	public static final Boolean valid(TextArea field, Boolean notEmpty, Integer min, Integer max,String msnError) {
 		Boolean valid = true;
 		if (field != null)

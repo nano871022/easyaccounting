@@ -2,7 +2,7 @@ package com.pyt.service.dto;
 
 import java.util.Date;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 import com.pyt.service.dto.dels.ParametroDelDTO;
 import com.pyt.service.dto.upds.ParametroUpdDTO;

@@ -1,6 +1,6 @@
 package com.pyt.service.dto.inventario;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 /**
  * Este objeto se ecarga de restar la cantidad de de unidades vendidas a la cantidad de unidades por cada movimiento

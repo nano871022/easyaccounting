@@ -1,4 +1,4 @@
-package org.pyt.common.common;
+package org.pyt.common.abstracts;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -7,9 +7,14 @@ import java.util.Map;
 
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.Comunicacion;
+import org.pyt.common.common.I18n;
+import org.pyt.common.common.Log;
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.controller.LocatorController;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.interfaces.IBean;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -24,7 +29,7 @@ import javafx.stage.Stage;
  * @since 10/04/2019
  * @param <T>
  */
-public abstract class GenericToBean<T extends ADto> extends Application implements IBean<T> {
+public abstract class AGenericToBean<T extends ADto> extends Application implements IBean<T> {
 	protected T registro;
 	protected BorderPane panel;
 	protected UsuarioDTO userLogin;
@@ -42,7 +47,7 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 	private Map<String, Object> defaultValuesGenericParametrized;
 	private I18n languages;
 
-	public GenericToBean() {
+	public AGenericToBean() {
 		try {
 			userLogin = new UsuarioDTO();
 			userLogin.setNombre("nano871022");
@@ -107,7 +112,7 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 	}
 	
 	@SuppressWarnings("unchecked")
-	public final <S extends GenericToBean<T>> S setWidth(double width) {
+	public final <S extends AGenericToBean<T>> S setWidth(double width) {
 		primaryStage.setWidth(width);
 		return (S) this;
 	}
@@ -142,7 +147,7 @@ public abstract class GenericToBean<T extends ADto> extends Application implemen
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <S extends GenericToBean<T>> S addDefaultValuesToGenericParametrized(String key, Object value) {
+	public final <S extends AGenericToBean<T>> S addDefaultValuesToGenericParametrized(String key, Object value) {
 		if (defaultValuesGenericParametrized == null) {
 			defaultValuesGenericParametrized = new HashMap<String, Object>();
 		}

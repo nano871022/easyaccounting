@@ -1,5 +1,6 @@
 package org.pyt.common.properties;
 
+import org.pyt.common.abstracts.AEjb;
 import org.pyt.common.constants.PropertiesConstants;
 
 /**

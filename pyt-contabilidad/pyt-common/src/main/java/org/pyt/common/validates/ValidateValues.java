@@ -1,4 +1,4 @@
-package org.pyt.common.common;
+package org.pyt.common.validates;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,6 +10,9 @@ import java.time.ZoneId;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.Compare;
+import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
 /**

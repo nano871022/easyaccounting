@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.Table;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;

@@ -2,12 +2,7 @@ package org.pyt.app.components;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.PopupBean.TIPOS;
-import org.pyt.common.common.ABean;
-/**
- * Se encarga de controlar el popup de errores, notificaciones y warning
- * @author Alejandro Parra
- * @since 18/10/2018
- */
+import org.pyt.common.abstracts.ABean;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;

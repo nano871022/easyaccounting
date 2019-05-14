@@ -1,8 +1,8 @@
 package com.pyt.service.dto;
 
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
-import org.pyt.common.common.ADto;
 import org.pyt.common.constants.ParametroConstants;
 
 import com.pyt.service.dto.dels.ParametroDelDTO;

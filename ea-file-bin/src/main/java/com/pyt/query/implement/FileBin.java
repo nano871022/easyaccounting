@@ -4,10 +4,10 @@ package com.pyt.query.implement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pyt.common.binario.ABin;
+import org.pyt.common.abstracts.ABin;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.binario.ReadBin;
 import org.pyt.common.binario.WriteBin;
-import org.pyt.common.common.ADto;
 import org.pyt.common.exceptions.FileBinException;
 
 /**

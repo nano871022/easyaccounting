@@ -1,4 +1,4 @@
-package org.pyt.common.binario;
+package org.pyt.common.abstracts;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
 
 

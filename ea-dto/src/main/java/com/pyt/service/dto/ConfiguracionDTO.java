@@ -1,6 +1,6 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 /**
  * Se encarga de almacenar las configuraciones
  * @author Alejandro Parra

@@ -2,8 +2,8 @@ package com.pyt.service.dto;
 
 import java.time.LocalDate;
 
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
-import org.pyt.common.common.ADto;
 import org.pyt.common.constants.ParametroConstants;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;

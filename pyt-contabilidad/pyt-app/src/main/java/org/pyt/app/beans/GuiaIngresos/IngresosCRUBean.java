@@ -7,18 +7,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ABean;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.Table;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.IngresoException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.ServiciosException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import com.pyt.service.dto.EmpresaDTO;

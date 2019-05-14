@@ -1,4 +1,4 @@
-package org.pyt.common.properties;
+package org.pyt.common.abstracts;
 
 import java.util.Properties;
 
@@ -6,6 +6,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.pyt.common.common.Log;
+import org.pyt.common.properties.EjbRemote;
+import org.pyt.common.properties.PropertiesUtils;
 
 public abstract class AEjb {
 	private Properties properties;

@@ -3,7 +3,7 @@ package com.pyt.service.interfaces;
 import java.util.List;
 import java.util.Map;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.MarcadorServicioException;
 

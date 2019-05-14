@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.query.interfaces.IAdvanceQuerySvc.triggerAction;

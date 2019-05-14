@@ -19,6 +19,7 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IComunicacion;
 import org.pyt.common.properties.EjbHome;
 import org.pyt.common.properties.EjbRemote;
+import org.pyt.common.properties.ServiceSimple;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 
@@ -102,6 +103,9 @@ public interface Reflection {
 					try {
 						obj1 = (T) EjbHome.getInstance().getEjb(field.getType());
 					} catch (Exception e1) {
+						try {
+							obj1 = (T) ServiceSimple.getInstance().getService(field.getType()); 
+						}catch(Exception e2) { }
 					}
 				}
 				if (obj1 != null) {

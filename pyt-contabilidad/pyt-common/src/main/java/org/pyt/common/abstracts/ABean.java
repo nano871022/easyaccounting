@@ -1,8 +1,13 @@
-package org.pyt.common.common;
+package org.pyt.common.abstracts;
 
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.Comunicacion;
+import org.pyt.common.common.I18n;
+import org.pyt.common.common.Log;
+import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.controller.LocatorController;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.interfaces.IBean;
 /**
  * Se encarga de implementar {@link IBean} para contruir controlladores de interfaces creadas en fxml
  * @author Alejandro Parra

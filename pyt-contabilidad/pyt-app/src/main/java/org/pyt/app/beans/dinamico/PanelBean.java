@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ABean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
-import org.pyt.common.common.ABean;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.DocumentosException;

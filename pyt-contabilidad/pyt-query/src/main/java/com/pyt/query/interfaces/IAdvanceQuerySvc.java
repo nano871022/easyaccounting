@@ -3,7 +3,7 @@ package com.pyt.query.interfaces;
 import java.sql.ResultSet;
 import java.util.ServiceLoader;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.QueryException;
 
 public interface IAdvanceQuerySvc {

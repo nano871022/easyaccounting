@@ -2,8 +2,8 @@ package org.pyt.app.beans.abstracts;
 
 import org.pyt.app.beans.interfaces.ListBasicBean;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ABean;
+import org.pyt.common.abstracts.ADto;
 /**
  * Se encarga de generalizar la pantalla de listar un objeto
  * @author Alejandro Parra

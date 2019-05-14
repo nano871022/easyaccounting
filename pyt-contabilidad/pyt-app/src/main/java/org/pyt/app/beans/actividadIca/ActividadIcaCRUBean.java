@@ -1,8 +1,8 @@
 package org.pyt.app.beans.actividadIca;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ABean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.ActividadIcaException;
 
 import com.pyt.service.dto.ActividadIcaDTO;

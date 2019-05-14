@@ -3,11 +3,11 @@ package com.pyt.service.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Increment;
 import org.pyt.common.annotations.NoEdit;
 import org.pyt.common.annotations.Operacion;
 import org.pyt.common.annotations.Operar;
-import org.pyt.common.common.ADto;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;

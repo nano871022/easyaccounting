@@ -5,9 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.IBean;
 import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
+import org.pyt.common.interfaces.IBean;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 

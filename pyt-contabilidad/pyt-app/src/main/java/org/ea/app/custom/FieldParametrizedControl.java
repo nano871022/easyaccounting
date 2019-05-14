@@ -3,7 +3,7 @@ package org.ea.app.custom;
 import java.io.IOException;
 import java.util.List;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.CustomFXMLConstant;

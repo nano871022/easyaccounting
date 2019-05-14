@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ABean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.ValidFields;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroInventarioConstants;
 import org.pyt.common.exceptions.inventario.InventarioException;
+import org.pyt.common.validates.ValidFields;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.inventario.MovimientoDto;
 import com.pyt.service.dto.inventario.ParametroInventarioDTO;
