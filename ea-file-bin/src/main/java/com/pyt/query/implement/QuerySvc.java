@@ -60,11 +60,9 @@ public class QuerySvc implements IQuerySvc {
 		try {
 			List<T> list = (List<T>) fb.loadRead(obj.getClass());
 			if (list != null) {
-				for (T dto : list) {
-					if ((new Compare<T>(dto)).to(obj)) {
-						lista.add(dto);
-					}
-				}
+				list.stream()
+				.filter(filter->(new Compare<T>(filter)).to(obj))
+				.forEach(row->lista.add(row));
 			} else {
 				list = new ArrayList<T>();
 			}

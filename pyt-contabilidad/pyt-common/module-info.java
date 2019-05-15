@@ -1,5 +1,5 @@
 
-module org.pyt.common {
+module com.japl.ea.common {
  exports org.pyt.common.binario;
  exports org.pyt.common.common;
  exports org.pyt.common.controller;

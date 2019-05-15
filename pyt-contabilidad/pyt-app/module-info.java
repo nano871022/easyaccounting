@@ -1,8 +1,10 @@
 
 module org.pyt.app {
 	requires javafx.*;
+	requires com.japl.ea.common;
 	requires org.pyt.common.common;
 	requires org.pyt.common.constants;
+	requires com.japl.ea.constants;
 	requires org.pyt.common.interfaces;
 	requires org.pyt.common.reflection;
 	requires org.pyt.common.annotations;

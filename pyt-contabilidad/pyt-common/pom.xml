@@ -63,18 +63,18 @@
 				<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
 			<artifactId>ikonli-javafx</artifactId>
-			<version>2.4.0</version>
+			<version>11.3.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
 			<artifactId>ikonli-core</artifactId>
-			<version>2.4.0</version>
+			<version>11.3.4</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-fontawesome-pack -->
 		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
 			<artifactId>ikonli-fontawesome-pack</artifactId>
-			<version>2.4.0</version>
+			<version>11.3.4</version>
 		</dependency>
 	</dependencies>
 	<repositories>

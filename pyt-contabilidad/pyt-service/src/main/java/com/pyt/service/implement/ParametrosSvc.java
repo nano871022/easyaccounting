@@ -27,11 +27,9 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		try {
 			lista = querySvc.gets(dto, init, end);
 			if ("*".equalsIgnoreCase(dto.getGrupo())) {
-				for (ParametroDTO dt : lista) {
-					if (dt.getGrupo() != null && dt.getGrupo().equalsIgnoreCase("*")) {
-						lista2.add(dt);
-					}
-				}
+				lista.stream()
+				.filter(filter->filter.getGrupo() != null && "*".equalsIgnoreCase(filter.getGrupo()))
+				.forEach(row->lista2.add(row));
 				if (lista2.size() > 0)
 					return lista2;
 			}
