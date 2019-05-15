@@ -115,13 +115,8 @@
 
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
-			<artifactId>ea-file-bin</artifactId>
-			<version>1.2.1-BETA</version>
-		</dependency>
-		<dependency>
-			<groupId>co.com.japl.ea</groupId>
-			<artifactId>ea-H2-mem</artifactId>
-			<version>1.2.1-BETA</version>
+			<artifactId>${project.connect.model}</artifactId>
+			<version>${project.connect.version}</version>
 		</dependency>
 	</dependencies>
 	<repositories>

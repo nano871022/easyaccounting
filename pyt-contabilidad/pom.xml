@@ -16,12 +16,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.compile.version>10</project.build.compile.version>
 		<project.version>1.2.1-BETA</project.version>
-<!-- 		<project.version>0.0.1-SNAPSHOT</project.version> -->
-<!-- 		<project.scope>runtime</project.scope> -->
-<!-- USED FOR COMPILATION, TO BUILD VERSION  -->
+		<!-- <project.version>0.0.1-SNAPSHOT</project.version> -->
+		<!-- <project.scope>runtime</project.scope> -->
+		<!-- USED FOR COMPILATION, TO BUILD VERSION -->
 		<project.scope>provided</project.scope>
-<!-- 		<project.scope>compile</project.scope> -->
-<!-- 		<project.scope>system</project.scope> -->
+		<!-- <project.scope>compile</project.scope> -->
+		<!-- <project.scope>system</project.scope> -->
+		<project.connect.model>ea-file-bin</project.connect.model>
+		<!-- <project.connect.model>ea-H2-mem</project.connect.model> -->
+		<project.connect.version>${project.version}</project.connect.version>
 	</properties>
 	<dependencies>
 		<dependency>
