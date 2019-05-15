@@ -158,7 +158,7 @@
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 							<mainClass>
-								org.pyt.app.load.App
+								org.ea.app.load.Main
 							</mainClass>
 						</manifest>
 					</archive>
