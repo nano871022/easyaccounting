@@ -11,98 +11,97 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.japl.ea.query.privates.H2Connect;
+import com.japl.ea.query.privates.Constants.QueryConstants;
 import com.japl.ea.query.privates.utils.StatementQuerysUtil;
 import com.pyt.query.interfaces.IAdvanceQuerySvc;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ParametroDTO;
 
-
 public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 
 	private H2Connect db;
 	private StatementQuerysUtil squ;
-	
+
 	public QuerySvc() {
 		db = H2Connect.getInstance();
 		squ = new StatementQuerysUtil();
 	}
 
+	/**
+	 * Se encarga de realizar de retornar un objeto completamente cargado en dto
+	 * 
+	 * @param rs    {@link ResultSet}
+	 * @param dto   extends {@link ADto}
+	 * @param names {@link List} < {@link String}
+	 * @return extends {@link ADto}
+	 * @throws ReflectionException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws QueryException
+	 * @throws SQLException
+	 */
 	@SuppressWarnings("unchecked")
+	private final <T extends ADto> T getSearchResult(ResultSet rs, T dto, List<String> names)
+			throws ReflectionException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException, QueryException, SQLException {
+		T newInstance = (T) dto.getClass().getConstructor().newInstance();
+		for (String name : names) {
+			if (newInstance.typeField(name).asSubclass(ADto.class) != null) {
+				var subInstance = newInstance.typeField(name).getConstructor().newInstance();
+				((ADto) subInstance).set(name, rs.getObject(name));
+				subInstance = get((T) subInstance);
+				newInstance.set(name, subInstance);
+			} else {
+				newInstance.set(name, rs.getObject(name));
+			}
+		}
+		return newInstance;
+	}
+
 	@Override
 	public <T extends ADto> List<T> gets(T obj, Integer init, Integer end) throws QueryException {
 		List<T> list = new ArrayList<T>();
-		String query = "SELECT %s FROM %s WHERE %s LIMIT %s";
+		String query = QueryConstants.SQL_SELECT_LIMIT;
 		ResultSet rs;
 		try {
 			List<String> names = obj.getNameFields();
 			query = String.format(query, squ.fieldToSelect(obj), squ.getTableName(obj), squ.fieldToWhere(obj, false),
-					init + "," + end);
+					init + QueryConstants.CONST_COMMA + end);
 			rs = db.executeQuery(query);
 			while (rs.next()) {
-				T newInstance = (T) obj.getClass().getConstructor().newInstance();
-				for (String name : names) {
-					newInstance.set(name, rs.getObject(name));
-				}
-				list.add(newInstance);
+				list.add(getSearchResult(rs, obj, names));
 			}
-		} catch (SQLException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (ReflectionException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (InstantiationException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalAccessException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalArgumentException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (InvocationTargetException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (NoSuchMethodException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (SecurityException e) {
-			throw new QueryException("Error en consulta", e);
+		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH, e);
 		}
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ADto> List<T> gets(T obj) throws QueryException {
 		List<T> list = new ArrayList<T>();
-		String query = "SELECT %s FROM %s WHERE %s";
+		String query = QueryConstants.SQL_SELECT;
 		ResultSet rs;
 		try {
 			List<String> names = obj.getNameFields();
 			query = String.format(query, squ.fieldToSelect(obj), squ.getTableName(obj), squ.fieldToWhere(obj, false));
 			rs = db.executeQuery(query);
 			while (rs.next()) {
-				T newInstance = null;
-				for (String name : names) {
-					newInstance = (T) obj.getClass().getConstructor().newInstance();
-					newInstance.set(name, rs.getObject(name));
-				}
-				list.add(newInstance);
+				list.add(getSearchResult(rs, obj, names));
 			}
-		} catch (SQLException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (ReflectionException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (InstantiationException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalAccessException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalArgumentException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (InvocationTargetException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (NoSuchMethodException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (SecurityException e) {
-			throw new QueryException("Error en consulta", e);
+		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH, e);
 		}
 		return list;
 	}
@@ -119,62 +118,66 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		return list.get(0);
 	}
 
-	public <T extends ADto> void createTrigger(Class<T> obj,triggerOption to,triggerAction... ta) throws QueryException {
+	public <T extends ADto> void createTrigger(Class<T> obj, triggerOption to, triggerAction... ta)
+			throws QueryException {
 		try {
-			if(ta.length == 0) {
+			if (ta.length == 0) {
 				throw new QueryException("No se puede crear trigger sin acciones a afectar.");
 			}
-			if(to == null) {
+			if (to == null) {
 				throw new QueryException("No se puede crear trigger sin option de cuando ejecutar el trigger.");
 			}
-			if(obj == null) {
+			if (obj == null) {
 				throw new QueryException("No se puede crear trigger sin conocer la tabla a afectar.");
 			}
-			var actions = Arrays.toString(ta).replace("[", "").replace("]", "");
+			var actions = Arrays.toString(ta).replace(QueryConstants.CONST_KEY_OPEN, QueryConstants.CONST_EMPTY)
+					.replace(QueryConstants.CONST_KEY_CLOSE, QueryConstants.CONST_EMPTY);
 			var table = squ.getTableName(obj.getConstructor().newInstance());
-			var query = "CREATE TRIGGER tgr_%s %s %s ON %s FOR EACH ROW CALL \"com.japl.ea.query.privates.triggers.%s\"";
-			query = String.format(query,table,to.toString(),actions,table,squ.getNameTriggerPOJO(obj, to, ta));
+			var query = QueryConstants.SQL_CREATE_TRIGGER;
+			query = String.format(query, table, to.toString(), actions, table, squ.getNameTriggerPOJO(obj, to, ta));
 			db.getStatement().executeUpdate(query);
-		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new QueryException("Error en la creacion de la tabla.", e);
+		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER, e);
 		}
 	}
 
 	public <T extends ADto> void createTableStandard(T obj) throws QueryException {
 		try {
-			String query = "create table %s (%s)";
+			String query = QueryConstants.SQL_CREATE_TABLE;
 			List<String> listFields = obj.getNameFields();
-			String fields = "";
+			String fields = QueryConstants.CONST_EMPTY;
 			for (String field : listFields) {
 				var type = obj.getType(field);
 				if (type != null) {
 					if (fields.length() > 0)
-						fields += ",";
-					fields += field + " " + squ.typeDataDB(type.getSimpleName()) + " NULL";
+						fields += QueryConstants.CONST_COMMA;
+					fields += field + QueryConstants.CONST_SPACE + squ.typeDataDB(type.getSimpleName())
+							+ QueryConstants.CONST_SPACE + QueryConstants.CONST_NULL;
 				}
 			}
 			query = String.format(query, squ.getTableName(obj), fields);
 			db.getStatement().executeUpdate(query);
 		} catch (ReflectionException | SQLException e) {
-			throw new QueryException("Error en la creacion de la tabla.", e);
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TABLE, e);
 		}
 	}
 
 	public <T extends ADto> void dropTable(T obj) throws QueryException {
 		try {
-			var query = "DROP TABLE " + squ.getTableName(obj);
+			var query = QueryConstants.SQL_DROP_TABLE + squ.getTableName(obj);
 			db.getStatement().executeUpdate(query);
 		} catch (SQLException e) {
-			throw new QueryException("Error en la elimiancion", e);
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_DROP_TABLE, e);
 		}
 	}
 
 	@Override
 	public <T extends ADto> T set(T obj, UsuarioDTO user) throws QueryException {
-		var query = "INSERT INTO %s (%s) VALUES (%s)";
+		var query = QueryConstants.SQL_INSERT;
 		try {
 			if (StringUtils.isNotBlank(obj.getCodigo())) {
-				query = "UPDATE %s SET %s WHERE %s";
+				query = QueryConstants.SQL_UPDATE;
 				obj.setActualizador(user.getNombre());
 				obj.setFechaActualizacion(new Date());
 			} else {
@@ -184,75 +187,51 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 						squ.genConsecutivo(obj.getClass(), countRow(obj.getClass().getConstructor().newInstance())));
 			}
 			query = String.format(query, squ.getTableName(obj), squ.fieldToSelect(obj),
-					squ.fieldToWhere(obj, query.contains("INSERT")));
+					squ.fieldToWhere(obj, query.contains(QueryConstants.CONST_INSERT)));
 			Boolean rs = db.executeIUD(query);
 			if (rs) {
-				if(StringUtils.isNotBlank(obj.getCodigo())) {
+				if (StringUtils.isNotBlank(obj.getCodigo())) {
 					return get(obj);
 				}
 				return obj;
 			} else {
 				throw new QueryException("No se logro ejecutar el query.");
 			}
-		} catch (SQLException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (ReflectionException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalArgumentException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (SecurityException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (InstantiationException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalAccessException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (InvocationTargetException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (NoSuchMethodException e) {
-			throw new QueryException("Error en consulta", e);
+		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE, e);
 		}
 	}
 
 	@Override
 	public <T extends ADto> void del(T obj, UsuarioDTO user) throws QueryException {
-		String query = "DELETE FROM %s WHERE %s";
+		String query = QueryConstants.SQL_DELETE;
 		try {
 			query = String.format(query, squ.getTableName(obj), squ.fieldToWhere(obj, false));
 			if (!db.executeIUD(query)) {
 				throw new QueryException("Error en la ejecucion de la sentencia.");
 			}
-		} catch (SQLException e) {
-			throw new QueryException("Error en queryException", e);
-		} catch (ReflectionException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalArgumentException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (SecurityException e) {
-			throw new QueryException("Error en consulta", e);
+		} catch (SQLException | ReflectionException | IllegalArgumentException | SecurityException e) {
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW, e);
 		}
 	}
 
 	@Override
 	public <T extends ADto> Integer countRow(T obj) throws QueryException {
-		String query = "SELECT count(1) as size FROM %s WHERE %s";
+		String query = QueryConstants.SQL_COUNT_ROW;
 		ResultSet rs;
 		try {
 			query = String.format(query, squ.getTableName(obj), squ.fieldToWhere(obj, false));
-			if(query.substring(query.indexOf("WHERE")).trim().replace("WHERE", "").length()==0) {
+			if (query.substring(query.indexOf(QueryConstants.CONST_WHERE)).trim()
+					.replace(QueryConstants.CONST_WHERE, QueryConstants.CONST_EMPTY).length() == 0) {
 				query += " 1";
 			}
 			rs = db.executeQuery(query);
 			while (rs.next()) {
-				return rs.getInt("size");
+				return rs.getInt(QueryConstants.CONST_FIELD_COUNT);
 			}
-		} catch (SQLException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (ReflectionException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (IllegalArgumentException e) {
-			throw new QueryException("Error en consulta", e);
-		} catch (SecurityException e) {
-			throw new QueryException("Error en consulta", e);
+		} catch (SQLException | ReflectionException | IllegalArgumentException | SecurityException e) {
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS, e);
 		}
 		return 0;
 	}
@@ -261,7 +240,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		try {
 			return db.getStatement().executeQuery(query);
 		} catch (SQLException e) {
-			throw new QueryException("Error en launcher query.", e);
+			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_LAUNCHER, e);
 		}
 	}
 
@@ -272,16 +251,17 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		var dto = new ParametroDTO();
 		dto.setNombre("test1");
 		try {
-			//query.createTableStandard(dto);
+			// query.createTableStandard(dto);
 			// ResultSet rs = query.queryLaunch("select * from mem_parametro");
-			 //query.del(dto, usuario);
-			//query.set(dto, usuario);
-			//query.createTableStandard(new ParametroDelDTO());
-			//query.createTrigger(ParametroDTO.class, triggerOption.BEFORE, triggerAction.DELETE);
+			// query.del(dto, usuario);
+			// query.set(dto, usuario);
+			// query.createTableStandard(new ParametroDelDTO());
+			// query.createTrigger(ParametroDTO.class, triggerOption.BEFORE,
+			// triggerAction.DELETE);
 			System.out.println(query.gets(dto, 0, 2).size());
-			query.gets(dto, 1, 2).forEach(obj->{
+			query.gets(dto, 1, 2).forEach(obj -> {
 				try {
-					query.del(obj,usuario);
+					query.del(obj, usuario);
 				} catch (QueryException e) {
 					e.printStackTrace();
 				}

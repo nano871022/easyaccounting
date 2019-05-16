@@ -16,5 +16,13 @@ public class LanguageConstant {
 	public final static String POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE = "popup-parametrized.error.clean-value";
 	public final static String LANGUAGE_KEY_NOT_FOUND = "languages.key.not-found";
 	public final static String LANGUAGE_FIELD_ASSIGN_EMPTY = "generic.field.assign.empty";
+	public final static String LANGUAGE_ERROR_QUERY_SEARCH = "service.error.query.search";
+	public final static String LANGUAGE_ERROR_QUERY_CREATE_TABLE = "service.error.query.create.table";
+	public final static String LANGUAGE_ERROR_QUERY_CREATE_TRIGGER = "service.error.query.create.trigger";
+	public final static String LANGUAGE_ERROR_QUERY_DROP_TABLE = "service.error.query.drop.table";
+	public final static String LANGUAGE_ERROR_QUERY_INSERT_UPDATE = "service.error.query.insert.update";
+	public final static String LANGUAGE_ERROR_QUERY_DELETE_ROW = "service.error.query.delete.row";
+	public final static String LANGUAGE_ERROR_QUERY_COUNT_ROWS = "service.error.query.count.rows";
+	public final static String LANGUAGE_ERROR_QUERY_LAUNCHER = "service.error.query.launcher";
 }
 
