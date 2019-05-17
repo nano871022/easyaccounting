@@ -1,10 +1,7 @@
 package com.japl.ea.query.privates.dao;
 
-import com.pyt.service.dto.ParametroDTO;
+import java.util.Map;
 
-public class ParametroDAO {
-  private ParametroDTO parametro;
-  public ParametroDAO(ParametroDTO parametro) {
-	  this.parametro = parametro;
-  }
+public final class ParametroDAO {
+	private Map<String,String> mapa;
 }

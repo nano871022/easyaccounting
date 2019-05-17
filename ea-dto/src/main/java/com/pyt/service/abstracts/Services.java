@@ -1,6 +1,7 @@
 package com.pyt.service.abstracts;
 
 import org.pyt.common.annotations.PostConstructor;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
@@ -14,11 +15,12 @@ import org.pyt.common.reflection.Reflection;
  */
 public abstract class Services implements Reflection {
 	private Log logger = Log.Log(this.getClass());
-
+	private I18n i18n;
 	@PostConstructor
 	public void load() {
 		try {
 			inject();
+			i18n = new I18n();
 		} catch (ReflectionException e) {
 			logger.logger(e);
 		}
@@ -26,5 +28,8 @@ public abstract class Services implements Reflection {
  
 	public final Log logger() {
 		return logger;
+	}
+	protected final I18n i18n() {
+		return i18n;
 	}
 }

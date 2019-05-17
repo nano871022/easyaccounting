@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.exceptions.QueryException;
@@ -26,18 +27,23 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 
 	private H2Connect db;
 	private StatementQuerysUtil squ;
+	private I18n i18n;
 
 	public QuerySvc() {
 		db = H2Connect.getInstance();
 		squ = new StatementQuerysUtil();
+		i18n = new I18n();
 	}
 
 	/**
 	 * Se encarga de realizar de retornar un objeto completamente cargado en dto
 	 * 
-	 * @param rs    {@link ResultSet}
-	 * @param dto   extends {@link ADto}
-	 * @param names {@link List} < {@link String}
+	 * @param rs
+	 *            {@link ResultSet}
+	 * @param dto
+	 *            extends {@link ADto}
+	 * @param names
+	 *            {@link List} < {@link String}
 	 * @return extends {@link ADto}
 	 * @throws ReflectionException
 	 * @throws InstantiationException
@@ -82,7 +88,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			}
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
 		}
 		return list;
 	}
@@ -101,7 +107,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			}
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
 		}
 		return list;
 	}
@@ -110,10 +116,10 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 	public <T extends ADto> T get(T obj) throws QueryException {
 		List<T> list = gets(obj);
 		if (list == null || list.size() == 0) {
-			throw new QueryException("No se encontraron registros.");
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW));
 		}
 		if (list.size() > 1) {
-			throw new QueryException("Se encontraron varios registros." + list.size());
+			throw new QueryException(String.format(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_FOUND_ROWS), list.size()));
 		}
 		return list.get(0);
 	}
@@ -122,13 +128,13 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			throws QueryException {
 		try {
 			if (ta.length == 0) {
-				throw new QueryException("No se puede crear trigger sin acciones a afectar.");
+				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_ACTION));
 			}
 			if (to == null) {
-				throw new QueryException("No se puede crear trigger sin option de cuando ejecutar el trigger.");
+				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_OPTION));
 			}
 			if (obj == null) {
-				throw new QueryException("No se puede crear trigger sin conocer la tabla a afectar.");
+				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_TABLE));
 			}
 			var actions = Arrays.toString(ta).replace(QueryConstants.CONST_KEY_OPEN, QueryConstants.CONST_EMPTY)
 					.replace(QueryConstants.CONST_KEY_CLOSE, QueryConstants.CONST_EMPTY);
@@ -138,7 +144,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			db.getStatement().executeUpdate(query);
 		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER), e);
 		}
 	}
 
@@ -159,7 +165,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			query = String.format(query, squ.getTableName(obj), fields);
 			db.getStatement().executeUpdate(query);
 		} catch (ReflectionException | SQLException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TABLE, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TABLE), e);
 		}
 	}
 
@@ -168,7 +174,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			var query = QueryConstants.SQL_DROP_TABLE + squ.getTableName(obj);
 			db.getStatement().executeUpdate(query);
 		} catch (SQLException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_DROP_TABLE, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DROP_TABLE), e);
 		}
 	}
 
@@ -195,11 +201,11 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 				}
 				return obj;
 			} else {
-				throw new QueryException("No se logro ejecutar el query.");
+				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_EXEC));
 			}
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
 		}
 	}
 
@@ -209,10 +215,10 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		try {
 			query = String.format(query, squ.getTableName(obj), squ.fieldToWhere(obj, false));
 			if (!db.executeIUD(query)) {
-				throw new QueryException("Error en la ejecucion de la sentencia.");
+				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_EXEC_DELETE));
 			}
 		} catch (SQLException | ReflectionException | IllegalArgumentException | SecurityException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW), e);
 		}
 	}
 
@@ -231,7 +237,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 				return rs.getInt(QueryConstants.CONST_FIELD_COUNT);
 			}
 		} catch (SQLException | ReflectionException | IllegalArgumentException | SecurityException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS), e);
 		}
 		return 0;
 	}
@@ -240,7 +246,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		try {
 			return db.getStatement().executeQuery(query);
 		} catch (SQLException e) {
-			throw new QueryException(LanguageConstant.LANGUAGE_ERROR_QUERY_LAUNCHER, e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_LAUNCHER), e);
 		}
 	}
 

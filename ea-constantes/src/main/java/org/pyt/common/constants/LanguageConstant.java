@@ -24,5 +24,14 @@ public class LanguageConstant {
 	public final static String LANGUAGE_ERROR_QUERY_DELETE_ROW = "service.error.query.delete.row";
 	public final static String LANGUAGE_ERROR_QUERY_COUNT_ROWS = "service.error.query.count.rows";
 	public final static String LANGUAGE_ERROR_QUERY_LAUNCHER = "service.error.query.launcher";
+	public final static String LANGUAGE_ERROR_QUERY_EXEC_DELETE = "service.error.query.exec.delete";
+	public final static String LANGUAGE_ERROR_QUERY_EXEC = "service.error.query.exec";
+	public final static String LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_ACTION = "service.error.query.create.trigger.without.action";
+	public final static String LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_OPTION = "service.error.query.create.trigger.without.option";
+	public final static String LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_TABLE = "service.error.query.create.trigger.without.table";
+	public final static String LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW = "service.error.query.not.found.row";
+	public final static String LANGUAGE_ERROR_QUERY_FOUND_ROWS = "service.error.query.found.rows";
+	public final static String GENERIC_SERVICE_EMPTY_DTO = "generic.service.empty.dto";
+	public final static String GENERIC_SERVICE_CODE_EMPTY_DTO = "generic.service.code.empty.dto";
 }
 
