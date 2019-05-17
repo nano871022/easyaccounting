@@ -22,8 +22,8 @@
 		<project.scope>provided</project.scope>
 		<!-- <project.scope>compile</project.scope> -->
 		<!-- <project.scope>system</project.scope> -->
-		<project.connect.model>ea-file-bin</project.connect.model>
-		<!-- <project.connect.model>ea-H2-mem</project.connect.model> -->
+<!-- 		<project.connect.model>ea-file-bin</project.connect.model> -->
+		<project.connect.model>ea-H2-mem</project.connect.model>
 		<project.connect.version>${project.version}</project.connect.version>
 	</properties>
 	<dependencies>
