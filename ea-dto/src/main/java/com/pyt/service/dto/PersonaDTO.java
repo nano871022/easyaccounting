@@ -24,7 +24,22 @@ public class PersonaDTO extends ADto{
 	private String telefono;
 	private Date fechaNacimiento;
 	private String email;
+	private ParametroDTO profesion;
+	private String numeroTarjetaProfesional;
 	
+	
+	public ParametroDTO getProfesion() {
+		return profesion;
+	}
+	public void setProfesion(ParametroDTO profesion) {
+		this.profesion = profesion;
+	}
+	public String getNumeroTarjetaProfesional() {
+		return numeroTarjetaProfesional;
+	}
+	public void setNumeroTarjetaProfesional(String numeroTarjetaProfesional) {
+		this.numeroTarjetaProfesional = numeroTarjetaProfesional;
+	}
 	public String getEmail() {
 		return email;
 	}
