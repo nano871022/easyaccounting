@@ -1,6 +1,8 @@
 package com.japl.ea.query.implement;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.h2.tools.DeleteDbFiles;
+import org.h2.tools.RunScript;
+import org.h2.tools.Script;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.UsuarioDTO;
@@ -278,4 +283,25 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		}
 		System.exit(0);
 	}
+	
+	@SuppressWarnings("static-access")
+	public final void backup() throws FileNotFoundException, SQLException {
+		var sc = new Script();
+		var password = "";
+		var user = "";
+		var url = "jdbc:h2:~/db";
+		var fileName = ".sql";
+		sc.process(url, user, password, fileName, null, null);
+	}
+	
+	public final void runScript() throws SQLException {
+		var fileName = "";
+		var charset = Charset.defaultCharset();
+		var continueOnError = true;
+		var password = "";
+		var user = "";
+		var url = "jdbc:h2:~/db";
+		RunScript.execute(url, user, password, fileName, charset, continueOnError);
+	}
+	
 }
