@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<h2:hibernate-configuration xmlns:h2="http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+	<h2:session-factory>
+		<!-- SQL Dialect -->
+		<h2:property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</h2:property>
+		<!-- Database Connection Settings -->
+		<h2:property name="hibernate.connection.driver_class">org.h2.Driver</h2:property>
+		<h2:property name="hibernate.connection.url">jdbc:h2:~/account.db</h2:property>
+		<h2:property name="hibernate.connection.username"></h2:property>
+		<h2:property name="hibernate.connection.password"></h2:property>
+		<h2:property name="show_sql">true</h2:property>
+
+		<!-- Specifying Session Context -->
+		<h2:property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</h2:property>
+
+		<!-- Mapping With Model Class Containing Annotations -->
+		<h2:mapping class="com.jcg.hibernate.maven.User" />
+	</h2:session-factory>
+</h2:hibernate-configuration>
