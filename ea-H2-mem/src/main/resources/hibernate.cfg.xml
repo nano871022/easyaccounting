@@ -3,21 +3,19 @@
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
-<h2:hibernate-configuration xmlns:h2="http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
-	<h2:session-factory>
+<hibernate-configuration>
+	<session-factory>
 		<!-- SQL Dialect -->
-		<h2:property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</h2:property>
+		<property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
 		<!-- Database Connection Settings -->
-		<h2:property name="hibernate.connection.driver_class">org.h2.Driver</h2:property>
-		<h2:property name="hibernate.connection.url">jdbc:h2:~/account.db</h2:property>
-		<h2:property name="hibernate.connection.username"></h2:property>
-		<h2:property name="hibernate.connection.password"></h2:property>
-		<h2:property name="show_sql">true</h2:property>
+		<property name="hibernate.connection.driver_class">org.h2.Driver</property>
+		<property name="show_sql">true</property>
 
 		<!-- Specifying Session Context -->
-		<h2:property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</h2:property>
+		<property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
 
 		<!-- Mapping With Model Class Containing Annotations -->
-		<h2:mapping class="com.jcg.hibernate.maven.User" />
-	</h2:session-factory>
-</h2:hibernate-configuration>
+		<mapping class="com.jcg.hibernate.maven.User" />
+		<mapping class="com.japl.ea.query.privates.jpa.ParametroJPA"/>
+	</session-factory>
+</hibernate-configuration>

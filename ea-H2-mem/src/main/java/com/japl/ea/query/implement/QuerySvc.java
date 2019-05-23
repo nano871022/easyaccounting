@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.h2.tools.DeleteDbFiles;
 import org.h2.tools.RunScript;
 import org.h2.tools.Script;
 import org.pyt.common.abstracts.ADto;
@@ -23,6 +22,7 @@ import org.pyt.common.exceptions.ReflectionException;
 
 import com.japl.ea.query.privates.H2Connect;
 import com.japl.ea.query.privates.Constants.QueryConstants;
+import com.japl.ea.query.privates.jpa.ParametroJPA;
 import com.japl.ea.query.privates.utils.StatementQuerysUtil;
 import com.pyt.query.interfaces.IAdvanceQuerySvc;
 import com.pyt.query.interfaces.IQuerySvc;
@@ -43,12 +43,9 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 	/**
 	 * Se encarga de realizar de retornar un objeto completamente cargado en dto
 	 * 
-	 * @param rs
-	 *            {@link ResultSet}
-	 * @param dto
-	 *            extends {@link ADto}
-	 * @param names
-	 *            {@link List} < {@link String}
+	 * @param rs    {@link ResultSet}
+	 * @param dto   extends {@link ADto}
+	 * @param names {@link List} < {@link String}
 	 * @return extends {@link ADto}
 	 * @throws ReflectionException
 	 * @throws InstantiationException
@@ -78,18 +75,29 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		return newInstance;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ADto> List<T> gets(T obj, Integer init, Integer end) throws QueryException {
-		List<T> list = new ArrayList<T>();
 		String query = QueryConstants.SQL_SELECT_LIMIT;
+		List<T> list = new ArrayList<T>();
 		ResultSet rs;
 		try {
 			List<String> names = obj.getNameFields();
 			query = String.format(query, squ.fieldToSelect(obj), squ.getTableName(obj), squ.fieldToWhere(obj, false),
 					init + QueryConstants.CONST_COMMA + end);
-			rs = db.executeQuery(query);
-			while (rs.next()) {
-				list.add(getSearchResult(rs, obj, names));
+			if (db.getHibernateConnect() != null) {
+				db.getHibernateConnect().beginTransaction();
+				var create = db.getHibernateConnect().createCriteria(ParametroJPA.class);
+//				var create = db.getHibernateConnect().createQuery(query.substring(0, query.indexOf("LIMIT")));
+//				create.setFirstResult(init);
+//				create.setMaxResults(init+end);
+//				list = (List<T>) create.getResultList();
+				var lists = create.list();
+			} else {
+				rs = db.executeQuery(query);
+				while (rs.next()) {
+					list.add(getSearchResult(rs, obj, names));
+				}
 			}
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -124,7 +132,8 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW));
 		}
 		if (list.size() > 1) {
-			throw new QueryException(String.format(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_FOUND_ROWS), list.size()));
+			throw new QueryException(
+					String.format(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_FOUND_ROWS), list.size()));
 		}
 		return list.get(0);
 	}
@@ -133,13 +142,16 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			throws QueryException {
 		try {
 			if (ta.length == 0) {
-				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_ACTION));
+				throw new QueryException(
+						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_ACTION));
 			}
 			if (to == null) {
-				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_OPTION));
+				throw new QueryException(
+						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_OPTION));
 			}
 			if (obj == null) {
-				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_TABLE));
+				throw new QueryException(
+						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_TABLE));
 			}
 			var actions = Arrays.toString(ta).replace(QueryConstants.CONST_KEY_OPEN, QueryConstants.CONST_EMPTY)
 					.replace(QueryConstants.CONST_KEY_CLOSE, QueryConstants.CONST_EMPTY);
@@ -269,7 +281,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			// query.createTableStandard(new ParametroDelDTO());
 			// query.createTrigger(ParametroDTO.class, triggerOption.BEFORE,
 			// triggerAction.DELETE);
-			System.out.println(query.gets(dto, 0, 2).size());
+			System.out.println("Size::"+query.gets(dto, 0, 2).size());
 			query.gets(dto, 1, 2).forEach(obj -> {
 				try {
 					query.del(obj, usuario);
@@ -280,10 +292,11 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			System.out.println(query.countRow(dto));
 		} catch (QueryException e) {
 			e.printStackTrace();
+		} finally {
+			System.exit(0);
 		}
-		System.exit(0);
 	}
-	
+
 	@SuppressWarnings("static-access")
 	public final void backup() throws FileNotFoundException, SQLException {
 		var sc = new Script();
@@ -293,7 +306,7 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		var fileName = ".sql";
 		sc.process(url, user, password, fileName, null, null);
 	}
-	
+
 	public final void runScript() throws SQLException {
 		var fileName = "";
 		var charset = Charset.defaultCharset();
@@ -303,5 +316,5 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		var url = "jdbc:h2:~/db";
 		RunScript.execute(url, user, password, fileName, charset, continueOnError);
 	}
-	
+
 }

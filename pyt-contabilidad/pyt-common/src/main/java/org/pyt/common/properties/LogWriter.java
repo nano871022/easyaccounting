@@ -25,15 +25,20 @@ public class LogWriter implements Runnable {
 	private String nameLoggerTrace = "./logger/stracTrace.log";
 	private final static String NAME_PATH_PROPERTIES = "path-log";
 	private final static String TRACT_PATH_PROPERTIES = "path-trace";
+	private final static String PROP_CONSOLE_PRINT = "ConsolePrint";
 	private List<String> impresiones;
 	private List<Exception> excepciones;
 	private Long sleep = (long) 1000;
 	private static LogWriter logWriter;
 	private Thread hilo;
+	private boolean consolePrint = false;
 
 	private LogWriter() {
 		impresiones = new ArrayList<String>();
 		excepciones = new ArrayList<Exception>();
+		if((System.getenv(PROP_CONSOLE_PRINT)!= null)) {
+			consolePrint = System.getenv(PROP_CONSOLE_PRINT).equalsIgnoreCase("true");
+		}
 	}
 
 	/**
@@ -92,9 +97,10 @@ public class LogWriter implements Runnable {
 	private WriteFile loadWriter() {
 		return new WriteFile().file(nameLogger);
 	}
-	
+
 	/**
 	 * Se encarga de crear una copia del archivo con otra fecha.
+	 * 
 	 * @param file {@link File}
 	 */
 	private final void copyOldFile(File file) {
@@ -117,13 +123,13 @@ public class LogWriter implements Runnable {
 		try {
 			File file = new File(nameLoggerTrace);
 			copyOldFile(file);
-			OutputStream out = new FileOutputStream(file,file.exists());
+			OutputStream out = new FileOutputStream(file, file.exists());
 			PrintStream s = new PrintStream(out);
 			excepcion.printStackTrace(s);
 			s.close();
 			out.close();
 		} catch (Exception e) {
-			addImpresion("Error presentado en printTrace::"+e.getMessage());
+			addImpresion("Error presentado en printTrace::" + e.getMessage());
 		}
 	}
 
@@ -137,6 +143,9 @@ public class LogWriter implements Runnable {
 			if (impresiones.size() > 0) {
 				String linea = impresiones.get(0);
 				loadWriter().writer(linea);
+				if (consolePrint) {
+					System.out.println(linea);
+				}
 				remove();
 			} else {
 				try {

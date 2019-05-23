@@ -6,7 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.pyt.common.common.Log;
+
+import com.japl.ea.query.constants.H2PropertiesConstant;
+import com.japl.ea.query.privates.utils.PropertiesH2;
 
 /**
  * Se realiza clase para contectar a una base de datos H2 embebida en la
@@ -22,8 +27,15 @@ public final class H2Connect implements AutoCloseable {
 	private Connection connection;
 	private Statement statement;
 	private static H2Connect db;
+	private PropertiesH2 properties = PropertiesH2.getInstance();
+	private SessionFactoryBuild sessionFactoryBuild;
 
 	private H2Connect() {
+		try {
+			this.connect = properties.load().getValue(H2PropertiesConstant.PROP_JDBC_H2);
+		} catch (Exception e) {
+			log.logger(e);
+		}
 	}
 
 	public static H2Connect getInstance() {
@@ -51,6 +63,18 @@ public final class H2Connect implements AutoCloseable {
 			statement = getConnection().createStatement();
 		}
 		return statement;
+	}
+
+	public Session getHibernateConnect() {
+		if (sessionFactoryBuild == null) {
+			sessionFactoryBuild = new SessionFactoryBuild();
+		}
+		SessionFactory sf = sessionFactoryBuild.buildSessionFactory();
+		if(sf == null)
+			return null;
+		if(sf.isOpen())
+			return sf.getCurrentSession();
+		return sf.openSession();
 	}
 
 	public ResultSet executeQuery(String query) throws SQLException {
