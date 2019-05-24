@@ -32,5 +32,6 @@ public class QueryConstants {
 	public final static String SQL_COUNT_ROW = "SELECT count(1) as size FROM %s WHERE %s";
 	public final static String SQL_SELECT = "SELECT %s FROM %s WHERE %s";
 	public final static String SQL_SELECT_LIMIT = "SELECT %s FROM %s WHERE %s LIMIT %s";
+	public final static String SQL_JPA_SELECT = "SELECT t FROM %s t WHERE %s";
 	public final static String SQL_CREATE_TRIGGER = "CREATE TRIGGER tgr_%s %s %s ON %s FOR EACH ROW CALL \"com.japl.ea.query.privates.triggers.%s\"";
 }

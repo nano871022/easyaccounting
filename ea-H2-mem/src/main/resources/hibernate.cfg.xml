@@ -13,9 +13,9 @@
 
 		<!-- Specifying Session Context -->
 		<property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
+		<property name="hibernate.archive.autodetection">class</property>
 
 		<!-- Mapping With Model Class Containing Annotations -->
-		<mapping class="com.jcg.hibernate.maven.User" />
 		<mapping class="com.japl.ea.query.privates.jpa.ParametroJPA"/>
 	</session-factory>
 </hibernate-configuration>

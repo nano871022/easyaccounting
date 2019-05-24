@@ -22,7 +22,6 @@ import org.pyt.common.exceptions.ReflectionException;
 
 import com.japl.ea.query.privates.H2Connect;
 import com.japl.ea.query.privates.Constants.QueryConstants;
-import com.japl.ea.query.privates.jpa.ParametroJPA;
 import com.japl.ea.query.privates.utils.StatementQuerysUtil;
 import com.pyt.query.interfaces.IAdvanceQuerySvc;
 import com.pyt.query.interfaces.IQuerySvc;
@@ -75,7 +74,6 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		return newInstance;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ADto> List<T> gets(T obj, Integer init, Integer end) throws QueryException {
 		String query = QueryConstants.SQL_SELECT_LIMIT;
@@ -83,21 +81,11 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 		ResultSet rs;
 		try {
 			List<String> names = obj.getNameFields();
-			query = String.format(query, squ.fieldToSelect(obj), squ.getTableName(obj), squ.fieldToWhere(obj, false),
-					init + QueryConstants.CONST_COMMA + end);
-			if (db.getHibernateConnect() != null) {
-				db.getHibernateConnect().beginTransaction();
-				var create = db.getHibernateConnect().createCriteria(ParametroJPA.class);
-//				var create = db.getHibernateConnect().createQuery(query.substring(0, query.indexOf("LIMIT")));
-//				create.setFirstResult(init);
-//				create.setMaxResults(init+end);
-//				list = (List<T>) create.getResultList();
-				var lists = create.list();
-			} else {
-				rs = db.executeQuery(query);
-				while (rs.next()) {
-					list.add(getSearchResult(rs, obj, names));
-				}
+			query = String.format(query, squ.fieldToSelect(obj), squ.getTableName(obj).toUpperCase(),
+					squ.fieldToWhere(obj, false), init + QueryConstants.CONST_COMMA + end);
+			rs = db.executeQuery(query);
+			while (rs.next()) {
+				list.add(getSearchResult(rs, obj, names));
 			}
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -281,16 +269,15 @@ public class QuerySvc implements IQuerySvc, IAdvanceQuerySvc {
 			// query.createTableStandard(new ParametroDelDTO());
 			// query.createTrigger(ParametroDTO.class, triggerOption.BEFORE,
 			// triggerAction.DELETE);
-			System.out.println("Size::"+query.gets(dto, 0, 2).size());
-			query.gets(dto, 1, 2).forEach(obj -> {
-				try {
-					query.del(obj, usuario);
-				} catch (QueryException e) {
-					e.printStackTrace();
-				}
-			});
+			System.out.println("Size::" + query.gets(dto, 0, 2).size());
+			/*
+			 * query.gets(dto, 1, 2).forEach(obj -> { try { query.del(obj, usuario); } catch
+			 * (QueryException e) { e.printStackTrace(); } });
+			 */
 			System.out.println(query.countRow(dto));
 		} catch (QueryException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			System.exit(0);

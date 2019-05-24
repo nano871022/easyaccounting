@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.pyt.common.abstracts.ADto;
@@ -37,6 +39,36 @@ public class StatementQuerysUtil {
 			}
 		}
 		return where;
+	}
+	
+	public final <T extends ADto> String fieldToWhereJPA(T obj, boolean valuesInsert) throws ReflectionException {
+		List<String> names = obj.getNameFields();
+		String where = QueryConstants.CONST_EMPTY;
+		for (String name : names) {
+			var value = obj.get(name);
+			if (value != null && !valuesInsert) {
+				if (where.length() > 0)
+					where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
+				where += name + QueryConstants.CONST_EQUAL + ":"+name;
+			} else if (valuesInsert) {
+				if (where.length() > 0)
+					where += QueryConstants.CONST_COMMA + QueryConstants.CONST_SPACE;
+				where += value != null ? ":"+name : QueryConstants.CONST_NULL;
+			}
+		}
+		return where;
+	}
+	
+	public final <T extends ADto>  Map<String,Object> getFieldToWhereJPA(T obj) throws ReflectionException{
+		List<String> names = obj.getNameFields();
+		Map<String,Object> fieldValue = new HashMap<String,Object>();
+		for (String name : names) {
+			var value = obj.get(name);
+			if (value != null) {
+				fieldValue.put(name , (value));
+			}
+		}
+		return fieldValue;
 	}
 
 	public final <T extends Object> String valueFormat(T value) {

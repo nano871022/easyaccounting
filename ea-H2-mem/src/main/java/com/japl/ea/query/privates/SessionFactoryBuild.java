@@ -9,6 +9,7 @@ import org.hibernate.service.ServiceRegistry;
 import org.pyt.common.common.Log;
 
 import com.japl.ea.query.constants.H2PropertiesConstant;
+import com.japl.ea.query.privates.jpa.ParametroJPA;
 import com.japl.ea.query.privates.utils.PropertiesH2;
 
 public class SessionFactoryBuild {
@@ -33,7 +34,8 @@ public class SessionFactoryBuild {
 		if (sessionFactory == null) {
 			loadConfiguration();
 			if (configuration != null) {
-				sessionFactory = configuration.buildSessionFactory(getServiceRegistry(configuration));
+				sessionFactory = configuration.addPackage("com.japl.ea.query.privates.jpa")
+						.addAnnotatedClass(ParametroJPA.class).buildSessionFactory(getServiceRegistry(configuration));
 			}
 		}
 		return sessionFactory;
