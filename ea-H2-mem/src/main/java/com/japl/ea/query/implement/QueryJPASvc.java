@@ -20,6 +20,7 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.ReflectionUtils;
 
 import com.japl.ea.query.privates.H2Connect;
+import com.japl.ea.query.privates.Constants.QueryConstants;
 import com.japl.ea.query.privates.utils.StatementQuerysUtil;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ParametroDTO;
@@ -38,8 +39,8 @@ public class QueryJPASvc implements IQuerySvc {
 
 	@SuppressWarnings("unchecked")
 	private <T extends Object, D extends ADto> Class<T> getJPAByDto(D dto) throws ClassNotFoundException {
-		var name = dto.getClass().getSimpleName().replace("DTO", "JPA");
-		var packageName = "com.japl.ea.query.privates.jpa.";
+		var name = dto.getClass().getSimpleName().replace(QueryConstants.CONST_SUBFIX_DTO, QueryConstants.CONST_SUBFIX_JPA);
+		var packageName = QueryConstants.CONST_PACKAGE_JPA;
 		return (Class<T>) Class.forName(packageName + name);
 	}
 

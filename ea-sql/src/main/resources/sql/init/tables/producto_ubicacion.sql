@@ -6,7 +6,7 @@ CREATE TABLE TBL_PRODUCT_LOCATION (
 	,dcreate  DATETIME           NOT NULL DEFAULT NOW()
 	,ddelete  DATETIME           NULL
 	,dupdate  DATETIME           NULL
-	,ncantidad NUMBER            NOT NULL
+	,nquantity NUMBER            NOT NULL
 	,sproduct VARCHAR2(30)       NOT NULL
 	,slocation VARCHAR2(30)      NOT NULL
 );

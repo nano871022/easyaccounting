@@ -1,6 +1,11 @@
 package com.japl.ea.query.privates.Constants;
 
 public class QueryConstants {
+	public final static String CONST_CONNECT_BDH2 = "jdbc:h2:~/account.db";
+	public final static String CONST_DELETE= "DELETE";
+	public final static String CONST_PACKAGE_JPA = "com.japl.ea.query.privates.jpa.";
+	public final static String CONST_SUBFIX_DTO = "DTO";
+	public final static String CONST_SUBFIX_JPA = "JPA";
 	public final static String CONST_KEY_OPEN = "[";
 	public final static String CONST_KEY_CLOSE = "]";
 	public final static String CONST_EMPTY = "";

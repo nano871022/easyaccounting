@@ -11,6 +11,7 @@ CREATE TABLE TBL_DOCUMENT (
 	,sstate   VARCHAR2(30)       NOT NULL
 	,dannulement DATETIME        NULL
 	,dnote     DATETIME          NULL
+	,snumbernote NUMBER          NULL
 	,dregister DATETIME          NOT NULL
 	,smoney   VARCHAR2(30)       NOT NULL
 	,senterprise VARCHAR2(30)    NOT NULL

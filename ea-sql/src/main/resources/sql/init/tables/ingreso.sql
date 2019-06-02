@@ -6,16 +6,14 @@ CREATE TABLE TBL_ENTRY (
 	,dcreate  DATETIME           NOT NULL DEFAULT NOW()
 	,ddelete  DATETIME           NULL
 	,dupdate  DATETIME           NULL
-	,sdriverin VARCHAR2(100)      NULL
-	,sdriverout VARCHAR2(100)      NULL
+	,sdriverin VARCHAR2(30)      NULL
+	,sdriverout VARCHAR2(30)      NULL
 	,sdescription VARCHAR2(200)      NULL
-	,sdriverdocumentin VARCHAR2(15)  NULL
-	,sdriverdocumentout VARCHAR2(15) NULL
 	,senterprise VARCHAR2(32)      NOT NULL
 	,din      DATETIME             NOT NULL
 	,dout     DATETIME             NULL
 	,splate   VARCHAR2(8)          NULL
-	,sowner   VARCHAR2(50)         NULL
+	,sowner   VARCHAR2(30)         NULL
 	,sphonecontact VARCHAR2(15)    NULL
 	,nstimatedtime NUMBER          NULL
 	,nworktime     NUMBER          NULL
@@ -24,6 +22,8 @@ CREATE TABLE TBL_ENTRY (
 ALTER TABLE TBL_ENTRY ADD PRIMARY KEY (scode);
 ALTER TABLE TBL_ENTRY ADD FOREIGN KEY (sworker) REFERENCES TBL_EMPLOYEE(scode);
 ALTER TABLE TBL_ENTRY ADD FOREIGN KEY (senterprise) REFERENCES TBL_ENTERPRISE(scode);
+ALTER TABLE TBL_ENTRY ADD FOREIGN KEY (sdriverin) REFERENCES TBL_PERSON(scode);
+ALTER TABLE TBL_ENTRY ADD FOREIGN KEY (sdriverout) REFERENCES TBL_PERSON(scode);
 -- tabla intermedia entrada repuesto
 CREATE TABLE TBL_ENTRY_REPLACEMENT (
  	 scode    VARCHAR2(30)       NOT NULL

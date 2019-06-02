@@ -11,9 +11,9 @@ import javax.persistence.Table;
  * @author alejandro parra
  * @since 06/05/2018
  */
-@Entity(name = "TBL_PARAMETRO")
-@Table(name = "TBL_PARAMETRO")
-public class ParametroJPA extends AJPA {
+@Entity(name = "TBL_PARAMETRO_UPDATE")
+@Table(name = "TBL_PARAMETRO_UPDATE")
+public class ParametroUpdJPA extends AJPA {
 	@Column(name="norder")
 	private Long orden;
 	@Column(name="sname")

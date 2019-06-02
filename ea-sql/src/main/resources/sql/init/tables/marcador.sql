@@ -9,6 +9,6 @@ CREATE TABLE TBL_MARKER(
 	,sconfiguration VARCHAR2(100) NULL
 	,smarker  VARCHAR2(50)       NOT NULL
 	,norder   NUMBER             NOT NULL
-	,sIOtype  VARCHAR2(10)       NOT NULL
+	,siotype  VARCHAR2(10)       NOT NULL
 );
 ALTER TABLE TBL_MARKER ADD PRIMARY KEY (scode);

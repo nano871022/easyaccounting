@@ -6,7 +6,7 @@ CREATE TABLE TBL_REMAIN_QUANTITY (
 	,dcreate  DATETIME           NOT NULL DEFAULT NOW()
 	,ddelete  DATETIME           NULL
 	,dupdate  DATETIME           NULL
-	,ncantidad NUMBER            NOT NULL
+	,nquantity NUMBER            NOT NULL
 	,smovement VARCHAR2(30)      NOT NULL
 );
 ALTER TABLE TBL_REMAIN_QUANTITY ADD PRIMARY KEY (scode);

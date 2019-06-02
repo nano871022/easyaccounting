@@ -11,19 +11,19 @@ import org.pyt.common.reflection.ReflectionDto;
 @MappedSuperclass
 public abstract class AJPA extends ReflectionDto{
 	@Id
-	@Column(name="CODIGO")
+	@Column(name="scode")
 	protected String codigo;
-	@Column
+	@Column(name="dcreate")
 	protected Date fechaCreacion;
-	@Column
+	@Column(name="dupdate")
 	protected Date fechaActualizacion;
-	@Column
+	@Column(name="ddelete")
 	protected Date fechaEliminacion;
-	@Column
+	@Column(name="screater")
 	protected String creador;
-	@Column
+	@Column(name="supdated")
 	protected String actualizador;
-	@Column
+	@Column(name="sdeleter")
 	protected String eliminador;
 	public String getCodigo() {
 		return codigo;

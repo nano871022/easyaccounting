@@ -11,7 +11,7 @@ CREATE TABLE TBL_PARAMETER(
 	,svalue   VARCHAR2(100)      NULL
 	,svalue2  VARCHAR2(100)      NULL
 	,norder   NUMBER             NULL
-	,bstate   NUMBER             NOT NULL DEFAULT 1
+	,nstate   NUMBER             NOT NULL DEFAULT 1
 	,sgroup   VARCHAR2(30)       NOT NULL DEFAULT '*'
 );
 ALTER TABLE TBL_PARAMETER ADD PRIMARY KEY (SCODE);
@@ -31,7 +31,7 @@ CREATE TABLE TBL_PARAMETER_UPDATE(
 	,svalue   VARCHAR2(100)      NULL
 	,svalue2  VARCHAR2(100)      NULL
 	,norder   NUMBER             NULL
-	,bstate   NUMBER             NOT NULL DEFAULT 1
+	,nstate   NUMBER             NOT NULL DEFAULT 1
 	,sgroup   VARCHAR2(30)       NOT NULL DEFAULT '*'
 );
 -- TABLA PARA ALMACENAR LOS DATOS QUE FUERON ELIMINADOS
@@ -50,6 +50,6 @@ CREATE TABLE TBL_PARAMETER_DELETE(
 	,svalue   VARCHAR2(100)      NULL
 	,svalue2  VARCHAR2(100)      NULL
 	,norder   NUMBER             NULL
-	,bstate   NUMBER             NOT NULL DEFAULT 1
+	,nstate   NUMBER             NOT NULL DEFAULT 1
 	,sgroup   VARCHAR2(30)       NOT NULL DEFAULT '*'
 );

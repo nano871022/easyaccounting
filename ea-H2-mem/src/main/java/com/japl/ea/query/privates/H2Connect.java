@@ -11,6 +11,7 @@ import org.hibernate.SessionFactory;
 import org.pyt.common.common.Log;
 
 import com.japl.ea.query.constants.H2PropertiesConstant;
+import com.japl.ea.query.privates.Constants.QueryConstants;
 import com.japl.ea.query.privates.utils.PropertiesH2;
 
 /**
@@ -23,7 +24,7 @@ import com.japl.ea.query.privates.utils.PropertiesH2;
  */
 public final class H2Connect implements AutoCloseable {
 	private Log log = Log.Log(H2Connect.class);
-	private String connect = "jdbc:h2:~/account.db";
+	private String connect = QueryConstants.CONST_CONNECT_BDH2;
 	private Connection connection;
 	private Statement statement;
 	private static H2Connect db;
@@ -94,7 +95,7 @@ public final class H2Connect implements AutoCloseable {
 	public Boolean executeIUD(String query) throws SQLException {
 		Statement st = getStatement();
 		int rs = st.executeUpdate(query);
-		if (query.contains("DELETE"))
+		if (query.contains(QueryConstants.CONST_DELETE))
 			return true;
 		return rs == 1;
 	}
