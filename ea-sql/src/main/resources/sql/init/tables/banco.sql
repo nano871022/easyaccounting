@@ -9,7 +9,7 @@ CREATE TABLE TBL_BANK(
     ,sdescription VARCHAR2(200)  NULL
     ,sstate   VARCHAR2(30)       NOT NULL
     ,sname    VARCHAR2(50)       NULL
-    ,naccount NUMBER             NULL
+    ,snumberaccount NUMBER       NULL
     ,stypebank VARCHAR2(30)      NOT NULL
     ,stypeaccount VARCHAR2(30)   NOT NULL
     ,dopening DATETIME           NOT NULL

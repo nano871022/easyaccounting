@@ -17,7 +17,6 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 @Entity(name="TBL_CONCEPT")
 @Table(name="TBL_CONCEPT")
 public class ConceptoJPA extends AJPA{
-	private static final long serialVersionUID = 8544091132270171494L;
 	@Column(name="sname")
 	private String nombre;
 	@Column(name="sdescription")
@@ -72,10 +71,10 @@ public class ConceptoJPA extends AJPA{
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public ParametroDTO getEstado() {
+	public ParametroJPA getEstado() {
 		return estado;
 	}
-	public void setEstado(ParametroDTO estado) {
+	public void setEstado(ParametroJPA estado) {
 		this.estado = estado;
 	}
 	public EmpresaJPA getEmpresa() {

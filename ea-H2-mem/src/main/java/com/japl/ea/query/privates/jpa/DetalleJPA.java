@@ -7,15 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.pyt.common.abstracts.AJPA;
-import org.pyt.common.annotations.Increment;
-import org.pyt.common.annotations.NoEdit;
-import org.pyt.common.annotations.Operacion;
-import org.pyt.common.annotations.Operar;
-
-import co.com.arquitectura.annotation.proccessor.DelClass;
-import co.com.arquitectura.annotation.proccessor.UpdClass;
-
 /**
  * Contiene el detalle de la factura
  * 

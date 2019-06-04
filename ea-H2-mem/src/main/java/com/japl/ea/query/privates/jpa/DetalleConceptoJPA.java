@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.pyt.common.abstracts.AJPA;
 /**
  * Indica el concepto del detalle del concepto de un documento
  * @author alejandro parra

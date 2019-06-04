@@ -6,9 +6,6 @@ import javax.persistence.Table;
 
 import org.pyt.common.abstracts.ADto;
 
-import co.com.arquitectura.annotation.proccessor.DelClass;
-import co.com.arquitectura.annotation.proccessor.UpdClass;
-
 /**
  * Se encarga de controlar los campos que se muestran y se configuran por el
  * formulario dinamico
@@ -81,10 +78,10 @@ public class DocumentosJPA extends AJPA {
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
 	}
-	public ParametroDTO getDoctype() {
+	public ParametroJPA getDoctype() {
 		return doctype;
 	}
-	public void setDoctype(ParametroDTO doctype) {
+	public void setDoctype(ParametroJPA doctype) {
 		this.doctype = doctype;
 	}
 	public Boolean getEdit() {

@@ -10,8 +10,6 @@ import javax.persistence.Table;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.constants.ParametroConstants;
 
-import com.pyt.service.dto.ParametroDTO;
-
 /**
  * Son los bancos que la empresa usa para mover el dinero
  * 
@@ -25,8 +23,8 @@ public class BancoJPA extends AJPA{
 	private String nombre;
 	 @Column(name="sdescription")
 	private String descripcion;
-	 @Column(name="saccount")
-	private BigDecimal numeroCuenta;
+	 @Column(name="snumberaccount")
+	private String numeroCuenta;
 	 @Column(name="dopening")
 	private LocalDate fechaApertura;
 	 @Column(name="dclosing")
@@ -70,22 +68,22 @@ public class BancoJPA extends AJPA{
 	public void setFechaCierre(LocalDate fechaCierre) {
 		this.fechaCierre = fechaCierre;
 	}
-	public ParametroDTO getEstado() {
+	public ParametroJPA getEstado() {
 		return estado;
 	}
-	public void setEstado(ParametroDTO estado) {
+	public void setEstado(ParametroJPA estado) {
 		this.estado = estado;
 	}
-	public ParametroDTO getTipoBanco() {
+	public ParametroJPA getTipoBanco() {
 		return tipoBanco;
 	}
-	public void setTipoBanco(ParametroDTO tipoBanco) {
+	public void setTipoBanco(ParametroJPA tipoBanco) {
 		this.tipoBanco = tipoBanco;
 	}
-	public ParametroDTO getTipoCuenta() {
+	public ParametroJPA getTipoCuenta() {
 		return tipoCuenta;
 	}
-	public void setTipoCuenta(ParametroDTO tipoCuenta) {
+	public void setTipoCuenta(ParametroJPA tipoCuenta) {
 		this.tipoCuenta = tipoCuenta;
 	}
 

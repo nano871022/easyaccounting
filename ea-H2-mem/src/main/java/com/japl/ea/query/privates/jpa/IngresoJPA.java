@@ -7,12 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.pyt.common.abstracts.ADto;
-
 import com.pyt.service.dto.inventario.ResumenProductoDto;
-
-import co.com.arquitectura.annotation.proccessor.DelClass;
-import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 /**
  * Se encarga de tener en almacenamiento del ingreso de un vehiculo, en el cual se
@@ -81,35 +76,23 @@ public class IngresoJPA extends AJPA{
 	public void setRespuestos(List<ResumenProductoDto> respuestos) {
 		this.respuestos = respuestos;
 	}
-	public String getPropietario() {
+	public PersonaJPA getPropietario() {
 		return propietario;
 	}
-	public void setPropietario(String propietario) {
+	public void setPropietario(PersonaJPA propietario) {
 		this.propietario = propietario;
 	}
-	public String getConductorEntrada() {
+	public PersonaJPA getConductorEntrada() {
 		return conductorEntrada;
 	}
-	public void setConductorEntrada(String conductorEntrada) {
+	public void setConductorEntrada(PersonaJPA conductorEntrada) {
 		this.conductorEntrada = conductorEntrada;
 	}
-	public String getConductorSalida() {
+	public PersonaJPA getConductorSalida() {
 		return conductorSalida;
 	}
-	public void setConductorSalida(String conductorSalida) {
+	public void setConductorSalida(PersonaJPA conductorSalida) {
 		this.conductorSalida = conductorSalida;
-	}
-	public String getDocumentoConductorEntrada() {
-		return documentoConductorEntrada;
-	}
-	public void setDocumentoConductorEntrada(String documentoConductorEntrada) {
-		this.documentoConductorEntrada = documentoConductorEntrada;
-	}
-	public String getDocumentoConductorSalida() {
-		return documentoConductorSalida;
-	}
-	public void setDocumentoConductorSalida(String documentoConductorSaldia) {
-		this.documentoConductorSalida = documentoConductorSaldia;
 	}
 	public String getTelefonoContacto() {
 		return telefonoContacto;
