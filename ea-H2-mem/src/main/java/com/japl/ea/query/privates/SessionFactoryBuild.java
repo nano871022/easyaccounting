@@ -1,5 +1,8 @@
 package com.japl.ea.query.privates;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.hibernate.SessionFactory;
@@ -34,8 +37,22 @@ public class SessionFactoryBuild {
 		if (sessionFactory == null) {
 			loadConfiguration();
 			if (configuration != null) {
-				sessionFactory = configuration.addPackage("com.japl.ea.query.privates.jpa")
-						.addAnnotatedClass(ParametroJPA.class).buildSessionFactory(getServiceRegistry(configuration));
+				var configure = configuration.addPackage("com.japl.ea.query.privates.jpa");
+				var in = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"com/japl/ea/query/privates/jpa/";
+				var file = new File(in);
+				if(file.exists() && file.isDirectory()) {
+					var jpas = new ArrayList<String>();
+					Arrays.stream(file.listFiles()).forEach(f->jpas.add("com.japl.ea.query.privates.jpa."+f.getName().replace(".class", "")));
+					jpas.forEach(clazz->{
+						try {
+							var classO  = Class.forName(clazz);
+							configure.addAnnotatedClass(classO);
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						}
+					});
+				}
+				sessionFactory = configure.buildSessionFactory(getServiceRegistry(configuration));
 			}
 		}
 		return sessionFactory;
@@ -61,5 +78,4 @@ public class SessionFactoryBuild {
 			configuration.configure(resourceConfiguration);
 		}
 	}
-
 }

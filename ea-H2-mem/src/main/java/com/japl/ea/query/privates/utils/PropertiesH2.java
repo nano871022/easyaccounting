@@ -22,8 +22,12 @@ public final class PropertiesH2 {
 	
 	public PropertiesH2 load() throws Exception {
 		var pu = PropertiesUtils.getInstance();
+		var path = System.getenv("path-h2-prop");
+		if(path == null) {
+			path = H2PropertiesConstant.PROP_PATH;
+		}
 		pu.setNameProperties(H2PropertiesConstant.PROP_NAME);
-		pu.setPathProperties(H2PropertiesConstant.PROP_PATH);
+		pu.setPathProperties(path);
 		properties = pu.load().getProperties();
 		return this;
 	}

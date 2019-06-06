@@ -3,12 +3,9 @@ package com.japl.ea.query.privates.jpa;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.pyt.common.abstracts.ADto;
 @Entity(name="TBL_MARKER_SERVICE")
 @Table(name="TBL_MARKER_SERVICE")
-public class MarcadorServicioJPA extends ADto {
-	private static final long serialVersionUID = 4348093849805335955L;
+public class MarcadorServicioJPA extends AJPA {
 	@Column(name="smark")
 	private String marcador;
 	@Column(name="sservice")

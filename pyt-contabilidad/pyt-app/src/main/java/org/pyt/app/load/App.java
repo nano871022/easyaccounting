@@ -12,8 +12,4 @@ public class App extends Application {
 		LoadAppFxml.loadFxml(primaryStage, Template.class);
 	}
 
-	public final static void main(String... args) {
-		App.launch(args);
-	}
-
 }

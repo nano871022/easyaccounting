@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 @Entity(name="TBL_BALANCE")
 @Table(name="TBL_BALANCE")
-public class saldoJPA extends AJPA {
+public class SaldoJPA extends AJPA {
 	@Column(name="smovement")
 	private MovimientoJPA movimiento;
 	@Column(name="nquantity")

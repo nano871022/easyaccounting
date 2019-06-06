@@ -1,16 +1,11 @@
 package com.japl.ea.query.implement;
 
-import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.h2.tools.RunScript;
-import org.h2.tools.Script;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.UsuarioDTO;
@@ -39,7 +34,8 @@ public class QueryJPASvc implements IQuerySvc {
 
 	@SuppressWarnings("unchecked")
 	private <T extends Object, D extends ADto> Class<T> getJPAByDto(D dto) throws ClassNotFoundException {
-		var name = dto.getClass().getSimpleName().replace(QueryConstants.CONST_SUBFIX_DTO, QueryConstants.CONST_SUBFIX_JPA);
+		var name = dto.getClass().getSimpleName().replace(QueryConstants.CONST_SUBFIX_DTO,
+				QueryConstants.CONST_SUBFIX_JPA);
 		var packageName = QueryConstants.CONST_PACKAGE_JPA;
 		return (Class<T>) Class.forName(packageName + name);
 	}
@@ -143,9 +139,9 @@ public class QueryJPASvc implements IQuerySvc {
 				var jpa = ReflectionUtils.instanciar().copyFromDto(obj, classJpa);
 				builder.delete(jpa);
 				db.getHibernateConnect().getTransaction().commit();
-				obj =  (T) ReflectionUtils.instanciar().copy(jpa, obj.getClass());
+				obj = (T) ReflectionUtils.instanciar().copy(jpa, obj.getClass());
 			}
-		} catch ( IllegalArgumentException | SecurityException | ClassNotFoundException e) {
+		} catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW), e);
 		}
 	}
@@ -163,8 +159,8 @@ public class QueryJPASvc implements IQuerySvc {
 				querys.select(builder.count(root.get("codigo")));
 				var map = squ.getFieldToWhereJPA(obj);
 				map.keySet().forEach(key -> {
-					if (map.get(key) instanceof String && (((String) map.get(key)).contains("%")
-							|| ((String) map.get(key)).contains("_"))) {
+					if (map.get(key) instanceof String
+							&& (((String) map.get(key)).contains("%") || ((String) map.get(key)).contains("_"))) {
 						querys.where(builder.like(root.get(key), ((String) map.get(key))));
 					} else {
 						querys.where(builder.equal(root.get(key), map.get(key)));
@@ -210,24 +206,12 @@ public class QueryJPASvc implements IQuerySvc {
 		}
 	}
 
-	@SuppressWarnings("static-access")
-	public final void backup() throws FileNotFoundException, SQLException {
-		var sc = new Script();
-		var password = "";
-		var user = "";
-		var url = "jdbc:h2:~/db";
-		var fileName = ".sql";
-		sc.process(url, user, password, fileName, null, null);
+	public final void backup() throws Exception {
+		db.backup();
 	}
 
-	public final void runScript() throws SQLException {
-		var fileName = "";
-		var charset = Charset.defaultCharset();
-		var continueOnError = true;
-		var password = "";
-		var user = "";
-		var url = "jdbc:h2:~/db";
-		RunScript.execute(url, user, password, fileName, charset, continueOnError);
+	public final void runScript(String fileName) throws Exception {
+		db.runScript(fileName);
 	}
 
 }

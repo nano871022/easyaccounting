@@ -49,5 +49,10 @@
 			<version>3.25.0-GA</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.japl.ea</groupId>
+			<artifactId>ea-sql</artifactId>
+			<version>1.2.1-BETA</version>
+		</dependency>
 	</dependencies>
 </project>

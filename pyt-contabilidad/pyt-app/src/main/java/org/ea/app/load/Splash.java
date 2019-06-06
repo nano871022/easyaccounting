@@ -1,5 +1,8 @@
 package org.ea.app.load;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import javafx.animation.FadeTransition;
 import javafx.application.Preloader;
 import javafx.application.Preloader.StateChangeNotification.Type;
@@ -35,6 +38,12 @@ public class Splash extends Preloader {
 	public void handleStateChangeNotification(StateChangeNotification stateChangeNotification) {
 		if (stateChangeNotification.getType() == Type.BEFORE_LOAD) {
 			// TODO analisis y verificacion de que la aplicacion este en buen estado para cargarse
+			try {
+//				Thread.sleep(3000);
+				validStructureDB();
+			} catch (/*InterruptedException |*/ ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
 		}
 		if (stateChangeNotification.getType() == Type.BEFORE_START) {
 			var ft = new FadeTransition(Duration.seconds(1), root);
@@ -44,5 +53,13 @@ public class Splash extends Preloader {
 			ft.setOnFinished(e->stage.hide());
 			ft.play();
 		}
+	}
+	
+	public void validStructureDB() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		var analize = Class.forName("com.japl.ea.query.privates.H2Connect");
+		Method methodInstance = analize.getMethod("getInstance");
+		var instance = methodInstance.invoke(null);
+		Method methodVerify = analize.getDeclaredMethod("verifyDB");
+		methodVerify.invoke(instance);
 	}
 }

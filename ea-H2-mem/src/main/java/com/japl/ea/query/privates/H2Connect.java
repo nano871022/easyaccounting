@@ -1,11 +1,16 @@
 package com.japl.ea.query.privates;
 
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.h2.tools.RunScript;
+import org.h2.tools.Script;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.pyt.common.common.Log;
@@ -13,6 +18,8 @@ import org.pyt.common.common.Log;
 import com.japl.ea.query.constants.H2PropertiesConstant;
 import com.japl.ea.query.privates.Constants.QueryConstants;
 import com.japl.ea.query.privates.utils.PropertiesH2;
+
+import co.com.japl.ea.sql.impl.Analize;
 
 /**
  * Se realiza clase para contectar a una base de datos H2 embebida en la
@@ -71,9 +78,9 @@ public final class H2Connect implements AutoCloseable {
 			sessionFactoryBuild = new SessionFactoryBuild();
 		}
 		SessionFactory sf = sessionFactoryBuild.buildSessionFactory();
-		if(sf == null)
+		if (sf == null)
 			return null;
-		if(sf.isOpen())
+		if (sf.isOpen())
 			return sf.getCurrentSession();
 		return sf.openSession();
 	}
@@ -118,6 +125,58 @@ public final class H2Connect implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		destroy();
+	}
+
+	@SuppressWarnings("static-access")
+	public void backup() throws Exception {
+		var sc = new Script();
+		var prop = PropertiesH2.getInstance().load();
+		String password = prop.getValue(H2PropertiesConstant.PROP_HIBERNATE_PASSWORD);
+		String user = prop.getValue(H2PropertiesConstant.PROP_HIBERNATE_USER_NAME);
+		String fileName = prop.getValue(H2PropertiesConstant.PROP_BACKUP_FILE_NAME);
+		;
+		sc.process(connect, user, password, fileName, null, null);
+	}
+
+	public void runScript(String fileName) throws Exception {
+		var prop = PropertiesH2.getInstance().load();
+		var charset = Charset.defaultCharset();
+		var continueOnError = true;
+		String password = prop.getValue(H2PropertiesConstant.PROP_HIBERNATE_PASSWORD);
+		String user = prop.getValue(H2PropertiesConstant.PROP_HIBERNATE_USER_NAME);
+		RunScript.execute(connect, user, password, fileName, charset, continueOnError);
+	}
+
+	public final void verifyDB()
+			throws URISyntaxException, ClassNotFoundException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		var map = new Analize().analizer();
+		var keys = map.keySet();
+		for (var key : keys) {
+			try {
+				var jpaClass = Class.forName("com.japl.ea.query.privates.jpa." + key + "JPA");
+				if (jpaClass != null) {
+					if (db.getHibernateConnect() != null) {
+						if (!db.getHibernateConnect().getTransaction().isActive()) {
+							db.getHibernateConnect().beginTransaction();
+						}
+						var builder = db.getHibernateConnect().getCriteriaBuilder();
+						var querys = builder.createQuery(Long.class);
+						var root = querys.from(jpaClass);
+						querys.select(builder.count(root.get("codigo")));
+						var create = db.getHibernateConnect().createQuery(querys);
+						var result = create.getSingleResult();
+						var count = Integer.valueOf(result.toString());
+						System.out.println(key + " " + count);
+					}
+				} else {
+					log.error("Clase no se encuentra " + key);
+				}
+			} catch (Exception e) {
+				log.error(key);
+				log.logger(e);
+			}
+		}
 	}
 
 }

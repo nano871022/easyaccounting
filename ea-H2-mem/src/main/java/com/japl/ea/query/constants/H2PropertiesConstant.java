@@ -8,6 +8,7 @@ public class H2PropertiesConstant {
 	public final static String PROP_HIBERNATE_URL = "hibernate.connection.url";
 	public final static String PROP_HIBERNATE_USER_NAME= "hibernate.connection.username";
 	public final static String PROP_HIBERNATE_PASSWORD = "hibernate.connection.password";
+	public final static String PROP_BACKUP_FILE_NAME = "backup.file.name";
 	
 	
 	
