@@ -1,13 +1,14 @@
 package com.japl.ea.query.privates.jpa;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.pyt.service.dto.inventario.ResumenProductoDto;
 
 /**
  * Se encarga de tener en almacenamiento del ingreso de un vehiculo, en el cual se
@@ -23,19 +24,21 @@ public class IngresoJPA extends AJPA{
 	private String placaVehiculo;
 	@Column(name="sdescriiption")
 	private String descripcion;
-	private List<ServicioJPA> servicios;
-	private List<ResumenProductoDto> respuestos;
-	@Column(name="sowner")
+	@ManyToMany(targetEntity=ServicioJPA.class)
+	private Set<ServicioJPA> servicios;
+	@ManyToMany(targetEntity=ResumenProductoJPA.class)
+	private Set<ResumenProductoJPA> respuestos;
+	@ManyToOne @JoinColumn(name="sowner")
 	private PersonaJPA propietario;
-	@Column(name="sdriverin")
+	@ManyToOne @JoinColumn(name="sdriverin")
 	private PersonaJPA conductorEntrada;
-	@Column(name="sdriverout")
+	@ManyToOne @JoinColumn(name="sdriverout")
 	private PersonaJPA conductorSalida;
 	@Column(name="sphonecontact")
 	private String telefonoContacto;
-	@Column(name="senterprise")
+	@ManyToOne @JoinColumn(name="senterprise")
 	private EmpresaJPA empresa;
-	@Column(name="sworker")
+	@ManyToOne @JoinColumn(name="sworker")
 	private TrabajadorJPA trabajador;
 	@Column(name="din")
 	private Date fechaEntrada;
@@ -64,16 +67,16 @@ public class IngresoJPA extends AJPA{
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public List<ServicioJPA> getServicios() {
+	public Set<ServicioJPA> getServicios() {
 		return servicios;
 	}
-	public void setServicios(List<ServicioJPA> servicios) {
+	public void setServicios(Set<ServicioJPA> servicios) {
 		this.servicios = servicios;
 	}
-	public List<ResumenProductoDto> getRespuestos() {
+	public Set<ResumenProductoJPA> getRespuestos() {
 		return respuestos;
 	}
-	public void setRespuestos(List<ResumenProductoDto> respuestos) {
+	public void setRespuestos(Set<ResumenProductoJPA> respuestos) {
 		this.respuestos = respuestos;
 	}
 	public PersonaJPA getPropietario() {

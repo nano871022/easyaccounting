@@ -12,7 +12,6 @@ import org.hibernate.service.ServiceRegistry;
 import org.pyt.common.common.Log;
 
 import com.japl.ea.query.constants.H2PropertiesConstant;
-import com.japl.ea.query.privates.jpa.ParametroJPA;
 import com.japl.ea.query.privates.utils.PropertiesH2;
 
 public class SessionFactoryBuild {
@@ -37,25 +36,35 @@ public class SessionFactoryBuild {
 		if (sessionFactory == null) {
 			loadConfiguration();
 			if (configuration != null) {
-				var configure = configuration.addPackage("com.japl.ea.query.privates.jpa");
-				var in = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"com/japl/ea/query/privates/jpa/";
-				var file = new File(in);
-				if(file.exists() && file.isDirectory()) {
-					var jpas = new ArrayList<String>();
-					Arrays.stream(file.listFiles()).forEach(f->jpas.add("com.japl.ea.query.privates.jpa."+f.getName().replace(".class", "")));
-					jpas.forEach(clazz->{
-						try {
-							var classO  = Class.forName(clazz);
-							configure.addAnnotatedClass(classO);
-						} catch (ClassNotFoundException e) {
-							e.printStackTrace();
-						}
-					});
-				}
+				var configure = configuration.addPackage(H2PropertiesConstant.CONST_PACKAGE_JPA);
+				loadJPA(configure);
 				sessionFactory = configure.buildSessionFactory(getServiceRegistry(configuration));
 			}
 		}
 		return sessionFactory;
+	}
+
+	private final void loadJPA(Configuration configure) {
+		var in = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
+				+ H2PropertiesConstant.CONST_PACKAGE_JPA.replace(H2PropertiesConstant.CONST_DOT,
+						H2PropertiesConstant.CONST_SLASH)
+				+ H2PropertiesConstant.CONST_SLASH;
+		var file = new File((String) in);
+		if (file.exists() && file.isDirectory()) {
+			var jpas = new ArrayList<String>();
+			Arrays.stream(file.listFiles()).forEach(
+					f -> jpas.add(H2PropertiesConstant.CONST_PACKAGE_JPA + H2PropertiesConstant.CONST_DOT + f.getName()
+							.replace(H2PropertiesConstant.CONST_DOT_CLASS, H2PropertiesConstant.CONST_EMPTY_STRING)));
+			jpas.forEach(clazz -> {
+				try {
+					var classO = Class.forName(clazz);
+					configure.addAnnotatedClass(classO);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			});
+		}
+
 	}
 
 	private ServiceRegistry getServiceRegistry(Configuration configuration) {

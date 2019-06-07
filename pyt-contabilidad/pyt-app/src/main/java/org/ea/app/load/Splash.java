@@ -56,9 +56,8 @@ public class Splash extends Preloader {
 	}
 	
 	public void validStructureDB() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		var analize = Class.forName("com.japl.ea.query.privates.H2Connect");
-		Method methodInstance = analize.getMethod("getInstance");
-		var instance = methodInstance.invoke(null);
+		var analize = Class.forName("com.japl.ea.query.privates.VerifyDB");
+		var instance = analize.getConstructor().newInstance();
 		Method methodVerify = analize.getDeclaredMethod("verifyDB");
 		methodVerify.invoke(instance);
 	}

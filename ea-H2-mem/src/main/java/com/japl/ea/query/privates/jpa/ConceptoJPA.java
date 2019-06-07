@@ -2,12 +2,9 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.pyt.common.abstracts.ADto;
-
-import co.com.arquitectura.annotation.proccessor.DelClass;
-import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 /**
  * un concepto contable indica a que se va a contabilidar
@@ -21,15 +18,15 @@ public class ConceptoJPA extends AJPA{
 	private String nombre;
 	@Column(name="sdescription")
 	private String descripcion;
-	@Column(name="sstate")
+	@ManyToOne @JoinColumn(name="sstate")
 	private ParametroJPA estado;
-	@Column(name="senterprise")
+	@ManyToOne @JoinColumn(name="senterprise")
 	private EmpresaJPA empresa;
 	@Column(name="ssubconcept")
 	private String subconcepto;
-	@Column(name="sexpenseaccount")
+	@ManyToOne @JoinColumn(name="sexpenseaccount")
 	private CuentaContableJPA cuentaGasto;
-	@Column(name="sbilltopay")
+	@ManyToOne @JoinColumn(name="sbilltopay")
 	private CuentaContableJPA cuentaXPagar;
 	
 	public String getSubconcepto() {

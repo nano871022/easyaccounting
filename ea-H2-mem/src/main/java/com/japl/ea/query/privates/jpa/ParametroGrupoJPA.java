@@ -2,6 +2,8 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -14,7 +16,7 @@ import javax.persistence.Table;
 @Entity(name="TBL_PARAMETER_GROUP")
 @Table(name="TBL_PARAMETER_GROUP")
 public class ParametroGrupoJPA extends AJPA {
-	@Column(name="sparameter")
+	@ManyToOne @JoinColumn(name="sparameter")
 	private ParametroJPA parametro;
 	@Column(name="sgroup")
 	private String grupo;

@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 /**
  * Es el documento que se encarga de realizar una nota credito,debito y otros tipo de documentos
@@ -14,15 +16,15 @@ import javax.persistence.Table;
 @Entity(name="TBL_DOCUMENT")
 @Table(name="TBL_DOCUMENT")
 public class DocumentoJPA extends AJPA{
-	@Column(name="sdocumenttype")
+	@ManyToOne @JoinColumn(name="sdocumenttype")
 	private ParametroJPA tipoDocumento;
-	@Column(name="sstate")
+	@ManyToOne @JoinColumn(name="sstate")
 	private ParametroJPA estado;
 	@Column(name="dnote")
 	private Date fechaNota;
 	@Column(name="sdescription")
 	private String descripcion;
-	@Column(name="sbank")
+	@ManyToOne @JoinColumn(name="sbank")
 	private BancoJPA banco;
 	@Column(name="nvalue")
 	private BigDecimal valor;
@@ -32,9 +34,9 @@ public class DocumentoJPA extends AJPA{
 	private Date fechaRegistro;
 	@Column(name="dannulement")
 	private Date fechaAnulacion;
-	@Column(name="senterprise")
+	@ManyToOne @JoinColumn(name="senterprise")
 	private EmpresaJPA tercero;
-	@Column(name="smoney")
+	@ManyToOne @JoinColumn(name="smoney")
 	private ParametroJPA moneda;
 	
 	public EmpresaJPA getTercero() {

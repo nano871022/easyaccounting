@@ -2,6 +2,8 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.pyt.common.abstracts.ADto;
@@ -20,7 +22,7 @@ public class DocumentosJPA extends AJPA {
 	private String fieldLabel;
 	@Column(name="sfieldname")
 	private String fieldName;
-	@Column(name="sdoctype")
+	@ManyToOne @JoinColumn(name="sdoctype")
 	private ParametroJPA doctype;
 	@Column(name="nedit")
 	private Boolean edit;

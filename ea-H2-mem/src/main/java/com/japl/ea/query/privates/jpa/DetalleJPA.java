@@ -1,10 +1,13 @@
 package com.japl.ea.query.privates.jpa;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -16,15 +19,13 @@ import javax.persistence.Table;
 @Entity(name="TBL_DETAIL")
 @Table(name="TBL_DETAIL")
 public class DetalleJPA extends AJPA {
-	@Column(name="scodedocument")
-	private String codeDocumento;
 	@Column(name="nrow")
 	private Integer renglon;
-	@Column(name="sconcept")
+	@ManyToOne @JoinColumn(name="sconcept")
 	private ServicioJPA concepto;
-	@Column(name="scostcenter")
+	@ManyToOne @JoinColumn(name="scostcenter")
 	private CentroCostoJPA centroCosto;
-	@Column(name="sspendingcategory")
+	@ManyToOne @JoinColumn(name="sspendingcategory")
 	private ParametroJPA categoriaGasto;
 	@Column(name="ngrossvalue")
 	private BigDecimal valorBruto;
@@ -38,12 +39,15 @@ public class DetalleJPA extends AJPA {
 	private Long impuestoConsumo;
 	@Column(name="nconsumtionvalue")
 	private BigDecimal valorConsumo;
-	private List<TrabajadorJPA> ejecutadores;
-	@Column(name="sicaactivity")
+	@ManyToMany(targetEntity=TrabajadorJPA.class)
+	private Set<TrabajadorJPA> ejecutadores;
+	@ManyToMany(targetEntity=FacturaJPA.class)
+	private Set<FacturaJPA> facturas;
+	@ManyToOne @JoinColumn(name="sicaactivity")
 	private ActividadIcaJPA actividadIca;
 	@Column(name="scodedocument")
 	private String codigoDocumento;
-	@Column(name="sentry")
+	@ManyToOne @JoinColumn(name="sentry")
 	private IngresoJPA ingreso;
 	@Column(name="ndiscountrate")
 	private Long porcentajeDescuento;
@@ -51,15 +55,33 @@ public class DetalleJPA extends AJPA {
 	private BigDecimal valorDescuento;
 	@Column(name="sactivityrateica")
 	private BigDecimal tarifaActividadIca;
-	@Column(name="sconcepttype")
+	@ManyToOne @JoinColumn(name="sconcepttype")
 	private ParametroJPA tipoConcepto;
 	@Column(name="sobservation")
 	private String observaciones;
 	@Column(name="sdescription")
 	private String descripcion;
-	@Column(name="sthird")
+	@ManyToOne @JoinColumn(name="sthird")
 	private EmpresaJPA tercero;
+	@ManyToMany
+	private Set<TrabajadorJPA> trabajadores; 
 	
+	public Set<FacturaJPA> getFacturas() {
+		return facturas;
+	}
+
+	public void setFacturas(Set<FacturaJPA> facturas) {
+		this.facturas = facturas;
+	}
+
+	public Set<TrabajadorJPA> getTrabajadores() {
+		return trabajadores;
+	}
+
+	public void setTrabajadores(Set<TrabajadorJPA> trabajadores) {
+		this.trabajadores = trabajadores;
+	}
+
 	public Long getPorcentajeDescuento() {
 		return porcentajeDescuento;
 	}
@@ -114,14 +136,6 @@ public class DetalleJPA extends AJPA {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
-	}
-
-	public String getCodeDocumento() {
-		return codeDocumento;
-	}
-
-	public void setCodeDocumento(String codeDocumento) {
-		this.codeDocumento = codeDocumento;
 	}
 
 	public IngresoJPA getIngreso() {
@@ -228,11 +242,11 @@ public class DetalleJPA extends AJPA {
 		this.actividadIca = actividadIca;
 	}
 
-	public List<TrabajadorJPA> getEjecutadores() {
+	public Set<TrabajadorJPA> getEjecutadores() {
 		return ejecutadores;
 	}
 
-	public void setEjecutadores(List<TrabajadorJPA> ejecutadores) {
+	public void setEjecutadores(Set<TrabajadorJPA> ejecutadores) {
 		this.ejecutadores = ejecutadores;
 	}
 

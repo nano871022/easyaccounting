@@ -1,10 +1,13 @@
 package com.japl.ea.query.privates.jpa;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 /**
  * Se encarga de almacenar la factura que se genera por uno o varios trabajos realizados
@@ -14,19 +17,20 @@ import javax.persistence.Table;
 @Entity(name="TBL_BILL")
 @Table(name="TBL_BILL")
 public class FacturaJPA extends AJPA{
-	@Column(name="senterprise")
+	@ManyToOne @JoinColumn(name="senterprise")
 	private EmpresaJPA tercero;
 	@Column(name="dbill")
 	private Date fechaFactura;
 	@Column(name="dregistre")
 	private Date fechaRegistro;
-	@Column(name="smoney")
+	@ManyToOne @JoinColumn(name="smoney")
 	private ParametroJPA moneda;
 	@Column(name="dexpiration")
 	private Date fechaVencimiento;
 	@Column(name="sobservation")
 	private String observacion;
-	private List<DetalleJPA> detalle;
+	@ManyToMany(targetEntity=DetalleJPA.class)
+	private Set<DetalleJPA> detalle;
 	public EmpresaJPA getTercero() {
 		return tercero;
 	}
@@ -63,10 +67,10 @@ public class FacturaJPA extends AJPA{
 	public void setObservacion(String observacion) {
 		this.observacion = observacion;
 	}
-	public List<DetalleJPA> getDetalle() {
+	public Set<DetalleJPA> getDetalle() {
 		return detalle;
 	}
-	public void setDetalle(List<DetalleJPA> detalle) {
+	public void setDetalle(Set<DetalleJPA> detalle) {
 		this.detalle = detalle;
 	}
 	

@@ -1,14 +1,12 @@
 package com.japl.ea.query.privates.jpa;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.pyt.common.annotation.generics.AssingValue;
-import org.pyt.common.constants.ParametroConstants;
 
 /**
  * Son los bancos que la empresa usa para mover el dinero
@@ -29,11 +27,11 @@ public class BancoJPA extends AJPA{
 	private LocalDate fechaApertura;
 	 @Column(name="dclosing")
 	private LocalDate fechaCierre;
-	 @Column(name="sstate")
+	 @ManyToOne @JoinColumn(name="sstate")
 	private ParametroJPA estado;
-	 @Column(name="stypeaccount")
+	 @ManyToOne @JoinColumn(name="stypeaccount")
 	private ParametroJPA tipoCuenta;
-	 @Column(name="stypebank")
+	 @ManyToOne @JoinColumn(name="stypebank")
 	private ParametroJPA tipoBanco;
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;

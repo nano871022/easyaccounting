@@ -11,8 +11,8 @@ import javax.persistence.Table;
  * @author alejandro parra
  * @since 06/05/2018
  */
-@Entity(name = "TBL_PARAMETRO")
-@Table(name = "TBL_PARAMETRO")
+@Entity(name = "TBL_PARAMETER")
+@Table(name = "TBL_PARAMETER")
 public class ParametroJPA extends AJPA {
 	@Column(name="norder")
 	private Long orden;
@@ -28,7 +28,7 @@ public class ParametroJPA extends AJPA {
 	private String grupo;
 	@Column(name="nstate")
 	private String estado;
-
+	
 	public Long getOrden() {
 		return orden;
 	}

@@ -2,13 +2,15 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 @Entity(name="TBL_DEPARTAMENT")
 @Table(name="TBL_DEPARTAMENT")
 public class DepartamentoJPA extends AJPA {
 	@Column(name="sname")
 	private String nombre;
-	@Column(name="scountry")
+	@ManyToOne @JoinColumn(name="scountry")
 	private PaisJPA pais;
 	public String getNombre() {
 		return nombre;

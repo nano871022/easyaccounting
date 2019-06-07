@@ -1,7 +1,10 @@
 package com.japl.ea.query.privates.jpa;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
@@ -18,6 +21,15 @@ public class ServicioJPA extends AJPA{
 	private Long  valorManoObra;
 	@Column(name="sdescription")
 	private String descripcion;
+	@ManyToMany(targetEntity=IngresoJPA.class)
+	private Set<IngresoJPA> servicios;
+	
+	public Set<IngresoJPA> getServicios() {
+		return servicios;
+	}
+	public void setServicios(Set<IngresoJPA> servicios) {
+		this.servicios = servicios;
+	}
 	public String getNombre() {
 		return nombre;
 	}

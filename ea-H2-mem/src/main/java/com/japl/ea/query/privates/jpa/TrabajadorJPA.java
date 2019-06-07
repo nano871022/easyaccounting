@@ -1,19 +1,23 @@
 package com.japl.ea.query.privates.jpa;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 /**
  * Se encarga de indicar las personas que trabajan en los servicios
  * @author alejandro parra
  * @since 06/05/2018
  */
-@Entity(name="TBL_WORKER")
-@Table(name="TBL_WORKER")
+@Entity(name="TBL_EMPLOYEE")
+@Table(name="TBL_EMPLOYEE")
 public class TrabajadorJPA extends AJPA {
-	@Column(name="sperson")
+	@ManyToOne @JoinColumn(name="sperson")
 	private PersonaJPA persona;
 	@Column(name="dentry")
 	private Date fechaIngreso;
@@ -21,13 +25,21 @@ public class TrabajadorJPA extends AJPA {
 	private Date fechaRetiro;
 	@Column(name="sstate")
 	private String estado;
-	@Column(name="spaytype")
+	@ManyToOne @JoinColumn(name="spaytype")
 	private ParametroJPA tipoPago;
-	@Column(name="scentercost")
+	@ManyToOne @JoinColumn(name="scentercost")
 	private CentroCostoJPA centroCosto;
 	@Column(name="semail")
 	private String correo;
+	@ManyToMany(targetEntity=DetalleJPA.class)
+	private Set<DetalleJPA> detalles; 
 	
+	public Set<DetalleJPA> getDetalles() {
+		return detalles;
+	}
+	public void setDetalles(Set<DetalleJPA> detalles) {
+		this.detalles = detalles;
+	}
 	public String getCorreo() {
 		return correo;
 	}

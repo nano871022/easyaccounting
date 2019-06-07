@@ -2,6 +2,8 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -25,13 +27,13 @@ public class EmpresaJPA extends com.japl.ea.query.privates.jpa.AJPA {
 	private String correoElectronico;
 	@Column(name = "sphone")
 	private String telefono;
-	@Column(name = "scountry")
+	@ManyToOne @JoinColumn(name = "scountry")
 	private PaisJPA pais;
-	@Column(name = "smoneydefect")
+	@ManyToOne @JoinColumn(name = "smoneydefect")
 	private ParametroJPA monedaDefecto;
 	@Column(name = "srepresentative")
 	private String nombreRepresentante;
-	@Column(name = "scounter")
+	@ManyToOne @JoinColumn(name = "scounter")
 	private PersonaJPA contador;
 
 	public String getNombre() {

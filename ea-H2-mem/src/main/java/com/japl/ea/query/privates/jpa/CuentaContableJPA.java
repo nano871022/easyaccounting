@@ -2,21 +2,23 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 @Entity(name="TBL_ACCOUNTING_ACCOUNT")
 @Table(name="TBL_ACCOUNTING_ACCOUNT")
 public class CuentaContableJPA extends AJPA{
 	@Column(name="scodeaccount")
 	private String codigoCuenta;
-	@Column(name="splantype")
+	@ManyToOne @JoinColumn(name="splantype")
 	private ParametroJPA tipoPlanContable;
-	@Column(name="stype")
+	@ManyToOne @JoinColumn(name="stype")
 	private ParametroJPA tipo;
 	@Column(name="sname")
 	private String nombre;
-	@Column(name="snature")
+	@ManyToOne @JoinColumn(name="snature")
 	private ParametroJPA naturaleza;
-	@Column(name="senterprise")
+	@ManyToOne @JoinColumn(name="senterprise")
 	private EmpresaJPA empresa;
 	@Column(name="sassociated")
 	private String asociado;

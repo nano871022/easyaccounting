@@ -2,6 +2,8 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity(name="TBL_OFFICE")
@@ -13,7 +15,7 @@ public class OficinaJPA extends AJPA {
 	private String detalle;
 	@Column(name="saddress")
 	private String direccion;
-	@Column(name="scity")
+	@ManyToOne @JoinColumn(name="scity")
 	private CiudadJPA ciudad;
 	public String getNombre() {
 		return nombre;

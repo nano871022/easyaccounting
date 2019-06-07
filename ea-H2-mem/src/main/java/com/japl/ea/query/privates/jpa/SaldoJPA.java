@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 @Entity(name="TBL_BALANCE")
 @Table(name="TBL_BALANCE")
 public class SaldoJPA extends AJPA {
-	@Column(name="smovement")
+	@ManyToOne @JoinColumn(name="smovement")
 	private MovimientoJPA movimiento;
 	@Column(name="nquantity")
 	private Integer cantidad;

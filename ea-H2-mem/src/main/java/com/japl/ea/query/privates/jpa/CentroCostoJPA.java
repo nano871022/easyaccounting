@@ -2,6 +2,8 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -21,7 +23,7 @@ public class CentroCostoJPA extends AJPA{
 	private String estado;
 	@Column(name="norder")
 	private Integer orden;
-	@Column(name="senterprise")
+	@ManyToOne @JoinColumn(name="senterprise")
 	private EmpresaJPA empresa;
 	public String getNombre() {
 		return nombre;

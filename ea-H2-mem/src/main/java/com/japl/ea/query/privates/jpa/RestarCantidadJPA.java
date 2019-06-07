@@ -2,6 +2,8 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -12,7 +14,7 @@ import javax.persistence.Table;
 @Entity(name="TBL_REMAIN_QUANTITY")
 @Table(name="TBL_REMAIN_QUANTITY")
 public class RestarCantidadJPA extends AJPA {
-	@Column(name="smovement")
+	@ManyToOne @JoinColumn(name="smovement")
 	private MovimientoJPA movimiento;
 	@Column(name="nquantity")
 	private Integer cantidad;

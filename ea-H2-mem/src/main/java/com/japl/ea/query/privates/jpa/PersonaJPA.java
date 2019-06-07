@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 /**
  * Datos basicos de una persona
@@ -29,7 +31,7 @@ public class PersonaJPA extends AJPA{
 	private Date fechaNacimiento;
 	@Column(name="semail")
 	private String email;
-	@Column(name="sprofession")
+	@ManyToOne @JoinColumn(name="sprofession")
 	private ParametroJPA profesion;
 	@Column(name="sprofessionalcard")
 	private String numeroTarjetaProfesional;

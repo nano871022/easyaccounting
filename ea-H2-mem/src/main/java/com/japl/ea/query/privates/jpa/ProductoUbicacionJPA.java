@@ -2,13 +2,15 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 @Entity(name="TBL_PRODUCT_LOCATION")
 @Table(name="TBL_PRODUCT_LOCATION")
 public class ProductoUbicacionJPA extends AJPA {
-	@Column(name="sproduct")
+	@ManyToOne @JoinColumn(name="sproduct")
 	private ProductoJPA producto;
-	@Column(name="slocation")
+	@ManyToOne @JoinColumn(name="slocation")
 	private UbicacionJPA ubicacionAlmacen;
 	@Column(name="nquantity")
 	private Integer cantidad;

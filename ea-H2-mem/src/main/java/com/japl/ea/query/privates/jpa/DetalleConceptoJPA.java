@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 /**
  * Indica el concepto del detalle del concepto de un documento
@@ -15,11 +17,11 @@ import javax.persistence.Table;
 public class DetalleConceptoJPA extends AJPA{
 	@Column(name="nrow")
 	private Integer renglon;
-	@Column(name="sconcept")
+	@ManyToOne @JoinColumn(name="sconcept")
 	private ConceptoJPA concepto;
-	@Column(name="scostcenter")
+	@ManyToOne @JoinColumn(name="scostcenter")
 	private CentroCostoJPA centroCosto;
-	@Column(name="sthird")
+	@ManyToOne @JoinColumn(name="sthird")
 	private EmpresaJPA tercero;
 	@Column(name="ngrossvalue")
 	private BigDecimal valorBruto;
@@ -39,11 +41,11 @@ public class DetalleConceptoJPA extends AJPA{
 	private BigDecimal baseImpoConsumo;
 	@Column(name="nconsumptiontaxvalue")
 	private BigDecimal valorIpoConsumo;
-	@Column(name="sicaactivity")
+	@ManyToOne @JoinColumn(name="sicaactivity")
 	private ActividadIcaJPA actividadIca;
 	@Column(name="nrateicaactivity")
 	private BigDecimal tarifaActividadIca;
-	@Column(name="sconcepttype")
+	@ManyToOne @JoinColumn(name="sconcepttype")
 	private ParametroJPA tipoConcepto;
 	@Column(name="sdescriiption")
 	private String descripcion;

@@ -8,7 +8,7 @@ CREATE TABLE TBL_MARKER_SERVICE(
 	,dupdate  DATETIME           NULL
 	,snamefield VARCHAR2(100)    NOT NULL
 	,smarker  VARCHAR2(100)      NOT NULL
-	,sconfiguration VARCAHR2(100) NULL
+	,sconfiguration VARCHAR2(100) NULL
 	,sservice  VARCHAR2(100)      NOT NULL
 );
 ALTER TABLE TBL_MARKER_SERVICE ADD PRIMARY KEY (scode);

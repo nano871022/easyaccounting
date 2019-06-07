@@ -1,27 +1,38 @@
 package com.japl.ea.query.privates.jpa;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.pyt.service.dto.ParametroDTO;
 @Entity(name="TBL_PRODUCT_SUMMARY")
 @Table(name="TBL_PRODUCT_SUMMARY")
 public class ResumenProductoJPA extends AJPA {
-	@Column(name="sproduct")
+	@ManyToOne @JoinColumn(name="sproduct")
 	private ProductoJPA producto;
 	@Column(name="nquantity")
 	private Integer cantidad;
-	@Column(name="sivapercentsaleapply")
-	private ParametroDTO ivaPercentAplicarVenta;
+	@ManyToOne @JoinColumn(name="sivapercentsaleapply")
+	private ParametroJPA ivaPercentAplicarVenta;
 	@Column(name="nprofitpercentsale")
 	private Long gananciaPercentVenta;
 	@Column(name="nsalevalue")
 	private BigDecimal valorVenta;
 	@Column(name="npurcharsevalue")
 	private BigDecimal valorCompra;
+	@ManyToMany(targetEntity=IngresoJPA.class)
+	private Set<IngresoJPA> servicios;
+	
+	public Set<IngresoJPA> getServicios() {
+		return servicios;
+	}
+	public void setServicios(Set<IngresoJPA> servicios) {
+		this.servicios = servicios;
+	}
 	public ProductoJPA getProducto() {
 		return producto;
 	}
@@ -50,10 +61,10 @@ public class ResumenProductoJPA extends AJPA {
 	public void setCantidad(Integer cantidad) {
 		this.cantidad = cantidad;
 	}
-	public ParametroDTO getIvaPercentAplicarVenta() {
+	public ParametroJPA getIvaPercentAplicarVenta() {
 		return ivaPercentAplicarVenta;
 	}
-	public void setIvaPercentAplicarVenta(ParametroDTO ivaPercentAplicarVenta) {
+	public void setIvaPercentAplicarVenta(ParametroJPA ivaPercentAplicarVenta) {
 		this.ivaPercentAplicarVenta = ivaPercentAplicarVenta;
 	}
 	public Long getGananciaPercentVenta() {

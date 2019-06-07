@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 @Entity(name="TBL_MOVEMENT")
 @Table(name="TBL_MOVEMENT")
 public class MovimientoJPA extends AJPA {
-	@Column(name="sproduct")
+	@ManyToOne @JoinColumn(name="sproduct")
 	private ProductoJPA producto;
 	@Column(name="npurcharseprice")
 	private BigDecimal precioCompra;
@@ -16,7 +18,7 @@ public class MovimientoJPA extends AJPA {
 	private Integer cantidad;
 	@Column(name="nvalue")
 	private BigDecimal valor;
-	@Column(name="stype")
+	@ManyToOne @JoinColumn(name="stype")
 	private ParametroInventarioJPA tipo;
 	public ProductoJPA getProducto() {
 		return producto;

@@ -8,8 +8,8 @@ import javax.persistence.Table;
  * @author Alejandro Parra
  * @since 16/09/2018
  */
-@Entity(name="TBL_MARK")
-@Table(name="TBL_MARK")
+@Entity(name="TBL_MARKER")
+@Table(name="TBL_MARKER")
 public class MarcadorJPA extends AJPA {
 	@Column(name="norder")
 	private Integer orden;
