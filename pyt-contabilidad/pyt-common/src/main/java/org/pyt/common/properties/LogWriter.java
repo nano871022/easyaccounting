@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.WriteFile;
+import org.pyt.common.constants.EnviromentConstants;
 import org.pyt.common.constants.PropertiesConstants;
 
 /**
@@ -25,7 +26,7 @@ public class LogWriter implements Runnable {
 	private String nameLoggerTrace = "./logger/stracTrace.log";
 	private final static String NAME_PATH_PROPERTIES = "path-log";
 	private final static String TRACT_PATH_PROPERTIES = "path-trace";
-	private final static String PROP_CONSOLE_PRINT = "ConsolePrint";
+	
 	private List<String> impresiones;
 	private List<Exception> excepciones;
 	private Long sleep = (long) 1000;
@@ -36,8 +37,9 @@ public class LogWriter implements Runnable {
 	private LogWriter() {
 		impresiones = new ArrayList<String>();
 		excepciones = new ArrayList<Exception>();
-		if((System.getenv(PROP_CONSOLE_PRINT)!= null)) {
-			consolePrint = System.getenv(PROP_CONSOLE_PRINT).equalsIgnoreCase("true");
+		var consolePrint = System.getenv(EnviromentConstants.PROP_ENV_CONSOLE_PRINT);
+		if((consolePrint != null)) {
+			this.consolePrint = consolePrint.equalsIgnoreCase("true");
 		}
 	}
 

@@ -16,11 +16,14 @@ import co.com.japl.ea.sql.privates.Constants;
  * @since 07/06/2019
  */
 public class ScriptSql {
-	private Map<Integer, Map<String, File>> mapa;
+	private Map<Integer, Map<String, File>> mapaTables;
+	private Map<String, File> mapaInserts;
 	private static ScriptSql scripts;
 
 	private ScriptSql() {
 	}
+	
+	
 
 	public final static ScriptSql getInstance() {
 		if (scripts == null) {
@@ -29,14 +32,37 @@ public class ScriptSql {
 		return scripts;
 	}
 
-	public Map<Integer, Map<String, File>> analizer() throws URISyntaxException {
-		if (mapa == null) {
-			mapa = generateMap();
+	public Map<Integer, Map<String, File>> getTables() throws URISyntaxException {
+		if (mapaTables == null || getHotReload()) {
+			mapaTables = generateTables();
+		}
+		return mapaTables;
+	}
+	
+	public final Map<String, File> getInserts(){
+		if(mapaInserts == null || getHotReload()) {
+			mapaInserts = generateInserts();
+		}
+		return mapaInserts;
+	}
+	
+	private final Map<String, File> generateInserts(){
+		var mapa = new HashMap<String, File>();
+		var packages = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+Constants.CONST_PATH;
+		var file = new File(packages);
+		if(file.exists() && file.isDirectory()) {
+			var inserts = new File(packages + Constants.CONST_FOLDER_INSERTS);
+			if(inserts.exists() && inserts.isDirectory()) {
+				Arrays.stream(inserts.listFiles()).forEach(insert->{
+					var name = insert.getName();
+					mapa.put(getNameSimple(name), insert);
+				});
+			}
 		}
 		return mapa;
 	}
 
-	private final Map<Integer, Map<String, File>> generateMap() throws URISyntaxException {
+	private final Map<Integer, Map<String, File>> generateTables() throws URISyntaxException {
 		var map = new HashMap<Integer, Map<String, File>>();
 		var in = getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + Constants.CONST_PATH;
 		var f = new File(in);
@@ -62,7 +88,18 @@ public class ScriptSql {
 				Constants.CONST_EMPTY_STRING);
 		return nameJoin;
 	}
-
+	
+	private final String getNameSimple(String name) {
+		var nameUse = name;
+		var split = nameUse.split(Constants.CONST_SPLIT_NAME);
+		for (int i = 0; i < split.length; i++) {
+			split[i] = split[i].substring(0, 1).toUpperCase() + split[i].substring(1);
+		}
+		var nameJoin = String.join(Constants.CONST_EMPTY_STRING, split).replace(Constants.CONST_SUBFIX_NAME,
+				Constants.CONST_EMPTY_STRING);
+		return nameJoin;
+	}
+	
 	private final Integer getNumber(String name) {
 		return Integer.valueOf(name.substring(0,name.indexOf(Constants.CONST_SPLIT_GUION)));
 	}
@@ -82,5 +119,9 @@ public class ScriptSql {
 		if (!map.containsKey(number)) {
 			map.put(number, subMap);
 		}
+	}
+	
+	private final Boolean getHotReload() {
+		return false;
 	}
 }

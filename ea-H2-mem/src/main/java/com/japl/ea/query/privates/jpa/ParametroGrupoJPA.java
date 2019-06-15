@@ -2,8 +2,13 @@ package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 /**
@@ -16,8 +21,12 @@ import javax.persistence.Table;
 @Entity(name="TBL_PARAMETER_GROUP")
 @Table(name="TBL_PARAMETER_GROUP")
 public class ParametroGrupoJPA extends AJPA {
-	@ManyToOne @JoinColumn(name="sparameter")
+	//@ManyToOne 
+	//@JoinColumn(name="sparameter")
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="sparameter",referencedColumnName="scode")
 	private ParametroJPA parametro;
+//	private String parametroCode;
 	@Column(name="sgroup")
 	private String grupo;
 	public String getGrupo() {
@@ -32,4 +41,11 @@ public class ParametroGrupoJPA extends AJPA {
 	public void setParametro(ParametroJPA parametro) {
 		this.parametro = parametro;
 	}
+//	public String getParametroCode() {
+//		return parametroCode;
+//	}
+//	public void setParametroCode(String parametroCode) {
+//		this.parametroCode = parametroCode;
+//	}
+	
 }

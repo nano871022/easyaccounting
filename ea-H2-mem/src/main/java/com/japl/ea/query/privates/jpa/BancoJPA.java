@@ -33,9 +33,6 @@ public class BancoJPA extends AJPA{
 	private ParametroJPA tipoCuenta;
 	 @ManyToOne @JoinColumn(name="stypebank")
 	private ParametroJPA tipoBanco;
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 	public String getNombre() {
 		return nombre;
 	}

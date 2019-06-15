@@ -18,7 +18,7 @@ import co.com.japl.ea.sql.impl.ScriptSql;
 public class VerifyDB {
 	private H2Connect h2 = H2Connect.getInstance();
 	private Log log = Log.Log(this.getClass());
-	
+
 	private final void verifyRows(Session session, String nameJpa) throws PersistenceException, ClassNotFoundException {
 		var jpaClass = Class.forName(H2PropertiesConstant.CONST_PACKAGE_JPA + H2PropertiesConstant.CONST_DOT + nameJpa
 				+ H2PropertiesConstant.CONST_JPA);
@@ -34,7 +34,7 @@ public class VerifyDB {
 				var create = session.createQuery(querys);
 				var result = create.getSingleResult();
 				var count = Integer.valueOf(result.toString());
-				if(count == 0) {
+				if (count == 0) {
 					insertRows(nameJpa);
 				}
 				session.getTransaction().commit();
@@ -64,15 +64,23 @@ public class VerifyDB {
 		}
 
 	}
-	
+
 	private final void insertRows(String nameJPA) {
-		log.logger("Se realiza busqueda en inserts para ingresar nuevos registros para "+nameJPA);
+		var map = ScriptSql.getInstance().getInserts();
+		if (map.containsKey(nameJPA)) {
+			var script = map.get(nameJPA);
+			try {
+				h2.runScript(script.getAbsolutePath());
+			} catch (Exception e) {
+				log.logger(e);
+			}
+		}
 	}
 
 	public final void verifyDB()
 			throws URISyntaxException, ClassNotFoundException, InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		var map = ScriptSql.getInstance().analizer();
+		var map = ScriptSql.getInstance().getTables();
 		var key = 1;
 		while (map.containsKey(key)) {
 			var jpaMap = map.get(key);

@@ -53,9 +53,6 @@ public class ConceptoJPA extends AJPA{
 		this.cuentaXPagar = cuentaXPagar;
 	}
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 	public String getNombre() {
 		return nombre;
 	}

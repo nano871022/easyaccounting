@@ -1,6 +1,7 @@
 package com.japl.ea.query.privates.jpa;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -13,7 +14,9 @@ import javax.persistence.Table;
  */
 @Entity(name = "TBL_PARAMETER")
 @Table(name = "TBL_PARAMETER")
-public class ParametroJPA extends AJPA {
+public class ParametroJPA extends JPA{
+	@EmbeddedId
+	private IDJPA codigo;
 	@Column(name="norder")
 	private Long orden;
 	@Column(name="sname")
@@ -35,14 +38,6 @@ public class ParametroJPA extends AJPA {
 
 	public void setOrden(Long orden) {
 		this.orden = orden;
-	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 
 	public String getNombre() {

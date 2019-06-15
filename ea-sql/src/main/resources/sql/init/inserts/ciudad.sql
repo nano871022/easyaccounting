@@ -1,0 +1,3 @@
+INSERT INTO TBL_CITY (scode,dcreate,sname,sdepartament) VALUES ('ciudad20190607000001','2019-06-07','Medellin','departamento20190607000001');
+INSERT INTO TBL_CITY (scode,dcreate,sname,sdepartament) VALUES ('ciudad20190607000002','2019-06-07','Bogota','departamento20190607000002');
+INSERT INTO TBL_CITY (scode,dcreate,sname,sdepartament) VALUES ('ciudad20190607000003','2019-06-07','Leticia','departamento20190607000003');

@@ -117,7 +117,7 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		try {
 			lista = querySvc.gets(dto);
 		} catch (QueryException e) {
-			throw new ParametroException("No se logro obtner los grupos asociados a parametros.", e);
+			throw new ParametroException("No se logro obtener los grupos asociados a parametros.", e);
 		}
 		return lista;
 	}

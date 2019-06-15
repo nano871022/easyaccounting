@@ -68,6 +68,8 @@ public class QueryJPASvc implements IQuerySvc {
 				}
 				var lists = create.getResultList();
 				lists.forEach(jpa -> list.add((T) ReflectionUtils.instanciar().copy(jpa, obj.getClass())));
+				db.getHibernateConnect().getTransaction().commit();
+				db.getHibernateConnect().close();
 			}
 		} catch (ReflectionException | IllegalArgumentException | SecurityException | ClassNotFoundException e) {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
@@ -156,7 +158,7 @@ public class QueryJPASvc implements IQuerySvc {
 				var builder = db.getHibernateConnect().getCriteriaBuilder();
 				var querys = builder.createQuery(Long.class);
 				var root = querys.from(getJPAByDto(obj));
-				querys.select(builder.count(root.get("codigo")));
+				querys.select(builder.count(root.get("id")));
 				var map = squ.getFieldToWhereJPA(obj);
 				map.keySet().forEach(key -> {
 					if (map.get(key) instanceof String
@@ -168,6 +170,8 @@ public class QueryJPASvc implements IQuerySvc {
 				});
 				var create = db.getHibernateConnect().createQuery(querys);
 				var result = create.getSingleResult();
+				db.getHibernateConnect().getTransaction().commit();
+				db.getHibernateConnect().close();
 				return Integer.valueOf(result.toString());
 			}
 		} catch (ReflectionException | IllegalArgumentException | SecurityException | ClassNotFoundException e) {

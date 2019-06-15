@@ -13,13 +13,8 @@ import javax.persistence.MappedSuperclass;
 import org.pyt.common.reflection.ReflectionDto;
 
 @MappedSuperclass
-@Inheritance( strategy = InheritanceType.TABLE_PER_CLASS)
-@Embeddable
-public class AJPA extends ReflectionDto implements Serializable{
+public class JPA extends ReflectionDto implements Serializable{
 	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name="scode")
-	public String codigo;
 	@Column(name="dcreate")
 	protected Date fechaCreacion;
 	@Column(name="dupdate")
@@ -32,12 +27,6 @@ public class AJPA extends ReflectionDto implements Serializable{
 	protected String actualizador;
 	@Column(name="sdeleter")
 	protected String eliminador;
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 	public Date getFechaCreacion() {
 		return fechaCreacion;
 	}
