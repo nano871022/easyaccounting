@@ -7,5 +7,5 @@ module com.japl.ea.query {
  requires org.h2.api;
  requires com.h2database;
 requires org.pyt.common.exceptions;
- provides com.pyt.query.interfaces.IQuerySvc with com.japl.ea.query.implement.QuerySvc;
+ provides com.pyt.query.interfaces.IQuerySvc with co.com.japl.ea.mybatis.impl.QueryMyBatisSvc;
 }
