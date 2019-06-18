@@ -1,0 +1,103 @@
+2019-05-23 15:46:19 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+Error presentado en printTrace::.\logger\stracTrace.log (El sistema no puede encontrar la ruta especificada)
+2019-05-23 15:48:34 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:49:40 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:49:40 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:50:16 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:50:25 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:52:19 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:52:26 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:53:21 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:53:40 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:55:15 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 15:56:59 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:02:10 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:02:10 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:02:58 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:02:58 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:03:47 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:03:47 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:04:17 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:04:17 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:04:42 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:04:47 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:05:57 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:05:57 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:06:25 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:07:37 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:07:47 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:08:20 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:08:20 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:09:09 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:09:09 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:09:18 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:09:19 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:12:53 com.japl.ea.query.privates.H2Connect : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:12:53 com.japl.ea.query.privates.SessionFactoryBuild : ERROR : No se encontro el archivo de properties ./\h2.properties en ./ en path C:\Users\Ingeneo\git\easy_accounting\ea-H2-mem\.\h2.properties
+2019-05-23 16:28:54 com.japl.ea.query.implement.QuerySvc : INFO : SELECT orden, nombre, descripcion, valor, valor2, grupo, estado, codigo, fechaCreacion, fechaActualizacion, fechaEliminacion, creador, actualizador, eliminador FROM MEM_Parametro WHERE nombre='test1' LIMIT 0,2
+2019-05-23 16:31:33 com.japl.ea.query.implement.QuerySvc : INFO : SELECT orden, nombre, descripcion, valor, valor2, grupo, estado, codigo, fechaCreacion, fechaActualizacion, fechaEliminacion, creador, actualizador, eliminador FROM MEM_Parametro WHERE nombre='test1' LIMIT 0,2
+2019-05-23 16:33:45 com.japl.ea.query.implement.QuerySvc : INFO : SELECT orden, nombre, descripcion, valor, valor2, grupo, estado, codigo, fechaCreacion, fechaActualizacion, fechaEliminacion, creador, actualizador, eliminador FROM MEM_Parametro WHERE nombre='test1' LIMIT 0,2
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:51:06 com.japl.ea.query.implement.QuerySvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre='test1'
+2019-05-24 11:16:56 com.japl.ea.query.implement.QuerySvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=t.'test1'
+2019-05-24 11:17:49 com.japl.ea.query.implement.QuerySvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE t.nombre='test1'
+2019-05-24 11:20:52 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre='test1'
+2019-05-24 11:23:53 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre='test1'
+2019-05-24 11:37:31 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:NOMBRE
+2019-05-24 11:39:25 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 11:40:26 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 11:42:26 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 11:45:29 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 11:46:52 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 11:48:07 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre like :nombre
+2019-05-24 11:50:43 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 12:40:17 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 12:40:47 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 12:41:51 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 12:47:12 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 12:48:03 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 12:52:13 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 12:52:34 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 13:05:36 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 13:06:31 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 13:06:52 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 13:07:08 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 13:07:30 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
+2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 13:11:13 com.japl.ea.query.implement.QueryJPASvc : INFO : nombre::'test1'
+2019-05-24 13:11:13 com.japl.ea.query.implement.QueryJPASvc : INFO : nombre::'test1'
+2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo codigo
+2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaCreacion
+2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaActualizacion
+2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaEliminacion
+2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo creador
+2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo actualizador
+2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo eliminador
