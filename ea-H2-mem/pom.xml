@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>co.com.japl.ea</groupId>
-	<artifactId>ea-H2-mem</artifactId>
+	<artifactId>ea-hibernate</artifactId>
 	<version>${project.version}</version>
 	<dependencies>
 		<dependency>
