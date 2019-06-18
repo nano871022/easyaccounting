@@ -3,25 +3,33 @@ package co.com.japl.ea.gdb.privates.utils;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.ReflectionException;
 
-import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import com.pyt.query.interfaces.IAdvanceQuerySvc.triggerAction;
 import com.pyt.query.interfaces.IAdvanceQuerySvc.triggerOption;
+
+import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 
 public class StatementQuerysUtil {
 	private final static String CONST_DTO = "DTO";
 	private final static String CONST_ABC_CHAIN = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
 	private final static Integer CONST_MAX_LENGTH = 15;
 	private final static String CONST_PREFIX_TABLE = "MEM_";
+	private final static String CONST_FIELD_ALIAS = "%s as %s";
+	private NameSqlProperties namesSql;
+
+	public StatementQuerysUtil() {
+		namesSql = NameSqlProperties.getInstance();
+	}
 
 	public final <T extends ADto> String fieldToWhere(T obj, boolean valuesInsert) throws ReflectionException {
 		List<String> names = obj.getNameFields();
@@ -31,7 +39,7 @@ public class StatementQuerysUtil {
 			if (value != null && !valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
-				where += name + QueryConstants.CONST_EQUAL + valueFormat(value);
+				where += getName(obj,name) + QueryConstants.CONST_EQUAL + valueFormat(value);
 			} else if (valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_COMMA + QueryConstants.CONST_SPACE;
@@ -40,7 +48,7 @@ public class StatementQuerysUtil {
 		}
 		return where;
 	}
-	
+
 	public final <T extends ADto> String fieldToWhereJPA(T obj, boolean valuesInsert) throws ReflectionException {
 		List<String> names = obj.getNameFields();
 		String where = QueryConstants.CONST_EMPTY;
@@ -49,23 +57,23 @@ public class StatementQuerysUtil {
 			if (value != null && !valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
-				where += name + QueryConstants.CONST_EQUAL + ":"+name;
+				where += getName(obj,name) + QueryConstants.CONST_EQUAL + ":" + name;
 			} else if (valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_COMMA + QueryConstants.CONST_SPACE;
-				where += value != null ? ":"+name : QueryConstants.CONST_NULL;
+				where += value != null ? ":" + name : QueryConstants.CONST_NULL;
 			}
 		}
 		return where;
 	}
-	
-	public final <T extends ADto>  Map<String,Object> getFieldToWhereJPA(T obj) throws ReflectionException{
+
+	public final <T extends ADto> Map<String, Object> getFieldToWhereJPA(T obj) throws ReflectionException {
 		List<String> names = obj.getNameFields();
-		Map<String,Object> fieldValue = new HashMap<String,Object>();
+		Map<String, Object> fieldValue = new HashMap<String, Object>();
 		for (String name : names) {
 			var value = obj.get(name);
 			if (value != null) {
-				fieldValue.put(name , (value));
+				fieldValue.put(name, (value));
 			}
 		}
 		return fieldValue;
@@ -90,10 +98,10 @@ public class StatementQuerysUtil {
 	}
 
 	public final <T extends ADto> String fieldToSelect(T obj) throws ReflectionException {
+		var outFields = new ArrayList<String>();
 		List<String> names = obj.getNameFields();
-		String fields = Arrays.toString(names.toArray(new String[names.size()]));
-		fields = fields.replace(QueryConstants.CONST_KEY_OPEN, QueryConstants.CONST_EMPTY);
-		fields = fields.replace(QueryConstants.CONST_KEY_CLOSE, QueryConstants.CONST_EMPTY);
+		names.forEach(name->outFields.add(String.format(CONST_FIELD_ALIAS,getName(obj, name),name)));
+		var fields = StringUtils.join(outFields,QueryConstants.CONST_COMMA);
 		return fields;
 	}
 
@@ -115,6 +123,10 @@ public class StatementQuerysUtil {
 	}
 
 	public <T extends ADto> String getTableName(T obj) {
+		var name = getName(obj,null);
+		if (StringUtils.isNotBlank(name)) {
+			return name;
+		}
 		return CONST_PREFIX_TABLE + obj.getClass().getSimpleName().replace(CONST_DTO, QueryConstants.CONST_EMPTY);
 	}
 
@@ -159,5 +171,9 @@ public class StatementQuerysUtil {
 		}
 		name += obj.getSimpleName();
 		return name;
+	}
+
+	private <T extends ADto> String getName(T dto,String name) {
+		return namesSql.getValue(name);
 	}
 }

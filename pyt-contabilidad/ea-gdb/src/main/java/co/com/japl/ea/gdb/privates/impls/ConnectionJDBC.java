@@ -25,7 +25,7 @@ import co.com.japl.ea.gdb.privates.utils.ConnectionProperties;
  */
 public final class ConnectionJDBC implements AutoCloseable {
 	private Log log = Log.Log(ConnectionJDBC.class);
-	private String connect = QueryConstants.CONST_CONNECT_BDH2;
+	private String connect;
 	private Connection connection;
 	private Statement statement;
 	private static ConnectionJDBC db;
@@ -33,7 +33,7 @@ public final class ConnectionJDBC implements AutoCloseable {
 
 	private ConnectionJDBC() {
 		try {
-			this.connect = properties.load().getValue(ConnectionPropertiesConstant.PROP_JDBC);
+			this.connect = properties.load().getValue(ConnectionPropertiesConstant.PROP_URL);
 		} catch (Exception e) {
 			log.logger(e);
 		}
