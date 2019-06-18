@@ -23,7 +23,7 @@ public final class PropertiesH2 {
 	
 	public PropertiesH2 load() throws Exception {
 		var pu = PropertiesUtils.getInstance();
-		var path = System.getenv(EnviromentConstants.PROP_ENV_PATH_H2);
+		var path = System.getenv(EnviromentConstants.PROP_ENV_PATH);
 		if(path == null) {
 			path = H2PropertiesConstant.PROP_PATH;
 		}
