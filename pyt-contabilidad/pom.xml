@@ -55,6 +55,9 @@
 		<module>ea-mybatis</module>
 		<module>pyt-service</module>
 		<module>pyt-app</module>
+		<module>../ea-sql</module>
+		
+		<module>ea-gdb</module>
 	</modules>
 	<build>
 		<plugins>
