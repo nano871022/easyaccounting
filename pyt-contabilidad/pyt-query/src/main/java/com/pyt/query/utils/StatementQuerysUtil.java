@@ -8,10 +8,9 @@ import org.pyt.common.abstracts.ADto;
 public class StatementQuerysUtil {
 	private final static String CONST_DTO = "DTO";
 	private final static String CONST_ABC_CHAIN = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
-	private final static Integer CONST_MAX_LENGTH = 17;
+	private final static Integer CONST_MAX_LENGTH = 30;
 	private final static String CONST_PREFIX_TABLE = "TBL_";
 	private final static String CONST_EMPTY = "";
-
 	
 	public <T extends ADto> String getTableName(T obj) {
 		return CONST_PREFIX_TABLE + obj.getClass().getSimpleName().replace(CONST_DTO, CONST_EMPTY);
@@ -41,8 +40,9 @@ public class StatementQuerysUtil {
 		sb.append(fecha.getHour());
 		sb.append(fecha.getMinute());
 		sb.append(fecha.getSecond());
+		var lack = CONST_MAX_LENGTH-(sb.toString().length()+size);
 		Random aleatorio = new Random();
-		for (int i = 0; i < CONST_MAX_LENGTH - length - lenSize; i++) {
+		for (int i = 0; i < lack; i++) {
 			Double valor = aleatorio.nextDouble() * (CONST_ABC_CHAIN.length() - 1 + 0);
 			sb.append(CONST_ABC_CHAIN.charAt(valor.intValue()));
 		}

@@ -2,14 +2,14 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.pyt.service.dto.parametrogrupo">
+<mapper namespace="com.pyt.service.dto.pais">
 
 	<insert id="insert"
-		parameterType="com.pyt.service.dto.ParametroGrupoDTO">
-		INSERT INTO TBL_PARAMETER_GROUP
+		parameterType="com.pyt.service.dto.PaisDTO">
+		INSERT INTO TBL_COUNTRY
 		(scode
-		,sparameter
-		,sgroup
+		,sname
+		,sstate
 		,dcreate
 		,dupdate
 		,ddelete
@@ -18,8 +18,8 @@
 		,sdeleter)
 		VALUES
 		(#{codigo}
-		,#{parametro}
-		,#{grupo}
+		,#{nombre}
+		,#{estado.codigo}
 		,#{fechaCreacion}
 		,#{fechaActualizacion}
 		,#{fechaEliminacion}
@@ -29,12 +29,11 @@
 	</insert>
 
 	<select id="select"
-		parameterType="com.pyt.service.dto.ParametroGrupoDTO"
-		resultType="com.pyt.service.dto.ParametroGrupoDTO">
+		parameterType="com.pyt.service.dto.PaisDTO"
+		resultType="com.pyt.service.dto.PaisDTO">
 		SELECT
 		scode as codigo
-		,sparameter as parametro
-		,sgroup as grupo
+		,sname as nombre
 		,dcreate
 		as fechaCreacion
 		,dupdate as fechaActualizacion
@@ -43,48 +42,45 @@
 		,screater as creador
 		,supdater as actualizador
 		,sdeleter as eliminador
-		FROM TBL_PARAMETER_GROUP
+		FROM TBL_COUNTRY
 
-		<include refid="pgwhere"></include>
+		<include refid="paiswhere"></include>
 	</select>
 
 	<select id="update"
-		parameterType="com.pyt.service.dto.ParametroGrupoDTO">
-		UPDATE TBL_PARAMETER_GROUP
+		parameterType="com.pyt.service.dto.PaisDTO">
+		UPDATE TBL_COUNTRY
 		SET
 		scode = #{codigo}
-		,sparameter =
-		#{parametro}
-		,sgroup = #{grupo}
+		,sname = #{nombre}
+		,sstate = #{estado.codigo}
 		,dcreate = #{fechaCreacion}
-		,dupdate =
-		#{fechaActualizacion}
+		,dupdate = #{fechaActualizacion}
 		,ddelete = #{fechaEliminacion}
-		,screater =
-		#{creador}
+		,screater = #{creador}
 		,supdater = #{actualizador}
 		,sdeleter = #{eliminador}
-		<include refid="pgwhere"></include>
+		<include refid="paiswhere"></include>
 	</select>
 
 	<select id="select_count"
-		parameterType="com.pyt.service.dto.ParametroGrupoDTO"
+		parameterType="com.pyt.service.dto.PaisDTO"
 		resultType="Integer">
 		SELECT
 		count(scode)
-		FROM TBL_PARAMETER_GROUP
-		<include refid="pgwhere"></include>
+		FROM TBL_COUNTRY
+		<include refid="paiswhere"></include>
 	</select>
-	<sql id="pgwhere">
+	<sql id="paiswhere">
 		<where>
 			<if test="codigo != null">
 				and scode = #{codigo}
 			</if>
-			<if test="parametro != null">
-				and sparameter = #{parametro}
+			<if test="nombre != null">
+				and sname = #{nombre}
 			</if>
-			<if test="grupo != null">
-				and sgroup = #{grupo}
+			<if test="estado != null">
+				and sstate = #{estado.codigo}
 			</if>
 		</where>
 	</sql>

@@ -23,6 +23,8 @@
 	<mappers>
 		<mapper resource="mybatis/parametro.xml" />
 		<mapper resource="mybatis/parametrogrupo.xml" />
+		<mapper resource="mybatis/pais.xml" />
+		<mapper resource="mybatis/departamento.xml" />
 	</mappers>
 
 </configuration>

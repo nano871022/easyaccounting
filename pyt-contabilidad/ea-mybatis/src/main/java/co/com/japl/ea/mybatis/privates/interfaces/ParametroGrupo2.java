@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 
 import com.pyt.service.dto.ParametroGrupoDTO;
 
-public interface ParametroGrupo extends GenericInterfaces {
+public interface ParametroGrupo2 extends GenericInterfaces {
 	
 	@Select("INSERT INTO TBL_PARAMETER_GROUP ( SPARAMETER, SGROUP ,SCODE) VALUES (#{parametro},#{grupo},#{codigo} )")
 	public void insert(ParametroGrupoDTO dto);
