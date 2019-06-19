@@ -1,5 +1,6 @@
 package co.com.japl.ea.gdb.privates.utils;
 
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.query.interfaces.IAdvanceQuerySvc.triggerAction;
@@ -39,7 +41,7 @@ public class StatementQuerysUtil {
 			if (value != null && !valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
-				where += getName(obj,name) + QueryConstants.CONST_EQUAL + valueFormat(value);
+				where += getName(obj, name) + QueryConstants.CONST_EQUAL + valueFormat(value);
 			} else if (valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_COMMA + QueryConstants.CONST_SPACE;
@@ -57,7 +59,7 @@ public class StatementQuerysUtil {
 			if (value != null && !valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
-				where += getName(obj,name) + QueryConstants.CONST_EQUAL + ":" + name;
+				where += getName(obj, name) + QueryConstants.CONST_EQUAL + ":" + name;
 			} else if (valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_COMMA + QueryConstants.CONST_SPACE;
@@ -100,8 +102,8 @@ public class StatementQuerysUtil {
 	public final <T extends ADto> String fieldToSelect(T obj) throws ReflectionException {
 		var outFields = new ArrayList<String>();
 		List<String> names = obj.getNameFields();
-		names.forEach(name->outFields.add(String.format(CONST_FIELD_ALIAS,getName(obj, name),name)));
-		var fields = StringUtils.join(outFields,QueryConstants.CONST_COMMA);
+		names.forEach(name -> outFields.add(String.format(CONST_FIELD_ALIAS, getName(obj, name), name)));
+		var fields = StringUtils.join(outFields, QueryConstants.CONST_COMMA);
 		return fields;
 	}
 
@@ -123,7 +125,7 @@ public class StatementQuerysUtil {
 	}
 
 	public <T extends ADto> String getTableName(T obj) {
-		var name = getName(obj,null);
+		var name = getName(obj, null);
 		if (StringUtils.isNotBlank(name)) {
 			return name;
 		}
@@ -173,7 +175,20 @@ public class StatementQuerysUtil {
 		return name;
 	}
 
-	private <T extends ADto> String getName(T dto,String name) {
-		return namesSql.getValue(name);
+	private <T extends ADto> String getName(T dto, String name) {
+		var path = "";
+		Field field = null;
+		try {
+			field = ADto.class.getDeclaredField(name);
+		}catch(Exception e){
+			field = null;
+		}
+		if (field != null) {
+			path = ADto.class.getCanonicalName();
+		} else {
+			path = dto.getClass().getCanonicalName();
+		}
+		path += ConfigServiceConstant.SEP_DOT + name;
+		return namesSql.getValue(path);
 	}
 }
