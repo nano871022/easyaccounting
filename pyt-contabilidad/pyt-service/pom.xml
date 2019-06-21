@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>co.com.pyt</groupId>
@@ -13,6 +15,11 @@
 	<name>pyt-service</name>
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-query</artifactId>
 			<version>${project.version}</version>
@@ -22,7 +29,6 @@
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-loader</artifactId>
 			<version>${project.version}</version>
-<!-- 			<scope>${project.scope}</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
@@ -41,12 +47,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-exceptions</artifactId>
 			<version>${project.version}</version>
@@ -61,13 +61,11 @@
 			<groupId>co.com.arquitectura.proccessor</groupId>
 			<artifactId>arquitectura-proccessor</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.com.arquitectura.anotaciones</groupId>
 			<artifactId>arquitetura-anotaciones</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>

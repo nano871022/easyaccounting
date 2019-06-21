@@ -1,6 +1,6 @@
 
-module com.japl.ea.common.annotation{
- exports org.pyt.common.annotation.generic;
+module ea_anotaciones{
+ exports org.pyt.common.annotation.generics;
  exports org.pyt.common.annotation.proccess;
  exports org.pyt.common.annotations;
 }

@@ -25,7 +25,6 @@ import com.pyt.service.interfaces.inventarios.IMovimientoSvc;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
-import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
 

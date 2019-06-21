@@ -19,17 +19,16 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
+			<groupId>org.apache.commons.io</groupId>
+			<artifactId>commonsIO</artifactId>
+			<version>2.5.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-service</artifactId>
@@ -59,13 +58,6 @@
 			<artifactId>arquitecrura-librerias</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.oracle</groupId> -->
-		<!-- <artifactId>javafx</artifactId> -->
-		<!-- <version>2.2</version> -->
-		<!-- <systemPath>${java.home}/lib/ext/jfxrt.jar</systemPath> -->
-		<!-- <scope>system</scope> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
@@ -99,18 +91,18 @@
 		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
 			<artifactId>ikonli-javafx</artifactId>
-			<version>2.4.0</version>
+			<version>11.3.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
 			<artifactId>ikonli-core</artifactId>
-			<version>2.4.0</version>
+			<version>11.3.4</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-fontawesome-pack -->
 		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
 			<artifactId>ikonli-fontawesome-pack</artifactId>
-			<version>2.4.0</version>
+			<version>11.3.4</version>
 		</dependency>
 
 		<dependency>

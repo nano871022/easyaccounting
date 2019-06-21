@@ -1,0 +1,76 @@
+2019-06-17 10:22:08 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource SqlMapCongif.xml
+Error presentado en printTrace::.\logger\stracTrace.log (El sistema no puede encontrar la ruta especificada)
+2019-06-17 10:26:59 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource /C:/Users/Ingeneo/git/easy_accounting/pyt-contabilidad/ea-mybatis/target/classes/SqlMapCongif.xml
+2019-06-17 10:27:38 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource /C:/Users/Ingeneo/git/easy_accounting/pyt-contabilidad/ea-mybatis/target/classes/SqlMapCongif.xml
+2019-06-17 10:29:51 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource /C:/Users/Ingeneo/git/easy_accounting/pyt-contabilidad/ea-mybatis/target/classes/SqlMapCongif.xml
+2019-06-17 10:30:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource C:/Users/Ingeneo/git/easy_accounting/pyt-contabilidad/ea-mybatis/target/classes/SqlMapCongif.xml
+2019-06-17 10:31:26 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource C:/Users/Ingeneo/git/easy_accounting/pyt-contabilidad/ea-mybatis/target/classes/SqlMapCongif.xml
+2019-06-17 10:32:18 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource SqlMapCongif.xml
+2019-06-17 10:32:39 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource SqlMapCongif.xml
+2019-06-17 10:33:06 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource ./SqlMapCongif.xml
+2019-06-17 10:36:05 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Could not find resource SqlMapCongif.xml
+2019-06-17 15:05:34 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:05:35 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:05:35 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:05:35 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:06:26 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:06:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:06:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:26:42 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:26:56 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:26:57 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:27:31 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:27:51 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:28:48 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:29:02 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:29:02 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:29:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:30:17 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:31:16 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:31:30 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:31:31 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:31:51 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:33:08 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:33:22 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:33:22 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:33:43 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:34:06 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:34:48 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:35:03 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:35:03 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:35:19 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:36:39 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:36:53 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:36:53 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.Parametro
+2019-06-17 15:37:12 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.com.pyt.service.dto.ParametroGrupo
+2019-06-17 15:39:07 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:39:21 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:39:21 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:43:26 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:43:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:43:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:45:48 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:46:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:46:46 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:48:13 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:48:52 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:48:52 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:49:30 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:50:00 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 15:50:00 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:06:26 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:07:11 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:07:15 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:07:21 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Type interface co.com.japl.ea.mybatis.privates.interfaces.ParametroGrupo is not known to the MapperRegistry.
+2019-06-17 16:11:52 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:11:53 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:11:53 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:13:37 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Type interface co.com.japl.ea.mybatis.privates.interfaces.ParametroGrupo is not known to the MapperRegistry.
+2019-06-17 16:14:34 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:14:35 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:14:35 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:14:44 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Type interface co.com.japl.ea.mybatis.privates.interfaces.ParametroGrupo is not known to the MapperRegistry.
+2019-06-17 16:59:40 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:59:41 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:59:41 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : co.com.japl.ea.mybatis.privates.interfaces.Parametro
+2019-06-17 16:59:49 co.com.japl.ea.mybatis.impl.QueryMyBatisSvc : ERROR : Type interface co.com.japl.ea.mybatis.privates.interfaces.ParametroGrupo is not known to the MapperRegistry.

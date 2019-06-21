@@ -8096,3 +8096,42 @@
 2019-06-07 17:01:06 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros.
 2019-06-07 17:01:06 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros.
 2019-06-07 17:01:06 org.pyt.app.load.Template : INFO : Cargando ventana principal
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Almacen
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Producto
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Parametro
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Marcador
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para ActividadIca
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Configuracion
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para ServicioCampoBusqueda
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para ParametroInventario
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para AsociacionArchivo
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Repuesto
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para MarcadorServicio
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Servicio
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Pais
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Ubicacion
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Documentos
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para ParametroGrupo
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Banco
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Persona
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Movimiento
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para ParametroGrupoInventario
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Departamento
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para ResumenProducto
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para CuentaContable
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para ProductoUbicacion
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para CentroCosto
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Empresa
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Saldo
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Ciudad
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Documento
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Factura
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para RestarCantidad
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para DetalleConcepto
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Oficina
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Concepto
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Trabajador
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para DetalleContable
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Ingreso
+2019-06-17 10:21:59 com.japl.ea.query.privates.VerifyDB : INFO : Se realiza busqueda en inserts para ingresar nuevos registros para Detalle
+2019-06-17 10:22:00 org.pyt.app.load.Template : INFO : Cargando ventana principal
