@@ -4,3 +4,4 @@
 /target/classes/*
 *.class
 .class
+/hs_err_pid5454.log
