@@ -44,12 +44,13 @@ public class QueryGDBSvc implements IQuerySvc {
 			InvocationTargetException, NoSuchMethodException, SecurityException, QueryException, SQLException {
 		T newInstance = (T) dto.getClass().getConstructor().newInstance();
 		for (String name : names) {
-			if (newInstance.typeField(name).asSubclass(ADto.class) != null) {
-				var subInstance = newInstance.typeField(name).getConstructor().newInstance();
+			try {
+				var clazz = newInstance.typeField(name).asSubclass(ADto.class);
+				var subInstance = clazz.getConstructor().newInstance();
 				((ADto) subInstance).set(name, rs.getObject(name));
 				subInstance = get((T) subInstance);
 				newInstance.set(name, subInstance);
-			} else {
+			} catch(ClassCastException e){
 				newInstance.set(name, rs.getObject(name));
 			}
 		}

@@ -21,7 +21,7 @@ public interface IStatementSql<T extends ReflectionDto> {
 	}
 	
 	default String select_count(T dto) throws StatementSqlException{
-		return select(dto, 0, 0, false,false);
+		return select(dto, 0, 0, false,true);
 	}
 
 	public String select(T dto, int init, int size, boolean insertValue, boolean count) throws StatementSqlException;

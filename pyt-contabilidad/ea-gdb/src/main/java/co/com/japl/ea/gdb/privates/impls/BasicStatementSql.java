@@ -20,8 +20,13 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 		String query = init > 0 && size > 0 ? QueryConstants.SQL_SELECT_LIMIT
 				: count ? QueryConstants.SQL_COUNT_ROW : QueryConstants.SQL_SELECT;
 		try {
-			query = String.format(query, squ.fieldToSelect(dto), squ.getTableName(dto),
-					squ.fieldToWhere(dto, insertValue), init + QueryConstants.CONST_COMMA + size);
+			if (!count) {
+				query = String.format(query, squ.fieldToSelect(dto), squ.getTableName(dto),
+						squ.fieldToWhere(dto, insertValue), init + QueryConstants.CONST_COMMA + size);
+			} else {
+				query = String.format(query, squ.getTableName(dto), squ.fieldToWhere(dto, insertValue),
+						init + QueryConstants.CONST_COMMA + size);
+			}
 			if (query.substring(query.indexOf(QueryConstants.CONST_WHERE)).trim()
 					.replace(QueryConstants.CONST_WHERE, QueryConstants.CONST_EMPTY).length() == 0) {
 				query += " 1";
@@ -36,7 +41,7 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 	public String update(T dto) throws StatementSqlException {
 		var query = QueryConstants.SQL_UPDATE;
 		try {
-			query = String.format(query, squ.getTableName(dto), squ.fieldToSelect(dto), squ.fieldToWhere(dto, false));
+			query = String.format(query, squ.getTableName(dto), squ.fieldTOSetUpdate(dto),  squ.fieldWhereToUpdate(dto));
 		} catch (ReflectionException e) {
 			throw new StatementSqlException("Se presento problema en generacion sentencia sql update", e);
 		}
@@ -47,11 +52,11 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 	public String insert(T dto) throws StatementSqlException {
 		var query = QueryConstants.SQL_INSERT;
 		try {
-			String.format(query, squ.getTableName(dto), squ.fieldToSelect(dto), squ.fieldToWhere(dto, true));
+			query = String.format(query, squ.getTableName(dto), squ.fieldToInsert(dto), squ.fieldToWhere(dto, true));
 		} catch (ReflectionException e) {
 			throw new StatementSqlException("Se presento problema en generacion sentencia sql update", e);
 		}
-		return null;
+		return query;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.Log;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
@@ -28,9 +29,14 @@ public class StatementQuerysUtil {
 	private final static String CONST_PREFIX_TABLE = "MEM_";
 	private final static String CONST_FIELD_ALIAS = "%s as %s";
 	private NameSqlProperties namesSql;
+	private Log logger = Log.Log(this.getClass());
 
 	public StatementQuerysUtil() {
-		namesSql = NameSqlProperties.getInstance();
+		try {
+			namesSql = NameSqlProperties.getInstance().load();
+		} catch (Exception e) {
+			logger.logger(e);
+		}
 	}
 
 	public final <T extends ADto> String fieldToWhere(T obj, boolean valuesInsert) throws ReflectionException {
@@ -50,6 +56,21 @@ public class StatementQuerysUtil {
 		}
 		return where;
 	}
+	
+	public final <T extends ADto> String fieldTOSetUpdate(T obj)throws ReflectionException{
+		List<String> names = obj.getNameFields();
+		List<String> sets = new ArrayList<String>();
+		names.forEach(name->{
+			try {
+				var value = valueFormat(obj.get(name));
+				sets.add(getName(obj, name)+QueryConstants.CONST_EQUAL+value);
+			}catch(Exception e) {
+				logger.logger(e);
+			}
+		});
+		var fields = String.join(QueryConstants.CONST_COMMA, sets);
+		return fields;
+	}
 
 	public final <T extends ADto> String fieldToWhereJPA(T obj, boolean valuesInsert) throws ReflectionException {
 		List<String> names = obj.getNameFields();
@@ -66,6 +87,11 @@ public class StatementQuerysUtil {
 				where += value != null ? ":" + name : QueryConstants.CONST_NULL;
 			}
 		}
+		return where;
+	}
+	
+	public final <T extends ADto> String fieldWhereToUpdate(T obj)throws ReflectionException {
+		var where = getName(obj, "codigo")+QueryConstants.CONST_EQUAL+valueFormat(obj.getCodigo());
 		return where;
 	}
 
@@ -102,8 +128,21 @@ public class StatementQuerysUtil {
 	public final <T extends ADto> String fieldToSelect(T obj) throws ReflectionException {
 		var outFields = new ArrayList<String>();
 		List<String> names = obj.getNameFields();
-		names.forEach(name -> outFields.add(String.format(CONST_FIELD_ALIAS, getName(obj, name), name)));
+		names.forEach(name -> {
+			var field = getName(obj, name);
+			if(field != null || field != "null") {
+				outFields.add(String.format(CONST_FIELD_ALIAS,field , name));
+			}
+		});
 		var fields = StringUtils.join(outFields, QueryConstants.CONST_COMMA);
+		return fields;
+	}
+
+	public final <T extends ADto> String fieldToInsert(T obj) throws ReflectionException {
+		List<String> names = obj.getNameFields();
+		List<String> fieldz = new ArrayList<String>();
+		names.forEach(name->fieldz.add(getName(obj,name)));
+		var fields = StringUtils.join(fieldz, QueryConstants.CONST_COMMA);
 		return fields;
 	}
 
@@ -180,7 +219,7 @@ public class StatementQuerysUtil {
 		Field field = null;
 		try {
 			field = ADto.class.getDeclaredField(name);
-		}catch(Exception e){
+		} catch (Exception e) {
 			field = null;
 		}
 		if (field != null) {
@@ -188,7 +227,9 @@ public class StatementQuerysUtil {
 		} else {
 			path = dto.getClass().getCanonicalName();
 		}
-		path += ConfigServiceConstant.SEP_DOT + name;
+		if(name != null) {
+			path += ConfigServiceConstant.SEP_DOT + name;
+		}
 		return namesSql.getValue(path);
 	}
 }
