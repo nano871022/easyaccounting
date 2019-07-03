@@ -19,7 +19,6 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 @UpdClass(nombre="com.pyt.service.dto.upds.BancoUpdDTO")
 public class BancoDTO extends ADto{
 	private static final long serialVersionUID = -5471821713015787406L;
-	private String codigo;
 	private String nombre;
 	private String descripcion;
 	private String numeroCuenta;
@@ -34,12 +33,6 @@ public class BancoDTO extends ADto{
 	@AssingValue(nameField=ParametroConstants.FIELD_NAME_GROUP,value=ParametroConstants.GRUPO_TIPO_BANCO)
 	@AssingValue(nameField=ParametroConstants.FIELD_NAME_STATE,value=ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
 	private ParametroDTO tipoBanco;
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 	public String getNombre() {
 		return nombre;
 	}

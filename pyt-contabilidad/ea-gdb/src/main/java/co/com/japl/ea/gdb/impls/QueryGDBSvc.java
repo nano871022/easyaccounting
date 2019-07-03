@@ -1,5 +1,6 @@
 package co.com.japl.ea.gdb.impls;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
@@ -47,10 +49,9 @@ public class QueryGDBSvc implements IQuerySvc {
 			try {
 				var clazz = newInstance.typeField(name).asSubclass(ADto.class);
 				var subInstance = clazz.getConstructor().newInstance();
-				((ADto) subInstance).set(name, rs.getObject(name));
-				subInstance = get((T) subInstance);
+				((ADto) subInstance).set("codigo", rs.getObject(name));
 				newInstance.set(name, subInstance);
-			} catch(ClassCastException e){
+			} catch (ClassCastException e) {
 				newInstance.set(name, rs.getObject(name));
 			}
 		}
@@ -70,12 +71,42 @@ public class QueryGDBSvc implements IQuerySvc {
 			while (rs.next()) {
 				list.add(getSearchResult(rs, obj, names));
 			}
+			list.forEach(dto->searchFieldTypeADTO(dto));
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
 				| StatementSqlException e) {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
 		}
 		return list;
+	}
+
+	/**
+	 * Realiza busqueda sobre el dto suministrado buscando campos tipo ADto para
+	 * realizar busquedas de ese objeto siempre y cuando tenga el codigo del objeto
+	 * para que este sea buscando en la bd
+	 * 
+	 * @param dto
+	 *            {@link ADto}
+	 * @return {@link ADto}
+	 */
+	private <T extends ADto, S extends ADto> T searchFieldTypeADTO(T dto) {
+		if (dto != null) {
+			var fields = dto.getClass().getDeclaredFields();
+			for (Field field : fields) {
+				try {
+					var clazz = field.getType().asSubclass(ADto.class);
+					S instance = dto.get(field.getName());
+					if (StringUtils.isNotBlank(((ADto) instance).getCodigo())) {
+						instance = get(instance);
+						dto.set(field.getName(), instance);
+					}
+
+				} catch (Exception e) {
+
+				}
+			}
+		}
+		return dto;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,6 +122,7 @@ public class QueryGDBSvc implements IQuerySvc {
 			while (rs.next()) {
 				list.add(getSearchResult(rs, obj, names));
 			}
+			list.forEach(dto->searchFieldTypeADTO(dto));
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
 				| StatementSqlException e) {
@@ -101,7 +133,7 @@ public class QueryGDBSvc implements IQuerySvc {
 
 	@Override
 	public <T extends ADto> T get(T obj) throws QueryException {
-		List<T> list = gets(obj);
+		List<T> list = gets(obj, 0, 1);
 		if (list == null || list.size() == 0) {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW));
 		}

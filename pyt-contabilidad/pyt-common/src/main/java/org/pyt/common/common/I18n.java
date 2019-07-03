@@ -1,6 +1,7 @@
 package org.pyt.common.common;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +56,12 @@ public final class I18n {
 		try {
 			return getLanguages().getString(key);
 		}catch(Exception exception) {
+			try {
 			logger.logger(String.format(getLanguages().getString(LanguageConstant.LANGUAGE_KEY_NOT_FOUND),key));
+			}catch(MissingResourceException e) {
+				logger.logger(exception);
+				logger.logger(e);
+			}
 			return key;
 		}
 	}

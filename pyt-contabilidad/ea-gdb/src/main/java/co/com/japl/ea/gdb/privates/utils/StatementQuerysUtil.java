@@ -3,7 +3,9 @@ package co.com.japl.ea.gdb.privates.utils;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -113,7 +115,11 @@ public class StatementQuerysUtil {
 		if (value.getClass() == String.class) {
 			return QueryConstants.CONST_QUOTE + value.toString() + QueryConstants.CONST_QUOTE;
 		}
-		if (value.getClass() == Date.class) {
+		if( value.getClass() == LocalDate.class) {
+			var formatter = DateTimeFormatter.ofPattern(QueryConstants.CONST_FORMAT_DATE);
+			return QueryConstants.CONST_QUOTE + ((LocalDate)value).format(formatter) + QueryConstants.CONST_QUOTE ;
+		}
+		if (value.getClass() == Date.class ) {
 			var sdf = new SimpleDateFormat(QueryConstants.CONST_FORMAT_DATE);
 			return QueryConstants.CONST_QUOTE + sdf.format(value) + QueryConstants.CONST_QUOTE;
 		}
@@ -121,6 +127,9 @@ public class StatementQuerysUtil {
 			var dt = new Date(((Timestamp) value).getTime());
 			var sdf = new SimpleDateFormat(QueryConstants.CONST_FORMAT_DATE);
 			return QueryConstants.CONST_QUOTE + sdf.format(dt) + QueryConstants.CONST_QUOTE;
+		}
+		if(value instanceof ADto) {
+			return valueFormat(((ADto) value).getCodigo());
 		}
 		return value.toString();
 	}
