@@ -6,7 +6,7 @@ CREATE TABLE TBL_SERVICE (
 	,dcreate  DATETIME           NOT NULL DEFAULT NOW()
 	,ddelete  DATETIME           NULL
 	,dupdate  DATETIME           NULL
-	,snombre  VARCHAR2(50)       NOT NULL
+	,sname  VARCHAR2(50)       NOT NULL
 	,sdescription VARCHAR2(200)  NULL
 	,nvaluehandwork NUMBER       NOT NULL
 	

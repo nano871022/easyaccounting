@@ -7,7 +7,7 @@ CREATE TABLE TBL_BILL(
 	,ddelete  DATETIME           NULL
 	,dupdate  DATETIME           NULL
 	,dbill    DATETIME           NOT NULL   
-	,dregistre DATETIME          NOT NULL
+	,dregister DATETIME          NOT NULL
 	,dexpiration DATETIME        NULL
 	,sobservation VARCHAR2(200)  NULL
 	,senterprise VARCHAR2(30)    NOT NULL

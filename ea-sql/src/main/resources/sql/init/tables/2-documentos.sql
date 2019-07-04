@@ -9,7 +9,7 @@ CREATE TABLE TBL_DOCUMENTS(
 	,scontrollerclass VARCHAR2(100) NOT NULL
 	,sdoctype VARCHAR2(30)       NOT NULL
 	,nedit    NUMBER             NULL
-	,sfieldlable VARCHAR2(50)    NOT NULL
+	,sfieldlabel VARCHAR2(50)    NOT NULL
 	,sfieldname  VARCHAR2(50)    NOT NULL
 	,nnullable   NUMBER          NULL
 	,sobjectsearchdto VARCHAR2(100) NULL

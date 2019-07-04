@@ -17,7 +17,6 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 public class FacturaDTO extends ADto{
 	private static final long serialVersionUID = -1911681512925350489L;
-	private String codigo;
 	private EmpresaDTO tercero;
 	private Date fechaFactura;
 	private Date fechaRegistro;
@@ -25,12 +24,6 @@ public class FacturaDTO extends ADto{
 	private Date fechaVencimiento;
 	private String observacion;
 	private List<DetalleDTO> detalle;
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 	public EmpresaDTO getTercero() {
 		return tercero;
 	}
