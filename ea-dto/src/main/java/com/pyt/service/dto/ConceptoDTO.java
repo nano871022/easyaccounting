@@ -15,7 +15,6 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 public class ConceptoDTO extends ADto{
 	private static final long serialVersionUID = 8544091132270171494L;
-	private String codigo;
 	private String nombre;
 	private String descripcion;
 	private ParametroDTO estado;
@@ -23,10 +22,6 @@ public class ConceptoDTO extends ADto{
 	private String subconcepto;
 	private CuentaContableDTO cuentaGasto;
 	private CuentaContableDTO cuentaXPagar;
-	
-	public String getCodigo() {
-		return codigo;
-	}
 	
 	public String getSubconcepto() {
 		return subconcepto;
@@ -52,9 +47,6 @@ public class ConceptoDTO extends ADto{
 		this.cuentaXPagar = cuentaXPagar;
 	}
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 	public String getNombre() {
 		return nombre;
 	}
