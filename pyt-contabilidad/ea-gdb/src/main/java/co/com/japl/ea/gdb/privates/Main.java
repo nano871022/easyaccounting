@@ -10,20 +10,24 @@ import com.pyt.service.dto.ParametroDTO;
 
 import co.com.japl.ea.gdb.impls.QueryGDBSvc;
 
-public class Main {
+public final class Main {
 	public IQuerySvc svc;
 	public Main() {
 		svc = new QueryGDBSvc();
 	}
 
-	public static void main(String[] args) {
+	public final static void main(String... args) {
+		System.out.println("start");
 		var main = new Main();
 		try {
-//			main.testParametroDTO();
+			main.testParametroDTO();
 			main.testBancoDTO();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {System.exit(0);}
+		}finally {
+			System.exit(0);
+		}
+		System.out.println("end");
 		
 	}
 	

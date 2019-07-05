@@ -30,6 +30,7 @@ public class StatementQuerysUtil {
 	private final static Integer CONST_MAX_LENGTH = 15;
 	private final static String CONST_PREFIX_TABLE = "MEM_";
 	private final static String CONST_FIELD_ALIAS = "%s as %s";
+	private final static Integer CONST_LETTER_MAX_NAME = 14;
 	private NameSqlProperties namesSql;
 	private Log logger = Log.Log(this.getClass());
 
@@ -187,30 +188,56 @@ public class StatementQuerysUtil {
 	 * @return
 	 */
 	public final <T extends ADto> String genConsecutivo(Class<T> dto, Integer size) {
-		String name = dto.getSimpleName();
-		Integer lenSize = size.toString().length();
-		name = name.replace(CONST_DTO, QueryConstants.CONST_EMPTY);
-		Integer length = name.length();
-		if (length > CONST_MAX_LENGTH) {
-			name = name.substring(0, 7);
-			length = name.length();
-		}
+		String name = getNameByDto(dto);
 		StringBuilder sb = new StringBuilder();
-		LocalDateTime fecha = LocalDateTime.now();
 		sb.append(name);
+		sb.append(getDateOfString());
+		var quantity = getQuantity(size,sb.length());
+		var generateLetter = generateLetterToCompleteCode(sb.length(),quantity.length());
+		sb.append(generateLetter);
+		sb.append(quantity);
+		return sb.toString();
+	}
+	
+	private final String getQuantity(Integer size,Integer quantityCode) {
+		var freeNumbers = CONST_LETTER_MAX_NAME-quantityCode;
+		String cantidad = String.valueOf(size);
+		if(cantidad.length() > freeNumbers) {
+			cantidad = cantidad.substring(0,freeNumbers);
+		}
+		return cantidad;
+	}
+	
+	private final String generateLetterToCompleteCode(Integer length,Integer quantityLength) {
+		var freeNumbers = CONST_LETTER_MAX_NAME - length - quantityLength;
+		StringBuilder sb = new StringBuilder();
+		Random aleatorio = new Random();
+		for (int i = 0; i < freeNumbers; i++) {
+			Double valor = aleatorio.nextDouble() * (CONST_ABC_CHAIN.length() - 1 + 0);
+			sb.append(CONST_ABC_CHAIN.charAt(valor.intValue()));
+		}
+		return sb.toString();
+	}
+	
+	private final <T extends ADto> String getNameByDto(Class<T> dto) {
+		String name = dto.getSimpleName();
+		name = name.replace(CONST_DTO, QueryConstants.CONST_EMPTY);
+		if(name.length() > CONST_LETTER_MAX_NAME) {
+			name = name.substring(0, CONST_LETTER_MAX_NAME);
+		}
+		return name;
+	}
+	
+	private final String getDateOfString() {
+		LocalDateTime fecha = LocalDateTime.now();
+		StringBuilder sb = new StringBuilder();
 		sb.append(fecha.getYear());
 		sb.append(fecha.getMonthValue());
 		sb.append(fecha.getDayOfMonth());
 		sb.append(fecha.getHour());
 		sb.append(fecha.getMinute());
 		sb.append(fecha.getSecond());
-		Random aleatorio = new Random();
-		for (int i = 0; i < CONST_MAX_LENGTH - length - lenSize; i++) {
-			Double valor = aleatorio.nextDouble() * (CONST_ABC_CHAIN.length() - 1 + 0);
-			sb.append(CONST_ABC_CHAIN.charAt(valor.intValue()));
-		}
-		sb.append(size);
-		return sb.toString();
+		return sb.toString().toLowerCase();
 	}
 
 	public <T extends ADto> String getNameTriggerPOJO(Class<T> obj, triggerOption to, triggerAction... tas) {
