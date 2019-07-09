@@ -11,9 +11,9 @@ import org.pyt.common.exceptions.inventario.InventarioException;
 import org.pyt.common.validates.ValidFields;
 import org.pyt.common.validates.ValidateValues;
 
-import com.pyt.service.dto.inventario.MovimientoDto;
+import com.pyt.service.dto.inventario.MovimientoDTO;
 import com.pyt.service.dto.inventario.ParametroInventarioDTO;
-import com.pyt.service.dto.inventario.ProductoDto;
+import com.pyt.service.dto.inventario.ProductoDTO;
 import com.pyt.service.interfaces.inventarios.IInventarioSvc;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 
@@ -30,7 +30,7 @@ import javafx.stage.Stage;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view/repuesto", file = "addmovimiento.fxml", nombreVentana = "Agregar Producto")
-public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
+public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 	@Inject(resource = "com.pyt.service.implement.inventario.InventarioSvc")
 	private IInventarioSvc inventarioSvc;
 	@Inject(resource = "com.pyt.service.implement.inventario.ParametroInventariosSvc")
@@ -54,7 +54,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
 	@FXML
 	public void initialize() {
 		NombreVentana = "Agregar Producto";
-		registro = new MovimientoDto();
+		registro = new MovimientoDTO();
 		valorUnidad.focusedProperty().addListener((obs, old, news) -> {
 			try {
 				BigDecimal valorU = vv.cast(valorUnidad.getText(), BigDecimal.class);
@@ -87,7 +87,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDto> {
 		valorUnidad.setText("");
 	}
 
-	public final void load(String llamar, ProductoDto producto) throws Exception {
+	public final void load(String llamar, ProductoDTO producto) throws Exception {
 		if (producto == null)
 			throw new Exception("El producto suministrado esta vacio.");
 		if (StringUtils.isBlank(producto.getCodigo()))

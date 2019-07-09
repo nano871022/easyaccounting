@@ -11,8 +11,8 @@ import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.inventario.ProductoDto;
-import com.pyt.service.dto.inventario.ResumenProductoDto;
+import com.pyt.service.dto.inventario.ProductoDTO;
+import com.pyt.service.dto.inventario.ResumenProductoDTO;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.Services.Type;
@@ -25,7 +25,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	
 	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso Productos", descripcion = "Servicio generico para ingreso de productos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
-	public ProductoDto insert(ProductoDto producto, UsuarioDTO usuario) throws ProductosException {
+	public ProductoDTO insert(ProductoDTO producto, UsuarioDTO usuario) throws ProductosException {
 		if (producto == null)
 			throw new ProductosException("No se encontro producto suministrado.");
 		if (usuario == null)
@@ -33,7 +33,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 		if (StringUtils.isNotBlank(producto.getCodigo()))
 			throw new ProductosException("El producto ya se encuentra creado.");
 		try {
-			List<ProductoDto> list =  productos(producto);
+			List<ProductoDTO> list =  productos(producto);
 			if(list != null && list.size() > 0) {
 				throw new ProductosException("Se encontro otro producto con los mismos valores suministrados.");
 			}
@@ -44,7 +44,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public ResumenProductoDto insert(ResumenProductoDto resumen, UsuarioDTO usuario) throws ResumenProductoException {
+	public ResumenProductoDTO insert(ResumenProductoDTO resumen, UsuarioDTO usuario) throws ResumenProductoException {
 		if (resumen == null)
 			throw new ResumenProductoException("No se encontro resumen de producto suministrado.");
 		if (usuario == null)
@@ -59,7 +59,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public void update(ProductoDto producto, UsuarioDTO usuario) throws ProductosException {
+	public void update(ProductoDTO producto, UsuarioDTO usuario) throws ProductosException {
 		if (producto == null)
 			throw new ProductosException("No se encontro producto suministrado.");
 		if (usuario == null)
@@ -74,7 +74,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public void update(ResumenProductoDto producto, UsuarioDTO usuario) throws ResumenProductoException {
+	public void update(ResumenProductoDTO producto, UsuarioDTO usuario) throws ResumenProductoException {
 		if (producto == null)
 			throw new ResumenProductoException("No se encontro resumen de producto suministrado.");
 		if (usuario == null)
@@ -89,7 +89,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public ProductoDto producto(ProductoDto producto) throws ProductosException {
+	public ProductoDTO producto(ProductoDTO producto) throws ProductosException {
 		if (producto == null)
 			throw new ProductosException("No se encontro producto suministrado.");
 		try {
@@ -100,7 +100,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public ResumenProductoDto resumenProducto(ResumenProductoDto resumentProducto) throws ResumenProductoException {
+	public ResumenProductoDTO resumenProducto(ResumenProductoDTO resumentProducto) throws ResumenProductoException {
 		if (resumentProducto == null)
 			throw new ResumenProductoException("No se encontro resumen de producto suministrado.");
 		try {
@@ -111,7 +111,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public List<ProductoDto> productos(ProductoDto producto) throws ProductosException {
+	public List<ProductoDTO> productos(ProductoDTO producto) throws ProductosException {
 		if (producto == null)
 			throw new ProductosException("No se encontro producto suministrado.");
 		try {
@@ -122,7 +122,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public List<ResumenProductoDto> resumenProductos(ResumenProductoDto resumen) throws ResumenProductoException {
+	public List<ResumenProductoDTO> resumenProductos(ResumenProductoDTO resumen) throws ResumenProductoException {
 		if (resumen == null)
 			throw new ResumenProductoException("No se encontro resumen de producto suministrado.");
 		try {
@@ -133,7 +133,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public List<ProductoDto> productos(ProductoDto producto, Integer inicio, Integer cantidad)
+	public List<ProductoDTO> productos(ProductoDTO producto, Integer inicio, Integer cantidad)
 			throws ProductosException {
 		if (producto == null)
 			throw new ProductosException("No se encontro producto suministrado.");
@@ -149,7 +149,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public List<ResumenProductoDto> resumenProductos(ResumenProductoDto resumen, Integer inicio, Integer cantidad)
+	public List<ResumenProductoDTO> resumenProductos(ResumenProductoDTO resumen, Integer inicio, Integer cantidad)
 			throws ResumenProductoException {
 		if (resumen == null)
 			throw new ResumenProductoException("No se encontro resumen de producto suministrado.");
@@ -165,7 +165,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public void del(ProductoDto producto, UsuarioDTO usuario) throws ProductosException {
+	public void del(ProductoDTO producto, UsuarioDTO usuario) throws ProductosException {
 		if (producto == null)
 			throw new ProductosException("No se encontro producto suministrado.");
 		if (usuario == null)
@@ -180,7 +180,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public void del(ResumenProductoDto resumen, UsuarioDTO usuario) throws ResumenProductoException {
+	public void del(ResumenProductoDTO resumen, UsuarioDTO usuario) throws ResumenProductoException {
 		if (resumen == null)
 			throw new ResumenProductoException("No se encontro producto suministrado.");
 		if (usuario == null)
@@ -195,10 +195,10 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public ResumenProductoDto resumenProducto(ProductoDto producto) throws ResumenProductoException {
+	public ResumenProductoDTO resumenProducto(ProductoDTO producto) throws ResumenProductoException {
 		if (producto == null)
 			throw new ResumenProductoException("El producto suministrado se encuentra vacio.");
-		ResumenProductoDto dto = new ResumenProductoDto();
+		ResumenProductoDTO dto = new ResumenProductoDTO();
 		dto.setProducto(producto);
 		try {
 			return querySvc.get(dto);
@@ -208,7 +208,7 @@ public class ProductosSvc extends Services implements IProductosSvc {
 	}
 
 	@Override
-	public Integer getTotalRows(ProductoDto dto) throws ProductosException {
+	public Integer getTotalRows(ProductoDTO dto) throws ProductosException {
 		if (dto == null)
 			throw new ProductosException("No se suministro el filtro indicado.");
 		try {

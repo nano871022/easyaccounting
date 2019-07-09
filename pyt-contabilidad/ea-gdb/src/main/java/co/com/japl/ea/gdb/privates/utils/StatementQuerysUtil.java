@@ -28,7 +28,7 @@ public class StatementQuerysUtil {
 	private final static String CONST_DTO = "DTO";
 	private final static String CONST_ABC_CHAIN = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
 	private final static Integer CONST_MAX_LENGTH = 15;
-	private final static String CONST_PREFIX_TABLE = "MEM_";
+	private final static String CONST_PREFIX_TABLE = "TBL_";
 	private final static String CONST_FIELD_ALIAS = "%s as %s";
 	private final static Integer CONST_LETTER_MAX_NAME = 14;
 	private NameSqlProperties namesSql;

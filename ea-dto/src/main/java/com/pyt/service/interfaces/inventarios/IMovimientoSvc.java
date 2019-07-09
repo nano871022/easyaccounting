@@ -5,9 +5,9 @@ import java.util.List;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.inventario.MovimientoException;
 
-import com.pyt.service.dto.inventario.MovimientoDto;
-import com.pyt.service.dto.inventario.RestarCantidadDto;
-import com.pyt.service.dto.inventario.saldoDto;
+import com.pyt.service.dto.inventario.MovimientoDTO;
+import com.pyt.service.dto.inventario.RestarCantidadDTO;
+import com.pyt.service.dto.inventario.SaldoDTO;
 
 /**
  * Se encarga de realizar los movimientos de los productos
@@ -17,124 +17,124 @@ import com.pyt.service.dto.inventario.saldoDto;
 public interface IMovimientoSvc {
 	/**
 	 * Se encarga de ingresar un restar cantidad
-	 * @param movimiento {@link RestarCantidadDto}
+	 * @param movimiento {@link RestarCantidadDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link RestarCantidadDto}
+	 * @return {@link RestarCantidadDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public RestarCantidadDto insert(RestarCantidadDto restar,UsuarioDTO usuario)throws MovimientoException;
+	public RestarCantidadDTO insert(RestarCantidadDTO restar,UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * 
 	 * Se encarga de ingresar un movimiento
-	 * @param movimiento {@link MovimientoDto}
+	 * @param movimiento {@link MovimientoDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link MovimientoDto}
+	 * @return {@link MovimientoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public MovimientoDto insert(MovimientoDto movimiento,UsuarioDTO usuario)throws MovimientoException;
+	public MovimientoDTO insert(MovimientoDTO movimiento,UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga de ingresar un saldo
-	 * @param saldo {@link saldoDto}
+	 * @param saldo {@link SaldoDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link saldoDto}
+	 * @return {@link SaldoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public saldoDto insert(saldoDto saldo,UsuarioDTO usuario)throws MovimientoException;
+	public SaldoDTO insert(SaldoDTO saldo,UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga de actualizar para restar la cantidad
-	 * @param movimiento {@link RestarCantidadDto}
+	 * @param movimiento {@link RestarCantidadDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public void update(RestarCantidadDto restar, UsuarioDTO usuario)throws MovimientoException;
+	public void update(RestarCantidadDTO restar, UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga de actualizar unn movimiento 
-	 * @param movimiento {@link MovimientoDto}
+	 * @param movimiento {@link MovimientoDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public void update(MovimientoDto movimiento, UsuarioDTO usuario)throws MovimientoException;
+	public void update(MovimientoDTO movimiento, UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga de acualizar un saldo
-	 * @param saldo {@link saldoDto}
+	 * @param saldo {@link SaldoDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public void update(saldoDto saldo,UsuarioDTO usuario)throws MovimientoException;
+	public void update(SaldoDTO saldo,UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga de obtener un movimiento a buscar
-	 * @param movimiento {@link MovimientoDto}
-	 * @return {@link MovimientoDto}
+	 * @param movimiento {@link MovimientoDTO}
+	 * @return {@link MovimientoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public MovimientoDto movimiento(MovimientoDto movimiento)throws MovimientoException;
+	public MovimientoDTO movimiento(MovimientoDTO movimiento)throws MovimientoException;
 	/**
 	 * Se encarga de obtener un saldo a buscar
-	 * @param saldo {@link saldoDto}
-	 * @return {@link saldoDto}
+	 * @param saldo {@link SaldoDTO}
+	 * @return {@link SaldoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public saldoDto saldo(saldoDto saldo)throws MovimientoException	;
+	public SaldoDTO saldo(SaldoDTO saldo)throws MovimientoException	;
 	/**
 	 * Se encarga de otener los movimientos
-	 * @param movimiento {@link MovimientoDto}
-	 * @return  {@link List} of {@link MovimientoDto}
+	 * @param movimiento {@link MovimientoDTO}
+	 * @return  {@link List} of {@link MovimientoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public List<MovimientoDto> movimientos(MovimientoDto movimiento)throws MovimientoException;
+	public List<MovimientoDTO> movimientos(MovimientoDTO movimiento)throws MovimientoException;
 	/**
 	 * Se encarga de otener los restar cantidad
-	 * @param movimiento {@link RestarCantidadDto}
-	 * @return  {@link List} of {@link RestarCantidadDto}
+	 * @param movimiento {@link RestarCantidadDTO}
+	 * @return  {@link List} of {@link RestarCantidadDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public List<RestarCantidadDto> restarCantidad(RestarCantidadDto restar)throws MovimientoException;
+	public List<RestarCantidadDTO> restarCantidad(RestarCantidadDTO restar)throws MovimientoException;
 
 	/**
 	 * Se encarga de obtener los saldos
-	 * @param saldo {@link saldoDto}
-	 * @return {@link List} of {@link saldoDto}
+	 * @param saldo {@link SaldoDTO}
+	 * @return {@link List} of {@link SaldoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public List<saldoDto> saldos(saldoDto saldo)throws MovimientoException;
+	public List<SaldoDTO> saldos(SaldoDTO saldo)throws MovimientoException;
 	/**
 	 * Se encarga de obtener los movimientos paginados
-	 * @param movimiento {@link MovimientoDto}
+	 * @param movimiento {@link MovimientoDTO}
 	 * @param inicio {@link Integer}
 	 * @param cantidad {@link Integer}
-	 * @return {@link List} of {@link MovimientoDto}
+	 * @return {@link List} of {@link MovimientoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public List<MovimientoDto> movimientos(MovimientoDto movimiento,Integer inicio,Integer cantidad)throws MovimientoException;
+	public List<MovimientoDTO> movimientos(MovimientoDTO movimiento,Integer inicio,Integer cantidad)throws MovimientoException;
 	/**
 	 * Se encarga de obtener los saldos pagonados
-	 * @param saldo {@link saldoDto}
+	 * @param saldo {@link SaldoDTO}
 	 * @param inicio {@link Integer}
 	 * @param cantidad {@link Integer}
-	 * @return {@link List} of {@link MovimientoDto}
+	 * @return {@link List} of {@link MovimientoDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public List<saldoDto> saldos(saldoDto saldo,Integer inicio,Integer cantidad)throws MovimientoException;
+	public List<SaldoDTO> saldos(SaldoDTO saldo,Integer inicio,Integer cantidad)throws MovimientoException;
 	/**
 	 * Se encarga de eliminar el movimiento
 	 * @param movimiento MovimientoDto
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public void del(MovimientoDto movimiento,UsuarioDTO usuario)throws MovimientoException;
+	public void del(MovimientoDTO movimiento,UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga dde eliminar un saldo
-	 * @param saldo {@link saldoDto}
+	 * @param saldo {@link SaldoDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public void del(saldoDto saldo,UsuarioDTO usuario)throws MovimientoException;
+	public void del(SaldoDTO saldo,UsuarioDTO usuario)throws MovimientoException;
 	/**
 	 * Se encarga dde eliminar un restar cantidad
-	 * @param saldo {@link RestarCantidadDto}
+	 * @param saldo {@link RestarCantidadDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link MovimientoException}
 	 */
-	public void del(RestarCantidadDto saldo,UsuarioDTO usuario)throws MovimientoException;
+	public void del(RestarCantidadDTO saldo,UsuarioDTO usuario)throws MovimientoException;
 
 }

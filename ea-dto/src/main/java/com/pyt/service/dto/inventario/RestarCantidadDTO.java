@@ -7,14 +7,14 @@ import org.pyt.common.abstracts.ADto;
  * @author Alejandro Parra
  * @since 18-12-2018 
  */
-public class RestarCantidadDto extends ADto {
+public class RestarCantidadDTO extends ADto {
 	private static final long serialVersionUID = -4038179761217195064L;
-	private MovimientoDto movimiento;
+	private MovimientoDTO movimiento;
 	private Integer cantidad;
-	public MovimientoDto getMovimiento() {
+	public MovimientoDTO getMovimiento() {
 		return movimiento;
 	}
-	public void setMovimiento(MovimientoDto movimiento) {
+	public void setMovimiento(MovimientoDTO movimiento) {
 		this.movimiento = movimiento;
 	}
 	public Integer getCantidad() {

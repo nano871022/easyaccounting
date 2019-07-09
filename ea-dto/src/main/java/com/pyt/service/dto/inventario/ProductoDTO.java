@@ -3,7 +3,7 @@ package com.pyt.service.dto.inventario;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.proccess.IsNotBlank;
 
-public class ProductoDto extends ADto {
+public class ProductoDTO extends ADto {
 	private static final long serialVersionUID = -5885260384830867325L;
 	@IsNotBlank
 	private String nombre;

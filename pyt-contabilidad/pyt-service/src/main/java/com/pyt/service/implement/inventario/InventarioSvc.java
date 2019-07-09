@@ -14,12 +14,12 @@ import org.pyt.common.exceptions.inventario.MovimientoException;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.inventario.MovimientoDto;
+import com.pyt.service.dto.inventario.MovimientoDTO;
 import com.pyt.service.dto.inventario.ParametroInventarioDTO;
-import com.pyt.service.dto.inventario.ProductoDto;
-import com.pyt.service.dto.inventario.RestarCantidadDto;
-import com.pyt.service.dto.inventario.ResumenProductoDto;
-import com.pyt.service.dto.inventario.saldoDto;
+import com.pyt.service.dto.inventario.ProductoDTO;
+import com.pyt.service.dto.inventario.RestarCantidadDTO;
+import com.pyt.service.dto.inventario.ResumenProductoDTO;
+import com.pyt.service.dto.inventario.SaldoDTO;
 import com.pyt.service.interfaces.inventarios.IInventarioSvc;
 import com.pyt.service.interfaces.inventarios.IMovimientoSvc;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
@@ -38,7 +38,7 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 	private IParametroInventariosSvc parametroSvc;
 	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Agregar unidades", descripcion = "Agregar unidades asociados a los productos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
-	public void agregarInventario(MovimientoDto dto, UsuarioDTO usuario) throws InventarioException {
+	public void agregarInventario(MovimientoDTO dto, UsuarioDTO usuario) throws InventarioException {
 		if (dto == null)
 			throw new InventarioException("No se suministro el movimiento.");
 		if (usuario == null)
@@ -62,9 +62,9 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 				dto.setTipo(tipoMovs.get(0));
 			}
 			dto = movimientoSvc.insert(dto, usuario);
-			ResumenProductoDto resumen = new ResumenProductoDto();
+			ResumenProductoDTO resumen = new ResumenProductoDTO();
 			resumen.setProducto(dto.getProducto());
-			List<ResumenProductoDto> list = productosSvc.resumenProductos(resumen);
+			List<ResumenProductoDTO> list = productosSvc.resumenProductos(resumen);
 			if (list == null || list.size() == 0) {
 				resumen.setCantidad(dto.getCantidad());
 				resumen.setValorCompra(dto.getPrecioCompra());
@@ -73,7 +73,7 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 				movimientoSvc.del(dto, usuario);
 				throw new InventarioException("Se encontraron varios resumenes, contacte con el administrador.");
 			}
-			saldoDto saldoOld = ultimoSaldo(resumen.getProducto());
+			SaldoDTO saldoOld = ultimoSaldo(resumen.getProducto());
 			if(list != null && list.size() > 0) {
 				resumen = list.get(0);
 			}
@@ -86,7 +86,7 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 			resumen.setCantidad(resumen.getCantidad() + dto.getCantidad());
 			productosSvc.update(resumen, usuario);
 			BigDecimal totalMovimiento = dto.getPrecioCompra().multiply(new BigDecimal(dto.getCantidad()));
-			saldoDto saldo = new saldoDto();
+			SaldoDTO saldo = new SaldoDTO();
 			saldo.setMovimiento(dto);
 			saldo.setCantidad(resumen.getCantidad());
 			saldo.setTotal(saldoOld.getTotal().add(totalMovimiento));
@@ -101,7 +101,7 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 	}
 
 	@Override
-	public void retirarInventario(MovimientoDto dto, UsuarioDTO usuario) throws InventarioException {
+	public void retirarInventario(MovimientoDTO dto, UsuarioDTO usuario) throws InventarioException {
 		if (dto == null)
 			throw new InventarioException("No se suministro el movimiento.");
 		if (usuario == null)
@@ -112,9 +112,9 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 			throw new InventarioException("El producto suministrado no se encuentra creado.");
 		try {
 			dto = movimientoSvc.insert(dto, usuario);
-			ResumenProductoDto resumen = new ResumenProductoDto();
+			ResumenProductoDTO resumen = new ResumenProductoDTO();
 			resumen.setProducto(dto.getProducto());
-			List<ResumenProductoDto> list = productosSvc.resumenProductos(resumen);
+			List<ResumenProductoDTO> list = productosSvc.resumenProductos(resumen);
 			if (list == null || list.size() == 0) {
 				movimientoSvc.del(dto, usuario);
 				throw new InventarioException("No se encontro resumen, contacte con el administrador.");
@@ -122,17 +122,17 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 				movimientoSvc.del(dto, usuario);
 				throw new InventarioException("Se encontraron varios resumenes, contacte con el administrador.");
 			}
-			saldoDto saldoOld = ultimoSaldo(resumen.getProducto());
+			SaldoDTO saldoOld = ultimoSaldo(resumen.getProducto());
 			resumen = list.get(0);
 			resumen.setCantidad(resumen.getCantidad() - dto.getCantidad());
 			productosSvc.update(resumen, usuario);
 			BigDecimal totalMovimiento = dto.getPrecioCompra().multiply(new BigDecimal(dto.getCantidad()));
-			saldoDto saldo = new saldoDto();
+			SaldoDTO saldo = new SaldoDTO();
 			saldo.setMovimiento(dto);
 			saldo.setCantidad(resumen.getCantidad());
 			saldo.setTotal(saldoOld.getTotal().subtract(totalMovimiento));
 			saldo = movimientoSvc.insert(saldo, usuario);
-			RestarCantidadDto restar = restarCantidad(dto.getProducto(), usuario);
+			RestarCantidadDTO restar = restarCantidad(dto.getProducto(), usuario);
 			restar.setCantidad(restar.getCantidad()-dto.getCantidad());
 			movimientoSvc.update(restar, usuario);
 		} catch (MovimientoException e) {
@@ -149,18 +149,18 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 		 */
 	}
 
-	private final RestarCantidadDto restarCantidad(ProductoDto producto, UsuarioDTO usuario)
+	private final RestarCantidadDTO restarCantidad(ProductoDTO producto, UsuarioDTO usuario)
 			throws InventarioException {
 		try {
-			MovimientoDto movimiento = new MovimientoDto();
+			MovimientoDTO movimiento = new MovimientoDTO();
 			movimiento.setProducto(producto);
 			Date fecha = null;
-			RestarCantidadDto primero = null;
-			List<MovimientoDto> movimientos = movimientoSvc.movimientos(movimiento);
-			for (MovimientoDto mov : movimientos) {
-				RestarCantidadDto restar = new RestarCantidadDto();
+			RestarCantidadDTO primero = null;
+			List<MovimientoDTO> movimientos = movimientoSvc.movimientos(movimiento);
+			for (MovimientoDTO mov : movimientos) {
+				RestarCantidadDTO restar = new RestarCantidadDTO();
 				restar.setMovimiento(mov);
-				List<RestarCantidadDto> restars = movimientoSvc.restarCantidad(restar);
+				List<RestarCantidadDTO> restars = movimientoSvc.restarCantidad(restar);
 				if (restars == null || restars.size() == 0) {
 					restar.setCantidad(mov.getCantidad());
 					return movimientoSvc.insert(restar, usuario);
@@ -188,21 +188,21 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 	 * Se encarga de obtener el ultimo saldo
 	 * 
 	 * @param producto
-	 *            {@link ProductoDto}
-	 * @return {@link saldoDto}
+	 *            {@link ProductoDTO}
+	 * @return {@link SaldoDTO}
 	 * @throws {@link
 	 *             InventarioException}
 	 */
-	private final saldoDto ultimoSaldo(ProductoDto producto) throws InventarioException {
+	private final SaldoDTO ultimoSaldo(ProductoDTO producto) throws InventarioException {
 		if (producto == null || StringUtils.isBlank(producto.getCodigo()))
 			throw new InventarioException("producto no suministrado.");
 		try {
-			MovimientoDto movimiento = new MovimientoDto();
+			MovimientoDTO movimiento = new MovimientoDTO();
 			movimiento.setProducto(producto);
-			List<MovimientoDto> list = movimientoSvc.movimientos(movimiento);
+			List<MovimientoDTO> list = movimientoSvc.movimientos(movimiento);
 			Date fecha = null;
 			movimiento = null;
-			for (MovimientoDto mov : list) {
+			for (MovimientoDTO mov : list) {
 				if (fecha == null) {
 					fecha = mov.getFechaCreacion();
 					movimiento = mov;
@@ -213,9 +213,9 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 					movimiento = mov;
 				}
 			}
-			saldoDto saldo = new saldoDto();
+			SaldoDTO saldo = new SaldoDTO();
 			saldo.setMovimiento(movimiento);
-			List<saldoDto> saldos = movimientoSvc.saldos(saldo);
+			List<SaldoDTO> saldos = movimientoSvc.saldos(saldo);
 			if (saldos == null || saldos.size() == 0) {
 				saldo.setCantidad(0);
 				saldo.setTotal(new BigDecimal(0));

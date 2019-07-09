@@ -5,9 +5,9 @@ import java.util.List;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.inventario.AlmacenException;
 
-import com.pyt.service.dto.inventario.AlmacenDto;
-import com.pyt.service.dto.inventario.ProductoUbicacionDto;
-import com.pyt.service.dto.inventario.UbicacionDto;
+import com.pyt.service.dto.inventario.AlmacenDTO;
+import com.pyt.service.dto.inventario.ProductoUbicacionDTO;
+import com.pyt.service.dto.inventario.UbicacionDTO;
 
 /**
  * Se encarga de realizar ingreso de regisros de los almacenes, ubicacion y asignacion de producctos a las ubicaciones
@@ -17,141 +17,141 @@ import com.pyt.service.dto.inventario.UbicacionDto;
 public interface IAlmacenSvc {
 	/**
 	 * Se encarga de ingresar un registro en almacen
-	 * @param almacen {@link AlmacenDto}
+	 * @param almacen {@link AlmacenDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link AlmacenDto}
+	 * @return {@link AlmacenDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public AlmacenDto insert(AlmacenDto almacen, UsuarioDTO usuario)throws AlmacenException;
+	public AlmacenDTO insert(AlmacenDTO almacen, UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encaga de ingresar un registro de ubicacion
-	 * @param ubicacion {@link UbicacionDto}
+	 * @param ubicacion {@link UbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link UbicacionDto}
+	 * @return {@link UbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public UbicacionDto insert(UbicacionDto ubicacion,UsuarioDTO usuario)throws AlmacenException;
+	public UbicacionDTO insert(UbicacionDTO ubicacion,UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encarga de ingresar un registro de asignacion de un producto a una ubicacion
-	 * @param asignar {@link ProductoUbicacionDto}
+	 * @param asignar {@link ProductoUbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link ProductoUbicacionDto}
+	 * @return {@link ProductoUbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public ProductoUbicacionDto insert(ProductoUbicacionDto asignar,UsuarioDTO usuario)throws AlmacenException;
+	public ProductoUbicacionDTO insert(ProductoUbicacionDTO asignar,UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encarga de actualizar un registro de almacen
-	 * @param almacen {@link AlmacenDto}
+	 * @param almacen {@link AlmacenDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public void update(AlmacenDto almacen, UsuarioDTO usuario)throws AlmacenException;
+	public void update(AlmacenDTO almacen, UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encarga de actualizar un registro de ubicaciones de un almacen
-	 * @param ubicacion {@link UbicacionDto}
+	 * @param ubicacion {@link UbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public void update(UbicacionDto ubicacion,UsuarioDTO usuario)throws AlmacenException;
+	public void update(UbicacionDTO ubicacion,UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encarga de actualizar un registro de asignacion del producto en la ubicacion
-	 * @param asignar {@link ProductoUbicacionDto}
+	 * @param asignar {@link ProductoUbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public void update(ProductoUbicacionDto asignar,UsuarioDTO usuario)throws AlmacenException;
+	public void update(ProductoUbicacionDTO asignar,UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encarga de obtener el registro buscando del almacen
-	 * @param almacen {@link AlmacenDto}
+	 * @param almacen {@link AlmacenDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link AlmacenDto}
+	 * @return {@link AlmacenDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public AlmacenDto almacen(AlmacenDto almacen)throws AlmacenException;
+	public AlmacenDTO almacen(AlmacenDTO almacen)throws AlmacenException;
 	/**
 	 * Se encarga de obtener el regstro buscando de la ubicaicon
-	 * @param ubicacion {@link UbicacionDto}
+	 * @param ubicacion {@link UbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link UbicacionDto}
+	 * @return {@link UbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public UbicacionDto ubicacion(UbicacionDto ubicacion)throws AlmacenException;
+	public UbicacionDTO ubicacion(UbicacionDTO ubicacion)throws AlmacenException;
 	/**
 	 * Se encarga de obtener el registro buscando de la asginacion del producto en la ubicacion
-	 * @param asignar {@link ProductoUbicacionDto}
+	 * @param asignar {@link ProductoUbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
-	 * @return {@link ProductoUbicacionDto}
+	 * @return {@link ProductoUbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public ProductoUbicacionDto productoUbicacion(ProductoUbicacionDto asignar)throws AlmacenException;
+	public ProductoUbicacionDTO productoUbicacion(ProductoUbicacionDTO asignar)throws AlmacenException;
 	/**
 	 * Se encarga de obtener los registros buscados de los almacenes
-	 * @param almacen {@link AlmacenDto}
-	 * @return {@link List} of {@link AlmacenDto}
+	 * @param almacen {@link AlmacenDTO}
+	 * @return {@link List} of {@link AlmacenDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public List<AlmacenDto> almacenes(AlmacenDto almacen)throws AlmacenException;
+	public List<AlmacenDTO> almacenes(AlmacenDTO almacen)throws AlmacenException;
 	/**
 	 * Se encarga de obtener los registros buscados de la ubicacion
-	 * @param ubicacion {@link UbicacionDto}
-	 * @return {@link List} of {@link UbicacionDto}
+	 * @param ubicacion {@link UbicacionDTO}
+	 * @return {@link List} of {@link UbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public List<UbicacionDto> ubicaciones(UbicacionDto ubicacion)throws AlmacenException;
+	public List<UbicacionDTO> ubicaciones(UbicacionDTO ubicacion)throws AlmacenException;
 	/**
 	 * Se encarga de obtener los registros biscados en la asignacion de productos en las ubicaciones
-	 * @param asignar {@link ProductoUbicacionDto}
-	 * @return {@link List} og {@link ProductoUbicacionDto}
+	 * @param asignar {@link ProductoUbicacionDTO}
+	 * @return {@link List} og {@link ProductoUbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public List<ProductoUbicacionDto> productoUbicaciones(ProductoUbicacionDto asignar)throws AlmacenException;
+	public List<ProductoUbicacionDTO> productoUbicaciones(ProductoUbicacionDTO asignar)throws AlmacenException;
 	/**
 	 * Se encarga de obtener los registros buscados en los almacenes paginados
-	 * @param almacen {@link AlmacenDto}
+	 * @param almacen {@link AlmacenDTO}
 	 * @param inicio {@link Integer}
 	 * @param cantidad {@link Integer}
-	 * @return {@link List} og {@link AlmacenDto}
+	 * @return {@link List} og {@link AlmacenDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public List<AlmacenDto> almaceness(AlmacenDto almacen, Integer inicio,Integer cantidad)throws AlmacenException;
+	public List<AlmacenDTO> almaceness(AlmacenDTO almacen, Integer inicio,Integer cantidad)throws AlmacenException;
 	/**
 	 * Se encarga de obtener los registros buscados de las ubicaicones paginadas
-	 * @param ubicacion {@link UbicacionDto}
+	 * @param ubicacion {@link UbicacionDTO}
 	 * @param inicio {@link Integer}
 	 * @param cantidad {@link Integer}
-	 * @return {@link List} og {@link UbicacionDto}
+	 * @return {@link List} og {@link UbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public List<UbicacionDto> ubicaciones(UbicacionDto ubicacion, Integer inicio,Integer cantidad)throws AlmacenException;
+	public List<UbicacionDTO> ubicaciones(UbicacionDTO ubicacion, Integer inicio,Integer cantidad)throws AlmacenException;
 	/**
 	 * Se encarga de obtener los registros buscados de las asignaciones de productos en las ubicaciones paginadas
-	 * @param asignar {@link ProductoUbicacionDto}
+	 * @param asignar {@link ProductoUbicacionDTO}
 	 * @param inicio {@link Integer}
 	 * @param cantidad {@link Integer}
-	 * @return {@link List} of {@link ProductoUbicacionDto}
+	 * @return {@link List} of {@link ProductoUbicacionDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public List<ProductoUbicacionDto> productoUbicaciones(ProductoUbicacionDto asignar, Integer inicio,Integer cantidad)throws AlmacenException;
+	public List<ProductoUbicacionDTO> productoUbicaciones(ProductoUbicacionDTO asignar, Integer inicio,Integer cantidad)throws AlmacenException;
 	/**
 	 * Se encarga de eliminar un almacen
-	 * @param almacen {@link AlmacenDto}
+	 * @param almacen {@link AlmacenDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public void del(AlmacenDto almacen,UsuarioDTO usuario)throws AlmacenException;
+	public void del(AlmacenDTO almacen,UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encarga de eliminar una ubicacion
-	 * @param almacen {@link UbicacionDto}
+	 * @param almacen {@link UbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public void del(UbicacionDto almacen,UsuarioDTO usuario)throws AlmacenException;
+	public void del(UbicacionDTO almacen,UsuarioDTO usuario)throws AlmacenException;
 	/**
 	 * Se encarga de eliminar un producto de ubicacion
-	 * @param almacen {@link ProductoUbicacionDto}
+	 * @param almacen {@link ProductoUbicacionDTO}
 	 * @param usuario {@link UsuarioDTO}
 	 * @throws {@link AlmacenException}
 	 */
-	public void del(ProductoUbicacionDto almacen,UsuarioDTO usuario)throws AlmacenException;
+	public void del(ProductoUbicacionDTO almacen,UsuarioDTO usuario)throws AlmacenException;
 
 }

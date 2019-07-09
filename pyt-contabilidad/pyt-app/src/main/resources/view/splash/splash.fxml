@@ -3,8 +3,13 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TextField?>
  <?import javafx.scene.control.*?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ea.app.load.ControllerSplash">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ea.app.load.ControllerSplash">
+ <center>
+ <AnchorPane BorderPane.alignment="CENTER">
    <children>
       <ImageView fx:id="fondo" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true">
          <image>
@@ -13,4 +18,14 @@
       </ImageView>
       <Label>Easy Accounting By JAPL </Label>
    </children>
-</AnchorPane>
+   </AnchorPane>
+ </center>
+ <bottom>
+ <AnchorPane BorderPane.alignment="CENTER">
+ <children>
+	 <ProgressBar fx:id="progress" prefHeight="18.0" prefWidth="305.0" progress="0.0" ></ProgressBar>
+	 <TextField fx:id="percentage"></TextField>
+	</children>
+   </AnchorPane> 
+ </bottom>
+</BorderPane>

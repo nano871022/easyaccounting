@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 
 import org.pyt.common.abstracts.ADto;
 
-public class saldoDto extends ADto {
+public class SaldoDTO extends ADto {
 	private static final long serialVersionUID = -4582108584069764218L;
-	private MovimientoDto movimiento;
+	private MovimientoDTO movimiento;
 	private Integer cantidad;
 	private BigDecimal total;
-	public MovimientoDto getMovimiento() {
+	public MovimientoDTO getMovimiento() {
 		return movimiento;
 	}
-	public void setMovimiento(MovimientoDto movimiento) {
+	public void setMovimiento(MovimientoDTO movimiento) {
 		this.movimiento = movimiento;
 	}
 	public Integer getCantidad() {

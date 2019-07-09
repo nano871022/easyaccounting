@@ -7,22 +7,22 @@ import org.pyt.common.annotation.proccess.IsNotBlank;
 import org.pyt.common.annotation.proccess.Valid;
 import org.pyt.common.annotation.proccess.ValueInObject;
 
-public class MovimientoDto extends ADto {
+public class MovimientoDTO extends ADto {
 	private static final long serialVersionUID = -4793142919555790830L;
 	@IsNotBlank
 	@Valid
 	@ValueInObject(field="nombre")
-	private ProductoDto producto;
+	private ProductoDTO producto;
 	@IsNotBlank
 	private BigDecimal precioCompra;
 	@IsNotBlank
 	private Integer cantidad;
 	private BigDecimal valor;
 	private ParametroInventarioDTO tipo;
-	public ProductoDto getProducto() {
+	public ProductoDTO getProducto() {
 		return producto;
 	}
-	public void setProducto(ProductoDto producto) {
+	public void setProducto(ProductoDTO producto) {
 		this.producto = producto;
 	}
 	public BigDecimal getPrecioCompra() {

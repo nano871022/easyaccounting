@@ -6,15 +6,15 @@ import org.pyt.common.abstracts.ADto;
 
 import com.pyt.service.dto.ParametroDTO;
 
-public class ResumenProductoDto extends ADto {
+public class ResumenProductoDTO extends ADto {
 	private static final long serialVersionUID = -4721145467642162080L;
-	private ProductoDto producto;
+	private ProductoDTO producto;
 	private Integer cantidad;
 	private ParametroDTO ivaPercentAplicarVenta;
 	private Long gananciaPercentVenta;
 	private BigDecimal valorVenta;
 	private BigDecimal valorCompra;
-	public ProductoDto getProducto() {
+	public ProductoDTO getProducto() {
 		return producto;
 	}
 	public BigDecimal getValorVenta() {
@@ -33,7 +33,7 @@ public class ResumenProductoDto extends ADto {
 		this.valorCompra = valorCompra;
 	}
 
-	public void setProducto(ProductoDto producto) {
+	public void setProducto(ProductoDTO producto) {
 		this.producto = producto;
 	}
 	public Integer getCantidad() {

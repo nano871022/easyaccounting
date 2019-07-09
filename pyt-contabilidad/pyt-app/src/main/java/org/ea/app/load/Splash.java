@@ -1,17 +1,18 @@
 package org.ea.app.load;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
+import com.pyt.query.interfaces.IVerifyStructuredDB;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Preloader;
 import javafx.application.Preloader.StateChangeNotification.Type;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 /**
  * Esta clase es la primera que se carga antes de iniciar el proceso de carga de la aplicación completa
  * @author Alejandro Parra
@@ -20,12 +21,14 @@ import javafx.scene.Parent;
 public class Splash extends Preloader {
 	private Stage stage;
 	private Parent root;
+	private FXMLLoader fxml;
 	private final static String SPLASH_RESOURCE_FXML = "view/splash/splash.fxml";
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.stage = primaryStage;
-		root = FXMLLoader.load(getClass().getClassLoader().getResource(SPLASH_RESOURCE_FXML));
+		fxml = new FXMLLoader(getClass().getClassLoader().getResource(SPLASH_RESOURCE_FXML));
+		root = fxml.load();
 		var scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.setAlwaysOnTop(true);
@@ -37,11 +40,11 @@ public class Splash extends Preloader {
 	@Override
 	public void handleStateChangeNotification(StateChangeNotification stateChangeNotification) {
 		if (stateChangeNotification.getType() == Type.BEFORE_LOAD) {
-			// TODO analisis y verificacion de que la aplicacion este en buen estado para cargarse
 			try {
-//				Thread.sleep(3000);
 				validStructureDB();
-			} catch (/*InterruptedException |*/ ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -55,10 +58,20 @@ public class Splash extends Preloader {
 		}
 	}
 	
-	public void validStructureDB() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		var analize = Class.forName("com.japl.ea.query.privates.VerifyDB");
+	public void validStructureDB() throws Exception {
+		var analize = Class.forName("co.com.japl.ea.gdb.privates.impls.VerifyDB");
 		var instance = analize.getConstructor().newInstance();
-		Method methodVerify = analize.getDeclaredMethod("verifyDB");
-		methodVerify.invoke(instance);
+		if(instance instanceof IVerifyStructuredDB) {
+			IVerifyStructuredDB verifyDB = (IVerifyStructuredDB) instance;
+			var controller =  fxml.getController();
+			if(controller != null) {
+				((ControllerSplash)controller).setVerifySctructureDB(verifyDB);
+			}
+			verifyDB.verifyDB();
+			if(controller != null) {
+				((ControllerSplash)controller).stop();
+			}
+			
+		}
 	}
 }

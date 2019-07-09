@@ -25,7 +25,7 @@ import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.IngresoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
-import com.pyt.service.dto.inventario.ResumenProductoDto;
+import com.pyt.service.dto.inventario.ResumenProductoDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IIngresosSvc;
@@ -83,7 +83,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private ChoiceBox<String> servicio;
 	@FXML
-	private ChoiceBox<ResumenProductoDto> repuesto;
+	private ChoiceBox<ResumenProductoDTO> repuesto;
 	@FXML
 	private ChoiceBox<TrabajadorDTO> trabajador;
 	@FXML
@@ -105,13 +105,13 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private TableView<ServicioDTO> tablaServicio;
 	@FXML
-	private TableView<ResumenProductoDto> tablaRepuesto;
+	private TableView<ResumenProductoDTO> tablaRepuesto;
 	@FXML
-	private TableColumn<ResumenProductoDto, String> nombre;
+	private TableColumn<ResumenProductoDTO, String> nombre;
 	private ValidateValues valid;
 	private List<EmpresaDTO> listEmpresas;
 	private List<ServicioDTO> listServicio;
-	private List<ResumenProductoDto> listRepuesto;
+	private List<ResumenProductoDTO> listRepuesto;
 	private List<TrabajadorDTO> listTrabajador;
 	private final static String field_name = "nombre";
 	private final static String field_valor_venta = "valorVenta";
@@ -126,21 +126,21 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			listEmpresas = empresaSvc.getAllEmpresas(new EmpresaDTO());
 			listServicio = serviciosSvc.getAllServicios(new ServicioDTO());
-			listRepuesto = repuestosSvc.resumenProductos(new ResumenProductoDto());
+			listRepuesto = repuestosSvc.resumenProductos(new ResumenProductoDTO());
 			listTrabajador = empleadosSvc.getAllTrabajadores(new TrabajadorDTO());
 			SelectList.put(empresa, listEmpresas, field_name);
 			SelectList.put(servicio, listServicio, field_name);
 			SelectList.put(repuesto, listRepuesto);
 			configTrabajador();
 			SelectList.put(trabajador, listTrabajador);
-			repuesto.converterProperty().set(new StringConverter<ResumenProductoDto>() {
+			repuesto.converterProperty().set(new StringConverter<ResumenProductoDTO>() {
 				@Override
-				public String toString(ResumenProductoDto object) {
+				public String toString(ResumenProductoDTO object) {
 					return object.getProducto().getNombre();
 				}
 				@Override
-				public ResumenProductoDto fromString(String string) {
-					for(ResumenProductoDto rp : listRepuesto) {
+				public ResumenProductoDTO fromString(String string) {
+					for(ResumenProductoDTO rp : listRepuesto) {
 						if(rp.getProducto().getNombre().equals(string)) {
 							return rp;
 						}
@@ -287,7 +287,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public final void addRepuesto() {
 		if (registro.getRespuestos() == null) {
-			registro.setRespuestos(new ArrayList<ResumenProductoDto>());
+			registro.setRespuestos(new ArrayList<ResumenProductoDTO>());
 		}
 		registro.getRespuestos().add(SelectList.get(repuesto));
 		Table.put(tablaRepuesto, registro.getRespuestos());

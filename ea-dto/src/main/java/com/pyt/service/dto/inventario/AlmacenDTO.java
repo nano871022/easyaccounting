@@ -2,7 +2,7 @@ package com.pyt.service.dto.inventario;
 
 import org.pyt.common.abstracts.ADto;
 
-public class AlmacenDto extends ADto {
+public class AlmacenDTO extends ADto {
 	private static final long serialVersionUID = -2700569796434943286L;
 	private String nombre;
 	private String descripcion;
