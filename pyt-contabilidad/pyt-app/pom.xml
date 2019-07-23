@@ -118,6 +118,11 @@
 			<artifactId>${project.connect.model}</artifactId>
 			<version>${project.connect.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.japl.ea</groupId>
+			<artifactId>ea-sql</artifactId>
+			<version>1.2.1-BETA</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
