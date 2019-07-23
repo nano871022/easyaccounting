@@ -2,10 +2,12 @@ package com.japl.ea.query.privates.utils;
 
 import java.util.Properties;
 
-import org.pyt.common.constants.EnviromentConstants;
 import org.pyt.common.properties.PropertiesUtils;
 
 import com.japl.ea.query.constants.H2PropertiesConstant;
+
+import co.com.japl.ea.constants.utils.EnviromentProperties;
+
 
 public final class PropertiesH2 {
 	private Properties properties;
@@ -23,10 +25,7 @@ public final class PropertiesH2 {
 	
 	public PropertiesH2 load() throws Exception {
 		var pu = PropertiesUtils.getInstance();
-		var path = System.getenv(EnviromentConstants.PROP_ENV_PATH);
-		if(path == null) {
-			path = H2PropertiesConstant.PROP_PATH;
-		}
+		var path = EnviromentProperties.getPath();
 		pu.setNameProperties(H2PropertiesConstant.PROP_NAME);
 		pu.setPathProperties(path);
 		properties = pu.load().getProperties();

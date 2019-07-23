@@ -5,6 +5,9 @@ import java.util.Properties;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.PropertiesConstants;
 
+import co.com.japl.ea.constants.utils.EnviromentProperties;
+
+
 /**
  * Usado para obtener instancias simples para interfaces cuando no se usa ejb,
  * para liberar la especificacion sobre la anotacion y poderlo modificar mas
@@ -20,7 +23,10 @@ public final class ServiceSimple {
 	protected Log log = Log.Log(ServiceSimple.class);
 
 	private ServiceSimple() throws Exception {
-		properties = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_SIMPLE_SERVICE).load().getProperties();
+		var propertiesUtil = PropertiesUtils.getInstance()
+				.setNameProperties(PropertiesConstants.PROP_SIMPLE_SERVICE)
+				.setPathProperties(EnviromentProperties.getPath());
+		properties = propertiesUtil.load().getProperties();
 	}
 
 	public static ServiceSimple getInstance() throws Exception {

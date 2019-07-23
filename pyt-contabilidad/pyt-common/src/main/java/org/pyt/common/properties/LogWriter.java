@@ -12,8 +12,11 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.WriteFile;
-import org.pyt.common.constants.EnviromentConstants;
 import org.pyt.common.constants.PropertiesConstants;
+
+import co.com.japl.ea.constants.utils.EnviromentProperties;
+
+
 
 /**
  * Se encarga de escribir en el archivo
@@ -37,10 +40,7 @@ public class LogWriter implements Runnable {
 	private LogWriter() {
 		impresiones = new ArrayList<String>();
 		excepciones = new ArrayList<Exception>();
-		var consolePrint = System.getenv(EnviromentConstants.PROP_ENV_CONSOLE_PRINT);
-		if((consolePrint != null)) {
-			this.consolePrint = consolePrint.equalsIgnoreCase("true");
-		}
+		this.consolePrint = EnviromentProperties.getConsolePrint();
 	}
 
 	/**
