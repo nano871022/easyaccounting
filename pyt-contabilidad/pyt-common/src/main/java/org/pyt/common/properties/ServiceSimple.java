@@ -47,7 +47,7 @@ public final class ServiceSimple {
 				return (T) instance;
 			}
 		} catch (Exception e) {
-			log.logger("Error al obtener el servicio.", e);
+			log.logger("Error al obtener el servicio "+service.getSimpleName()+".", e);
 		}
 		return null;
 	}

@@ -29,6 +29,7 @@ public class LogWriter implements Runnable {
 	private String nameLoggerTrace = "./logger/stracTrace.log";
 	private final static String NAME_PATH_PROPERTIES = "path-log";
 	private final static String TRACT_PATH_PROPERTIES = "path-trace";
+	private final static String CONST_PROP_MODES = "modes";
 	
 	private List<String> impresiones;
 	private List<Exception> excepciones;
@@ -36,11 +37,19 @@ public class LogWriter implements Runnable {
 	private static LogWriter logWriter;
 	private Thread hilo;
 	private boolean consolePrint = false;
+	private String modes;
 
 	private LogWriter() {
 		impresiones = new ArrayList<String>();
 		excepciones = new ArrayList<Exception>();
 		this.consolePrint = EnviromentProperties.getConsolePrint();
+	}
+	
+	public String getModesToPrint() {
+		if(modes == null) {
+			modes = "ERROR";
+		}
+		return modes;
 	}
 
 	/**
@@ -85,6 +94,10 @@ public class LogWriter implements Runnable {
 				nameLoggerTrace = trace;
 			} else {
 				System.out.println("Se esta tomando el path por defecto " + nameLoggerTrace);
+			}
+			String mode = properties.getProperty(CONST_PROP_MODES);
+			if(StringUtils.isNotBlank(mode)) {
+				modes = mode;
 			}
 		} catch (Exception e) {
 			System.err.println(e);

@@ -83,7 +83,7 @@ public interface Reflection {
 		return fields;
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	private <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase) throws ReflectionException {
 		if (fields == null || fields.length == 0)
 			return;

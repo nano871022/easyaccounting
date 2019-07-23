@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.pyt.common.common.Log;
+
 /**
  * Se encarga de cargar las propiedasd de un archivo properties y se pasan a la
  * aplicacion
@@ -13,6 +15,7 @@ import java.util.Properties;
  * @since 2018-10-30
  */
 public final class PropertiesUtils {
+	private Log logger = Log.Log(this.getClass());
 	private String pathProperties;
 	private String nameProperties;
 	private String folderSystem;
@@ -49,6 +52,7 @@ public final class PropertiesUtils {
 	 */
 	private final InputStream loadProperties() throws Exception {
 		String namePath = pathProperties + folderSystem + nameProperties;
+		logger.DEBUG(namePath);
 		File file = new File(namePath);
 		if (file.exists()) {
 			return new FileInputStream(file);
@@ -68,6 +72,7 @@ public final class PropertiesUtils {
 	}
 	
 	public final PropertiesUtils setPathProperties(String pathProperties) {
+		logger.DEBUG("setPathProperties:: "+pathProperties);
 		this.pathProperties = pathProperties;
 		return this;
 	}
