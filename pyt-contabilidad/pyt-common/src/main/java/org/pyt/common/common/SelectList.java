@@ -41,16 +41,18 @@ public final class SelectList {
 		choiceBox.getItems().clear();
 		ObservableList<S> observable = choiceBox.getItems();
 		observable.add((S) AppConstants.SELECCIONE);
-		lista.stream().filter(obj -> obj != null).forEach(obj -> {
-			try {
-				S v = obj.get(campoDto);
-				if (v != null) {
-					observable.add(v);
+		if (lista != null) {
+			lista.stream().filter(obj -> obj != null).forEach(obj -> {
+				try {
+					S v = obj.get(campoDto);
+					if (v != null) {
+						observable.add(v);
+					}
+				} catch (ReflectionException e) {
+					logger.logger(e);
 				}
-			} catch (ReflectionException e) {
-				logger.logger(e);
-			}
-		});
+			});
+		}
 		try {
 			choiceBox.getSelectionModel().selectFirst();
 		} catch (Exception e) {
@@ -160,9 +162,11 @@ public final class SelectList {
 	public final static <S extends Object, T extends ADto> T get(ChoiceBox<S> selects, List<T> list,
 			String nombreCampoDto) {
 		try {
-			for (T dto : list) {
-				if (selects.getValue() == dto.get(nombreCampoDto)) {
-					return dto;
+			if (list != null) {
+				for (T dto : list) {
+					if (selects.getValue() == dto.get(nombreCampoDto)) {
+						return dto;
+					}
 				}
 			}
 		} catch (ReflectionException e) {

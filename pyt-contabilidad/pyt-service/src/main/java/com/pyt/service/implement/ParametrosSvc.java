@@ -42,7 +42,7 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 	public List<ParametroDTO> getAllParametros(ParametroDTO dto) throws ParametroException {
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 		if (dto == null)
-			throw new ParametroException("El objeto empresa se encuentra vacio.");
+			throw new ParametroException("El objeto parametro se encuentra vacio.");
 		try {
 			lista = querySvc.gets(dto);
 		} catch (QueryException e) {

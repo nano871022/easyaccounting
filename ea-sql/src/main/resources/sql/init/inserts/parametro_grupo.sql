@@ -1,1 +1,2 @@
 INSERT INTO TBL_PARAMETER_GROUP (scode,dcreate,sgroup,sparameter) VALUES ('parametrogrupo20190607000001','2019-06-07','Moneda','parametro2019060700001');
+INSERT INTO TBL_PARAMETER_GROUP (scode,dcreate,sgroup,sparameter) VALUES ('parametrogrupo20190724000002','2019-07-24','TipoDocumento','parametro2019072400007');

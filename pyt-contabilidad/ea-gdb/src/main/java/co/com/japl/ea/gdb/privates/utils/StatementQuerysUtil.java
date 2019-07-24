@@ -59,15 +59,15 @@ public class StatementQuerysUtil {
 		}
 		return where;
 	}
-	
-	public final <T extends ADto> String fieldTOSetUpdate(T obj)throws ReflectionException{
+
+	public final <T extends ADto> String fieldTOSetUpdate(T obj) throws ReflectionException {
 		List<String> names = obj.getNameFields();
 		List<String> sets = new ArrayList<String>();
-		names.forEach(name->{
+		names.forEach(name -> {
 			try {
 				var value = valueFormat(obj.get(name));
-				sets.add(getName(obj, name)+QueryConstants.CONST_EQUAL+value);
-			}catch(Exception e) {
+				sets.add(getName(obj, name) + QueryConstants.CONST_EQUAL + value);
+			} catch (Exception e) {
 				logger.logger(e);
 			}
 		});
@@ -92,9 +92,9 @@ public class StatementQuerysUtil {
 		}
 		return where;
 	}
-	
-	public final <T extends ADto> String fieldWhereToUpdate(T obj)throws ReflectionException {
-		var where = getName(obj, "codigo")+QueryConstants.CONST_EQUAL+valueFormat(obj.getCodigo());
+
+	public final <T extends ADto> String fieldWhereToUpdate(T obj) throws ReflectionException {
+		var where = getName(obj, "codigo") + QueryConstants.CONST_EQUAL + valueFormat(obj.getCodigo());
 		return where;
 	}
 
@@ -116,11 +116,11 @@ public class StatementQuerysUtil {
 		if (value.getClass() == String.class) {
 			return QueryConstants.CONST_QUOTE + value.toString() + QueryConstants.CONST_QUOTE;
 		}
-		if( value.getClass() == LocalDate.class) {
+		if (value.getClass() == LocalDate.class) {
 			var formatter = DateTimeFormatter.ofPattern(QueryConstants.CONST_FORMAT_DATE);
-			return QueryConstants.CONST_QUOTE + ((LocalDate)value).format(formatter) + QueryConstants.CONST_QUOTE ;
+			return QueryConstants.CONST_QUOTE + ((LocalDate) value).format(formatter) + QueryConstants.CONST_QUOTE;
 		}
-		if (value.getClass() == Date.class ) {
+		if (value.getClass() == Date.class) {
 			var sdf = new SimpleDateFormat(QueryConstants.CONST_FORMAT_DATE);
 			return QueryConstants.CONST_QUOTE + sdf.format(value) + QueryConstants.CONST_QUOTE;
 		}
@@ -129,8 +129,11 @@ public class StatementQuerysUtil {
 			var sdf = new SimpleDateFormat(QueryConstants.CONST_FORMAT_DATE);
 			return QueryConstants.CONST_QUOTE + sdf.format(dt) + QueryConstants.CONST_QUOTE;
 		}
-		if(value instanceof ADto) {
+		if (value instanceof ADto) {
 			return valueFormat(((ADto) value).getCodigo());
+		}
+		if (value instanceof Class) {
+			return QueryConstants.CONST_QUOTE + (((Class) value).getName()) + QueryConstants.CONST_QUOTE;
 		}
 		return value.toString();
 	}
@@ -140,8 +143,8 @@ public class StatementQuerysUtil {
 		List<String> names = obj.getNameFields();
 		names.forEach(name -> {
 			var field = getName(obj, name);
-			if(field != null || field != "null") {
-				outFields.add(String.format(CONST_FIELD_ALIAS,field , name));
+			if (field != null || field != "null") {
+				outFields.add(String.format(CONST_FIELD_ALIAS, field, name));
 			}
 		});
 		var fields = StringUtils.join(outFields, QueryConstants.CONST_COMMA);
@@ -151,7 +154,7 @@ public class StatementQuerysUtil {
 	public final <T extends ADto> String fieldToInsert(T obj) throws ReflectionException {
 		List<String> names = obj.getNameFields();
 		List<String> fieldz = new ArrayList<String>();
-		names.forEach(name->fieldz.add(getName(obj,name)));
+		names.forEach(name -> fieldz.add(getName(obj, name)));
 		var fields = StringUtils.join(fieldz, QueryConstants.CONST_COMMA);
 		return fields;
 	}
@@ -192,23 +195,23 @@ public class StatementQuerysUtil {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 		sb.append(getDateOfString());
-		var quantity = getQuantity(size,sb.length());
-		var generateLetter = generateLetterToCompleteCode(sb.length(),quantity.length());
+		var quantity = getQuantity(size, sb.length());
+		var generateLetter = generateLetterToCompleteCode(sb.length(), quantity.length());
 		sb.append(generateLetter);
 		sb.append(quantity);
 		return sb.toString();
 	}
-	
-	private final String getQuantity(Integer size,Integer quantityCode) {
-		var freeNumbers = CONST_LETTER_MAX_NAME-quantityCode;
+
+	private final String getQuantity(Integer size, Integer quantityCode) {
+		var freeNumbers = CONST_LETTER_MAX_NAME - quantityCode;
 		String cantidad = String.valueOf(size);
-		if(cantidad.length() > freeNumbers) {
-			cantidad = cantidad.substring(0,freeNumbers);
+		if (freeNumbers > 0 && cantidad.length() > freeNumbers) {
+			cantidad = cantidad.substring(0, freeNumbers);
 		}
 		return cantidad;
 	}
-	
-	private final String generateLetterToCompleteCode(Integer length,Integer quantityLength) {
+
+	private final String generateLetterToCompleteCode(Integer length, Integer quantityLength) {
 		var freeNumbers = CONST_LETTER_MAX_NAME - length - quantityLength;
 		StringBuilder sb = new StringBuilder();
 		Random aleatorio = new Random();
@@ -218,16 +221,16 @@ public class StatementQuerysUtil {
 		}
 		return sb.toString();
 	}
-	
+
 	private final <T extends ADto> String getNameByDto(Class<T> dto) {
 		String name = dto.getSimpleName();
 		name = name.replace(CONST_DTO, QueryConstants.CONST_EMPTY);
-		if(name.length() > CONST_LETTER_MAX_NAME) {
+		if (name.length() > CONST_LETTER_MAX_NAME) {
 			name = name.substring(0, CONST_LETTER_MAX_NAME);
 		}
 		return name;
 	}
-	
+
 	private final String getDateOfString() {
 		LocalDateTime fecha = LocalDateTime.now();
 		StringBuilder sb = new StringBuilder();
@@ -263,9 +266,13 @@ public class StatementQuerysUtil {
 		} else {
 			path = dto.getClass().getCanonicalName();
 		}
-		if(name != null) {
+		if (name != null) {
 			path += ConfigServiceConstant.SEP_DOT + name;
 		}
-		return namesSql.getValue(path);
+		var value = namesSql.getValue(path);
+		if (value == null) {
+			value = name;
+		}
+		return (String) value;
 	}
 }

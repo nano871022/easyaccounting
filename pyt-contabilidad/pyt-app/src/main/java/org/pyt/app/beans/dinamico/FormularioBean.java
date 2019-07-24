@@ -27,7 +27,6 @@ import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
@@ -130,14 +129,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		grupo.setGrupo("*");
 		ParametroDTO tipoDoc = new ParametroDTO();
 		try {
-			ParametroGrupoDTO preGrupo = new ParametroGrupoDTO();
-			preGrupo.setGrupo(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
-			List<ParametroGrupoDTO> listPreG = parametroSvc.getParametroGrupo(preGrupo);
-			if (listPreG != null && listPreG.size() == 1) {
-				tipoDoc.setGrupo(listPreG.get(0).getParametro());
-			}
 			listGrupo = parametroSvc.getAllParametros(grupo);
-			listTipoDocumento = parametroSvc.getAllParametros(tipoDoc);
+			listTipoDocumento = parametroSvc.getAllParametros(tipoDoc, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 		} catch (ParametroException e) {
 			error(e);
 		}

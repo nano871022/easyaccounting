@@ -3,7 +3,6 @@ package org.pyt.common.common;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.pyt.common.interfaces.IAssingValueToField;
 import org.pyt.common.interfaces.ICaller;
 
@@ -14,6 +13,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
+
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
 
 /**
  * 
@@ -85,10 +87,11 @@ public final class UtilControlFieldFX {
 	 * @param fontIconIkonli {@link String} icono de ikonli que se agrega al texto 
 	 * @return {@link Button}
 	 */
-	public Button buttonGenericWithEventClicked(ICaller caller, String showName,String fontIconIkonli) {
+	public Button buttonGenericWithEventClicked(ICaller caller, String showName,FontAwesome.Glyph fontIcon) {
 		var button = new Button(showName);
 		button.onMouseClickedProperty().set((event) -> caller.caller());
-		FontIcon fi = new FontIcon(fontIconIkonli);
+		
+		Glyph fi = new Glyph("FontAwesome",fontIcon);
 		button.setGraphic(fi);
 		return button;
 	}

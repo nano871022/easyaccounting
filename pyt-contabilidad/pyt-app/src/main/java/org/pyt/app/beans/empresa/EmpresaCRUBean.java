@@ -11,6 +11,7 @@ import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
@@ -48,9 +49,9 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@FXML
 	private javafx.scene.control.TextField pais;
 	@FXML
-	private javafx.scene.control.TextField representante;
+	private PopupParametrizedControl representante;
 	@FXML
-	private javafx.scene.control.TextField contador;
+	private PopupParametrizedControl contador;
 	@FXML
 	private javafx.scene.control.TextField nContador;
 	@FXML
@@ -66,10 +67,20 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
 		pais.setText(AppConstants.DEFAULT_PAIS_COL);
-		moneda.setPopupOpenAction(()->popupMonedas());
-		moneda.setCleanValue(()->{
+		moneda.setPopupOpenAction(() -> popupMonedas());
+		moneda.setCleanValue(() -> {
 			registro.setMonedaDefecto(null);
 			this.moneda.setText("");
+		});
+		representante.setPopupOpenAction(() -> popupRepresentante());
+		representante.setCleanValue(() -> {
+			registro.setRepresentante(null);
+			this.representante.setText("");
+		});
+		contador.setPopupOpenAction(() -> popupContador());
+		contador.setCleanValue(() -> {
+			registro.setContador(null);
+			this.contador.setText("");
 		});
 	}
 
@@ -88,9 +99,6 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		registro.setCorreoElectronico(email.getText());
 		registro.setTelefono(telefono.getText());
 		registro.setPais(pais.getText());
-		registro.setNombreRepresentante(representante.getText());
-		registro.setNombreContador(contador.getText());
-		registro.setTarjetaProfeccionalContador(nContador.getText());
 	}
 
 	private void loadFxml() {
@@ -105,9 +113,9 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		telefono.setText(registro.getTelefono());
 		pais.setText(registro.getPais());
 		this.moneda.setText(registro.getMonedaDefecto().getDescripcion());
-		representante.setText(registro.getNombreRepresentante());
-		contador.setText(registro.getNombreContador());
-		nContador.setText(registro.getTarjetaProfeccionalContador());
+		representante.setText(registro.getRepresentante().getNombres());
+		contador.setText(registro.getContador().getNombres());
+		nContador.setText(registro.getContador().getNumeroTarjetaProfesional());
 	}
 
 	public void load(EmpresaDTO dto) {
@@ -142,17 +150,45 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	public void popupMonedas() {
 		try {
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
-			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_MONEDA)))
-			.setWidth(350)
-			).load("#{EmpresaCRUBean.moneda}");
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_MONEDA))).setWidth(350))
+									.load("#{EmpresaCRUBean.moneda}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public void setMoneda(ParametroDTO moneda) {
 		registro.setMonedaDefecto(moneda);
 		this.moneda.setText(moneda.getDescripcion());
+	}
+
+	public void popupRepresentante() {
+		try {
+			((PopupGenBean<PersonaDTO>) controllerPopup(new PopupGenBean<PersonaDTO>(PersonaDTO.class)).setWidth(350))
+					.load("#{EmpresaCRUBean.representante}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setRepresentante(PersonaDTO persona) {
+		registro.setRepresentante(persona);
+		this.moneda.setText(persona.getNombres());
+	}
+
+	public void popupContador() {
+		try {
+			((PopupGenBean<PersonaDTO>) controllerPopup(new PopupGenBean<PersonaDTO>(PersonaDTO.class)).setWidth(350))
+					.load("#{EmpresaCRUBean.contador}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setContador(PersonaDTO persona) {
+		registro.setContador(persona);
+		this.contador.setText(persona.getNombres());
 	}
 
 	public void cancel() {

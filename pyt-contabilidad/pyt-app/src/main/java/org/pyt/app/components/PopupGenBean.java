@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.UtilControlFieldFX;
-import org.pyt.common.constants.IconFontConstant;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
@@ -105,10 +105,10 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		});
 		gridFilter.getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
 		gridFilter.add(util.buttonGenericWithEventClicked(() -> table.search(),
-				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH), IconFontConstant.CONST_FONT_SEARCH), 0,
+				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH), FontAwesome.Glyph.SEARCH), 0,
 				indices.rowIndex + 1);
 		gridFilter.add(util.buttonGenericWithEventClicked(() -> cleanFilter(),
-				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN), IconFontConstant.CONST_FONT_REMOVE), 1,
+				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN), FontAwesome.Glyph.REMOVE), 1,
 				indices.rowIndex + 1);
 
 	}

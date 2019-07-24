@@ -139,7 +139,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			public List<ParametroDTO> getList(ParametroDTO filter, Integer page, Integer rows) {
 				List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 				try {
-					lista = parametrosSvc.getParametros(getFilter(), page - 1, rows);
+					lista = parametrosSvc.getParametros(filter, page - 1, rows);
 				} catch (ParametroException e) {
 					logger.logger(e);
 					error(e);
@@ -150,13 +150,17 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			@Override
 			public ParametroDTO getFilter() {
 				ParametroDTO filtro = new ParametroDTO();
-				filtro.setNombre(nombre.getText());
-				filtro.setDescripcion(descripcion.getText());
+				if (StringUtils.isNotBlank(nombre.getText())) {
+					filtro.setNombre(nombre.getText());
+				}
+				if (StringUtils.isNotBlank(descripcion.getText())) {
+					filtro.setDescripcion(descripcion.getText());
+				}
 				if (StringUtils.isNotBlank(estado.getValue())) {
 					filtro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
 				}
-				if (StringUtils.isNotBlank(seleccionFiltro.getCodigo())) {
-					filtro.setGrupo(seleccionFiltro.getCodigo());
+				if (StringUtils.isNotBlank(lazyFiltrar.getSelectedRow().getCodigo())) {
+					filtro.setGrupo(lazyFiltrar.getSelectedRow().getCodigo());
 				}
 				return filtro;
 			}
@@ -209,7 +213,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	@Override
 	public void createBtn() {
-		ParametroDTO dto = new ParametroDTO(); 
+		ParametroDTO dto = new ParametroDTO();
 		dto.setGrupo(seleccionFiltro.getCodigo());
 		getController(ParametrosCRUBean.class).load(dto);
 	}
@@ -225,14 +229,17 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	@Override
 	public void deleteBtn() {
 		try {
-			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}",
+					"¿Desea eliminar los registros seleccionados?");
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;
+			if (!valid)
+				return;
 			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				parametrosSvc.delete(registro, userLogin);

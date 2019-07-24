@@ -2,6 +2,7 @@ package co.com.japl.ea.gdb.impls;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
+import org.pyt.common.common.Log;
 import org.pyt.common.common.RefreshCodeValidation;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.LanguageConstant;
@@ -36,6 +38,8 @@ public class QueryGDBSvc implements IQuerySvc {
 	private StatementFactory sfactory;
 	private String motor;
 	private Map<String, ADto> mapJoin;
+	private Log logger = Log.Log(this.getClass());
+	private static final String CONST_FIELD_NAME_DTO = "codigo";
 
 	public QueryGDBSvc() {
 		db = ConnectionJDBC.getInstance();
@@ -48,16 +52,37 @@ public class QueryGDBSvc implements IQuerySvc {
 	@SuppressWarnings("unchecked")
 	private final <T extends ADto> T getSearchResult(ResultSet rs, T dto, List<String> names)
 			throws ReflectionException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException, QueryException, SQLException {
+			InvocationTargetException, NoSuchMethodException, SecurityException, QueryException, SQLException,
+			ClassNotFoundException {
 		T newInstance = (T) dto.getClass().getConstructor().newInstance();
 		for (String name : names) {
 			try {
 				var clazz = newInstance.typeField(name).asSubclass(ADto.class);
 				var subInstance = clazz.getConstructor().newInstance();
-				((ADto) subInstance).set("codigo", rs.getObject(name));
+				((ADto) subInstance).set(CONST_FIELD_NAME_DTO, rs.getObject(name));
 				newInstance.set(name, subInstance);
 			} catch (ClassCastException e) {
-				newInstance.set(name, rs.getObject(name));
+				try {
+					var value = rs.getObject(name);
+					var clazz = newInstance.typeField(name);
+					if (clazz == Class.class) {
+						var clasz = Class.forName((String) value);
+						newInstance.set(name, clasz);
+					}
+					if ((clazz == Boolean.class || clazz == boolean.class)
+							&& (value instanceof Integer || value instanceof BigDecimal)) {
+						if (value instanceof Integer) {
+							newInstance.set(name, (Integer) value == 1 ? true : false);
+						} else {
+							newInstance.set(name,
+									((BigDecimal) value).compareTo(new BigDecimal(1)) == 0 ? true : false);
+						}
+					} else {
+						newInstance.set(name, value);
+					}
+				} catch (NullPointerException e1) {
+					logger.logger("No se encontro el campo " + name + " dentro de " + dto.getClass().getName(), e1);
+				}
 			}
 		}
 		return newInstance;
@@ -79,7 +104,7 @@ public class QueryGDBSvc implements IQuerySvc {
 			findJoins(list);
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
-				| StatementSqlException e) {
+				| StatementSqlException | ClassNotFoundException e) {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
 		}
 		return list;
@@ -120,7 +145,7 @@ public class QueryGDBSvc implements IQuerySvc {
 	}
 
 	private <T extends ADto> void findJoins(List<T> list) {
-		if(RefreshCodeValidation.getInstance().validate(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN)) {
+		if (RefreshCodeValidation.getInstance().validate(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN)) {
 			mapJoin.clear();
 		}
 		list.forEach(dto -> searchFieldTypeADTO(dto));
@@ -142,7 +167,7 @@ public class QueryGDBSvc implements IQuerySvc {
 			findJoins(list);
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
-				| StatementSqlException e) {
+				| StatementSqlException | ClassNotFoundException e) {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
 		}
 		return list;
@@ -164,9 +189,8 @@ public class QueryGDBSvc implements IQuerySvc {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ADto> T set(T obj, UsuarioDTO user) throws QueryException {
-
+		var newDto = false;
 		try {
-			var newDto = false;
 			var statement = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
 			if (StringUtils.isNotBlank(obj.getCodigo())) {
 				obj.setActualizador(user.getNombre());
@@ -184,7 +208,7 @@ public class QueryGDBSvc implements IQuerySvc {
 				if (StringUtils.isNotBlank(obj.getCodigo())) {
 					return get(obj);
 				}
-				if(StringUtils.isNotBlank(obj.getActualizador())) {
+				if (StringUtils.isNotBlank(obj.getActualizador())) {
 					updateJoinCache(obj);
 				}
 				return obj;
@@ -193,19 +217,22 @@ public class QueryGDBSvc implements IQuerySvc {
 			}
 		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException | StatementSqlException e) {
+			if (newDto) {
+				obj.setCodigo(null);
+			}
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
 		}
 	}
-	
+
 	private void removeJoinCache(String code) {
-		if(mapJoin.containsKey(code)) {
+		if (mapJoin.containsKey(code)) {
 			mapJoin.remove(code);
 		}
 	}
 
 	private <T extends ADto> void updateJoinCache(T cached) {
-		if(mapJoin.containsKey(cached.getCodigo())) {
-			mapJoin.put(cached.getCodigo(),cached);
+		if (mapJoin.containsKey(cached.getCodigo())) {
+			mapJoin.put(cached.getCodigo(), cached);
 		}
 	}
 
