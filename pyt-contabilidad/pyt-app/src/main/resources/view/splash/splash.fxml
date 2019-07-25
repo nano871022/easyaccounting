@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.TextField?>
- <?import javafx.scene.control.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ea.app.load.ControllerSplash">
- <center>
- <AnchorPane BorderPane.alignment="CENTER">
-   <children>
-      <ImageView fx:id="fondo" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true">
-         <image>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="354.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.ea.app.load.ControllerSplash">
+  <bottom>
+    <AnchorPane minHeight="16.0" prefHeight="16.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <children>
+        <HBox layoutX="178.0" layoutY="11.0" prefHeight="16.0" prefWidth="322.0">
+          <children>
+            <ProgressBar fx:id="progress" prefHeight="16.0" prefWidth="336.0" progress="0.0" />
+            <TextField fx:id="percentage" editable="false" prefHeight="16.0" prefWidth="80.0" />
+          </children>
+        </HBox>
+      </children>
+    </AnchorPane>
+  </bottom>
+  <center>
+    <AnchorPane BorderPane.alignment="CENTER">
+      <children>
+        <ImageView fx:id="fondo" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true">
+          <image>
             <Image url="@../../images/ok.png" />
-         </image>
-      </ImageView>
-      <Label>Easy Accounting By JAPL </Label>
-   </children>
-   </AnchorPane>
- </center>
- <bottom>
- <AnchorPane BorderPane.alignment="CENTER">
- <children>
-	 <ProgressBar fx:id="progress" prefHeight="18.0" prefWidth="305.0" progress="0.0" ></ProgressBar>
-	 <TextField fx:id="percentage"></TextField>
-	</children>
-   </AnchorPane> 
- </bottom>
+          </image>
+        </ImageView>
+      </children>
+    </AnchorPane>
+  </center>
+  <top>
+    <Label alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" />
+  </top>
 </BorderPane>

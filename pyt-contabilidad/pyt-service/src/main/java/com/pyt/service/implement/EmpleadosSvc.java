@@ -168,5 +168,15 @@ public class EmpleadosSvc extends Services implements IEmpleadosSvc {
 			throw new EmpleadoException(e.getMensage(), e);
 		}
 	}
+	@Override
+	public Integer getTotalRows(PersonaDTO dto) throws EmpleadoException {
+		if (dto == null)
+			throw new EmpleadoException("EL objeto persona esta vacio");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new EmpleadoException(e.getMensage(), e);
+		}
+	}
 
 }

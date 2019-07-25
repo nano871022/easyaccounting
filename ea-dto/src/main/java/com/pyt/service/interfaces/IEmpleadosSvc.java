@@ -144,4 +144,13 @@ public interface IEmpleadosSvc {
 	 * @throws {@link EmpleadoException}
 	 */
 	public Integer getTotalRows(TrabajadorDTO dto)throws EmpleadoException;
+	/**
+	 * Se encarga de obtener la cantidada de registros encontrados con el filtro aplicado
+	 * @param dto {@link PersonaDTO}
+	 * @return {@link Integer}
+	 * @throws {@link EmpleadoException}
+	 */
+	public Integer getTotalRows(PersonaDTO dto)throws EmpleadoException;
+
+	
 }

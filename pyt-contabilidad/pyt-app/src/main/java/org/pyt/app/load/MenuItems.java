@@ -15,6 +15,7 @@ import org.pyt.app.beans.dinamico.ListaDocumentosBean;
 import org.pyt.app.beans.empresa.EmpresaBean;
 import org.pyt.app.beans.parametroInventario.ParametrosInventariosBean;
 import org.pyt.app.beans.parametros.ParametrosBean;
+import org.pyt.app.beans.persona.PersonaBean;
 import org.pyt.app.beans.repuesto.RepuestoBean;
 import org.pyt.app.beans.servicio.ServicioBean;
 import org.pyt.app.beans.trabajador.TrabajadorBean;
@@ -58,6 +59,7 @@ public class MenuItems {
 	private final static String BTN_SERVICIO = "Servicio";
 	private final static String BTN_CUENTA_CONTABLE = "Cuenta Contable";
 	private final static String BTN_DOCUMENTO_DINAMICO = "Documento Dinamico";
+	private final static String BTN_PERSONA = "Persona";
 	private final static String BTN_FORMULARIO_DOCUMENTO= "Documento";
 	private final static String BTN_PRODUCTOS = "Productos";
 	private final static String BTN_LIST_DOCUMENTO= "Documentos";
@@ -231,6 +233,14 @@ public class MenuItems {
 				logger.logger(e);
 			}
 		}));
+		items.add(addItem(BTN_PERSONA, event -> {
+			try {
+				LoadAppFxml.BeanFxmlScroller(scroll, PersonaBean.class);
+			} catch (LoadAppFxmlException e) {
+				logger.logger(e);
+			}
+		}));
+
 		add(admin);
 	}
 
