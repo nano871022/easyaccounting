@@ -7,27 +7,29 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.common.Table;
-import org.pyt.common.exceptions.EmpleadoException;
-import org.pyt.common.exceptions.EmpresasException;
+import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.IngresoException;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.ServiciosException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
-import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.IngresoDTO;
+import com.pyt.service.dto.IngresoRepuestoDTO;
+import com.pyt.service.dto.IngresoServicioDTO;
+import com.pyt.service.dto.PersonaDTO;
+import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
-import com.pyt.service.dto.inventario.ResumenProductoDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 import com.pyt.service.interfaces.IEmpresasSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IIngresosSvc;
 import com.pyt.service.interfaces.IServiciosSvc;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
@@ -35,14 +37,12 @@ import com.pyt.service.interfaces.inventarios.IProductosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.util.StringConverter;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -56,6 +56,10 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private IServiciosSvc serviciosSvc;
 	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
 	private IProductosSvc repuestosSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<IngresoServicioDTO> ingresoServicioSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<IngresoRepuestoDTO> ingresoRepuestoSvc;
 	@Inject(resource = "com.pyt.service.implement.IngresosSvc")
 	private IIngresosSvc ingresosSvc;
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
@@ -67,25 +71,25 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private TextField placa;
 	@FXML
-	private TextField conductorEntrada;
+	private PopupParametrizedControl conductorEntrada;
 	@FXML
-	private TextField conductorSalida;
+	private PopupParametrizedControl conductorSalida;
 	@FXML
 	private TextField docEntrada;
 	@FXML
 	private TextField docSalida;
 	@FXML
-	private TextField propietario;
+	private PopupParametrizedControl propietario;
 	@FXML
 	private TextField telContacto;
 	@FXML
-	private ChoiceBox<String> empresa;
+	private PopupParametrizedControl empresa;
 	@FXML
-	private ChoiceBox<String> servicio;
+	private PopupParametrizedControl servicio;
 	@FXML
-	private ChoiceBox<ResumenProductoDTO> repuesto;
+	private PopupParametrizedControl repuesto;
 	@FXML
-	private ChoiceBox<TrabajadorDTO> trabajador;
+	private PopupParametrizedControl trabajador;
 	@FXML
 	private TextField tiempoEstimado;
 	@FXML
@@ -103,19 +107,21 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private Label totalRepuesto;
 	@FXML
-	private TableView<ServicioDTO> tablaServicio;
+	private TableView<IngresoServicioDTO> tablaServicio;
 	@FXML
-	private TableView<ResumenProductoDTO> tablaRepuesto;
+	private TableView<IngresoRepuestoDTO> tablaRepuesto;
 	@FXML
-	private TableColumn<ResumenProductoDTO, String> nombre;
+	private TableColumn<IngresoRepuestoDTO, String> nombre;
+	@FXML
+	private TableColumn<IngresoServicioDTO, String> nombreServicio;
 	private ValidateValues valid;
-	private List<EmpresaDTO> listEmpresas;
-	private List<ServicioDTO> listServicio;
-	private List<ResumenProductoDTO> listRepuesto;
-	private List<TrabajadorDTO> listTrabajador;
 	private final static String field_name = "nombre";
 	private final static String field_valor_venta = "valorVenta";
 	private final static String field_valor_mano_obra = "valorManoObra";
+	private List<IngresoServicioDTO> listServicios;
+	private List<IngresoRepuestoDTO> listRepuestos;
+	private IngresoServicioDTO selectedServicio;
+	private IngresoRepuestoDTO selectedRepuesto;
 
 	@FXML
 	public void initialize() {
@@ -123,61 +129,40 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		titulo.setText(NombreVentana);
 		registro = new IngresoDTO();
 		valid = new ValidateValues();
-		try {
-			listEmpresas = empresaSvc.getAllEmpresas(new EmpresaDTO());
-			listServicio = serviciosSvc.getAllServicios(new ServicioDTO());
-			listRepuesto = repuestosSvc.resumenProductos(new ResumenProductoDTO());
-			listTrabajador = empleadosSvc.getAllTrabajadores(new TrabajadorDTO());
-			SelectList.put(empresa, listEmpresas, field_name);
-			SelectList.put(servicio, listServicio, field_name);
-			SelectList.put(repuesto, listRepuesto);
-			configTrabajador();
-			SelectList.put(trabajador, listTrabajador);
-			repuesto.converterProperty().set(new StringConverter<ResumenProductoDTO>() {
-				@Override
-				public String toString(ResumenProductoDTO object) {
-					return object.getProducto().getNombre();
-				}
-				@Override
-				public ResumenProductoDTO fromString(String string) {
-					for(ResumenProductoDTO rp : listRepuesto) {
-						if(rp.getProducto().getNombre().equals(string)) {
-							return rp;
-						}
-					}
-					return null;
-				}
-			});
-			nombre.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getProducto().getNombre()));
-		} catch (EmpresasException | ServiciosException | ResumenProductoException | EmpleadoException e) {
-			error(e);
-		}
+		docEntrada.setDisable(false);
+		docSalida.setDisable(false);
+		conductorEntrada.setPopupOpenAction(() -> popupConductorEntrada());
+		conductorEntrada.setCleanValue(() -> cleanConductorEntrada());
+		conductorSalida.setPopupOpenAction(() -> popupConductorSalida());
+		conductorSalida.setCleanValue(() -> cleanConductorSalida());
+		trabajador.setPopupOpenAction(() -> popupTrabajador());
+		trabajador.setCleanValue(() -> cleanTrabajador());
+		empresa.setPopupOpenAction(() -> popupEmpresa());
+		empresa.setCleanValue(() -> cleanEmpresa());
+		servicio.setPopupOpenAction(() -> popupServicio());
+		servicio.setCleanValue(() -> cleanServicio());
+		repuesto.setPopupOpenAction(() -> popupRepuesto());
+		repuesto.setCleanValue(() -> cleanRepuesto());
+		propietario.setPopupOpenAction(() -> popupPropietario());
+		propietario.setCleanValue(() -> cleanPropietario());
+		nombre.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getRepuesto().getNombre()));
+		nombreServicio.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getServicio().getNombre()));
+		tablaRepuesto.getSelectionModel().selectedItemProperty()
+				.addListener((listener, oldValue, newValue) -> repuestoSelect());
+		tablaServicio.getSelectionModel().selectedItemProperty()
+				.addListener((listener, oldValue, newValue) -> servicioSelect());
 	}
 
-	/**
-	 * Se encarga de configurar el trabajador
-	 */
-	private final void configTrabajador() {
-		trabajador.converterProperty().set(new StringConverter<TrabajadorDTO>() {
+	public final void repuestoSelect() {
+		var selected = Table.getSelectedRows(tablaRepuesto);
+		selectedRepuesto = selected.get(0);
+		repuesto.setText(selectedRepuesto.getRepuesto().getNombre());
+	}
 
-			@Override
-			public String toString(TrabajadorDTO object) {
-				return String.format("%s : %s %s", object.getPersona().getDocumento(), object.getPersona().getNombre(),
-						object.getPersona().getApellido());
-			}
-
-			@Override
-			public TrabajadorDTO fromString(String string) {
-				for (TrabajadorDTO dto : listTrabajador) {
-					if (string.contentEquals(String.format("%s : %s %s", dto.getPersona().getDocumento(),
-							dto.getPersona().getNombre(), dto.getPersona().getApellido()))) {
-						return dto;
-					}
-				}
-				return null;
-			}
-		});
-
+	public final void servicioSelect() {
+		var selected = Table.getSelectedRows(tablaServicio);
+		selectedServicio = selected.get(0);
+		servicio.setText(selectedServicio.getServicio().getNombre());
 	}
 
 	/**
@@ -190,21 +175,12 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			registro.setCodigo(codigo.getText());
 			registro.setPlacaVehiculo(placa.getText());
-			registro.setConductorEntrada(conductorEntrada.getText());
-			registro.setConductorSalida(conductorSalida.getText());
 			registro.setDescripcion(descripcion.getText());
-			registro.setDocumentoConductorEntrada(docEntrada.getText());
-			registro.setDocumentoConductorSalida(docSalida.getText());
 			registro.setFechaEntrada(valid.cast(fechaEntrada.getValue(), Date.class));
 			registro.setFechaSalida(valid.cast(fechaSalida.getValue(), Date.class));
-			registro.setPropietario(propietario.getText());
 			registro.setTelefonoContacto(telContacto.getText());
 			registro.setTiempoEstimado(valid.cast(tiempoEstimado.getText(), Long.class));
 			registro.setTiempoTrabajado(valid.cast(tiempoTrabajo.getText(), Long.class));
-			registro.setTrabajador(SelectList.get(trabajador));
-			registro.setEmpresa(SelectList.get(empresa, listEmpresas, field_name));
-			totalRepuesto.setText(sumar(registro.getRespuestos(), field_valor_venta).toString());
-			totalServicio.setText(sumar(registro.getServicios(), field_valor_mano_obra).toString());
 		} catch (ValidateValueException e) {
 			error(e);
 		}
@@ -216,48 +192,51 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			codigo.setText(registro.getCodigo());
 			placa.setText(registro.getPlacaVehiculo());
-			conductorEntrada.setText(registro.getConductorEntrada());
-			conductorSalida.setText(registro.getConductorSalida());
+			conductorEntrada.setText(registro.getConductorEntrada().getNombres());
+			conductorSalida.setText(registro.getConductorSalida().getNombres());
 			descripcion.setText(registro.getDescripcion());
-			docEntrada.setText(registro.getDocumentoConductorEntrada());
-			docSalida.setText(registro.getDocumentoConductorSalida());
+			docEntrada.setText(registro.getConductorEntrada().getDocumento());
+			docSalida.setText(registro.getConductorSalida().getDocumento());
 			fechaEntrada.setValue(valid.cast(registro.getFechaEntrada(), LocalDate.class));
 			fechaSalida.setValue(valid.cast(registro.getFechaSalida(), LocalDate.class));
-			propietario.setText(registro.getPropietario());
+			propietario.setText(registro.getPropietario().getNombres());
 			telContacto.setText(registro.getTelefonoContacto());
 			tiempoEstimado.setText(valid.cast(registro.getTiempoEstimado(), String.class));
 			tiempoTrabajo.setText(valid.cast(registro.getTiempoTrabajado(), String.class));
-			// SelectList.selectItem(trabajador, registro.getTrabajador());
-			selectTrabajador();
-			SelectList.selectItem(empresa, listEmpresas, field_name, registro.getEmpresa());
-			Table.put(tablaRepuesto, registro.getRespuestos());
-			Table.put(tablaServicio, registro.getServicios());
-			totalRepuesto.setText(sumar(registro.getRespuestos(), field_valor_venta).toString());
-			totalServicio.setText(sumar(registro.getServicios(), field_valor_mano_obra).toString());
+			trabajador.setText(registro.getTrabajador().getPersona().getNombres());
+			empresa.setText(registro.getEmpresa().getNombre());
+
+			Table.put(tablaRepuesto, listRepuestos);
+			Table.put(tablaServicio, listServicios);
+			totalRepuesto.setText(sumar(listRepuestos, field_valor_venta).toString());
+			totalServicio.setText(sumar(listServicios, field_valor_mano_obra).toString());
 		} catch (ValidateValueException e) {
 			error(e);
-		}
-	}
-
-	private void selectTrabajador() {
-		for (TrabajadorDTO obj : trabajador.getItems()) {
-			if (registro.getTrabajador() != null) {
-				if (obj.getPersona().getDocumento()
-						.contentEquals(registro.getTrabajador().getPersona().getDocumento())) {
-					trabajador.setValue(obj);
-				}
-			}
 		}
 	}
 
 	public void load(IngresoDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
+			getListas();
 			loadFxml();
 			titulo.setText("Modificando Ingreso");
 		} else {
 			error("El ingreso es invalido para editar.");
 			cancel();
+		}
+	}
+
+	private final void getListas() {
+		try {
+			var ingresoServicio = new IngresoServicioDTO();
+			ingresoServicio.setIngreso(registro);
+			var ingresoRepuesto = new IngresoRepuestoDTO();
+			ingresoRepuesto.setIngreso(registro);
+			listServicios = ingresoServicioSvc.getAll(ingresoServicio);
+			listRepuestos = ingresoRepuestoSvc.getAll(ingresoRepuesto);
+		} catch (Exception e) {
+			error(e);
 		}
 	}
 
@@ -275,24 +254,169 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		return suma;
 	}
 
-	public final void addServicio() {
-		if (registro.getServicios() == null) {
-			registro.setServicios(new ArrayList<ServicioDTO>());
+	public void popupTrabajador() {
+		try {
+			((PopupGenBean<TrabajadorDTO>) controllerPopup(new PopupGenBean<TrabajadorDTO>(TrabajadorDTO.class))
+					.addDefaultValuesToGenericParametrized("estado", "A")).load("#{IngresoCRUBean.trabajador}");
+		} catch (Exception e) {
+			error(e);
 		}
-		registro.getServicios().add(SelectList.get(servicio, listServicio, field_name));
-		Table.put(tablaServicio, registro.getServicios());
-		totalServicio.setText(sumar(registro.getServicios(), "valorManoObra").toString());
-		servicio.getSelectionModel().selectFirst();
+	}
+
+	public void setTrabajador(TrabajadorDTO trabajador) {
+		registro.setTrabajador(trabajador);
+		this.trabajador.setText(trabajador.getPersona().getNombres());
+	}
+
+	public void cleanTrabajador() {
+		registro.setTrabajador(null);
+		this.trabajador.setText(null);
+	}
+
+	public void popupPropietario() {
+		// TODO
+	}
+
+	public void setPopietario(PersonaDTO persona) {
+		propietario.setText(persona.getNombres());
+		registro.setPropietario(persona);
+	}
+
+	public void cleanPropietario() {
+		propietario.setText(null);
+		registro.setPropietario(null);
+	}
+
+	public void popupEmpresa() {
+		try {
+			controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).load("#{IngresoCRUBean.empresa}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setEmpresa(EmpresaDTO empresa) {
+		this.empresa.setText(empresa.getNombre());
+		registro.setEmpresa(empresa);
+	}
+
+	public void cleanEmpresa() {
+		empresa.setText(null);
+		registro.setEmpresa(null);
+	}
+
+	public void popupRepuesto() {
+		try {
+			controllerPopup(new PopupGenBean<RepuestoDTO>(RepuestoDTO.class)).load("#{IngresoCRUBean.repuesto}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void cleanRepuesto() {
+		repuesto.setText(null);
+
+	}
+
+	public void popupServicio() {
+		try {
+			controllerPopup(new PopupGenBean<ServicioDTO>(ServicioDTO.class)).load("#{IngresoCRUBean.servicio}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void cleanServicio() {
+		servicio.setText(null);
+
+	}
+
+	public final void setServicio(ServicioDTO servicio) {
+		if (listServicios == null) {
+			listServicios = new ArrayList<IngresoServicioDTO>();
+		}
+		if (servicio != null) {
+			var ingresoServicio = new IngresoServicioDTO();
+			ingresoServicio.setIngreso(registro);
+			ingresoServicio.setServicio(servicio);
+			selectedServicio = ingresoServicio;
+		}
+	}
+
+	public void popupConductorEntrada() {
+		try {
+			var bean = new PopupGenBean<PersonaDTO>(PersonaDTO.class);
+			bean.addDefaultValuesToGenericParametrized("estado", "A");
+			controllerPopup(bean).load("#{IngresoCRUBean.conductorEntrada}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void cleanConductorEntrada() {
+		registro.setConductorEntrada(null);
+		conductorEntrada.setText(null);
+
+	}
+
+	public final void setConductorEntrada(PersonaDTO persona) {
+		if (persona != null) {
+			registro.setConductorEntrada(persona);
+			conductorEntrada.setText(persona.getNombres());
+		}
+	}
+
+	public void popupConductorSalida() {
+		try {
+			var bean = new PopupGenBean<PersonaDTO>(PersonaDTO.class);
+			bean.addDefaultValuesToGenericParametrized("estado", "A");
+			controllerPopup(bean).load("#{IngresoCRUBean.conductorSalida}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void cleanConductorSalida() {
+		registro.setConductorSalida(null);
+		conductorSalida.setText(null);
+
+	}
+
+	public final void setConductorSalida(PersonaDTO persona) {
+		if (persona != null) {
+			registro.setConductorSalida(persona);
+			conductorSalida.setText(persona.getNombres());
+		}
+	}
+
+	public final void addServicio() {
+		if (selectedServicio != null) {
+			listServicios.add(selectedServicio);
+			Table.put(tablaServicio, listServicios);
+			totalServicio.setText(sumar(listServicios, "valorManoObra").toString());
+			selectedServicio = null;
+		}
+	}
+
+	public final void setRepuesto(RepuestoDTO repuesto) {
+		if (listRepuestos == null) {
+			listRepuestos = new ArrayList<IngresoRepuestoDTO>();
+		}
+		if (repuesto != null) {
+			var ingresoRepuesto = new IngresoRepuestoDTO();
+			ingresoRepuesto.setIngreso(registro);
+			ingresoRepuesto.setRepuesto(repuesto);
+			selectedRepuesto = ingresoRepuesto;
+		}
 	}
 
 	public final void addRepuesto() {
-		if (registro.getRespuestos() == null) {
-			registro.setRespuestos(new ArrayList<ResumenProductoDTO>());
+		if (selectedRepuesto != null) {
+			listRepuestos.add(selectedRepuesto);
+			Table.put(tablaRepuesto, listRepuestos);
+			totalRepuesto.setText(sumar(listRepuestos, "valorVenta").toString());
+			selectedRepuesto = null;
 		}
-		registro.getRespuestos().add(SelectList.get(repuesto));
-		Table.put(tablaRepuesto, registro.getRespuestos());
-		totalRepuesto.setText(sumar(registro.getRespuestos(), "valorVenta").toString());
-		repuesto.getSelectionModel().selectFirst();
 	}
 
 	public void add() {
@@ -300,10 +424,12 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
 				ingresosSvc.update(registro, userLogin);
+				ingresoServiciosYRepuestos();
 				notificar("Se guardo el ingreso correctamente.");
 				cancel();
 			} else {
 				registro = ingresosSvc.insert(registro, userLogin);
+				ingresoServiciosYRepuestos();
 				codigo.setText(registro.getCodigo());
 				notificar("Se agrego el ingreso correctamente.");
 				cancel();
@@ -311,6 +437,24 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		} catch (IngresoException e) {
 			error(e);
 		}
+	}
+
+	private final void ingresoServiciosYRepuestos() {
+		listServicios.stream().filter(row -> StringUtils.isBlank(row.getCodigo())).forEach(row -> {
+			try {
+				ingresoServicioSvc.insert(row, userLogin);
+			} catch (GenericServiceException e) {
+				logger.logger("Error al ingresar un Servicio a ingresos.", e);
+			}
+		});
+		listRepuestos.stream().filter(row -> StringUtils.isBlank(row.getCodigo())).forEach(row -> {
+			try {
+				ingresoRepuestoSvc.insert(row, userLogin);
+			} catch (GenericServiceException e) {
+				logger.logger("Error al ingresar un Servicio a ingresos.", e);
+			}
+		});
+
 	}
 
 	public void cancel() {

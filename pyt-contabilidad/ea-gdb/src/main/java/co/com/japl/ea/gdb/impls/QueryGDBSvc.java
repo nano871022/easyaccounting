@@ -64,21 +64,22 @@ public class QueryGDBSvc implements IQuerySvc {
 			} catch (ClassCastException e) {
 				try {
 					var value = rs.getObject(name);
-					var clazz = newInstance.typeField(name);
-					if (clazz == Class.class) {
-						var clasz = Class.forName((String) value);
-						newInstance.set(name, clasz);
-					}
-					if ((clazz == Boolean.class || clazz == boolean.class)
-							&& (value instanceof Integer || value instanceof BigDecimal)) {
-						if (value instanceof Integer) {
-							newInstance.set(name, (Integer) value == 1 ? true : false);
+					if (value != null) {
+						var clazz = newInstance.typeField(name);
+						if (clazz == Class.class) {
+							var clasz = Class.forName((String) value);
+							newInstance.set(name, clasz);
+						} else if ((clazz == Boolean.class || clazz == boolean.class)
+								&& (value instanceof Integer || value instanceof BigDecimal)) {
+							if (value instanceof Integer) {
+								newInstance.set(name, (Integer) value == 1 ? true : false);
+							} else {
+								newInstance.set(name,
+										((BigDecimal) value).compareTo(new BigDecimal(1)) == 0 ? true : false);
+							}
 						} else {
-							newInstance.set(name,
-									((BigDecimal) value).compareTo(new BigDecimal(1)) == 0 ? true : false);
+							newInstance.set(name, value);
 						}
-					} else {
-						newInstance.set(name, value);
 					}
 				} catch (NullPointerException e1) {
 					logger.logger("No se encontro el campo " + name + " dentro de " + dto.getClass().getName(), e1);

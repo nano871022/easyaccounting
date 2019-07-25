@@ -35,7 +35,7 @@ import javafx.scene.layout.VBox;
  * @author Alejandro Parra
  * @since 07-07-2018
  */
-@FXMLFile(path = "view/dinamico", file = "formulario.fxml",name="DocumentoDinamico")
+@FXMLFile(path = "view/dinamico", file = "formulario.fxml", name = "DocumentoDinamico")
 public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
@@ -99,10 +99,12 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 		try {
 			this.registro = registro;
 			BigDecimal valores = sumaDetalles();
-			this.registro.setValor(valores);
 			SelectList.selectItem(tipoDocumentos, listTipoDocumento, FIELD_NAME, registro.getTipoDocumento().getValor(),
 					"valor");
-			documentosSvc.update(registro, userLogin);
+			if (valores.compareTo(registro.getValor()) != 0) {
+				this.registro.setValor(valores);
+				documentosSvc.update(registro, userLogin);
+			}
 		} catch (DocumentosException e) {
 			error(e);
 		}
@@ -169,6 +171,6 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	 * Se encarga de cancelar el almacenamiento de los datos
 	 */
 	public final void cancelar() {
-       getController(ListaDocumentosBean.class);
+		getController(ListaDocumentosBean.class);
 	}
 }

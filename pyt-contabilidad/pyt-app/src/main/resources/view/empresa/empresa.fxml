@@ -61,7 +61,7 @@
 				<Label alignment="CENTER" prefHeight="31.0" prefWidth="87.0" text="Telefono" GridPane.rowIndex="3" />
 				<TextField fx:id="telefono" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 				<Label alignment="CENTER" prefHeight="28.0" prefWidth="68.0" text="Pais" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-				<TextField fx:id="pais" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+				<PopupParametrizedControl fx:id="pais" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 				<Label alignment="CENTER" prefHeight="28.0" prefWidth="90.0" text="Moneda" GridPane.rowIndex="4" />
 				<PopupParametrizedControl fx:id="moneda"  GridPane.columnIndex="1" GridPane.rowIndex="4" />
 				

@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
+<?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="717.0"
 	prefWidth="599.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
@@ -41,10 +42,10 @@
 				<TextField fx:id="placa" GridPane.columnIndex="3" />
 				<Label alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="Conductor Entrada"
 					GridPane.rowIndex="1" />
-				<TextField fx:id="conductorEntrada" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+				<PopupParametrizedControl fx:id="conductorEntrada" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 				<Label alignment="CENTER_LEFT" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="76.0"
 					text="Conductor Salida" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-				<TextField fx:id="conductorSalida" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+				<PopupParametrizedControl fx:id="conductorSalida" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 				<Label maxWidth="1.7976931348623157E308" text="Doc. Entrada" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="2" />
 				<Label maxWidth="1.7976931348623157E308" text="Doc. Salida" GridPane.columnIndex="2" GridPane.rowIndex="2" />
 				<TextField fx:id="docEntrada" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -53,28 +54,24 @@
 				<Label maxWidth="1.7976931348623157E308" text="Fecha Salida" GridPane.columnIndex="2" GridPane.rowIndex="3" />
 				<Label maxWidth="1.7976931348623157E308" text="Propietario" GridPane.columnIndex="0" GridPane.rowIndex="4" />
 				<Label maxWidth="1.7976931348623157E308" text="Tel:. Contacto" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-				<TextField fx:id="propietario" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+				<PopupParametrizedControl fx:id="propietario" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 				<TextField fx:id="telContacto" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
 				<Label maxWidth="1.7976931348623157E308" text="Empresa" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-				<ChoiceBox fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+				<PopupParametrizedControl fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 				<Label maxWidth="1.7976931348623157E308" text="Tiempo Estimado" GridPane.columnIndex="0" GridPane.rowIndex="5" />
 				<Label maxWidth="1.7976931348623157E308" text="Tiempo Trabajo" GridPane.columnIndex="2" GridPane.rowIndex="5" />
 				<TextField fx:id="tiempoEstimado" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 				<TextField fx:id="tiempoTrabajo" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
 				<Label maxWidth="1.7976931348623157E308" text="Servicio" GridPane.columnIndex="0" GridPane.rowIndex="7" />
 				<Label maxWidth="1.7976931348623157E308" text="Repuesto" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-				<ChoiceBox fx:id="servicio" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-				<ChoiceBox fx:id="repuesto" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+				<PopupParametrizedControl fx:id="servicio" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+				<PopupParametrizedControl fx:id="repuesto" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="7" />
 				<Button mnemonicParsing="false" onAction="#addServicio" text="Agregar" GridPane.columnIndex="1" GridPane.rowIndex="8" />
 				<Button mnemonicParsing="false" onAction="#addRepuesto" text="Agregar" GridPane.columnIndex="3" GridPane.rowIndex="8" />
 				<TableView fx:id="tablaServicio" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="2"
 					GridPane.rowIndex="9">
 					<columns>
-						<TableColumn id="nombre" maxWidth="5000.0" minWidth="10.0" prefWidth="191.0" text="Nombre">
-							<cellValueFactory>
-								<PropertyValueFactory property="nombre" />
-							</cellValueFactory>
-						</TableColumn>
+						<TableColumn fx:id="nombreServicio" id="nombre" maxWidth="5000.0" minWidth="10.0" prefWidth="191.0" text="Nombre"/>
 						<TableColumn id="valorManoObra" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Valor">
 							<cellValueFactory>
 								<PropertyValueFactory property="valorManoObra" />
@@ -94,7 +91,7 @@
 					</columns>
 				</TableView>
 				<Label maxWidth="1.7976931348623157E308" text="Trabajador" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-				<ChoiceBox fx:id="trabajador" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+				<PopupParametrizedControl fx:id="trabajador" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="6" />
 				<Label maxWidth="1.7976931348623157E308" text="Descripcion" GridPane.columnIndex="0" GridPane.rowIndex="11" />
 				<TextArea fx:id="descripcion" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="11"
 					GridPane.rowSpan="2" />

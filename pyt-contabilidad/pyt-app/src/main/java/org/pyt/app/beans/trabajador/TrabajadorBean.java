@@ -59,27 +59,27 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	public void initialize() {
 		NombreVentana = "Lista Empleados";
 		registro = new TrabajadorDTO();
-		fechaNacimiento.setCellValueFactory(e->{
+		fechaNacimiento.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getPersona().getFechaNacimiento().toString());
 			return sp;
 		});
-		nombre.setCellValueFactory(e->{
+		nombre.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getPersona().getNombre());
 			return sp;
 		});
-		apellido.setCellValueFactory(e->{
+		apellido.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getPersona().getApellido());
 			return sp;
 		});
-		cedula.setCellValueFactory(e->{
+		cedula.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getPersona().getDocumento());
 			return sp;
 		});
-		email.setCellValueFactory(e->{
+		email.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getCorreo());
 			return sp;
@@ -96,7 +96,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			public List<TrabajadorDTO> getList(TrabajadorDTO filter, Integer page, Integer rows) {
 				List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
 				try {
-					lista = empleadosSvc.getTrabajadores(getFilter(), page-1, rows);
+					lista = empleadosSvc.getTrabajadores(getFilter(), page - 1, rows);
 				} catch (EmpleadoException e) {
 					error(e);
 				}
@@ -118,9 +118,15 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			public TrabajadorDTO getFilter() {
 				TrabajadorDTO filtro = new TrabajadorDTO();
 				filtro.setPersona(new PersonaDTO());
-				filtro.getPersona().setDocumento(documento.getText());
-				filtro.getPersona().setNombre(nombres.getText());
-				filtro.getPersona().setApellido(apellidos.getText());
+				if (!documento.getText().isEmpty()) {
+					filtro.getPersona().setDocumento(documento.getText());
+				}
+				if (!nombres.getText().isEmpty()) {
+					filtro.getPersona().setNombre(nombres.getText());
+				}
+				if (!apellidos.getText().isEmpty()) {
+					filtro.getPersona().setApellido(apellidos.getText());
+				}
 				return filtro;
 			}
 		};
@@ -140,14 +146,17 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 
 	public void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{TrabajadorBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			controllerPopup(ConfirmPopupBean.class).load("#{TrabajadorBean.delete}",
+					"¿Desea eliminar los registros seleccionados?");
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;	
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				empleadosSvc.delete(registro, userLogin);

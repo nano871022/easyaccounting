@@ -22,7 +22,7 @@ public class EmpresaDTO extends ADto {
 	private String direccion;
 	private String correoElectronico;
 	private String telefono;
-	private String pais;
+	private PaisDTO pais;
 	private ParametroDTO monedaDefecto;
 	private PersonaDTO representante;
 	private PersonaDTO contador;
@@ -31,7 +31,7 @@ public class EmpresaDTO extends ADto {
 	}
 
 	public EmpresaDTO(String codigo, String nombre, String nit, String digitoVerificacion, String direccion,
-			String correoElectronico, String telefono, String pais, ParametroDTO monedaDefecto,
+			String correoElectronico, String telefono, PaisDTO pais, ParametroDTO monedaDefecto,
 			String nombreRepresentante, String nombreContador, String tarjetaProfeccionalContador) {
 		super();
 		this.nombre = nombre;
@@ -92,11 +92,11 @@ public class EmpresaDTO extends ADto {
 		this.telefono = telefono;
 	}
 
-	public String getPais() {
+	public PaisDTO getPais() {
 		return pais;
 	}
 
-	public void setPais(String pais) {
+	public void setPais(PaisDTO pais) {
 		this.pais = pais;
 	}
 

@@ -60,7 +60,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 			public List<EmpresaDTO> getList(EmpresaDTO filter, Integer page, Integer rows) {
 				List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
 				try {
-					lista = empresaSvc.getEmpresas(filter, page-1, rows);
+					lista = empresaSvc.getEmpresas(filter, page - 1, rows);
 				} catch (EmpresasException e) {
 					error(e);
 				}
@@ -81,9 +81,15 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 			@Override
 			public EmpresaDTO getFilter() {
 				EmpresaDTO filtro = new EmpresaDTO();
-				filtro.setCodigo(codigo.getText());
-				filtro.setNombre(codigo.getText());
-				filtro.setCorreoElectronico(email.getText());
+				if (!codigo.getText().isEmpty()) {
+					filtro.setCodigo(codigo.getText());
+				}
+				if (!nombre.getText().isEmpty()) {
+					filtro.setNombre(nombre.getText());
+				}
+				if (!email.getText().isEmpty()) {
+					filtro.setCorreoElectronico(email.getText());
+				}
 				return filtro;
 			}
 		};
@@ -104,14 +110,17 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 
 	public void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{EmpresaBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			controllerPopup(ConfirmPopupBean.class).load("#{EmpresaBean.delete}",
+					"¿Desea eliminar los registros seleccionados?");
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				empresaSvc.delete(registro, userLogin);

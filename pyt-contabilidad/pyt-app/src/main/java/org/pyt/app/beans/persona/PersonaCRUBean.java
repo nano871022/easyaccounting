@@ -63,6 +63,7 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 	private PopupParametrizedControl profesion;
 	private List<ParametroDTO> lTipoDocumentos;
 	public final static String FIELD_NAME = "nombre";
+	public final static String FIELD_CODE = "codigo";
 	public final static String FIELD_VALOR = "valor";
 
 	@FXML
@@ -121,7 +122,7 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 		if (registro != null && registro.getFechaNacimiento() != null)
 			fechaNacimiento
 					.setValue(LocalDate.ofInstant(registro.getFechaNacimiento().toInstant(), ZoneId.systemDefault()));
-		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getTipoDocumento(), FIELD_VALOR);
+		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getTipoDocumento(), FIELD_CODE);
 	}
 
 	public void load(PersonaDTO dto) {

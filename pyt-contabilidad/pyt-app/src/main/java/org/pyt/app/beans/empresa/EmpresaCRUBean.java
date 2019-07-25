@@ -5,11 +5,11 @@ import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ABean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
+import com.pyt.service.dto.PaisDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
@@ -47,7 +47,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@FXML
 	private javafx.scene.control.TextField telefono;
 	@FXML
-	private javafx.scene.control.TextField pais;
+	private PopupParametrizedControl pais;
 	@FXML
 	private PopupParametrizedControl representante;
 	@FXML
@@ -66,7 +66,11 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		NombreVentana = "Agregando Nueva Empresa";
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
-		pais.setText(AppConstants.DEFAULT_PAIS_COL);
+		pais.setPopupOpenAction(() -> popupPais());
+		pais.setCleanValue(() -> {
+			pais.setText(null);
+			registro.setPais(null);
+		});
 		moneda.setPopupOpenAction(() -> popupMonedas());
 		moneda.setCleanValue(() -> {
 			registro.setMonedaDefecto(null);
@@ -82,6 +86,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 			registro.setContador(null);
 			this.contador.setText("");
 		});
+		nContador.setDisable(true);
 	}
 
 	/**
@@ -98,7 +103,20 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		registro.setDireccion(direccion.getText());
 		registro.setCorreoElectronico(email.getText());
 		registro.setTelefono(telefono.getText());
-		registro.setPais(pais.getText());
+	}
+
+	public void popupPais() {
+		try {
+			((PopupGenBean<PaisDTO>) controllerPopup(new PopupGenBean<PaisDTO>(PaisDTO.class)).setWidth(350))
+					.load("#{EmpresaCRUBean.pais}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setPais(PaisDTO pais) {
+		registro.setPais(pais);
+		this.pais.setText(pais.getNombre());
 	}
 
 	private void loadFxml() {
@@ -111,11 +129,11 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		direccion.setText(registro.getDireccion());
 		email.setText(registro.getCorreoElectronico());
 		telefono.setText(registro.getTelefono());
-		pais.setText(registro.getPais());
 		this.moneda.setText(registro.getMonedaDefecto().getDescripcion());
 		representante.setText(registro.getRepresentante().getNombres());
 		contador.setText(registro.getContador().getNombres());
 		nContador.setText(registro.getContador().getNumeroTarjetaProfesional());
+		pais.setText(registro.getPais().getNombre());
 	}
 
 	public void load(EmpresaDTO dto) {
@@ -174,7 +192,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void setRepresentante(PersonaDTO persona) {
 		registro.setRepresentante(persona);
-		this.moneda.setText(persona.getNombres());
+		this.representante.setText(persona.getNombres());
 	}
 
 	public void popupContador() {
