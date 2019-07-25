@@ -15,11 +15,8 @@ import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.ParametroException;
 
-import com.pyt.service.dto.CentroCostoDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.PersonaDTO;
-import com.pyt.service.dto.PersonaDTO;
-import com.pyt.service.interfaces.ICentroCostosSvc;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
@@ -53,6 +50,8 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 	@FXML
 	private javafx.scene.control.TextField telefono;
 	@FXML
+	private javafx.scene.control.TextField numeroTarjetaProfesional;
+	@FXML
 	private javafx.scene.control.ChoiceBox<String> tipoDocumentos;
 	@FXML
 	private javafx.scene.control.DatePicker fechaNacimiento;
@@ -60,8 +59,9 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
+	@FXML
+	private PopupParametrizedControl profesion;
 	private List<ParametroDTO> lTipoDocumentos;
-	private List<ParametroDTO> lEstados;
 	public final static String FIELD_NAME = "nombre";
 	public final static String FIELD_VALOR = "valor";
 
@@ -73,10 +73,18 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 		try {
 			fechaNacimiento.setOnAction(event -> registro.setFechaNacimiento(
 					Date.from(fechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())));
-			lEstados = parametroSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_ESTADO_EMPLEADO);
 			lTipoDocumentos = parametroSvc.getAllParametros(new ParametroDTO(),
 					ParametroConstants.GRUPO_TIPOS_DOCUMENTO_PERSONA);
 			SelectList.put(tipoDocumentos, lTipoDocumentos, FIELD_NAME);
+			profesion.setPopupOpenAction(() -> popupProfesion());
+			profesion.setCleanValue(() -> {
+				registro.setProfesion(null);
+				profesion.setText(null);
+				numeroTarjetaProfesional.setText(null);
+				registro.setNumeroTarjetaProfesional(null);
+				numeroTarjetaProfesional.setDisable(true);
+			});
+			numeroTarjetaProfesional.setDisable(true);
 		} catch (ParametroException e) {
 			error(e);
 		}
@@ -98,10 +106,9 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 		if (fechaNacimiento.getValue() != null)
 			registro.setFechaNacimiento(
 					Date.from(fechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME).getValor());
+		registro.setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME).getCodigo());
 	}
-	
-	
+
 	private void loadFxml() {
 		if (registro == null)
 			return;
@@ -111,11 +118,10 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 		direccion.setText(registro.getDireccion());
 		email.setText(registro.getEmail());
 		telefono.setText(registro.getTelefono());
-		if (registro != null &&  registro.getFechaNacimiento() != null)
-			fechaNacimiento.setValue(LocalDate.ofInstant(registro.getFechaNacimiento().toInstant(),
-					ZoneId.systemDefault()));
-		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getTipoDocumento(),
-				FIELD_VALOR);
+		if (registro != null && registro.getFechaNacimiento() != null)
+			fechaNacimiento
+					.setValue(LocalDate.ofInstant(registro.getFechaNacimiento().toInstant(), ZoneId.systemDefault()));
+		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getTipoDocumento(), FIELD_VALOR);
 	}
 
 	public void load(PersonaDTO dto) {
@@ -127,6 +133,24 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 			error("El persona es invalido para editar.");
 			cancel();
 		}
+	}
+
+	public void popupProfesion() {
+		try {
+			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.addDefaultValuesToGenericParametrized("estado", "A")
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_PROFESIONES)))
+									.load("#{PersonaCRUBean.profesion}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setProfesion(ParametroDTO profesion) {
+		registro.setProfesion(profesion);
+		this.profesion.setText(profesion.getNombre());
+		numeroTarjetaProfesional.setDisable(false);
 	}
 
 	public void add() {

@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -28,13 +29,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo Integer
 	 * 
-	 * @param value1
-	 *            {@link Integer}
-	 * @param value2
-	 *            {@link Integer}
+	 * @param value1 {@link Integer}
+	 * @param value2 {@link Integer}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(Integer value1, Integer value2) throws Exception {
 		return value1.compareTo(value2) == 0;
@@ -43,13 +41,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo BigDecimal
 	 * 
-	 * @param value1
-	 *            {@link BigDecimal}
-	 * @param value2
-	 *            {@link BigDecimal}
+	 * @param value1 {@link BigDecimal}
+	 * @param value2 {@link BigDecimal}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(BigDecimal value1, BigDecimal value2) throws Exception {
 		return value1.compareTo(value2) == 0;
@@ -58,13 +53,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo BigInteger
 	 * 
-	 * @param value1
-	 *            {@link BigInteger}
-	 * @param value2
-	 *            {@link BigInteger}
+	 * @param value1 {@link BigInteger}
+	 * @param value2 {@link BigInteger}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(BigInteger value1, BigInteger value2) throws Exception {
 		return value1.compareTo(value2) == 0;
@@ -73,13 +65,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo Number
 	 * 
-	 * @param value1
-	 *            {@link Number}
-	 * @param value2
-	 *            {@link Number}
+	 * @param value1 {@link Number}
+	 * @param value2 {@link Number}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(Number value1, Number value2) throws Exception {
 		return value1.byteValue() == (value2).byteValue();
@@ -88,13 +77,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo Long
 	 * 
-	 * @param value1
-	 *            {@link Long}
-	 * @param value2
-	 *            {@link Long}
+	 * @param value1 {@link Long}
+	 * @param value2 {@link Long}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(Long value1, Long value2) throws Exception {
 		return value1.compareTo(value2) == 0;
@@ -103,13 +89,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo Double
 	 * 
-	 * @param value1
-	 *            {@link Double}
-	 * @param value2
-	 *            {@link Double}
+	 * @param value1 {@link Double}
+	 * @param value2 {@link Double}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(Double value1, Double value2) throws Exception {
 		return value1.compareTo(value2) == 0;
@@ -118,13 +101,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo Short
 	 * 
-	 * @param value1
-	 *            {@link Short}
-	 * @param value2
-	 *            {@link Short}
+	 * @param value1 {@link Short}
+	 * @param value2 {@link Short}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(Short value1, Short value2) throws Exception {
 		return value1.compareTo(value2) == 0;
@@ -133,13 +113,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo String
 	 * 
-	 * @param value1
-	 *            {@link String}
-	 * @param value2
-	 *            {@link String}
+	 * @param value1 {@link String}
+	 * @param value2 {@link String}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final Boolean validate(String value1, String value2) throws Exception {
 		if (StringUtils.isNotBlank(value2)) {
@@ -169,13 +146,10 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de validar dos valores que son de tipo Object
 	 * 
-	 * @param value1
-	 *            {@link Object}
-	 * @param value2
-	 *            {@link Object}
+	 * @param value1 {@link Object}
+	 * @param value2 {@link Object}
 	 * @return {@link Boolean}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final Boolean validate(Object value1, Object value2) throws ValidateValueException {
@@ -226,10 +200,8 @@ public final class ValidateValues {
 	/**
 	 * Se encarga de realizar cast de un valor a otro valor
 	 * 
-	 * @param value
-	 *            {@link Object} extended
-	 * @param clase
-	 *            {@link Class} extended
+	 * @param value {@link Object} extended
+	 * @param clase {@link Class} extended
 	 * @return {@link Object} extended
 	 * @throws ValidateValueException
 	 */
@@ -243,6 +215,9 @@ public final class ValidateValues {
 			if (clase == Date.class) {
 				if (value.getClass() == LocalDate.class) {
 					return (T) Date.from(((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toInstant());
+				}
+				if (value.getClass() == Timestamp.class) {
+					return (T) Date.from(((Timestamp) value).toInstant());
 				}
 			}
 			if (clase == LocalDate.class) {
@@ -326,10 +301,8 @@ public final class ValidateValues {
 	 * Se encarga de verificar si el valor no esta vacio y es del tipo de la clase
 	 * indicado
 	 * 
-	 * @param value
-	 *            {@link Object}
-	 * @param clase
-	 *            {@link Class}
+	 * @param value {@link Object}
+	 * @param clase {@link Class}
 	 * @return {@link Boolean}
 	 */
 	@SuppressWarnings("unchecked")

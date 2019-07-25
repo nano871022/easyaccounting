@@ -2,7 +2,6 @@ package org.pyt.common.common;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.pyt.common.properties.LogWriter;
@@ -77,6 +76,22 @@ public final class Log {
 		} else {
 			msnBuild(error.getMessage(), ERROR);
 		}
+		printDEBUGCause(error);
+	}
+
+	private final <T extends Throwable> void printDEBUGCause(T error) {
+		if (error.getCause() != null) {
+			if (error.getMessage() != error.getCause().getMessage()) {
+				msnBuild(error.getCause().getMessage(), DEBUG);
+				if (error.getCause().getStackTrace() != null && error.getCause().getStackTrace().length > 0) {
+					Arrays.asList(error.getCause().getStackTrace()).forEach(action -> msnBuild(
+							action.getFileName() + "." + action.getMethodName() + ":LN_" + action.getLineNumber(),
+							DEBUG));
+				}
+			} else {
+				printDEBUGCause(error.getCause());
+			}
+		}
 	}
 
 	/**
@@ -117,7 +132,8 @@ public final class Log {
 	 */
 	public final <T extends Exception> void logger(String mensaje, T error) {
 		msnBuild(mensaje, ERROR);
-		Arrays.asList(error.getStackTrace()).forEach(action->msnBuild(action.getFileName()+"."+action.getMethodName()+":LN_"+action.getLineNumber(),DEBUG));
+		Arrays.asList(error.getStackTrace()).forEach(action -> msnBuild(
+				action.getFileName() + "." + action.getMethodName() + ":LN_" + action.getLineNumber(), DEBUG));
 	}
 
 }

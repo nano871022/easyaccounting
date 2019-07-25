@@ -7,6 +7,7 @@ public class ParametroConstants {
 	public final static String GRUPO_IVA = "Iva";
 	public final static String GRUPO_MONEDA = "Moneda";
 	public final static String GRUPO_TIPO_PAGO = "TipoPago";
+	public final static String GRUPO_PROFESIONES = "Profesiones";
 	public final static String GRUPO_TIPO_DOCUMENTO = "TipoDocumento";
 	public final static String GRUPO_TIPOS_DOCUMENTO_PERSONA = "TiposDocumentoPersona";
 	public final static String GRUPO_ESTADO_EMPLEADO = "EstadoEmpleado";
@@ -59,5 +60,6 @@ public class ParametroConstants {
 		MAPA_GRUPOS.put(GRUPO_NATURALEZA, GRUPO_NATURALEZA);
 		MAPA_GRUPOS.put(GRUPO_TIPO_PLAN_CONTABLE, GRUPO_TIPO_PLAN_CONTABLE);
 		MAPA_GRUPOS.put(GRUPO_IVA, GRUPO_IVA);
+		MAPA_GRUPOS.put(GRUPO_PROFESIONES, GRUPO_PROFESIONES);
 	}
 }
