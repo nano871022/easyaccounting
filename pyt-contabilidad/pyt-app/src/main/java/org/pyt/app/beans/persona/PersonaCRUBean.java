@@ -107,7 +107,7 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 		if (fechaNacimiento.getValue() != null)
 			registro.setFechaNacimiento(
 					Date.from(fechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME).getCodigo());
+		registro.setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME));
 	}
 
 	private void loadFxml() {
@@ -122,7 +122,7 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 		if (registro != null && registro.getFechaNacimiento() != null)
 			fechaNacimiento
 					.setValue(LocalDate.ofInstant(registro.getFechaNacimiento().toInstant(), ZoneId.systemDefault()));
-		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getTipoDocumento(), FIELD_CODE);
+		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getTipoDocumento(),FIELD_NAME);
 	}
 
 	public void load(PersonaDTO dto) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
@@ -13,7 +14,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="354.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.ea.app.load.ControllerSplash">
   <bottom>
-    <AnchorPane minHeight="16.0" prefHeight="16.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+    <AnchorPane depthTest="INHERIT" focusTraversable="false" minHeight="16.0" prefHeight="29.0" prefWidth="600.0" snapToPixel="true" BorderPane.alignment="CENTER">
       <children>
         <HBox layoutX="178.0" layoutY="11.0" prefHeight="16.0" prefWidth="322.0">
           <children>
@@ -25,9 +26,9 @@
     </AnchorPane>
   </bottom>
   <center>
-    <AnchorPane BorderPane.alignment="CENTER">
+    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
       <children>
-        <ImageView fx:id="fondo" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true">
+        <ImageView fx:id="fondo" fitHeight="304.0" fitWidth="600.0" layoutX="0.0" layoutY="14.0" opacity="1.0" pickOnBounds="true">
           <image>
             <Image url="@../../images/ok.png" />
           </image>
@@ -36,6 +37,10 @@
     </AnchorPane>
   </center>
   <top>
-    <Label alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" />
+    <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" text="Easy Counting By JAPL" textAlignment="RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
+      <BorderPane.margin>
+        <Insets left="20.0" right="20.0" />
+      </BorderPane.margin>
+    </Label>
   </top>
 </BorderPane>

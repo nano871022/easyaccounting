@@ -48,10 +48,14 @@ public class StatementQuerysUtil {
 		for (String name : names) {
 			var value = obj.get(name);
 			if (value != null && !valuesInsert) {
-				if (where.length() > 0)
-					where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
-				where += getName(obj, name) + QueryConstants.CONST_EQUAL + valueFormat(value);
-			} else if (valuesInsert) {
+				var valuePut = valueFormat(value);
+				if (valuePut != null) {
+					if (where.length() > 0) {
+						where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
+					}
+					where += getName(obj, name) + QueryConstants.CONST_EQUAL + valuePut;
+				}
+			} else if (valuesInsert ) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_COMMA + QueryConstants.CONST_SPACE;
 				where += value != null ? valueFormat(value) : QueryConstants.CONST_NULL;

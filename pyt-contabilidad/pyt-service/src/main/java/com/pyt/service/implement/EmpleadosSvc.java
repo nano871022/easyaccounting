@@ -33,7 +33,7 @@ public class EmpleadosSvc extends Services implements IEmpleadosSvc {
 	public List<TrabajadorDTO> getTrabajadores(TrabajadorDTO dto, Integer init, Integer end) throws EmpleadoException {
 		List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
 		if (dto == null)
-			throw new EmpleadoException("El objeto trabajaro esta vacio.");
+			throw new EmpleadoException("El objeto trabajo esta vacio.");
 		try {
 			lista = querySvc.gets(dto, init, end);
 		} catch (QueryException e) {

@@ -1,5 +1,6 @@
 package org.pyt.app.beans.trabajador;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	@FXML
 	private TableColumn<TrabajadorDTO, String> cedula;
 	@FXML
+	private TableColumn<TrabajadorDTO, String> estado;
+	@FXML
 	private TableColumn<TrabajadorDTO, String> fechaNacimiento;
 	private DataTableFXML<TrabajadorDTO, TrabajadorDTO> dt;
 
@@ -60,8 +63,11 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 		NombreVentana = "Lista Empleados";
 		registro = new TrabajadorDTO();
 		fechaNacimiento.setCellValueFactory(e -> {
+			var date = new SimpleDateFormat().format(e.getValue().getPersona().getFechaNacimiento());
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			sp.setValue(e.getValue().getPersona().getFechaNacimiento().toString());
+			if(date != null) {
+				sp.setValue(date);
+			}
 			return sp;
 		});
 		nombre.setCellValueFactory(e -> {
@@ -84,6 +90,11 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			sp.setValue(e.getValue().getCorreo());
 			return sp;
 		});
+		estado.setCellValueFactory(e -> {
+			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
+			sp.setValue(e.getValue().getEstado().getNombre());
+			return sp;
+		});
 		lazy();
 	}
 
@@ -96,7 +107,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			public List<TrabajadorDTO> getList(TrabajadorDTO filter, Integer page, Integer rows) {
 				List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
 				try {
-					lista = empleadosSvc.getTrabajadores(getFilter(), page - 1, rows);
+					lista = empleadosSvc.getTrabajadores(filter, page - 1, rows);
 				} catch (EmpleadoException e) {
 					error(e);
 				}

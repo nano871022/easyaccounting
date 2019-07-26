@@ -136,7 +136,7 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 					Date.from(fechaIngreso.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		if (fechaRetiro.getValue() != null)
 			registro.setFechaRetiro(Date.from(fechaRetiro.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.getPersona().setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME).getCodigo());
+		registro.getPersona().setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME));
 		var estado = SelectList.get(estados, lEstados, FIELD_NAME);
 		registro.setEstado(estado);
 	}
@@ -190,8 +190,8 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		if (registro.getFechaRetiro() != null)
 			fechaRetiro.setValue(LocalDate.ofInstant(registro.getFechaRetiro().toInstant(), ZoneId.systemDefault()));
 		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getPersona().getTipoDocumento(),
-				FIELD_VALOR);
-		SelectList.selectItem(estados, lEstados, FIELD_NAME, registro.getEstado(), FIELD_VALOR);
+				FIELD_NAME);
+		SelectList.selectItem(estados, lEstados, FIELD_NAME, registro.getEstado(), FIELD_NAME);
 		tipoPagos.setText(registro.getTipoPago().getDescripcion());
 		centroCostos.setText(registro.getCentroCosto().getDescripcion());
 	}

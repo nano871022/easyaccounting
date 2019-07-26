@@ -20,7 +20,7 @@ public class PersonaDTO extends ADto {
 	private static final long serialVersionUID = 5798223959158769375L;
 	private String nombre;
 	private String apellido;
-	private String tipoDocumento;
+	private ParametroDTO tipoDocumento;
 	private String documento;
 	private String direccion;
 	private String telefono;
@@ -69,11 +69,12 @@ public class PersonaDTO extends ADto {
 		this.apellido = apellido;
 	}
 
-	public String getTipoDocumento() {
+
+	public ParametroDTO getTipoDocumento() {
 		return tipoDocumento;
 	}
 
-	public void setTipoDocumento(String tipoDocumento) {
+	public void setTipoDocumento(ParametroDTO tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
 	}
 

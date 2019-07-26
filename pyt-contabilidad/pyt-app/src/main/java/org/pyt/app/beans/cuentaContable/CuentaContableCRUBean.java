@@ -11,7 +11,9 @@ import org.pyt.common.exceptions.CuentaContableException;
 import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.interfaces.ICuentaContableSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
@@ -29,6 +31,8 @@ import javafx.scene.layout.BorderPane;
 public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ParametroGrupoDTO> parametroSvc;
 	@FXML
 	private Label codigo;
 	@FXML
@@ -143,9 +147,11 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	
 	public final void popupTipoPlanContable() {
 		try {
+			var parametroGrupo = new ParametroGrupoDTO();
+			parametroGrupo.setGrupo(ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.setWidth(350)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, parametroSvc.get(parametroGrupo).getCodigo())
 					).load("#{CuentaContableCRUBean.tipoPlanContable}");
 		} catch (Exception e) {
 			error(e);
@@ -159,9 +165,11 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupNaturaleza() {
 		try {
+			var parametroGrupo = new ParametroGrupoDTO();
+			parametroGrupo.setGrupo(ParametroConstants.GRUPO_NATURALEZA);
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.setWidth(350)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_NATURALEZA)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, parametroSvc.get(parametroGrupo).getCodigo())
 					).load("#{CuentaContableCRUBean.naturaleza}");
 		} catch (Exception e) {
 			error(e);
@@ -175,9 +183,11 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupTipoCuentaContable() {
 		try {
+			var parametroGrupo = new ParametroGrupoDTO();
+			parametroGrupo.setGrupo(ParametroConstants.GRUPO_TIPO);
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.setWidth(350)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_TIPO)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, parametroSvc.get(parametroGrupo).getCodigo())
 					).load("#{CuentaContableCRUBean.tipoCuentaContable}");
 		} catch (Exception e) {
 			error(e);
