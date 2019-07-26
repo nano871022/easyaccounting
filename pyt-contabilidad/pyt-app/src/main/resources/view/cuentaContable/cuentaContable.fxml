@@ -35,7 +35,7 @@
 				<Label alignment="CENTER" prefHeight="33.0" prefWidth="88.0" text="Codigo" />
 				<Label fx:id="codigo" alignment="CENTER" contentDisplay="CENTER" prefHeight="38.0" prefWidth="163.0" textAlignment="CENTER"
 					GridPane.columnIndex="1" />
-				<TextField id="descripcion" fx:id="asociado" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+				<PopupParametrizedControl id="asociado" fx:id="asociado" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 				<Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0"
 					text="Asociado" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 				<Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="70.0"
@@ -55,7 +55,7 @@
 					GridPane.rowIndex="3" />
 				<PopupParametrizedControl  fx:id="tipo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 				<PopupParametrizedControl fx:id="empresa" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-				<TextField id="descripcion" fx:id="codigoCuenta" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+				<TextField id="codigoCuenta" fx:id="codigoCuenta" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 			</children>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="99.0" />

@@ -2,6 +2,7 @@ package co.com.japl.ea.sql.privates;
 
 public class Constants {
 	public final static String CONST_PATH = "sql/init/";
+	public final static String CONST_PATH_CHANGED = "sql/changed/";
 	public final static String CONST_FOLDER_TABLES = "tables";
 	public final static String CONST_FOLDER_INSERTS = "inserts";
 	public final static String CONST_SPLIT_NAME = "_";

@@ -110,7 +110,7 @@
 				</Label>
 				<PopupParametrizedControl fx:id="tipoCuentaContables" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 				<Label maxWidth="1.7976931348623157E308" text="Asociado" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-				<TextField fx:id="asociado" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+				<PopupParametrizedControl fx:id="asociado" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 			</children>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="129.0" />

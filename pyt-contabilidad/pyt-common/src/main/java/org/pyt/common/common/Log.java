@@ -88,6 +88,7 @@ public final class Log {
 							action.getFileName() + "." + action.getMethodName() + ":LN_" + action.getLineNumber(),
 							DEBUG));
 				}
+				printDEBUGCause(error.getCause());
 			} else {
 				printDEBUGCause(error.getCause());
 			}

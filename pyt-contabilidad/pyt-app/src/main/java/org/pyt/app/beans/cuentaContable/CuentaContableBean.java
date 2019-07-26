@@ -41,7 +41,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private TextField nombre;
 	@FXML
-	private TextField asociado;
+	private PopupParametrizedControl asociado;
 	@FXML
 	private PopupParametrizedControl tipoCuentaContables;
 	@FXML
@@ -68,8 +68,10 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		registro.setTipoPlanContable(new ParametroDTO());
 		registro.setTipo(new ParametroDTO());
 		registro.setEmpresa(new EmpresaDTO());
-		tipoCuentaContables.setPopupOpenAction(()->popupTipoPlanContable());
-		tipoCuentaContables.setCleanValue(()->filter.setTipoPlanContable(null));
+		asociado.setPopupOpenAction(() -> popupAsociado());
+		asociado.setCleanValue(() -> filter.setAsociado(null));
+		tipoCuentaContables.setPopupOpenAction(() -> popupTipoPlanContable());
+		tipoCuentaContables.setCleanValue(() -> filter.setTipoPlanContable(null));
 		tipoCuentaContable
 				.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
 		tipo.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipo().getNombre()));
@@ -110,8 +112,8 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 				if (StringUtils.isNotBlank(nombre.getText())) {
 					filtro.setNombre(nombre.getText());
 				}
-				if (StringUtils.isNotBlank(asociado.getText())) {
-					filtro.setAsociado(asociado.getText());
+				if (filter.getAsociado() != null) {
+					filtro.setAsociado(filter.getAsociado());
 				}
 				if (filter.getTipoPlanContable() != null) {
 					filtro.setTipoPlanContable(filter.getTipoPlanContable());
@@ -125,23 +127,39 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		btnMod.setVisible(isSelected());
 		btnDel.setVisible(isSelected());
 	}
-	
+
 	public final void popupTipoPlanContable() {
 		try {
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
-					.setWidth(350)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE)
-					).load("#{CuentaContableBean.tipoPlanContable}");
+					.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE))
+									.load("#{CuentaContableBean.tipoPlanContable}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
+	public final void popupAsociado() {
+		try {
+			controllerPopup(new PopupGenBean<CuentaContableDTO>(CuentaContableDTO.class))
+					.load("#{CuentaContableBean.asociado}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setAsociado(CuentaContableDTO asociado) {
+		if (asociado != null) {
+			filter.setAsociado(asociado);
+			this.asociado.setText(asociado.getCodigoCuenta() + ":" + asociado.getNombre());
+		}
+	}
+
 	public final void setTipoPlanContable(ParametroDTO tipoPlanContable) {
 		filter.setTipoPlanContable(tipoPlanContable);
 		tipoCuentaContables.setText(tipoPlanContable.getNombre());
 	}
-	
+
 	public void add() {
 		getController(CuentaContableCRUBean.class);
 	}
@@ -168,8 +186,8 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	public void set() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{CuentaContableBean.delete}",
-				"¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+					"¿Desea eliminar los registros seleccionados?");
+		} catch (Exception e) {
 			error(e);
 		}
 	}
