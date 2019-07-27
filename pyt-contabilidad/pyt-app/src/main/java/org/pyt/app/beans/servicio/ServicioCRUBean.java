@@ -71,7 +71,9 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 		codigo.setText(registro.getCodigo());
 		nombre.setText(registro.getNombre());
 		descripcion.setText(registro.getDescripcion());
-		valorManoObra.setText(String.valueOf(registro.getValorManoObra()));
+		if (registro.getValorManoObra() != null) {
+			valorManoObra.setText(String.valueOf(registro.getValorManoObra()));
+		}
 	}
 
 	public void load(ServicioDTO dto) {

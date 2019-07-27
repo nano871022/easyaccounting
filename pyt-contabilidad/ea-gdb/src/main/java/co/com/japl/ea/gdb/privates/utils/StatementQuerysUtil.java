@@ -53,9 +53,13 @@ public class StatementQuerysUtil {
 					if (where.length() > 0) {
 						where += QueryConstants.CONST_SPACE + QueryConstants.CONST_AND + QueryConstants.CONST_SPACE;
 					}
-					where += getName(obj, name) + QueryConstants.CONST_EQUAL + valuePut;
+					var comparator = QueryConstants.CONST_EQUAL;
+					if (valuePut.contains("%")) {
+						comparator = QueryConstants.CONST_LIKE;
+					}
+					where += getName(obj, name) + comparator + valuePut;
 				}
-			} else if (valuesInsert ) {
+			} else if (valuesInsert) {
 				if (where.length() > 0)
 					where += QueryConstants.CONST_COMMA + QueryConstants.CONST_SPACE;
 				where += value != null ? valueFormat(value) : QueryConstants.CONST_NULL;

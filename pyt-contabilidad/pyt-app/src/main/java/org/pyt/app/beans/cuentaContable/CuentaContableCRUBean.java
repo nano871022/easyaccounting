@@ -100,7 +100,10 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	}
 
 	private final String getCuentaAsociadaShow() {
-		return registro.getAsociado().getCodigoCuenta() + ":" + registro.getAsociado().getNombre();
+		if (registro.getAsociado().getCodigoCuenta() != null && registro.getAsociado().getNombre() != null) {
+			return registro.getAsociado().getCodigoCuenta() + ":" + registro.getAsociado().getNombre();
+		}
+		return null;
 	}
 
 	public void load(CuentaContableDTO dto) {

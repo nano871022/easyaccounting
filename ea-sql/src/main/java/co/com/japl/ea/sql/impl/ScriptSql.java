@@ -34,9 +34,12 @@ public class ScriptSql {
 
 	private ScriptSql() {
 		readBin = new ReadBin();
+		loadVersion = true;
 		try {
 			versions = readBin.read(CONST_FILE_VERSION_RUNNER);
-			loadVersion = versions.contains(AppConstants.VERSION_DATABASE);
+			if (versions != null) {
+				loadVersion = !versions.contains(AppConstants.VERSION_DATABASE);
+			}
 		} catch (FileBinException e) {
 			System.err.println(e);
 		}
@@ -105,6 +108,9 @@ public class ScriptSql {
 					mapa.put(version, map);
 				});
 				try {
+					if (versions == null) {
+						versions = new ArrayList<String>();
+					}
 					versions.add(version);
 					new WriteBin().write(CONST_FILE_VERSION_RUNNER, versions);
 				} catch (FileBinException e) {
@@ -119,12 +125,15 @@ public class ScriptSql {
 		var list = new ArrayList<String>();
 		var folder = new File(packages);
 		if (folder.exists() && folder.isDirectory()) {
-			Arrays.stream(folder.listFiles())
-					.filter(file -> file.exists() && file.isDirectory()
-							&& file.getName() == AppConstants.VERSION_DATABASE && loadVersion)
+			Arrays.stream(folder.listFiles()).filter(file -> validVersion(file))
 					.forEach(file -> list.add(file.getName()));
 		}
 		return list.toArray(new String[list.size()]);
+	}
+
+	private Boolean validVersion(File file) {
+		return file.exists() && file.isDirectory() && AppConstants.VERSION_DATABASE.compareTo(file.getName()) == 0
+				&& loadVersion;
 	}
 
 	private final Map<Integer, Map<String, File>> generateTables() throws URISyntaxException {

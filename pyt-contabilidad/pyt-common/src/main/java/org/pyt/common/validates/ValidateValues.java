@@ -8,7 +8,9 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -25,6 +27,11 @@ import org.pyt.common.exceptions.validates.ValidateValueException;
  */
 public final class ValidateValues {
 	private Log logger = Log.Log(this.getClass());
+	private List<MethodToValue> list;
+
+	public ValidateValues() {
+		list = new ArrayList<MethodToValue>();
+	}
 
 	/**
 	 * Se encarga de validar dos valores que son de tipo Integer
@@ -208,10 +215,18 @@ public final class ValidateValues {
 	@SuppressWarnings("unchecked")
 	public final <T, S extends Object> T cast(S value, Class<T> clase) throws ValidateValueException {
 		try {
-			if (value == null)
+			if (value == null || clase == null)
 				return null;
-			if (clase == null)
-				return null;
+			var originClass = clase;
+			var valueReturn = convertValueToClassMethodStatic(value, clase, originClass);
+			if (valueReturn != null) {
+				return (T) valueReturn;
+			}
+			valueReturn = getValueFromMethod(value, clase, originClass);
+			if (valueReturn != null) {
+				return (T) valueReturn;
+			}
+
 			if (clase == Date.class) {
 				if (value.getClass() == LocalDate.class) {
 					return (T) Date.from(((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -237,23 +252,12 @@ public final class ValidateValues {
 			if (clase == long.class) {
 				clase = (Class<T>) Long.class;
 			}
-			if (value.getClass() == String.class) {
-				if (clase == Integer.class) {
-					return (T) Integer.valueOf((String) value);
-				}
-				if (clase == Double.class) {
-					return (T) Double.valueOf((String) value);
-				}
-				if (clase == Long.class) {
-					return (T) Long.valueOf((String) value);
-				}
-				if (clase == Short.class) {
-					return (T) Short.valueOf((String) value);
-				}
-				if (clase == BigDecimal.class) {
-					return (T) new BigDecimal((String) value);
-				}
+
+			valueReturn = stringToClass(value, clase);
+			if (valueReturn != null) {
+				return (T) valueReturn;
 			}
+
 			if (value.getClass() == Integer.class) {
 				if (clase == BigDecimal.class) {
 					return (T) new BigDecimal((int) value);
@@ -263,36 +267,76 @@ public final class ValidateValues {
 				return (T) value;
 			}
 
-			Method[] metodos = clase.getDeclaredMethods();
-			for (Method metodo : metodos) {
-				if (Modifier.isStatic(metodo.getModifiers())) {
-					if (metodo.getReturnType() == clase) {
-						Class<?>[] clases = metodo.getParameterTypes();
-						if (clases != null && clases.length == 1) {
-							if (clases[0] == value.getClass()) {
-								return (T) metodo.invoke(null, value);
-							} else if (isCast(value, clases[0])) {
-								T val = (T) cast(value, clases[0]);
-								try {
-									return (T) metodo.invoke(null, val);
-								} catch (Exception e) {
-								}
-							}
-						}
-					}
-				}
-			}
-			metodos = value.getClass().getMethods();
-			for (Method metodo : metodos) {
-				if (metodo.getParameterTypes().length == 0) {
-					if (metodo.getReturnType() == clase) {
-						return (T) metodo.invoke(value);
-					}
-				}
-			}
-
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new ValidateValueException(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private final <T, S> T stringToClass(S value, Class clazz) {
+		if (value.getClass() == String.class) {
+			if (clazz == Integer.class) {
+				return (T) Integer.valueOf((String) value);
+			}
+			if (clazz == Double.class) {
+				return (T) Double.valueOf((String) value);
+			}
+			if (clazz == Long.class) {
+				return (T) Long.valueOf((String) value);
+			}
+			if (clazz == Short.class) {
+				return (T) Short.valueOf((String) value);
+			}
+			if (clazz == BigDecimal.class) {
+				return (T) new BigDecimal((String) value);
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private final <T, S> T getValueFromMethod(S value, Class clazz, Class originClass)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		for (var method : list) {
+			if (method.isClassInOut(value.getClass(), originClass)) {
+				return (T) method.getValueInvoke(value);
+			}
+		}
+		var methods = value.getClass().getDeclaredMethods();
+		for (var method : methods) {
+			if (method.getParameterCount() == 0 && !Modifier.isStatic(method.getModifiers())
+					&& (method.getReturnType() == clazz || method.getReturnType() == originClass)) {
+				list.add(new MethodToValue(method, value.getClass(), originClass, true));
+				return (T) method.invoke(value);
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private final <T, S> T convertValueToClassMethodStatic(S value, Class clazz, Class originClass)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ValidateValueException {
+		for (var method : list) {
+			if (method.isClassInOut(value.getClass(), originClass)) {
+				return (T) method.getValueInvoke(value);
+			}
+		}
+		var metodos = clazz.getDeclaredMethods();
+		for (Method metodo : metodos) {
+			if (Modifier.isStatic(metodo.getModifiers())
+					&& (metodo.getReturnType() == clazz || metodo.getReturnType() == originClass)
+					&& metodo.getParameterCount() == 1) {
+				var clases = metodo.getParameterTypes()[0];
+				if (clases == value.getClass()) {
+					list.add(new MethodToValue(metodo, value.getClass(), originClass, true));
+					return (T) metodo.invoke(null, value);
+				} else if (isCast(value, clases)) {
+					T val = (T) cast(value, clases);
+					list.add(new MethodToValue(metodo, val.getClass(), originClass, true));
+					return (T) metodo.invoke(null, val);
+				}
+			}
 		}
 		return null;
 	}

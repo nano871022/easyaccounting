@@ -22,6 +22,8 @@ import org.pyt.common.constants.RefreshCodeConstant;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.querys.StatementSqlException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.query.interfaces.IQuerySvc;
 
@@ -40,8 +42,10 @@ public class QueryGDBSvc implements IQuerySvc {
 	private Map<String, ADto> mapJoin;
 	private Log logger = Log.Log(this.getClass());
 	private static final String CONST_FIELD_NAME_DTO = "codigo";
+	private ValidateValues validateValues;
 
 	public QueryGDBSvc() {
+		validateValues = new ValidateValues();
 		db = ConnectionJDBC.getInstance();
 		i18n = new I18n();
 		sfactory = new StatementFactory();
@@ -78,10 +82,10 @@ public class QueryGDBSvc implements IQuerySvc {
 										((BigDecimal) value).compareTo(new BigDecimal(1)) == 0 ? true : false);
 							}
 						} else {
-							newInstance.set(name, value);
+							newInstance.set(name, validateValues.cast(value, clazz));
 						}
 					}
-				} catch (NullPointerException e1) {
+				} catch (NullPointerException | ValidateValueException e1) {
 					logger.logger("No se encontro el campo " + name + " dentro de " + dto.getClass().getName(), e1);
 				}
 			}

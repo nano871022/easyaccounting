@@ -1,7 +1,7 @@
 package co.com.japl.ea.gdb.privates.constants;
 
 public class QueryConstants {
-	public final static String CONST_DELETE= "DELETE";
+	public final static String CONST_DELETE = "DELETE";
 	public final static String CONST_SUBFIX_DTO = "DTO";
 	public final static String CONST_KEY_OPEN = "[";
 	public final static String CONST_KEY_CLOSE = "]";
@@ -9,6 +9,7 @@ public class QueryConstants {
 	public final static String CONST_SPACE = " ";
 	public final static String CONST_COMMA = ",";
 	public final static String CONST_EQUAL = "=";
+	public final static String CONST_LIKE = " LIKE ";
 	public final static String CONST_QUOTE = "'";
 	public final static String CONST_NULL = "NULL";
 	public final static String CONST_AND = "AND";
