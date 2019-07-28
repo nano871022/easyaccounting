@@ -27,19 +27,26 @@ import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 public class StatementQuerysUtil {
 	private final static String CONST_DTO = "DTO";
 	private final static String CONST_ABC_CHAIN = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
-	private final static Integer CONST_MAX_LENGTH = 15;
 	private final static String CONST_PREFIX_TABLE = "TBL_";
 	private final static String CONST_FIELD_ALIAS = "%s as %s";
 	private final static Integer CONST_LETTER_MAX_NAME = 14;
 	private NameSqlProperties namesSql;
 	private Log logger = Log.Log(this.getClass());
+	private static StatementQuerysUtil statementQuerysUtil;
 
-	public StatementQuerysUtil() {
+	private StatementQuerysUtil() {
 		try {
 			namesSql = NameSqlProperties.getInstance().load();
 		} catch (Exception e) {
 			logger.logger(e);
 		}
+	}
+
+	public final static StatementQuerysUtil instance() {
+		if (statementQuerysUtil == null) {
+			statementQuerysUtil = new StatementQuerysUtil();
+		}
+		return statementQuerysUtil;
 	}
 
 	public final <T extends ADto> String fieldToWhere(T obj, boolean valuesInsert) throws ReflectionException {

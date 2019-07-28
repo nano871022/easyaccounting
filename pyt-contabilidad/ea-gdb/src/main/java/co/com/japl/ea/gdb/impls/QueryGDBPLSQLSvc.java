@@ -24,7 +24,7 @@ public class QueryGDBPLSQLSvc implements IAdvanceQuerySvc {
 	private ConnectionJDBC db;
 
 	public QueryGDBPLSQLSvc() {
-		squ = new StatementQuerysUtil();
+		squ = StatementQuerysUtil.instance();
 		i18n = new I18n();
 		db = ConnectionJDBC.getInstance();
 	}

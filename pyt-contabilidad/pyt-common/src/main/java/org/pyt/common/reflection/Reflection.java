@@ -3,6 +3,9 @@ package org.pyt.common.reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +36,9 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
  */
 public interface Reflection {
 	public Log logger();
+
+	public Map<Class<?>, Class<?>> mapInjects = new HashMap<Class<?>, Class<?>>();
+	public Map<Class<?>, List<Method>> mapPostConstructor = new HashMap<Class<?>, List<Method>>();
 
 	/**
 	 * Se encarga de verificar la cclase y objeter la anotacion inject, con la ccual
@@ -94,37 +100,46 @@ public interface Reflection {
 				Inject inject = field.getAnnotation(Inject.class);
 				if (inject == null)
 					continue;
-				var service = ServiceLoader.load(field.getType());
 				T obj = null;
 				T obj1 = null;
-				try {
-					obj1 = (T) EjbRemote.getInstance().getEjb(field.getType());
-				} catch (Exception e) {
-					try {
-						obj1 = (T) EjbHome.getInstance().getEjb(field.getType());
-					} catch (Exception e1) {
-						try {
-							obj1 = (T) ServiceSimple.getInstance().getService(field.getType()); 
-						}catch(Exception e2) { }
-					}
+				if (mapInjects.containsKey(field.getType())) {
+					obj = (T) mapInjects.get(field.getType()).getConstructor().newInstance();
 				}
-				if (obj1 != null) {
-					obj = obj1;
-				} else if (service != null && service.findFirst() != null && service.findFirst().isPresent()) {
-					obj = (T) service.findFirst().get();
-				} else if (StringUtils.isNotBlank(inject.resource())) {
-					obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
-				} else if (StringUtils.isBlank(inject.resource())) {
-					Class<T> classe = (Class<T>) field.getType();
-					Singleton singleton = classe.getAnnotation(Singleton.class);
-					if (singleton != null) {
-						var method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
-						obj = (T) method.invoke(classe);
-					} else {
-						obj = (T) field.getType().getConstructor().newInstance();
+				if (obj == null) {
+					var service = ServiceLoader.load(field.getType());
+					try {
+						obj1 = (T) EjbRemote.getInstance().getEjb(field.getType());
+					} catch (Exception e) {
+						try {
+							obj1 = (T) EjbHome.getInstance().getEjb(field.getType());
+						} catch (Exception e1) {
+							try {
+								obj1 = (T) ServiceSimple.getInstance().getService(field.getType());
+							} catch (Exception e2) {
+							}
+						}
+					}
+					if (obj1 != null) {
+						obj = obj1;
+					} else if (service != null && service.findFirst() != null && service.findFirst().isPresent()) {
+						obj = (T) service.findFirst().get();
+					} else if (StringUtils.isNotBlank(inject.resource())) {
+						obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
+					} else if (StringUtils.isBlank(inject.resource())) {
+						Class<T> classe = (Class<T>) field.getType();
+						Singleton singleton = classe.getAnnotation(Singleton.class);
+						if (singleton != null) {
+							var method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
+							obj = (T) method.invoke(classe);
+						} else {
+							obj = (T) field.getType().getConstructor().newInstance();
+						}
 					}
 				}
 				if (obj != null) {
+					if (!mapInjects.containsKey(field.getType())) {
+						mapInjects.put(field.getType(), obj.getClass());
+					}
 					postConstructor(obj, obj.getClass());
 					put(object, field, obj);
 				}
@@ -158,6 +173,14 @@ public interface Reflection {
 		try {
 			if (clase == null)
 				return;
+//			if (mapPostConstructor.containsKey(instance.getClass())) {
+//				var methods = mapPostConstructor.get(instance.getClass());
+//				if (methods != null) {
+//					for (Method method : methods) {
+//						method.invoke(instance);
+//					}
+//				}
+//			}
 			Method[] metodos = clase.getDeclaredMethods();
 			if (metodos == null || metodos.length == 0)
 				return;
@@ -166,6 +189,15 @@ public interface Reflection {
 			for (Method metodo : metodos) {
 				PostConstructor pc = metodo.getAnnotation(PostConstructor.class);
 				if (pc != null) {
+//					var list = mapPostConstructor.get(instance.getClass());
+//					if (list == null) {
+//						list = new ArrayList<Method>();
+//						mapPostConstructor.put(instance.getClass(), list);
+//					}
+//					if (!list.contains(metodo)) {
+//						list.add(metodo);
+//					}
+//				}
 					metodo.invoke(instance);
 				}
 			}

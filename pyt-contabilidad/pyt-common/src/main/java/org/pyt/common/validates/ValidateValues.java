@@ -217,60 +217,94 @@ public final class ValidateValues {
 		try {
 			if (value == null || clase == null)
 				return null;
+
 			var originClass = clase;
-			var valueReturn = convertValueToClassMethodStatic(value, clase, originClass);
-			if (valueReturn != null) {
-				return (T) valueReturn;
-			}
-			valueReturn = getValueFromMethod(value, clase, originClass);
-			if (valueReturn != null) {
-				return (T) valueReturn;
+
+			var castDates = castDates(value, clase);
+			if (castDates != null) {
+				return (T) castDates;
 			}
 
-			if (clase == Date.class) {
-				if (value.getClass() == LocalDate.class) {
-					return (T) Date.from(((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toInstant());
-				}
-				if (value.getClass() == Timestamp.class) {
-					return (T) Date.from(((Timestamp) value).toInstant());
-				}
-			}
-			if (clase == LocalDate.class) {
-				if (value.getClass() == Date.class) {
-					return (T) LocalDate.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault());
-				}
-			}
-			if (clase == int.class) {
-				clase = (Class<T>) Integer.class;
-			}
-			if (clase == short.class) {
-				clase = (Class<T>) Short.class;
-			}
-			if (clase == double.class) {
-				clase = (Class<T>) Double.class;
-			}
-			if (clase == long.class) {
-				clase = (Class<T>) Long.class;
+			var numbers = castNumbers(value, clase);
+			if (numbers != null) {
+				return numbers;
 			}
 
-			valueReturn = stringToClass(value, clase);
+			clase = convertFromPrimitive(clase);
+
+			var valueReturn = stringToClass(value, clase);
 			if (valueReturn != null) {
 				return (T) valueReturn;
 			}
 
-			if (value.getClass() == Integer.class) {
-				if (clase == BigDecimal.class) {
-					return (T) new BigDecimal((int) value);
-				}
-			}
+//			valueReturn = convertValueToClassMethodStatic(value, clase, originClass);
+//			if (valueReturn != null) {
+//				return (T) valueReturn;
+//			}
+//			valueReturn = getValueFromMethod(value, clase, originClass);
+//			if (valueReturn != null) {
+//				return (T) valueReturn;
+//			}
+
 			if (value.getClass() == clase) {
 				return (T) value;
 			}
 
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (IllegalArgumentException e) {
 			throw new ValidateValueException(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private final <T, S> T castNumbers(S value, Class<T> clazz) {
+		if (clazz == Long.class) {
+			if (value.getClass() == BigDecimal.class) {
+				return (T) Long.valueOf(((BigDecimal) value).longValue());
+			}
+		}
+		if (clazz == BigDecimal.class) {
+			if (value.getClass() == Integer.class) {
+				return (T) new BigDecimal((int) value);
+			}
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private final <T, S> T castDates(S value, Class<T> clazz) {
+		if (clazz == Date.class) {
+			if (value.getClass() == LocalDate.class) {
+				return (T) Date.from(((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toInstant());
+			}
+			if (value.getClass() == Timestamp.class) {
+				return (T) Date.from(((Timestamp) value).toInstant());
+			}
+		}
+		if (clazz == LocalDate.class) {
+			if (value.getClass() == Date.class) {
+				return (T) LocalDate.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault());
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private final <T> Class<T> convertFromPrimitive(Class clazz) {
+		if (clazz == int.class) {
+			clazz = (Class<T>) Integer.class;
+		}
+		if (clazz == short.class) {
+			clazz = (Class<T>) Short.class;
+		}
+		if (clazz == double.class) {
+			clazz = (Class<T>) Double.class;
+		}
+		if (clazz == long.class) {
+			clazz = (Class<T>) Long.class;
+		}
+		return clazz;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -298,11 +332,11 @@ public final class ValidateValues {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <T, S> T getValueFromMethod(S value, Class clazz, Class originClass)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		for (var method : list) {
-			if (method.isClassInOut(value.getClass(), originClass)) {
-				return (T) method.getValueInvoke(value);
-			}
-		}
+//		for (var method : list) {
+//			if (method.isClassInOut(value.getClass(), originClass)) {
+//				return (T) method.getValueInvoke(value);
+//			}
+//		}
 		var methods = value.getClass().getDeclaredMethods();
 		for (var method : methods) {
 			if (method.getParameterCount() == 0 && !Modifier.isStatic(method.getModifiers())
@@ -317,11 +351,11 @@ public final class ValidateValues {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <T, S> T convertValueToClassMethodStatic(S value, Class clazz, Class originClass)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ValidateValueException {
-		for (var method : list) {
-			if (method.isClassInOut(value.getClass(), originClass)) {
-				return (T) method.getValueInvoke(value);
-			}
-		}
+//		for (var method : list) {
+//			if (method.isClassInOut(value.getClass(), originClass)) {
+//				return (T) method.getValueInvoke(value);
+//			}
+//		}
 		var metodos = clazz.getDeclaredMethods();
 		for (Method metodo : metodos) {
 			if (Modifier.isStatic(metodo.getModifiers())
@@ -352,18 +386,7 @@ public final class ValidateValues {
 	@SuppressWarnings("unchecked")
 	public final <T, L extends Object> Boolean isCast(T value, Class<L> clase) {
 		try {
-			if (clase == int.class) {
-				clase = (Class<L>) Integer.class;
-			}
-			if (clase == short.class) {
-				clase = (Class<L>) Short.class;
-			}
-			if (clase == double.class) {
-				clase = (Class<L>) Double.class;
-			}
-			if (clase == long.class) {
-				clase = (Class<L>) Long.class;
-			}
+			clase = convertFromPrimitive(clase);
 			if (clase == Integer.class) {
 				if (value != null && value instanceof Integer) {
 					return true;

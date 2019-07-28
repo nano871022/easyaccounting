@@ -12,7 +12,7 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 	private StatementQuerysUtil squ;
 
 	public BasicStatementSql() {
-		squ = new StatementQuerysUtil();
+		squ = StatementQuerysUtil.instance();
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 	public String update(T dto) throws StatementSqlException {
 		var query = QueryConstants.SQL_UPDATE;
 		try {
-			query = String.format(query, squ.getTableName(dto), squ.fieldTOSetUpdate(dto),  squ.fieldWhereToUpdate(dto));
+			query = String.format(query, squ.getTableName(dto), squ.fieldTOSetUpdate(dto), squ.fieldWhereToUpdate(dto));
 		} catch (ReflectionException e) {
 			throw new StatementSqlException("Se presento problema en generacion sentencia sql update", e);
 		}

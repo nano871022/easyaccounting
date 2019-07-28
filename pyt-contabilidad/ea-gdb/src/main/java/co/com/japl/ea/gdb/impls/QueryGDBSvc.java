@@ -43,6 +43,7 @@ public class QueryGDBSvc implements IQuerySvc {
 	private Log logger = Log.Log(this.getClass());
 	private static final String CONST_FIELD_NAME_DTO = "codigo";
 	private ValidateValues validateValues;
+	private StatementQuerysUtil statementQueryUtils;
 
 	public QueryGDBSvc() {
 		validateValues = new ValidateValues();
@@ -51,6 +52,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		sfactory = new StatementFactory();
 		motor = "";
 		mapJoin = new HashMap<String, ADto>();
+		statementQueryUtils = StatementQuerysUtil.instance();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -203,7 +205,7 @@ public class QueryGDBSvc implements IQuerySvc {
 			} else {
 				obj.setCreador(user.getNombre());
 				obj.setFechaCreacion(new Date());
-				obj.setCodigo(new StatementQuerysUtil().genConsecutivo(obj.getClass(),
+				obj.setCodigo(statementQueryUtils.genConsecutivo(obj.getClass(),
 						countRow(obj.getClass().getConstructor().newInstance())));
 				newDto = true;
 			}
