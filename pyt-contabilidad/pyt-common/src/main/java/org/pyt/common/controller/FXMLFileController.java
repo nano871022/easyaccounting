@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ABean;
 import org.pyt.common.interfaces.IBean;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -19,7 +20,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 @SuppressWarnings("rawtypes")
 public abstract class FXMLFileController<T extends IBean> {
 	protected Class<T> controller;
-	private static Map<String,Object> instancias;
+	private static Map<String, Object> instancias;
 
 	/**
 	 * constructor
@@ -46,11 +47,9 @@ public abstract class FXMLFileController<T extends IBean> {
 	 * Se encarga devalidar si el alias suministrado es igual al configurado en la
 	 * anotacion
 	 * 
-	 * @param alias
-	 *            {@link String}
+	 * @param alias {@link String}
 	 * @return {@link Class}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	public final Class<T> valid(String alias) throws Exception {
 		if (controller != null && StringUtils.isNotBlank(alias)) {
@@ -63,32 +62,40 @@ public abstract class FXMLFileController<T extends IBean> {
 		}
 		return null;
 	}
+
 	/**
 	 * Se encarga de agregar la instancia cargada para ser usada
+	 * 
 	 * @param instance {@link ABean} extends
 	 */
 	@SuppressWarnings({ "hiding" })
 	public final <T extends IBean> void put(T instance) {
-		if(FXMLFileController.instancias == null) {
-			FXMLFileController.instancias = new HashMap<String,Object>();
+		if (FXMLFileController.instancias == null) {
+			FXMLFileController.instancias = new HashMap<String, Object>();
 		}
-		FXMLFileController.instancias.put(instance.getClass().getSimpleName(), instance );
+		FXMLFileController.instancias.put(instance.getClass().getSimpleName(), instance);
 	}
+
 	/**
 	 * Se encarga de limiar la instancia actual cargada
 	 */
 	@SuppressWarnings("hiding")
 	public final <T extends IBean> void destroy(Class<T> instancia) {
-		if(FXMLFileController.instancias != null) {
+		if (FXMLFileController.instancias != null) {
 			FXMLFileController.instancias.remove(instancia.getSimpleName());
 		}
 	}
+
 	/**
 	 * Retorna la instalncia fxmlfile suministradda
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "hiding" })
 	public final <T extends IBean> T getFXMLFile(Class<T> instancia) {
-		return (T) FXMLFileController.instancias.get(instancia.getSimpleName());
+		if (instancias != null && instancias.containsKey(instancia.getSimpleName())) {
+			return (T) instancias.get(instancia.getSimpleName());
+		}
+		return null;
 	}
 }

@@ -3,9 +3,6 @@ package org.pyt.common.reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +17,7 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IComunicacion;
+import org.pyt.common.properties.CacheInjects;
 import org.pyt.common.properties.EjbHome;
 import org.pyt.common.properties.EjbRemote;
 import org.pyt.common.properties.ServiceSimple;
@@ -36,9 +34,6 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
  */
 public interface Reflection {
 	public Log logger();
-
-	public Map<Class<?>, Class<?>> mapInjects = new HashMap<Class<?>, Class<?>>();
-	public Map<Class<?>, List<Method>> mapPostConstructor = new HashMap<Class<?>, List<Method>>();
 
 	/**
 	 * Se encarga de verificar la cclase y objeter la anotacion inject, con la ccual
@@ -61,9 +56,7 @@ public interface Reflection {
 			} else {
 				logger().warn("No se encontraron campos en la clase.");
 			}
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (SecurityException e) {
+		} catch (IllegalArgumentException | SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (NullPointerException e) {
 			logger().logger(e);
@@ -91,75 +84,74 @@ public interface Reflection {
 
 	@SuppressWarnings({ "unchecked" })
 	private <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase) throws ReflectionException {
-		if (fields == null || fields.length == 0)
-			return;
-		if (clase == Object.class || clase == Reflection.class)
-			return;
-		try {
-			for (Field field : fields) {
-				Inject inject = field.getAnnotation(Inject.class);
-				if (inject == null)
-					continue;
-				T obj = null;
-				T obj1 = null;
-				if (mapInjects.containsKey(field.getType())) {
-					obj = (T) mapInjects.get(field.getType()).getConstructor().newInstance();
-				}
-				if (obj == null) {
-					var service = ServiceLoader.load(field.getType());
-					try {
-						obj1 = (T) EjbRemote.getInstance().getEjb(field.getType());
-					} catch (Exception e) {
-						try {
-							obj1 = (T) EjbHome.getInstance().getEjb(field.getType());
-						} catch (Exception e1) {
-							try {
-								obj1 = (T) ServiceSimple.getInstance().getService(field.getType());
-							} catch (Exception e2) {
-							}
+		if (fields != null && fields.length > 0 && clase != Object.class && clase != Reflection.class) {
+			try {
+				for (Field field : fields) {
+					Inject inject = field.getAnnotation(Inject.class);
+					if (inject == null)
+						continue;
+					T obj = null;
+					obj = CacheInjects.instance().getInjectCache(field);
+					if (obj == null) {
+						obj = locatorServices(field);
+						if (obj == null && StringUtils.isNotBlank(inject.resource())) {
+							obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
+						} else if (obj == null) {
+							obj = getSingletonAnnotated(inject.resource(), field);
 						}
 					}
-					if (obj1 != null) {
-						obj = obj1;
-					} else if (service != null && service.findFirst() != null && service.findFirst().isPresent()) {
-						obj = (T) service.findFirst().get();
-					} else if (StringUtils.isNotBlank(inject.resource())) {
-						obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
-					} else if (StringUtils.isBlank(inject.resource())) {
-						Class<T> classe = (Class<T>) field.getType();
-						Singleton singleton = classe.getAnnotation(Singleton.class);
-						if (singleton != null) {
-							var method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
-							obj = (T) method.invoke(classe);
-						} else {
-							obj = (T) field.getType().getConstructor().newInstance();
+					if (obj != null) {
+						CacheInjects.instance().addInjectToCache(obj, field);
+						if (!CacheInjects.instance().getConstructorAnnotatedCache(obj)) {
+							postConstructor(obj, obj.getClass());
 						}
+						put(object, field, obj);
 					}
-				}
-				if (obj != null) {
-					if (!mapInjects.containsKey(field.getType())) {
-						mapInjects.put(field.getType(), obj.getClass());
-					}
-					postConstructor(obj, obj.getClass());
-					put(object, field, obj);
-				}
-			} // end for
-			inject(object, clase.getSuperclass().getDeclaredFields(), (Class<S>) clase.getSuperclass());
-		} catch (InstantiationException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (InvocationTargetException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (NoSuchMethodException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (SecurityException e) {
-			throw new ReflectionException(e.getMessage(), e);
+				} // end for
+				inject(object, clase.getSuperclass().getDeclaredFields(), (Class<S>) clase.getSuperclass());
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new ReflectionException(e.getMessage(), e);
+			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T locatorServices(Field field) {
+		var service = ServiceLoader.load(field.getType());
+		if (service != null && service.findFirst() != null && service.findFirst().isPresent()) {
+			return (T) service.findFirst().get();
+		} else {
+			try {
+				return (T) EjbRemote.getInstance().getEjb(field.getType());
+			} catch (Exception e) {
+				try {
+					return (T) EjbHome.getInstance().getEjb(field.getType());
+				} catch (Exception e1) {
+					try {
+						return (T) ServiceSimple.getInstance().getService(field.getType());
+					} catch (Exception e2) {
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T getSingletonAnnotated(String resource, Field field) throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
+		if (StringUtils.isBlank(resource)) {
+			Class<T> classe = (Class<T>) field.getType();
+			Singleton singleton = classe.getAnnotation(Singleton.class);
+			if (singleton != null) {
+				var method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
+				return (T) method.invoke(classe);
+			} else {
+				return (T) field.getType().getConstructor().newInstance();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -171,37 +163,18 @@ public interface Reflection {
 	 */
 	private <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws ReflectionException {
 		try {
-			if (clase == null)
+			if (clase == null || clase == Object.class || clase == Reflection.class)
 				return;
-//			if (mapPostConstructor.containsKey(instance.getClass())) {
-//				var methods = mapPostConstructor.get(instance.getClass());
-//				if (methods != null) {
-//					for (Method method : methods) {
-//						method.invoke(instance);
-//					}
-//				}
-//			}
-			Method[] metodos = clase.getDeclaredMethods();
-			if (metodos == null || metodos.length == 0)
-				return;
-			if (clase == Object.class || clase == Reflection.class)
-				return;
-			for (Method metodo : metodos) {
-				PostConstructor pc = metodo.getAnnotation(PostConstructor.class);
-				if (pc != null) {
-//					var list = mapPostConstructor.get(instance.getClass());
-//					if (list == null) {
-//						list = new ArrayList<Method>();
-//						mapPostConstructor.put(instance.getClass(), list);
-//					}
-//					if (!list.contains(metodo)) {
-//						list.add(metodo);
-//					}
-//				}
-					metodo.invoke(instance);
+			var metodos = clase.getDeclaredMethods();
+			if (metodos != null && metodos.length > 0) {
+				for (Method metodo : metodos) {
+					if (metodo.getAnnotation(PostConstructor.class) != null) {
+						CacheInjects.instance().addConstructorAnnotatedToCache(instance, metodo);
+						metodo.invoke(instance);
+					}
 				}
+				postConstructor(instance, clase.getSuperclass());
 			}
-			postConstructor(instance, clase.getSuperclass());
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new ReflectionException("Problema en la ejecucion del metodo anotado con pos constructor", e);
 		}
@@ -260,26 +233,17 @@ public interface Reflection {
 	default <T extends Reflection, S extends Object> S get(T obj, Field field) throws ReflectionException {
 		try {
 			Class<T> clase = (Class<T>) obj.getClass();
-			String get = ReflectionConstants.GET + field.getName().substring(0, 1) + field.getName().substring(1);
-			Method method;
-			method = clase.getMethod(get);
+			var methodName = ReflectionUtils.instanciar().getNameMethod(ReflectionConstants.GET, field.getName());
+			var method = clase.getMethod(methodName);
 			return (S) method.invoke(obj);
 		} catch (NoSuchMethodException e) {
 			field.setAccessible(true);
 			try {
 				return (S) field.get(obj);
-			} catch (IllegalArgumentException e1) {
-				throw new ReflectionException(e.getMessage(), e);
-			} catch (IllegalAccessException e1) {
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
 				throw new ReflectionException(e.getMessage(), e);
 			}
-		} catch (SecurityException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (InvocationTargetException e) {
+		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		}
 	}
@@ -294,30 +258,19 @@ public interface Reflection {
 
 	@SuppressWarnings({ "unchecked" })
 	default <T, S, A extends Object> void put(T obj, Field field, S valor) throws ReflectionException {
-		Class<T> clase = (Class<T>) obj.getClass();
-		Method metodo;
-		String get;
 		try {
-			get = String.format("%s%s%s", ReflectionConstants.SET, field.getName().substring(0, 1).toUpperCase(),
-					field.getName().substring(1));
-			metodo = clase.getMethod(get, valor.getClass());
+			var clase = (Class<T>) obj.getClass();
+			var methodName = ReflectionUtils.instanciar().getNameMethod(ReflectionConstants.SET, field.getName());
+			var metodo = clase.getMethod(methodName, valor.getClass());
 			metodo.invoke(obj, valor);
 		} catch (NoSuchMethodException e) {
 			field.setAccessible(true);
 			try {
 				field.set(obj, valor);
-			} catch (IllegalArgumentException e1) {
-				throw new ReflectionException(e.getMessage(), e);
-			} catch (IllegalAccessException e1) {
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
 				throw new ReflectionException(e.getMessage(), e);
 			}
-		} catch (SecurityException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException(e.getMessage(), e);
-		} catch (InvocationTargetException e) {
+		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		}
 
@@ -332,6 +285,7 @@ public interface Reflection {
 	default <T extends Object> String pathFileFxml() {
 		Class<T> clase = (Class<T>) this.getClass();
 		FXMLFile fxmlFile = clase.getDeclaredAnnotation(FXMLFile.class);
-		return String.format("%s/%s", fxmlFile.path(), fxmlFile.file());
+		return String.format(ReflectionConstants.CONST_PATH_FILE_FXML_JOIN_ANNOTATED, fxmlFile.path(), fxmlFile.file());
 	}
+
 }

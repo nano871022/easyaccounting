@@ -72,22 +72,14 @@
 					GridPane.rowIndex="9">
 					<columns>
 						<TableColumn fx:id="nombreServicio" id="nombre" maxWidth="5000.0" minWidth="10.0" prefWidth="191.0" text="Nombre"/>
-						<TableColumn id="valorManoObra" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Valor">
-							<cellValueFactory>
-								<PropertyValueFactory property="valorManoObra" />
-							</cellValueFactory>
-						</TableColumn>
+						<TableColumn fx:id="valorServicio" id="valorManoObra" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Valor"/>
 					</columns>
 				</TableView>
 				<TableView fx:id="tablaRepuesto" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2"
 					GridPane.rowIndex="9">
 					<columns>
 						<TableColumn fx:id="nombre" maxWidth="5000.0" minWidth="10.0" prefWidth="186.0" text="Nombre"/>
-						<TableColumn id="valorVenta" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Valor">
-							<cellValueFactory>
-								<PropertyValueFactory property="valorVenta" />
-							</cellValueFactory>
-						</TableColumn>
+						<TableColumn fx:id="valorRepuesto" id="valorVenta" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Valor"/>
 					</columns>
 				</TableView>
 				<Label maxWidth="1.7976931348623157E308" text="Trabajador" GridPane.columnIndex="2" GridPane.rowIndex="6" />

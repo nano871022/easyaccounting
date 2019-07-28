@@ -13,6 +13,7 @@ import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Table;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.IngresoException;
 import org.pyt.common.exceptions.ReflectionException;
@@ -23,6 +24,8 @@ import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.IngresoDTO;
 import com.pyt.service.dto.IngresoRepuestoDTO;
 import com.pyt.service.dto.IngresoServicioDTO;
+import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
@@ -60,6 +63,10 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private IGenericServiceSvc<IngresoServicioDTO> ingresoServicioSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<IngresoRepuestoDTO> ingresoRepuestoSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ParametroGrupoDTO> parametroGrupoSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ParametroDTO> parametroSvc;
 	@Inject(resource = "com.pyt.service.implement.IngresosSvc")
 	private IIngresosSvc ingresosSvc;
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
@@ -113,15 +120,20 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	@FXML
 	private TableColumn<IngresoRepuestoDTO, String> nombre;
 	@FXML
+	private TableColumn<IngresoRepuestoDTO, String> valorRepuesto;
+	@FXML
 	private TableColumn<IngresoServicioDTO, String> nombreServicio;
+	@FXML
+	private TableColumn<IngresoServicioDTO, String> valorServicio;
 	private ValidateValues valid;
 	private final static String field_name = "nombre";
 	private final static String field_valor_venta = "valorVenta";
 	private final static String field_valor_mano_obra = "valorManoObra";
 	private List<IngresoServicioDTO> listServicios;
 	private List<IngresoRepuestoDTO> listRepuestos;
-	private IngresoServicioDTO selectedServicio;
-	private IngresoRepuestoDTO selectedRepuesto;
+	private ParametroDTO parametroEstado;
+	private ServicioDTO servicioSelect;
+	private RepuestoDTO repuestoSelect;
 
 	@FXML
 	public void initialize() {
@@ -131,6 +143,8 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		valid = new ValidateValues();
 		docEntrada.setDisable(false);
 		docSalida.setDisable(false);
+		docEntrada.setDisable(true);
+		docSalida.setDisable(true);
 		conductorEntrada.setPopupOpenAction(() -> popupConductorEntrada());
 		conductorEntrada.setCleanValue(() -> cleanConductorEntrada());
 		conductorSalida.setPopupOpenAction(() -> popupConductorSalida());
@@ -146,23 +160,32 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		propietario.setPopupOpenAction(() -> popupPropietario());
 		propietario.setCleanValue(() -> cleanPropietario());
 		nombre.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getRepuesto().getNombre()));
+		valorServicio.setCellValueFactory(
+				e -> new SimpleStringProperty(String.valueOf(e.getValue().getServicio().getValorManoObra())));
 		nombreServicio.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getServicio().getNombre()));
+		valorRepuesto.setCellValueFactory(
+				e -> new SimpleStringProperty(String.valueOf(e.getValue().getRepuesto().getValorVenta())));
 		tablaRepuesto.getSelectionModel().selectedItemProperty()
 				.addListener((listener, oldValue, newValue) -> repuestoSelect());
 		tablaServicio.getSelectionModel().selectedItemProperty()
 				.addListener((listener, oldValue, newValue) -> servicioSelect());
+		try {
+			searchParametroEstadoTrabajadorActivo();
+		} catch (Exception e) {
+			logger.logger(e);
+		}
 	}
 
 	public final void repuestoSelect() {
 		var selected = Table.getSelectedRows(tablaRepuesto);
-		selectedRepuesto = selected.get(0);
-		repuesto.setText(selectedRepuesto.getRepuesto().getNombre());
+		repuestoSelect = selected.get(0).getRepuesto();
+		repuesto.setText(repuestoSelect.getNombre());
 	}
 
 	public final void servicioSelect() {
 		var selected = Table.getSelectedRows(tablaServicio);
-		selectedServicio = selected.get(0);
-		servicio.setText(selectedServicio.getServicio().getNombre());
+		servicioSelect = selected.get(0).getServicio();
+		servicio.setText(servicioSelect.getNombre());
 	}
 
 	/**
@@ -243,9 +266,11 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private final <T extends ADto> BigDecimal sumar(List<T> lista, String nombre) {
 		BigDecimal suma = new BigDecimal(0);
 		try {
-			for (T dto : lista) {
-				if (valid.isCast(dto.get(nombre), Long.class)) {
-					suma = suma.add(valid.cast(dto.get(nombre), BigDecimal.class));
+			if (lista != null) {
+				for (T dto : lista) {
+					if (valid.isCast(dto.get(nombre), Long.class)) {
+						suma = suma.add(valid.cast(dto.get(nombre), BigDecimal.class));
+					}
 				}
 			}
 		} catch (ReflectionException | ValidateValueException e) {
@@ -254,18 +279,32 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		return suma;
 	}
 
+	private void searchParametroEstadoTrabajadorActivo() throws GenericServiceException {
+		var parametroGrupo = new ParametroGrupoDTO();
+		parametroGrupo.setGrupo(ParametroConstants.GRUPO_ESTADO_EMPLEADO);
+		var grupo = parametroGrupoSvc.get(parametroGrupo);
+		var parametro = new ParametroDTO();
+		parametro.setGrupo(grupo.getParametro());
+		parametro.setValor("1");
+		parametro = parametroSvc.get(parametro);
+		parametroEstado = parametro;
+	}
+
 	public void popupTrabajador() {
 		try {
-			((PopupGenBean<TrabajadorDTO>) controllerPopup(new PopupGenBean<TrabajadorDTO>(TrabajadorDTO.class))
-					.addDefaultValuesToGenericParametrized("estado", "A")).load("#{IngresoCRUBean.trabajador}");
+			var bean = controllerPopup(new PopupGenBean<TrabajadorDTO>(TrabajadorDTO.class));
+			bean.addDefaultValuesToGenericParametrized("estado", parametroEstado);
+			bean.load("#{IngresosCRUBean.trabajador}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
 
 	public void setTrabajador(TrabajadorDTO trabajador) {
-		registro.setTrabajador(trabajador);
-		this.trabajador.setText(trabajador.getPersona().getNombres());
+		if (trabajador != null) {
+			registro.setTrabajador(trabajador);
+			this.trabajador.setText(trabajador.getPersona().getNombres());
+		}
 	}
 
 	public void cleanTrabajador() {
@@ -274,12 +313,18 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	}
 
 	public void popupPropietario() {
-		// TODO
+		try {
+			controllerPopup(new PopupGenBean<PersonaDTO>(PersonaDTO.class)).load("#{IngresosCRUBean.propietario}");
+		} catch (Exception e) {
+			error(e);
+		}
 	}
 
-	public void setPopietario(PersonaDTO persona) {
-		propietario.setText(persona.getNombres());
-		registro.setPropietario(persona);
+	public void setPropietario(PersonaDTO persona) {
+		if (persona != null) {
+			propietario.setText(persona.getNombres());
+			registro.setPropietario(persona);
+		}
 	}
 
 	public void cleanPropietario() {
@@ -289,15 +334,17 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupEmpresa() {
 		try {
-			controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).load("#{IngresoCRUBean.empresa}");
+			controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).load("#{IngresosCRUBean.empresa}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
 
 	public void setEmpresa(EmpresaDTO empresa) {
-		this.empresa.setText(empresa.getNombre());
-		registro.setEmpresa(empresa);
+		if (empresa != null) {
+			this.empresa.setText(empresa.getNombre());
+			registro.setEmpresa(empresa);
+		}
 	}
 
 	public void cleanEmpresa() {
@@ -307,20 +354,21 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupRepuesto() {
 		try {
-			controllerPopup(new PopupGenBean<RepuestoDTO>(RepuestoDTO.class)).load("#{IngresoCRUBean.repuesto}");
+			controllerPopup(new PopupGenBean<RepuestoDTO>(RepuestoDTO.class)).load("#{IngresosCRUBean.repuesto}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
 
 	public void cleanRepuesto() {
+		repuestoSelect = null;
 		repuesto.setText(null);
 
 	}
 
 	public void popupServicio() {
 		try {
-			controllerPopup(new PopupGenBean<ServicioDTO>(ServicioDTO.class)).load("#{IngresoCRUBean.servicio}");
+			controllerPopup(new PopupGenBean<ServicioDTO>(ServicioDTO.class)).load("#{IngresosCRUBean.servicio}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -328,26 +376,20 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void cleanServicio() {
 		servicio.setText(null);
-
+		servicioSelect = null;
 	}
 
 	public final void setServicio(ServicioDTO servicio) {
-		if (listServicios == null) {
-			listServicios = new ArrayList<IngresoServicioDTO>();
-		}
 		if (servicio != null) {
-			var ingresoServicio = new IngresoServicioDTO();
-			ingresoServicio.setIngreso(registro);
-			ingresoServicio.setServicio(servicio);
-			selectedServicio = ingresoServicio;
+			servicioSelect = servicio;
+			this.servicio.setText(servicio.getNombre());
 		}
 	}
 
 	public void popupConductorEntrada() {
 		try {
 			var bean = new PopupGenBean<PersonaDTO>(PersonaDTO.class);
-			bean.addDefaultValuesToGenericParametrized("estado", "A");
-			controllerPopup(bean).load("#{IngresoCRUBean.conductorEntrada}");
+			controllerPopup(bean).load("#{IngresosCRUBean.conductorEntrada}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -363,14 +405,14 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		if (persona != null) {
 			registro.setConductorEntrada(persona);
 			conductorEntrada.setText(persona.getNombres());
+			docEntrada.setText(persona.getDocumento());
 		}
 	}
 
 	public void popupConductorSalida() {
 		try {
 			var bean = new PopupGenBean<PersonaDTO>(PersonaDTO.class);
-			bean.addDefaultValuesToGenericParametrized("estado", "A");
-			controllerPopup(bean).load("#{IngresoCRUBean.conductorSalida}");
+			controllerPopup(bean).load("#{IngresosCRUBean.conductorSalida}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -386,36 +428,44 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		if (persona != null) {
 			registro.setConductorSalida(persona);
 			conductorSalida.setText(persona.getNombres());
+			docSalida.setText(persona.getDocumento());
 		}
 	}
 
 	public final void addServicio() {
-		if (selectedServicio != null) {
-			listServicios.add(selectedServicio);
+		if (listServicios == null) {
+			listServicios = new ArrayList<IngresoServicioDTO>();
+		}
+		if (servicioSelect != null) {
+			var ingresoServicio = new IngresoServicioDTO();
+			ingresoServicio.setIngreso(registro);
+			ingresoServicio.setServicio(servicioSelect);
+			listServicios.add(ingresoServicio);
 			Table.put(tablaServicio, listServicios);
 			totalServicio.setText(sumar(listServicios, "valorManoObra").toString());
-			selectedServicio = null;
+			servicioSelect = null;
 		}
 	}
 
 	public final void setRepuesto(RepuestoDTO repuesto) {
-		if (listRepuestos == null) {
-			listRepuestos = new ArrayList<IngresoRepuestoDTO>();
-		}
 		if (repuesto != null) {
-			var ingresoRepuesto = new IngresoRepuestoDTO();
-			ingresoRepuesto.setIngreso(registro);
-			ingresoRepuesto.setRepuesto(repuesto);
-			selectedRepuesto = ingresoRepuesto;
+			repuestoSelect = repuesto;
+			this.repuesto.setText(repuesto.getNombre());
 		}
 	}
 
 	public final void addRepuesto() {
-		if (selectedRepuesto != null) {
-			listRepuestos.add(selectedRepuesto);
+		if (listRepuestos == null) {
+			listRepuestos = new ArrayList<IngresoRepuestoDTO>();
+		}
+		if (repuestoSelect != null) {
+			var ingresoRepuesto = new IngresoRepuestoDTO();
+			ingresoRepuesto.setIngreso(registro);
+			ingresoRepuesto.setRepuesto(repuestoSelect);
+			listRepuestos.add(ingresoRepuesto);
 			Table.put(tablaRepuesto, listRepuestos);
 			totalRepuesto.setText(sumar(listRepuestos, "valorVenta").toString());
-			selectedRepuesto = null;
+			repuestoSelect = null;
 		}
 	}
 

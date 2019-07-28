@@ -1,13 +1,14 @@
 package org.pyt.common.controller;
 
-import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
+import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.interfaces.IBean;
+import org.pyt.common.reflection.ReflectionUtils;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 
@@ -38,25 +39,23 @@ public class LocatorController {
 	 */
 	@SuppressWarnings({ "unchecked", "static-access", "rawtypes" })
 	private final <T extends FXMLFileController> T getController(String nombre) throws Exception {
-			String clase = PACKAGE_CONTROLLER_PRE + nombre + PACKAGE_CONTROLLER_LAST;
-			Class clases = null;
+		String clase = PACKAGE_CONTROLLER_PRE + nombre + PACKAGE_CONTROLLER_LAST;
+		Class clases = null;
 //			logger.info("Clase a cargar :: "+clase);
-			if (this.clase == null) {
-				clases = Class.forName(clase);
-			} else {
-				clases = this.clase.forName(clase);
-			}
-			T instancia = (T) clases.getDeclaredConstructor().newInstance();
-			return instancia;
+		if (this.clase == null) {
+			clases = Class.forName(clase);
+		} else {
+			clases = this.clase.forName(clase);
+		}
+		T instancia = (T) clases.getDeclaredConstructor().newInstance();
+		return instancia;
 	}
 
 	/**
 	 * se ecnarga de realizar un caller
 	 * 
-	 * @param caller
-	 *            {@link String}
-	 * @param valor
-	 *            {@link Object}
+	 * @param caller {@link String}
+	 * @param valor  {@link Object}
 	 * @return {@link Object}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -78,23 +77,25 @@ public class LocatorController {
 					if (bean == null) {
 						bean = (I) LoadAppFxml.BeanFxml(controller.getController());
 					}
-					Class<I> claseBean = (Class<I>) bean.getClass();
-					if (StringUtils.isNotBlank(split[1])) {
-						if (valor != null) {
-							String setName = "set" + split[1].substring(0, 1).toUpperCase() + split[1].substring(1);
-//							logger.info(setName);
-							Method metodo = claseBean.getDeclaredMethod(setName, valor.getClass());
-							metodo.invoke(bean, valor);
-						} else {
-							String getName = "get" + split[1].substring(0, 1).toUpperCase() + split[1].substring(1);
-//							logger.info(getName);
-							Method metodo = claseBean.getDeclaredMethod(getName);
-							return (T) metodo.invoke(bean);
+					if (bean != null) {
+						var claseBean = (Class<I>) bean.getClass();
+						if (StringUtils.isNotBlank(split[1])) {
+							if (valor != null) {
+								var setName = ReflectionUtils.instanciar().getNameMethod(ReflectionConstants.SET,
+										split[1]);
+								var metodo = claseBean.getDeclaredMethod(setName, valor.getClass());
+								metodo.invoke(bean, valor);
+							} else {
+								var getName = ReflectionUtils.instanciar().getNameMethod(ReflectionConstants.GET,
+										split[1]);
+								var metodo = claseBean.getDeclaredMethod(getName);
+								return (T) metodo.invoke(bean);
+							}
 						}
 					}
 				}
-			}else {
-				logger.error("Se encontro problema con "+caller+" ya que no cruza con "+REGEX);
+			} else {
+				logger.error("Se encontro problema con " + caller + " ya que no cruza con " + REGEX);
 			}
 		} catch (Exception e) {
 			logger.logger(e);
@@ -105,19 +106,18 @@ public class LocatorController {
 	/**
 	 * Se encarga de obtener el controlador buscado
 	 * 
-	 * @param controller
-	 *            {@link Class}
+	 * @param controller {@link Class}
 	 * @return {@link Class}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	private final <T extends IBean, L extends FXMLFileController> L locator(Class<T> controller) throws Exception {
 		FXMLFile fxml = controller.getAnnotation(FXMLFile.class);
 		try {
-			if(StringUtils.isNotBlank(fxml.name()))
+			if (StringUtils.isNotBlank(fxml.name()))
 				return getController(fxml.name());
-			else throw new Exception("Buscar otro");
+			else
+				throw new Exception("Buscar otro");
 		} catch (Exception e) {
 			try {
 				return getController(controller.getSimpleName());
@@ -131,10 +131,8 @@ public class LocatorController {
 	 * Se encarga de poner el controlador sobre la clase que carga los controladores
 	 * para ser usados
 	 * 
-	 * @param controller
-	 *            {@link Class}
-	 * @throws {@link
-	 *             Exception}
+	 * @param controller {@link Class}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final <T extends IBean, L extends FXMLFileController> void putLoadInController(T control) throws Exception {
@@ -147,10 +145,8 @@ public class LocatorController {
 	/**
 	 * Se encarga de remover el controladore cargado de la clase que lo carga
 	 * 
-	 * @param controller
-	 *            {@link class}
-	 * @throws {@link
-	 *             Exception}
+	 * @param controller {@link class}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final <T extends IBean, L extends FXMLFileController> void removeLoadInController(T controller)
@@ -177,8 +173,7 @@ public class LocatorController {
 	 * Configura la clase a usar para realzar el forname para que no se haga desde
 	 * common
 	 * 
-	 * @param clase
-	 *            {@link Class} para realizar el forname
+	 * @param clase {@link Class} para realizar el forname
 	 * @return {@link LocatorController} locator siempre retorna el mosmo
 	 */
 	@SuppressWarnings("rawtypes")
@@ -186,7 +181,7 @@ public class LocatorController {
 		this.clase = clase;
 		return locator;
 	}
-	
+
 	public final static void main(String... strings) {
 		String caller = "#{bean.metodo}";
 		Pattern patron = Pattern.compile(REGEX);

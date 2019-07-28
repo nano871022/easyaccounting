@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
+import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.validates.ValidateValues;
 
@@ -95,7 +96,7 @@ public final class ReflectionUtils {
 			List<String> campos = origen.getNameFields();
 			campos.forEach(campo -> {
 				try {
-					setValueField(out,campo,getValueField(origen, campo));
+					setValueField(out, campo, getValueField(origen, campo));
 				} catch (ReflectionException e) {
 					logger.logger(e);
 				}
@@ -212,20 +213,21 @@ public final class ReflectionUtils {
 	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
-	public final static <T, S,V> S setValueField(T object, String fieldName,V value) throws ReflectionException {
+	public final static <T, S, V> S setValueField(T object, String fieldName, V value) throws ReflectionException {
 		try {
 			Class<T> clase = (Class<T>) object.getClass();
 			if (ReflectionDto.class.isInstance(object)) {
-				var metodoGetGeneric = ReflectionDto.class.getDeclaredMethod("set", String.class,Object.class);
-				return (S) metodoGetGeneric.invoke(object, fieldName,value);
+				var metodoGetGeneric = ReflectionDto.class.getDeclaredMethod("set", String.class, Object.class);
+				return (S) metodoGetGeneric.invoke(object, fieldName, value);
 			}
 			return null;
-		//} catch (NoSuchFieldException e) {
-			//throw new ReflectionException("No se encuentro el campo " + e.getMessage(), e);
+			// } catch (NoSuchFieldException e) {
+			// throw new ReflectionException("No se encuentro el campo " + e.getMessage(),
+			// e);
 		} catch (SecurityException e) {
 			throw new ReflectionException("Problema de seguridad en busca de campo " + e.getMessage(), e);
 		} catch (NoSuchMethodException e) {
-				throw new ReflectionException("No se encontro el metodo " + e.getMessage(), e);
+			throw new ReflectionException("No se encontro el metodo " + e.getMessage(), e);
 		} catch (IllegalAccessException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (IllegalArgumentException e) {
@@ -326,4 +328,10 @@ public final class ReflectionUtils {
 		}
 		return field;
 	}
+
+	public synchronized final String getNameMethod(String prefix, String name) {
+		return String.format(ReflectionConstants.CONST_NAME_METHOD, ReflectionConstants.SET,
+				name.substring(0, 1).toUpperCase(), name.substring(1));
+	}
+
 }

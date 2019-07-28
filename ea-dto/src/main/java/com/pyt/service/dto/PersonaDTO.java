@@ -3,6 +3,7 @@ package com.pyt.service.dto;
 import java.util.Date;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -18,9 +19,16 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 public class PersonaDTO extends ADto {
 	private static final long serialVersionUID = 5798223959158769375L;
+	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.COLUMN)
+	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.FILTER)
 	private String nombre;
+	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.COLUMN)
+	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.FILTER)
+
 	private String apellido;
 	private ParametroDTO tipoDocumento;
+	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.COLUMN)
+	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.FILTER)
 	private String documento;
 	private String direccion;
 	private String telefono;
@@ -68,7 +76,6 @@ public class PersonaDTO extends ADto {
 	public void setApellido(String apellido) {
 		this.apellido = apellido;
 	}
-
 
 	public ParametroDTO getTipoDocumento() {
 		return tipoDocumento;
