@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
@@ -16,7 +17,7 @@ import org.pyt.common.common.Table;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.IngresoException;
-import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
 
@@ -132,8 +133,8 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private List<IngresoServicioDTO> listServicios;
 	private List<IngresoRepuestoDTO> listRepuestos;
 	private ParametroDTO parametroEstado;
-	private ServicioDTO servicioSelect;
-	private RepuestoDTO repuestoSelect;
+	private IngresoServicioDTO servicioSelect;
+	private IngresoRepuestoDTO repuestoSelect;
 
 	@FXML
 	public void initialize() {
@@ -178,14 +179,14 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public final void repuestoSelect() {
 		var selected = Table.getSelectedRows(tablaRepuesto);
-		repuestoSelect = selected.get(0).getRepuesto();
-		repuesto.setText(repuestoSelect.getNombre());
+		repuestoSelect = selected.get(0);
+		repuesto.setText(repuestoSelect.getRepuesto().getNombre());
 	}
 
 	public final void servicioSelect() {
 		var selected = Table.getSelectedRows(tablaServicio);
-		servicioSelect = selected.get(0).getServicio();
-		servicio.setText(servicioSelect.getNombre());
+		servicioSelect = selected.get(0);
+		servicio.setText(servicioSelect.getServicio().getNombre());
 	}
 
 	/**
@@ -231,8 +232,8 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 			Table.put(tablaRepuesto, listRepuestos);
 			Table.put(tablaServicio, listServicios);
-			totalRepuesto.setText(sumar(listRepuestos, field_valor_venta).toString());
-			totalServicio.setText(sumar(listServicios, field_valor_mano_obra).toString());
+			totalRepuesto.setText(sumarRepuestos(listRepuestos).toString());
+			totalServicio.setText(sumarServicios(listServicios).toString());
 		} catch (ValidateValueException e) {
 			error(e);
 		}
@@ -263,17 +264,35 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		}
 	}
 
-	private final <T extends ADto> BigDecimal sumar(List<T> lista, String nombre) {
+	private final <T extends ADto> BigDecimal sumarServicios(List<IngresoServicioDTO> lista) {
 		BigDecimal suma = new BigDecimal(0);
 		try {
 			if (lista != null) {
-				for (T dto : lista) {
-					if (valid.isCast(dto.get(nombre), Long.class)) {
-						suma = suma.add(valid.cast(dto.get(nombre), BigDecimal.class));
+				for (var dto : lista) {
+					var value = dto.getServicio().getValorManoObra();
+					if (value != null) {
+						suma = suma.add(valid.cast(value, BigDecimal.class));
 					}
 				}
 			}
-		} catch (ReflectionException | ValidateValueException e) {
+		} catch (ValidateValueException e) {
+			error(e);
+		}
+		return suma;
+	}
+
+	private final <T extends ADto> BigDecimal sumarRepuestos(List<IngresoRepuestoDTO> lista) {
+		BigDecimal suma = new BigDecimal(0);
+		try {
+			if (lista != null) {
+				for (var dto : lista) {
+					var value = dto.getRepuesto().getValorVenta();
+					if (value != null) {
+						suma = suma.add(valid.cast(value, BigDecimal.class));
+					}
+				}
+			}
+		} catch (ValidateValueException e) {
 			error(e);
 		}
 		return suma;
@@ -381,7 +400,9 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public final void setServicio(ServicioDTO servicio) {
 		if (servicio != null) {
-			servicioSelect = servicio;
+			servicioSelect = new IngresoServicioDTO();
+			servicioSelect.setServicio(servicio);
+			servicioSelect.setIngreso(registro);
 			this.servicio.setText(servicio.getNombre());
 		}
 	}
@@ -432,24 +453,84 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		}
 	}
 
+	public final void removeServicio() {
+		try {
+			if (listServicios != null && listServicios.size() > 0 && servicioSelect != null) {
+				if (StringUtils.isNotBlank(servicioSelect.getCodigo())) {
+					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteServicio}", String
+							.format("¿Desea eliminar el servicio %s ?", servicioSelect.getServicio().getNombre()));
+				} else {
+					listServicios.remove(servicioSelect);
+					servicio.setText(null);
+					Table.put(tablaServicio, listServicios);
+				}
+			}
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
+
+	public final void setDeleteServicio(Boolean respuesta) {
+		try {
+			if (respuesta) {
+				ingresoServicioSvc.delete(servicioSelect, userLogin);
+				listServicios.remove(servicioSelect);
+				servicio.setText(null);
+				Table.put(tablaServicio, listServicios);
+			}
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void removeRepuesto() {
+		try {
+			if (listRepuestos != null && listRepuestos.size() > 0 && repuestoSelect != null) {
+				if (StringUtils.isNotBlank(repuestoSelect.getCodigo())) {
+					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteRepuesto}", String
+							.format("¿Desea eliminar el repuesto %s ?", repuestoSelect.getRepuesto().getNombre()));
+				} else {
+					listRepuestos.remove(repuestoSelect);
+					repuesto.setText(null);
+					Table.put(tablaRepuesto, listRepuestos);
+				}
+			}
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
+
+	public final void setDeleteRepuesto(Boolean respuesta) {
+		try {
+			if (respuesta) {
+				ingresoRepuestoSvc.delete(repuestoSelect, userLogin);
+				listRepuestos.remove(repuestoSelect);
+				repuesto.setText(null);
+				Table.put(tablaRepuesto, listRepuestos);
+			}
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
 	public final void addServicio() {
 		if (listServicios == null) {
 			listServicios = new ArrayList<IngresoServicioDTO>();
 		}
 		if (servicioSelect != null) {
-			var ingresoServicio = new IngresoServicioDTO();
-			ingresoServicio.setIngreso(registro);
-			ingresoServicio.setServicio(servicioSelect);
-			listServicios.add(ingresoServicio);
+			listServicios.add(servicioSelect);
 			Table.put(tablaServicio, listServicios);
-			totalServicio.setText(sumar(listServicios, "valorManoObra").toString());
+			totalServicio.setText(sumarServicios(listServicios).toString());
 			servicioSelect = null;
+			servicio.setText(null);
 		}
 	}
 
 	public final void setRepuesto(RepuestoDTO repuesto) {
 		if (repuesto != null) {
-			repuestoSelect = repuesto;
+			repuestoSelect = new IngresoRepuestoDTO();
+			repuestoSelect.setRepuesto(repuesto);
+			repuestoSelect.setIngreso(registro);
 			this.repuesto.setText(repuesto.getNombre());
 		}
 	}
@@ -459,13 +540,11 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			listRepuestos = new ArrayList<IngresoRepuestoDTO>();
 		}
 		if (repuestoSelect != null) {
-			var ingresoRepuesto = new IngresoRepuestoDTO();
-			ingresoRepuesto.setIngreso(registro);
-			ingresoRepuesto.setRepuesto(repuestoSelect);
-			listRepuestos.add(ingresoRepuesto);
+			listRepuestos.add(repuestoSelect);
 			Table.put(tablaRepuesto, listRepuestos);
-			totalRepuesto.setText(sumar(listRepuestos, "valorVenta").toString());
+			totalRepuesto.setText(sumarRepuestos(listRepuestos).toString());
 			repuestoSelect = null;
+			repuesto.setText(null);
 		}
 	}
 

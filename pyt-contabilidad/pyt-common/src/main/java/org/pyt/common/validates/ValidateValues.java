@@ -1,6 +1,5 @@
 package org.pyt.common.validates;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -231,20 +230,23 @@ public final class ValidateValues {
 			}
 
 			clase = convertFromPrimitive(clase);
+			if (value.getClass() == clase) {
+				return (T) value;
+			}
 
 			var valueReturn = stringToClass(value, clase);
 			if (valueReturn != null) {
 				return (T) valueReturn;
 			}
 
-//			valueReturn = convertValueToClassMethodStatic(value, clase, originClass);
-//			if (valueReturn != null) {
-//				return (T) valueReturn;
-//			}
-//			valueReturn = getValueFromMethod(value, clase, originClass);
-//			if (valueReturn != null) {
-//				return (T) valueReturn;
-//			}
+			valueReturn = convertValueToClassMethodStatic(value, clase, originClass);
+			if (valueReturn != null) {
+				return (T) valueReturn;
+			}
+			valueReturn = getValueFromMethod(value, clase, originClass);
+			if (valueReturn != null) {
+				return (T) valueReturn;
+			}
 
 			if (value.getClass() == clase) {
 				return (T) value;
@@ -330,47 +332,54 @@ public final class ValidateValues {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private final <T, S> T getValueFromMethod(S value, Class clazz, Class originClass)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private final <T, S> T getValueFromMethod(S value, Class clazz, Class originClass) throws ValidateValueException {
+		try {
 //		for (var method : list) {
 //			if (method.isClassInOut(value.getClass(), originClass)) {
 //				return (T) method.getValueInvoke(value);
 //			}
 //		}
-		var methods = value.getClass().getDeclaredMethods();
-		for (var method : methods) {
-			if (method.getParameterCount() == 0 && !Modifier.isStatic(method.getModifiers())
-					&& (method.getReturnType() == clazz || method.getReturnType() == originClass)) {
-				list.add(new MethodToValue(method, value.getClass(), originClass, true));
-				return (T) method.invoke(value);
+			var methods = value.getClass().getDeclaredMethods();
+			for (var method : methods) {
+				if (method.getParameterCount() == 0 && !Modifier.isStatic(method.getModifiers())
+						&& (method.getReturnType() == clazz || method.getReturnType() == originClass)) {
+					list.add(new MethodToValue(method, value.getClass(), originClass, true));
+					return (T) method.invoke(value);
+				}
 			}
+		} catch (Exception e) {
+			throw new ValidateValueException("No se logra encontrar el metodo de conversion.", e);
 		}
 		return null;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <T, S> T convertValueToClassMethodStatic(S value, Class clazz, Class originClass)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ValidateValueException {
+			throws ValidateValueException {
+		try {
 //		for (var method : list) {
 //			if (method.isClassInOut(value.getClass(), originClass)) {
 //				return (T) method.getValueInvoke(value);
 //			}
 //		}
-		var metodos = clazz.getDeclaredMethods();
-		for (Method metodo : metodos) {
-			if (Modifier.isStatic(metodo.getModifiers())
-					&& (metodo.getReturnType() == clazz || metodo.getReturnType() == originClass)
-					&& metodo.getParameterCount() == 1) {
-				var clases = metodo.getParameterTypes()[0];
-				if (clases == value.getClass()) {
-					list.add(new MethodToValue(metodo, value.getClass(), originClass, true));
-					return (T) metodo.invoke(null, value);
-				} else if (isCast(value, clases)) {
-					T val = (T) cast(value, clases);
-					list.add(new MethodToValue(metodo, val.getClass(), originClass, true));
-					return (T) metodo.invoke(null, val);
+			var metodos = clazz.getDeclaredMethods();
+			for (Method metodo : metodos) {
+				if (Modifier.isStatic(metodo.getModifiers())
+						&& (metodo.getReturnType() == clazz || metodo.getReturnType() == originClass)
+						&& metodo.getParameterCount() == 1) {
+					var clases = metodo.getParameterTypes()[0];
+					if (clases == value.getClass()) {
+						list.add(new MethodToValue(metodo, value.getClass(), originClass, true));
+						return (T) metodo.invoke(null, value);
+					} else if (isCast(value, clases)) {
+						T val = (T) cast(value, clases);
+						list.add(new MethodToValue(metodo, val.getClass(), originClass, true));
+						return (T) metodo.invoke(null, val);
+					}
 				}
 			}
+		} catch (Exception e) {
+			throw new ValidateValueException("No se logra obtener la conversion de metodo estatico.", e);
 		}
 		return null;
 	}
