@@ -2,10 +2,12 @@ package com.pyt.service.dto;
 
 import org.pyt.common.abstracts.ADto;
 
+import com.pyt.service.dto.inventario.ResumenProductoDTO;
+
 public class IngresoRepuestoDTO extends ADto {
 	private static final long serialVersionUID = 1L;
 	private IngresoDTO ingreso;
-	private RepuestoDTO repuesto;
+	private ResumenProductoDTO repuesto;
 
 	public IngresoDTO getIngreso() {
 		return this.ingreso;
@@ -15,11 +17,11 @@ public class IngresoRepuestoDTO extends ADto {
 		this.ingreso = ingreso;
 	}
 
-	public RepuestoDTO getRepuesto() {
+	public ResumenProductoDTO getRepuesto() {
 		return this.repuesto;
 	}
 
-	public void setRepuesto(RepuestoDTO repuesto) {
+	public void setRepuesto(ResumenProductoDTO repuesto) {
 		this.repuesto = repuesto;
 	}
 

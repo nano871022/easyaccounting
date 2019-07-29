@@ -100,7 +100,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			public List<ParametroDTO> getList(ParametroDTO filter, Integer page, Integer rows) {
 				List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 				try {
-					lista = parametrosSvc.getParametros(filter, page - 1, rows);
+					lista = parametrosSvc.getParametros(filter, page, rows);
 				} catch (ParametroException e) {
 					error(e);
 				}
@@ -127,7 +127,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			public Integer getTotalRows(ParametroDTO filter) {
 				Integer count = 0;
 				try {
-					count = parametrosSvc.totalCount(getFilter());
+					count = parametrosSvc.totalCount(filter);
 				} catch (ParametroException e) {
 					logger.logger(e);
 					error(e);

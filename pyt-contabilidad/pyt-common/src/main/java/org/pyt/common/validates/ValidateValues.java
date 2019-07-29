@@ -264,13 +264,15 @@ public final class ValidateValues {
 			if (value.getClass() == BigDecimal.class) {
 				return (T) Long.valueOf(((BigDecimal) value).longValue());
 			}
-		}
-		if (clazz == BigDecimal.class) {
+		} else if (clazz == BigDecimal.class) {
 			if (value.getClass() == Integer.class) {
 				return (T) new BigDecimal((int) value);
 			}
+		} else if (clazz == Integer.class) {
+			if (value.getClass() == BigDecimal.class) {
+				return (T) Integer.valueOf(((BigDecimal) value).intValue());
+			}
 		}
-
 		return null;
 	}
 

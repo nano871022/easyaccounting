@@ -27,9 +27,9 @@ import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
+import com.pyt.service.dto.inventario.ProductoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
@@ -175,7 +175,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		mapa_claseBusqueda.put("Centro de Costo", CentroCostoDTO.class);
 		mapa_claseBusqueda.put("Empresa", EmpresaDTO.class);
 		mapa_claseBusqueda.put("Trabajador", TrabajadorDTO.class);
-		mapa_claseBusqueda.put("Repuestos", RepuestoDTO.class);
+		mapa_claseBusqueda.put("Producto", ProductoDTO.class);
 		mapa_claseBusqueda.put("Servicios", ServicioDTO.class);
 	}
 

@@ -23,13 +23,12 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 		List<ParametroDTO> lista2 = new ArrayList<ParametroDTO>();
 		if (dto == null)
-			throw new ParametroException("El objeto empresa se encuentra vacio.");
+			throw new ParametroException("El objeto parametro se encuentra vacio.");
 		try {
 			lista = querySvc.gets(dto, init, end);
 			if ("*".equalsIgnoreCase(dto.getGrupo())) {
-				lista.stream()
-				.filter(filter->filter.getGrupo() != null && "*".equalsIgnoreCase(filter.getGrupo()))
-				.forEach(row->lista2.add(row));
+				lista.stream().filter(filter -> filter.getGrupo() != null && "*".equalsIgnoreCase(filter.getGrupo()))
+						.forEach(row -> lista2.add(row));
 				if (lista2.size() > 0)
 					return lista2;
 			}

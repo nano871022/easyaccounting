@@ -69,7 +69,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 		});
 		try {
 			ParametroInventarioDTO parametro = new ParametroInventarioDTO();
-			parametro.setNombre("entrada");
+			parametro.setNombre("Entrada");
 			List<ParametroInventarioDTO> parametros = parametroSvc.getAllParametros(parametro,
 					ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
 			if (parametros == null || parametros.size() == 0)

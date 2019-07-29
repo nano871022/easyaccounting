@@ -98,21 +98,22 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 		} catch (ValidateValueException e) {
 			error(e);
 		}
-		registro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
+		registro.setEstado(String.valueOf(ParametroConstants.mapa_estados_parametros.get(estado.getValue())));
 		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
 			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroInventarioConstants.mapa_grupo));
 		}
 		buttones_update();
 	}
+
 	/**
 	 * Verifica si un boton se muestra o no
 	 */
 	private final void buttones_update() {
-		if(StringUtils.isBlank(registro.getCodigo())) {
+		if (StringUtils.isBlank(registro.getCodigo())) {
 			insert.setVisible(true);
 			update.setVisible(false);
 			delete.setVisible(false);
-		}else {
+		} else {
 			insert.setVisible(false);
 			update.setVisible(true);
 			delete.setVisible(true);
@@ -122,8 +123,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	/**
 	 * Se encarga de cargar el parametro para poder realizar crud sobre el registro
 	 * 
-	 * @param dto
-	 *            {@link ParametroInventarioDTO}
+	 * @param dto {@link ParametroInventarioDTO}
 	 */
 	public void load(ParametroInventarioDTO dto) {
 		if (StringUtils.isBlank(dto.getGrupo()) && (dto == null || StringUtils.isBlank(dto.getCodigo()))) {
@@ -254,8 +254,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	/**
 	 * Se encarga de validar el parametro grupo
 	 * 
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final void validParametroGrupo() throws Exception {
 		if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
@@ -264,7 +263,8 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 			List<ParametroGrupoInventarioDTO> lista = parametroSvc.getParametroGrupo(pGrupo);
 			if (lista.size() > 0) {
 				for (ParametroGrupoInventarioDTO grupo : lista) {
-					if(StringUtils.isBlank(grupo.getParametro()))continue;
+					if (StringUtils.isBlank(grupo.getParametro()))
+						continue;
 					ParametroInventarioDTO parametro = new ParametroInventarioDTO();
 					parametro.setCodigo(grupo.getParametro());
 					if (grupo != null && registro != null && StringUtils.isNotBlank(registro.getCodigo())
@@ -313,8 +313,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	@SuppressWarnings("unchecked")
 	public void deleteBtn() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}",
-					"¿Desea eliminar el registro?");
+			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}", "¿Desea eliminar el registro?");
 			;
 		} catch (LoadAppFxmlException e) {
 			error(e);

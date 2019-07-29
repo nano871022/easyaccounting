@@ -28,9 +28,10 @@ import com.pyt.service.dto.IngresoServicioDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.dto.PersonaDTO;
-import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
+import com.pyt.service.dto.inventario.ProductoDTO;
+import com.pyt.service.dto.inventario.ResumenProductoDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
@@ -62,6 +63,8 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private IProductosSvc repuestosSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<IngresoServicioDTO> ingresoServicioSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ResumenProductoDTO> resumenProductoSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<IngresoRepuestoDTO> ingresoRepuestoSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
@@ -160,7 +163,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		repuesto.setCleanValue(() -> cleanRepuesto());
 		propietario.setPopupOpenAction(() -> popupPropietario());
 		propietario.setCleanValue(() -> cleanPropietario());
-		nombre.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getRepuesto().getNombre()));
+		nombre.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getRepuesto().getProducto().getNombre()));
 		valorServicio.setCellValueFactory(
 				e -> new SimpleStringProperty(String.valueOf(e.getValue().getServicio().getValorManoObra())));
 		nombreServicio.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getServicio().getNombre()));
@@ -180,7 +183,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	public final void repuestoSelect() {
 		var selected = Table.getSelectedRows(tablaRepuesto);
 		repuestoSelect = selected.get(0);
-		repuesto.setText(repuestoSelect.getRepuesto().getNombre());
+		repuesto.setText(repuestoSelect.getRepuesto().getProducto().getNombre());
 	}
 
 	public final void servicioSelect() {
@@ -373,7 +376,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupRepuesto() {
 		try {
-			controllerPopup(new PopupGenBean<RepuestoDTO>(RepuestoDTO.class)).load("#{IngresosCRUBean.repuesto}");
+			controllerPopup(new PopupGenBean<ProductoDTO>(ProductoDTO.class)).load("#{IngresosCRUBean.repuesto}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -487,8 +490,9 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			if (listRepuestos != null && listRepuestos.size() > 0 && repuestoSelect != null) {
 				if (StringUtils.isNotBlank(repuestoSelect.getCodigo())) {
-					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteRepuesto}", String
-							.format("¿Desea eliminar el repuesto %s ?", repuestoSelect.getRepuesto().getNombre()));
+					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteRepuesto}",
+							String.format("¿Desea eliminar el repuesto %s ?",
+									repuestoSelect.getRepuesto().getProducto().getNombre()));
 				} else {
 					listRepuestos.remove(repuestoSelect);
 					repuesto.setText(null);
@@ -526,13 +530,27 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		}
 	}
 
-	public final void setRepuesto(RepuestoDTO repuesto) {
+	public final void setRepuesto(ProductoDTO repuesto) {
 		if (repuesto != null) {
 			repuestoSelect = new IngresoRepuestoDTO();
-			repuestoSelect.setRepuesto(repuesto);
+			repuestoSelect.setRepuesto(getResumenProducto(repuesto));
 			repuestoSelect.setIngreso(registro);
 			this.repuesto.setText(repuesto.getNombre());
 		}
+	}
+
+	private final ResumenProductoDTO getResumenProducto(ProductoDTO producto) {
+		try {
+			var resumenProducto = new ResumenProductoDTO();
+			resumenProducto.setProducto(producto);
+			var list = resumenProductoSvc.getAll(resumenProducto);
+			if (list != null) {
+				return list.get(0);
+			}
+		} catch (Exception e) {
+			error(e);
+		}
+		return null;
 	}
 
 	public final void addRepuesto() {

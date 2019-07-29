@@ -36,6 +36,7 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 	private IProductosSvc productosSvc;
 	@Inject(resource = "com.pyt.service.implement.inventario.ParametroInventariosSvc")
 	private IParametroInventariosSvc parametroSvc;
+
 	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Agregar unidades", descripcion = "Agregar unidades asociados a los productos.", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
 	public void agregarInventario(MovimientoDTO dto, UsuarioDTO usuario) throws InventarioException {
@@ -48,16 +49,22 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 		if (StringUtils.isBlank(dto.getProducto().getCodigo()))
 			throw new InventarioException("El producto suministrado no se encuentra creado.");
 		try {
-			if(dto.getTipo() == null) {
+			if (dto.getCantidad() == null) {
+				dto.setCantidad(0);
+			}
+			if (dto.getTipo() == null) {
 				ParametroInventarioDTO parametro = new ParametroInventarioDTO();
 				parametro.setEstado("A");
 				parametro.setNombre(ParametroInventarioConstants.DESC_TIPO_MOV_ENTRADA);
-				List<ParametroInventarioDTO> tipoMovs = parametroSvc.getAllParametros(parametro, ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
-				if(tipoMovs != null && tipoMovs.size() > 1) {
-					throw new InventarioException("Se encontraron varios registros para el parametro de tipo novedad de entrada.");
+				List<ParametroInventarioDTO> tipoMovs = parametroSvc.getAllParametros(parametro,
+						ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
+				if (tipoMovs != null && tipoMovs.size() > 1) {
+					throw new InventarioException(
+							"Se encontraron varios registros para el parametro de tipo novedad de entrada.");
 				}
-				if(tipoMovs == null || tipoMovs.size() == 0) {
-					throw new InventarioException("No se encontro ningun registro para el parametro de tipo de novedad de entrada.");
+				if (tipoMovs == null || tipoMovs.size() == 0) {
+					throw new InventarioException(
+							"No se encontro ningun registro para el parametro de tipo de novedad de entrada.");
 				}
 				dto.setTipo(tipoMovs.get(0));
 			}
@@ -74,13 +81,13 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 				throw new InventarioException("Se encontraron varios resumenes, contacte con el administrador.");
 			}
 			SaldoDTO saldoOld = ultimoSaldo(resumen.getProducto());
-			if(list != null && list.size() > 0) {
+			if (list != null && list.size() > 0) {
 				resumen = list.get(0);
 			}
-			if(resumen == null || StringUtils.isBlank(resumen.getCodigo())) {
+			if (resumen == null || StringUtils.isBlank(resumen.getCodigo())) {
 				throw new InventarioException("No fue encontrado ningun resumen de movimientos.");
 			}
-			if(resumen.getCantidad() == null) {
+			if (resumen.getCantidad() == null) {
 				resumen.setCantidad(0);
 			}
 			resumen.setCantidad(resumen.getCantidad() + dto.getCantidad());
@@ -96,7 +103,8 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 		} catch (ResumenProductoException e) {
 			throw new InventarioException("Se presento error en la actualizacion del resumen del producto.", e);
 		} catch (ParametroException e) {
-			throw new InventarioException("Se presento error en la obtencion del parametro de invetarion de tipo movimiento de entrada.");
+			throw new InventarioException(
+					"Se presento error en la obtencion del parametro de invetarion de tipo movimiento de entrada.");
 		}
 	}
 
@@ -133,7 +141,7 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 			saldo.setTotal(saldoOld.getTotal().subtract(totalMovimiento));
 			saldo = movimientoSvc.insert(saldo, usuario);
 			RestarCantidadDTO restar = restarCantidad(dto.getProducto(), usuario);
-			restar.setCantidad(restar.getCantidad()-dto.getCantidad());
+			restar.setCantidad(restar.getCantidad() - dto.getCantidad());
 			movimientoSvc.update(restar, usuario);
 		} catch (MovimientoException e) {
 			throw new InventarioException("Se presento error con el ingreso del movimiento.", e);
@@ -165,7 +173,7 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 					restar.setCantidad(mov.getCantidad());
 					return movimientoSvc.insert(restar, usuario);
 				}
-				if(restars.size() > 1) {
+				if (restars.size() > 1) {
 					throw new InventarioException("Se encontraron varios registros de restar cantidad.");
 				}
 				if (restars.size() == 1) {
@@ -187,11 +195,9 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 	/**
 	 * Se encarga de obtener el ultimo saldo
 	 * 
-	 * @param producto
-	 *            {@link ProductoDTO}
+	 * @param producto {@link ProductoDTO}
 	 * @return {@link SaldoDTO}
-	 * @throws {@link
-	 *             InventarioException}
+	 * @throws {@link InventarioException}
 	 */
 	private final SaldoDTO ultimoSaldo(ProductoDTO producto) throws InventarioException {
 		if (producto == null || StringUtils.isBlank(producto.getCodigo()))
