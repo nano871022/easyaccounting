@@ -10,7 +10,6 @@ import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SearchService;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
@@ -50,7 +49,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 @FXMLFile(path = "view/config/servicios", file = "ConfigService.fxml")
@@ -208,8 +206,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/**
 	 * Se carga de realizar busqueda de los registros y carga las data tablas
 	 * 
-	 * @param configuracion
-	 *            {@link ConfiguracionDTO}
+	 * @param configuracion {@link ConfiguracionDTO}
 	 */
 	public final void load(ConfiguracionDTO configuracion) {
 		logger.info("Load cargado");
@@ -470,7 +467,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		colMarcador.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getMarcador()));
 		colInOut.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoInOut()));
 		orden.setCellValueFactory(e -> new SimpleIntegerProperty(e.getValue().getOrden()).asObject());
-		
+
 	}
 
 	private void hiddenTabs() {
@@ -562,7 +559,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (StringUtils.isNotBlank(marcador)) {
 			MarcadorDTO marca = new MarcadorDTO();
 			marca.setMarcador(marcador);
-			marca.setOrden(tbMarcador.getTotal()+1);
+			marca.setOrden(tbMarcador.getTotal() + 1);
 			RadioButton toggle = (RadioButton) group.getSelectedToggle();
 			marca.setTipoInOut(toggle.getText());
 			marcadores.add(marca);
@@ -655,8 +652,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		marcador.getSelectionModel().selectFirst();
 		tbMarcadorSerivicio.search();
 	}
+
 	/**
 	 * Se encarga de poner los campos del servicio usado.
+	 * 
 	 * @param service {@link ServicePOJO}
 	 */
 	public <T extends Object> void putCamposServicio(ServicePOJO service) {
@@ -669,59 +668,74 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
+	private final void loadFields() throws Exception {
+		if (StringUtils.isNotBlank(configuracion.getText())) {
+			config.setConfiguracion(configuracion.getText());
+		} else {
+			throw new Exception("No se encontró el nombre de la configuración.");
+		}
+		if (StringUtils.isNotBlank(nameFiler.getText())) {
+			config.setArchivo(nameFiler.getText());
+		} else if (rbReportes.isSelected()) {
+			throw new Exception("No se encontró el nombre del archivo.");
+		}
+		if (StringUtils.isNotBlank(nameFilerOut.getText())) {
+			config.setArchivoSalida(nameFilerOut.getText());
+		}
+		if (StringUtils.isNotBlank(this.descripcion.getText())) {
+			config.setDescripcion(descripcion.getText());
+		}
+		if (rbReportes.isSelected()) {
+			config.setReport(true);
+		}
+		if (rbCargues.isSelected()) {
+			config.setReport(false);
+		}
+	}
+
+	private final void servicioCampoUPDINST() throws MarcadorServicioException {
+		for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
+			servicio.setConfiguracion(config.getConfiguracion());
+			if (StringUtils.isNotBlank(servicio.getCodigo())) {
+				configMarcadorServicio.updateServicioCampo(servicio, userLogin);
+			} else if (StringUtils.isBlank(servicio.getCodigo())) {
+				servicio = configMarcadorServicio.insertServicioCampoBusqueda(servicio, userLogin);
+			}
+		}
+
+	}
+
+	private final void servicioMarcadorUPDINST() throws MarcadorServicioException {
+		for (MarcadorServicioDTO marcador : marcadoresServicios) {
+			marcador.setConfiguracion(config.getConfiguracion());
+			if (StringUtils.isNotBlank(marcador.getCodigo())) {
+				configMarcadorServicio.updateServicioMarcador(marcador, userLogin);
+			} else if (StringUtils.isBlank(marcador.getCodigo())) {
+				marcador = configMarcadorServicio.insertMarcadorServicio(marcador, userLogin);
+			}
+		}
+	}
+
+	private final void marcadorUPDINST() throws MarcadorServicioException {
+		for (MarcadorDTO marcador : marcadores) {
+			marcador.setConfiguracion(config.getConfiguracion());
+			if (StringUtils.isNotBlank(marcador.getCodigo())) {
+				configMarcadorServicio.updateMarcador(marcador, userLogin);
+			} else if (StringUtils.isBlank(marcador.getCodigo())) {
+				marcador = configMarcadorServicio.insertMarcador(marcador, userLogin);
+			}
+		}
+	}
+
 	public final void saveAll() {
 		try {
-			if (StringUtils.isNotBlank(configuracion.getText())) {
-				config.setConfiguracion(configuracion.getText());
-			} else {
-				this.notificar("No se encontró el nombre de la configuración.");
-				return;
-			}
-			if (StringUtils.isNotBlank(nameFiler.getText())) {
-				config.setArchivo(nameFiler.getText());
-			} else if (rbReportes.isSelected()) {
-				this.notificar("No se encontró el nombre del archivo.");
-				return;
-			}
-			if (StringUtils.isNotBlank(nameFilerOut.getText())) {
-				config.setArchivoSalida(nameFilerOut.getText());
-			}
-			if (StringUtils.isNotBlank(this.descripcion.getText())) {
-				config.setDescripcion(descripcion.getText());
-			}
-			if (rbReportes.isSelected()) {
-				config.setReport(true);
-			}
-			if (rbCargues.isSelected()) {
-				config.setReport(false);
-			}
-			for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
-				servicio.setConfiguracion(config.getConfiguracion());
-				if (StringUtils.isNotBlank(servicio.getCodigo())) {
-					configMarcadorServicio.updateServicioCampo(servicio, userLogin);
-				} else if (StringUtils.isBlank(servicio.getCodigo())) {
-					servicio = configMarcadorServicio.insertServicioCampoBusqueda(servicio, userLogin);
-				}
-			}
-			for (MarcadorServicioDTO marcador : marcadoresServicios) {
-				marcador.setConfiguracion(config.getConfiguracion());
-				if (StringUtils.isNotBlank(marcador.getCodigo())) {
-					configMarcadorServicio.updateServicioMarcador(marcador, userLogin);
-				} else if (StringUtils.isBlank(marcador.getCodigo())) {
-					marcador = configMarcadorServicio.insertMarcadorServicio(marcador, userLogin);
-				}
-			}
-			for (MarcadorDTO marcador : marcadores) {
-				marcador.setConfiguracion(config.getConfiguracion());
-				if (StringUtils.isNotBlank(marcador.getCodigo())) {
-					configMarcadorServicio.updateMarcador(marcador, userLogin);
-				} else if (StringUtils.isBlank(marcador.getCodigo())) {
-					marcador = configMarcadorServicio.insertMarcador(marcador, userLogin);
-				}
-			}
+			loadFields();
+			servicioCampoUPDINST();
+			servicioMarcadorUPDINST();
+			marcadorUPDINST();
 			if (StringUtils.isNotBlank(config.getCodigo())) {
 				configMarcadorServicio.updateConfiguracion(config, userLogin);
-			} else if (StringUtils.isBlank(config.getCodigo())) {
+			} else {
 				config = configMarcadorServicio.insertConfiguracion(config, userLogin);
 			}
 			this.notificar("Se guardaron los registros correctamente.");
@@ -756,7 +770,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void reports() {
 		try {
-			controllerPopup( GenConfigBean.class).load(config.getConfiguracion());
+			controllerPopup(GenConfigBean.class).load(config.getConfiguracion());
 		} catch (LoadAppFxmlException e) {
 			error(e);
 		}

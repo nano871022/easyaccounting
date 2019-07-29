@@ -174,6 +174,12 @@ public final class ValidateValues {
 				return validate((Short) value1, (Short) value2);
 			if (value1 instanceof Number && value2 instanceof Number)
 				return validate((Number) value1, (Number) value2);
+			if (value1 instanceof String && value2 instanceof Long && isCast(value1, Long.class))
+				return validate(cast(value1, Long.class), (Long) value2);
+			if (value1 instanceof String && value2 instanceof Integer && isCast(value1, Integer.class))
+				return validate(cast(value1, Integer.class), (Integer) value2);
+			if (value1 instanceof String && value2 instanceof BigDecimal && isCast(value1, BigDecimal.class))
+				return validate(cast(value1, BigDecimal.class), (BigDecimal) value2);
 			if (value1 instanceof String && value2 instanceof String)
 				return validate((String) value1, (String) value2);
 			if (value1 instanceof ADto && value2 instanceof ADto)
@@ -394,7 +400,6 @@ public final class ValidateValues {
 	 * @param clase {@link Class}
 	 * @return {@link Boolean}
 	 */
-	@SuppressWarnings("unchecked")
 	public final <T, L extends Object> Boolean isCast(T value, Class<L> clase) {
 		try {
 			clase = convertFromPrimitive(clase);

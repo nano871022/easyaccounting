@@ -43,20 +43,9 @@ public class SearchService {
 		try {
 			listServices = (AbstractListFromProccess) this.getClass().forName(AppConstants.PATH_LIST_SERVICE)
 					.getConstructor().newInstance();
-		} catch (InstantiationException e) {
-			throw new SearchServicesException("Error en instanciación.", e);
-		} catch (IllegalAccessException e) {
-			throw new SearchServicesException("Acceso ilegal.", e);
-		} catch (IllegalArgumentException e) {
-			throw new SearchServicesException("Argumento ilegal.", e);
-		} catch (InvocationTargetException e) {
-			throw new SearchServicesException("Objetivo de invocación.", e);
-		} catch (NoSuchMethodException e) {
-			throw new SearchServicesException("No se encontro metodo.", e);
-		} catch (SecurityException e) {
-			throw new SearchServicesException("Error en seguridad.", e);
-		} catch (ClassNotFoundException e) {
-			throw new SearchServicesException("No se encontro clase.", e);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+			throw new SearchServicesException("Problema con obtener instancia de la clase seleccionada.", e);
 		}
 	}
 
@@ -68,11 +57,9 @@ public class SearchService {
 	 * Se encarga de obtener las instancias de los Strings los cuales son los
 	 * parametros que se deben pasar a los servicos.
 	 * 
-	 * @param parameters
-	 *            {@link String} array
+	 * @param parameters {@link String} array
 	 * @return Array {@link Object}
-	 * @throws {@link
-	 *             SearchServicesException}
+	 * @throws {@link SearchServicesException}
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private final <P extends Object> P[] stringToObjectParameters(String... parameters) throws SearchServicesException {
@@ -105,11 +92,9 @@ public class SearchService {
 	/**
 	 * Se encarga de obtener los campos del servicio indicado
 	 * 
-	 * @param service
-	 *            {@link String} nombre del servicio
+	 * @param service {@link String} nombre del servicio
 	 * @return {@link List} < {@link String} >
-	 * @throws {@link
-	 *             SearchServicesException}
+	 * @throws {@link SearchServicesException}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final <T extends Object, P extends Object> List<String> getCampos(String service)
@@ -147,7 +132,7 @@ public class SearchService {
 				} catch (ClassNotFoundException e) {
 					throw new SearchServicesException("No se encontro clase.", e);
 				}
-				
+
 				break;
 			}
 		} // end for
@@ -158,18 +143,17 @@ public class SearchService {
 	 * Obteine todos los campos a poner en la lsita desplegable despues de
 	 * seleccionar el servicio
 	 * 
-	 * @param service
-	 *            {@link ServicePOJO}
+	 * @param service {@link ServicePOJO}
 	 * @return {@link List} < {@link String} >
-	 * @throws {@link
-	 *             SearchServicesException}
+	 * @throws {@link SearchServicesException}
 	 */
 	@SuppressWarnings("rawtypes")
 	public final <P extends Object> List<String> putCamposServicios(ServicePOJO service)
 			throws SearchServicesException {
 		List<String> listaCampos = new ArrayList<String>();
 		try {
-			if(service == null)throw new SearchServicesException("No se suministro el ServicePOJO a procesar."); 
+			if (service == null)
+				throw new SearchServicesException("No se suministro el ServicePOJO a procesar.");
 			P[] parameterss = stringToObjectParameters(service.getParameter());
 			Method metodoUso;
 			metodoUso = ReflectionUtils.instanciar().getMethod(service.getClasss(), service.getName(), parameterss);
@@ -204,14 +188,12 @@ public class SearchService {
 	/**
 	 * Se encarga de agregar los campos a la lsita e campos a usar
 	 * 
-	 * @param listaCampos
-	 *            {@link List} of {@link String}
-	 * @param parametro
-	 *            {@link Class} clase en la cual se buscan los cmpos
+	 * @param listaCampos {@link List} of {@link String}
+	 * @param parametro   {@link Class} clase en la cual se buscan los cmpos
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private final void addCampos(List<String> listaCampos, Class parametro) {
-		if(excludeUsuarioDTO && parametro.isAssignableFrom(UsuarioDTO.class)) {
+		if (excludeUsuarioDTO && parametro.isAssignableFrom(UsuarioDTO.class)) {
 			return;
 		}
 		List<String> campos = allFields(parametro);
@@ -222,8 +204,7 @@ public class SearchService {
 	 * Se encarga de obtener tod slos nombre de los campos dentro de la clase
 	 * suministrada
 	 * 
-	 * @param parametro
-	 *            {@link Class}
+	 * @param parametro {@link Class}
 	 * @return {@link List} of {@link String}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -248,23 +229,19 @@ public class SearchService {
 	/**
 	 * Se encarga de agreagr los campos ssegun los datos suministrados
 	 * 
-	 * @param obj
-	 *            {@link Object} extends instancia del objeto a obtener los campos
-	 *            el campo debe conntener getNameFields
-	 * @param clase
-	 *            {@link Class} Clase que se usa para obtener el nombre del campo a
-	 *            usar
-	 * @param retornoSimpleName
-	 *            {@link String} Nombe del campo al cual se retornara.
-	 * @throws {@link
-	 *             SearchServicesException}
+	 * @param obj               {@link Object} extends instancia del objeto a
+	 *                          obtener los campos el campo debe conntener
+	 *                          getNameFields
+	 * @param clase             {@link Class} Clase que se usa para obtener el
+	 *                          nombre del campo a usar
+	 * @param retornoSimpleName {@link String} Nombe del campo al cual se retornara.
+	 * @throws {@link SearchServicesException}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private final <T extends Object> void addCampos(T obj, Class clase, String retornoSimpleName)
-			{
+	private final <T extends Object> void addCampos(T obj, Class clase, String retornoSimpleName) {
 		try {
 			if (obj instanceof ADto) {
-				if( excludeUsuarioDTO && obj instanceof UsuarioDTO) {
+				if (excludeUsuarioDTO && obj instanceof UsuarioDTO) {
 					return;
 				}
 				List<String> campos;
@@ -284,12 +261,9 @@ public class SearchService {
 	 * Se encarga de agregar los campos segun el {@link Type} confiigurado en el
 	 * retorno del metodo
 	 * 
-	 * @param metodo
-	 *            {@link Method}
-	 * @param retorno
-	 *            {@link Class}
-	 * @throws {@link
-	 *             SearchServicesException}
+	 * @param metodo  {@link Method}
+	 * @param retorno {@link Class}
+	 * @throws {@link SearchServicesException}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private <T extends Object> void addFieldByType(Method metodo, Class retorno) throws SearchServicesException {
