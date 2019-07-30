@@ -3,9 +3,11 @@ package org.pyt.app.beans.config;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.PropertiesUtil;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
@@ -14,9 +16,12 @@ import org.pyt.common.common.SearchService;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
+import org.pyt.common.constants.DataPropertiesConstants;
+import org.pyt.common.constants.PropertiesConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.SearchServicesException;
+import org.pyt.common.properties.PropertiesUtils;
 
 import com.pyt.service.dto.AsociacionArchivoDTO;
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -140,6 +145,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private List<MarcadorServicioDTO> marcadoresServicios;
 	private Integer posicion;
 	private Integer max;
+	private String servicePackageList;
 
 	private AbstractListFromProccess<ServicePOJO> listServices;
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
@@ -191,6 +197,11 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			lNameFiler.setVisible(true);
 			lNameFilerOut.setVisible(true);
 		});
+		try {
+		servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load().getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
+		}catch(Exception e) {
+			logger.logger(e);
+		}
 		hiddenTabs();
 		hiddenBtns();
 		configColmn();
@@ -400,7 +411,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
 	private void loadServices() {
 		try {
-			listServices = (AbstractListFromProccess) this.getClass().forName(AppConstants.PATH_LIST_SERVICE)
+			var pathServices = StringUtils.isNotBlank(servicePackageList)?servicePackageList:AppConstants.PATH_LIST_SERVICE;
+			listServices = (AbstractListFromProccess) this.getClass().forName(pathServices)
 					.getConstructor().newInstance();
 			lstServicios.converterProperty().set(new StringConverter<ServicePOJO>() {
 				@Override

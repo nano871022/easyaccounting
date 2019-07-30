@@ -2,6 +2,7 @@ package com.pyt.service.dto;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
+import org.pyt.common.annotation.proccess.ValueInObject;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -14,13 +15,18 @@ public class CuentaContableDTO extends ADto {
 	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.COLUMN)
 	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.FILTER)
 	private String codigoCuenta;
+	@ValueInObject(field="nombre")
 	private ParametroDTO tipoPlanContable;
+	@ValueInObject(field="nombre")
 	private ParametroDTO tipo;
 	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.FILTER)
 	@DefaultFieldToGeneric(simpleNameClazzBean = "PopupGenBean", use = DefaultFieldToGeneric.Uses.COLUMN)
 	private String nombre;
+	@ValueInObject(field="nombre")
 	private ParametroDTO naturaleza;
+	@ValueInObject(field="nombre")
 	private EmpresaDTO empresa;
+	@ValueInObject(field="codigoCuenta")
 	private CuentaContableDTO asociado;
 
 	public ParametroDTO getTipoPlanContable() {

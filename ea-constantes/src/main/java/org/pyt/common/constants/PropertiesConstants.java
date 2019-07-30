@@ -9,4 +9,5 @@ public class PropertiesConstants {
 	public final static String PROP_EJB_HOME = "ejb-home.properties";
 	public final static String PROP_LOG = "log.properties";
 	public final static String PROP_SIMPLE_SERVICE = "simple-service.properties";
+	public final static String PROP_DATA = "data.properties";
 }

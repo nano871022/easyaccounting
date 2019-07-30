@@ -9,12 +9,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
+import org.pyt.common.constants.DataPropertiesConstants;
 import org.pyt.common.constants.DtoConstants;
+import org.pyt.common.constants.PropertiesConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.SearchServicesException;
+import org.pyt.common.properties.PropertiesUtils;
 import org.pyt.common.reflection.ReflectionUtils;
 
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
@@ -35,13 +39,20 @@ public class SearchService {
 	private AbstractListFromProccess<ServicePOJO> listServices;
 	private Boolean excludeUsuarioDTO;
 	protected Log logger = Log.Log(this.getClass());
+	private String servicePackageList;
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
 	private SearchService() throws SearchServicesException {
 		campos = new ArrayList<String>();
 		excludeUsuarioDTO = true;
 		try {
-			listServices = (AbstractListFromProccess) this.getClass().forName(AppConstants.PATH_LIST_SERVICE)
+		servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load().getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
+		}catch(Exception e) {
+			logger.logger(e);
+		}
+		try {
+			var serviceList = StringUtils.isNotBlank(servicePackageList)?servicePackageList:AppConstants.PATH_LIST_SERVICE;
+			listServices = (AbstractListFromProccess) this.getClass().forName(serviceList)
 					.getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {

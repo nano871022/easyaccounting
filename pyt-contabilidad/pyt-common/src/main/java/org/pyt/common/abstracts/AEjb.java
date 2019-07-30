@@ -17,7 +17,7 @@ public abstract class AEjb {
 
 	public AEjb(String prop)throws Exception {
 		context = new InitialContext();
-		PropertiesUtils.getInstance().setNameProperties(prop).load()
+		properties = PropertiesUtils.getInstance().setNameProperties(prop).load()
 		.getProperties();
 	}
 	

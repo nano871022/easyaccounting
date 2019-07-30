@@ -8,6 +8,8 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.Log;
+import org.pyt.common.constants.DataPropertiesConstants;
+import org.pyt.common.constants.PropertiesConstants;
 
 
 
@@ -20,7 +22,6 @@ import org.pyt.common.common.Log;
  */
 public abstract class ABin {
 	private String path_split = "/";
-	private final static String file_properties = "./properties/data.properties";
 	private final static String default_file_data = "./systemFile";
 	private Log logger = Log.Log(this.getClass());
 
@@ -56,14 +57,14 @@ public abstract class ABin {
 	}
 	
 	private final String pathData() {
-		File properties = new File(file_properties);
+		File properties = new File(PropertiesConstants.PROP_DATA);
 		if(properties.exists()) {
 			try {
 				Properties prop = new Properties();
 				FileInputStream fis = new FileInputStream(properties);
 				if(fis != null) {
 					prop.load(fis);
-					String path = prop.getProperty("path");
+					String path = prop.getProperty(DataPropertiesConstants.CONST_PATH_FILES);
 					if(StringUtils.isNotBlank(path)) {
 						return path;
 					}

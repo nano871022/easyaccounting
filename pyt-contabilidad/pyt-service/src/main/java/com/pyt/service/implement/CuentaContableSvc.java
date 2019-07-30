@@ -66,6 +66,21 @@ public class CuentaContableSvc extends Services implements ICuentaContableSvc {
 		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new CuentaContableException("El codigo de la cuenta contable existe.");
 		try {
+			if(dto.getAsociado() != null && StringUtils.isNotBlank(dto.getAsociado().getNombre())) {
+				dto.setAsociado(querySvc.get(dto.getAsociado()));
+			}
+			if(dto.getEmpresa() != null && StringUtils.isNotBlank(dto.getEmpresa().getNombre())) {
+				dto.setEmpresa(querySvc.get(dto.getEmpresa()));
+			}
+			if(dto.getTipoPlanContable() != null && StringUtils.isNotBlank(dto.getTipoPlanContable().getNombre())) {
+				dto.setTipoPlanContable(querySvc.get(dto.getTipoPlanContable()));
+			}
+			if(dto.getNaturaleza() != null && StringUtils.isNotBlank(dto.getNaturaleza().getNombre())){
+				dto.setNaturaleza(querySvc.get(dto.getNaturaleza()));
+			}
+			if(dto.getTipo() != null && StringUtils.isNotBlank(dto.getTipo().getNombre())){
+				dto.setTipo(querySvc.get(dto.getTipo()));
+			}
 			return querySvc.set(dto, user);
 		} catch (QueryException e) {
 			throw new CuentaContableException(e);
