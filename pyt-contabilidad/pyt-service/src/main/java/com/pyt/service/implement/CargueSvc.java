@@ -42,8 +42,7 @@ public class CargueSvc extends Services implements ICargue {
 	 * Se encarga de obtener la cantidad de marcadores usados dentro de la
 	 * configuración
 	 * 
-	 * @param marcadores
-	 *            {@link List} < {@link ServicioCampoBusquedaDTO} >
+	 * @param marcadores {@link List} < {@link ServicioCampoBusquedaDTO} >
 	 * @return {@link Integer}
 	 */
 	private final Integer cantidadMarcadoresUsados(List<ServicioCampoBusquedaDTO> marcadores) {
@@ -58,10 +57,8 @@ public class CargueSvc extends Services implements ICargue {
 	 * Realiza la busqueda dentro de los marcadores y comprara con el orden idicado
 	 * y retorna el arcador que corresponde al numero de la orden
 	 * 
-	 * @param list
-	 *            {@link List} < {@link MarcadorDTO} >
-	 * @param orden
-	 *            {@link Integer}
+	 * @param list  {@link List} < {@link MarcadorDTO} >
+	 * @param orden {@link Integer}
 	 * @return {@link MarcadorDTO}
 	 */
 	public final MarcadorDTO getMarcador(List<MarcadorDTO> list, Integer orden) {
@@ -76,10 +73,8 @@ public class CargueSvc extends Services implements ICargue {
 	/**
 	 * Se encarga de obtener todos los servicios asociados al marcador indicado
 	 * 
-	 * @param marcador
-	 *            {@link MarcadorDTO}
-	 * @param marcadoresServicios
-	 *            {@link List} < {@link ServicioCampoBusquedaDTO} >
+	 * @param marcador            {@link MarcadorDTO}
+	 * @param marcadoresServicios {@link List} < {@link ServicioCampoBusquedaDTO} >
 	 * @return {@link List} < {@link ServicioCampoBusquedaDTO} >
 	 */
 	public final List<ServicioCampoBusquedaDTO> getMarcadorServicio(MarcadorDTO marcador,
@@ -103,7 +98,9 @@ public class CargueSvc extends Services implements ICargue {
 				throw new CargueException("El nombre de la configuracion no se suministro.");
 			if (file == null || file.getByte() == null)
 				throw new CargueException("El archivo suministrado no fue cargado correctamente.");
-			List<MarcadorDTO> listMarcadores = configMarkService.getMarcador(nameConfig);
+			var configuracion = new ConfiguracionDTO();
+			configuracion.setConfiguracion(nameConfig);
+			List<MarcadorDTO> listMarcadores = configMarkService.getMarcador(configuracion);
 			if (listMarcadores == null) {
 				throw new CargueException("No se encontro los marcadores configurados.");
 			}
@@ -139,12 +136,13 @@ public class CargueSvc extends Services implements ICargue {
 						inst = mapa.get(marcador.getServicio()).get(marcador.getCampo().split(DOUBLE_2_DOT)[0]);
 						mapa.get(marcador.getServicio()).setNumLine(numLine);
 						if (inst instanceof ADto) {
-							Field field = ReflectionUtils.instanciar().getField(inst.getClass(), marcador.getCampo().split(DOUBLE_2_DOT)[1]);
+							Field field = ReflectionUtils.instanciar().getField(inst.getClass(),
+									marcador.getCampo().split(DOUBLE_2_DOT)[1]);
 							if (field.getType() == Date.class || field.getType() == LocalDate.class
 									|| field.getType() == LocalDateTime.class) {
 								inst = aap.DateTime((ADto) inst, field.getName(), columna);
 							}
-							aap.valueInObject((ADto)inst, (marcador.getCampo().split(DOUBLE_2_DOT))[1], columna);
+							aap.valueInObject((ADto) inst, (marcador.getCampo().split(DOUBLE_2_DOT))[1], columna);
 							aap.size((ADto) inst, field.getName());
 						}
 
@@ -170,10 +168,8 @@ public class CargueSvc extends Services implements ICargue {
 	/**
 	 * Se encarga de cargar los marcadores dentro de un mapa
 	 * 
-	 * @param marcadores
-	 *            {@link List} extends {@link ServicioCampoBusquedaDTO}
-	 * @param mapa
-	 *            {@link Map} < {@link String} , {@link ProccessPOJO} >
+	 * @param marcadores {@link List} extends {@link ServicioCampoBusquedaDTO}
+	 * @param mapa       {@link Map} < {@link String} , {@link ProccessPOJO} >
 	 */
 	public final void servicioMarcadores(List<ServicioCampoBusquedaDTO> marcadores, Map<String, ProccessPOJO> mapa) {
 		ProccesConfigService proccess = new ProccesConfigService();
@@ -217,10 +213,8 @@ public class CargueSvc extends Services implements ICargue {
 	 * Se encarga de cargar cada registro en la base de datos y realizar las
 	 * alidaciones necesarias
 	 * 
-	 * @param procces
-	 *            {@link ProccessPOJO}
-	 * @param user
-	 *            {@link UsuarioDTO}
+	 * @param procces {@link ProccessPOJO}
+	 * @param user    {@link UsuarioDTO}
 	 */
 	@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
 	public final <T extends ADto> ProccessPOJO loading(ProccessPOJO procces, UsuarioDTO user) {
@@ -246,7 +240,8 @@ public class CargueSvc extends Services implements ICargue {
 			}
 			try {
 				if (!aap.isNotBlank((ADto) procces.get(parameter))) {
-					procces.addError("Los siguientes campos se encuentran vacios: "+String.join(",",aap.getMarkBlank().toArray(new String[aap.getMarkBlank().size()])));
+					procces.addError("Los siguientes campos se encuentran vacios: "
+							+ String.join(",", aap.getMarkBlank().toArray(new String[aap.getMarkBlank().size()])));
 				}
 				T valid = aap.valid((T) procces.get(parameter));
 				error = false;

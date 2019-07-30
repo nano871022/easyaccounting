@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -14,6 +15,10 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
+
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
 
 public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
@@ -128,6 +133,28 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		if (user == null)
 			throw new ParametroException("Se encontro el usuario vacio.");
 		try {
+			dto = querySvc.set(dto, user);
+		} catch (QueryException e) {
+			throw new ParametroException("Se presento un problema en el ingreso del registro.");
+		}
+		return dto;
+	}
+
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso Parametros", descripcion = "Ingreso de servicios de parametros", tipo = kind.PUBLIC, type = Type.CREATE)
+	@Override
+	public ParametroDTO insertService(ParametroDTO dto, UsuarioDTO user) throws ParametroException {
+		if (dto == null)
+			throw new ParametroException("Se encontro el parameto grupo vacio.");
+		if (user == null)
+			throw new ParametroException("Se encontro el usuario vacio.");
+		try {
+			if (StringUtils.isNotBlank(dto.getGrupo()) && !dto.getGrupo().contains("*")) {
+				var parametro = new ParametroDTO();
+				parametro.setNombre(dto.getGrupo());
+				parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				parametro = querySvc.get(parametro);
+				dto.setGrupo(parametro.getCodigo());
+			}
 			dto = querySvc.set(dto, user);
 		} catch (QueryException e) {
 			throw new ParametroException("Se presento un problema en el ingreso del registro.");

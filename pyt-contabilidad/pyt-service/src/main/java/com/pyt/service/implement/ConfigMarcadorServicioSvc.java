@@ -30,10 +30,10 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	private IQuerySvc query;
 
 	@Override
-	public List<ServicioCampoBusquedaDTO> getServiciosCampoBusqueda(String configuracion)
+	public List<ServicioCampoBusquedaDTO> getServiciosCampoBusqueda(ConfiguracionDTO configuracion)
 			throws MarcadorServicioException {
 		ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.gets(dto);
 		} catch (QueryException e) {
@@ -42,9 +42,10 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public List<MarcadorServicioDTO> getMarcadorServicio(String configuracion) throws MarcadorServicioException {
+	public List<MarcadorServicioDTO> getMarcadorServicio(ConfiguracionDTO configuracion)
+			throws MarcadorServicioException {
 		MarcadorServicioDTO dto = new MarcadorServicioDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.gets(dto);
 		} catch (QueryException e) {
@@ -53,9 +54,9 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public List<MarcadorDTO> getMarcador(String configuracion) throws MarcadorServicioException {
+	public List<MarcadorDTO> getMarcador(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		MarcadorDTO dto = new MarcadorDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.gets(dto);
 		} catch (QueryException e) {
@@ -156,11 +157,15 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public List<ServicioCampoBusquedaDTO> getServiciosCampoBusqueda(String configuracion, Integer inicio,
+	public List<ServicioCampoBusquedaDTO> getServiciosCampoBusqueda(ConfiguracionDTO configuracion, Integer inicio,
 			Integer cantidad) throws MarcadorServicioException {
 		ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
+			if (StringUtils.isNotBlank(dto.getConfiguracion().getConfiguracion())
+					&& StringUtils.isBlank(dto.getConfiguracion().getCodigo())) {
+				dto.setConfiguracion(query.get(dto.getConfiguracion()));
+			}
 			return query.gets(dto, inicio, cantidad);
 		} catch (QueryException e) {
 			throw new MarcadorServicioException(e);
@@ -168,10 +173,10 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public List<MarcadorServicioDTO> getMarcadorServicio(String configuracion, Integer inicio, Integer cantidad)
-			throws MarcadorServicioException {
+	public List<MarcadorServicioDTO> getMarcadorServicio(ConfiguracionDTO configuracion, Integer inicio,
+			Integer cantidad) throws MarcadorServicioException {
 		MarcadorServicioDTO dto = new MarcadorServicioDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.gets(dto, inicio, cantidad);
 		} catch (QueryException e) {
@@ -180,10 +185,10 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public List<MarcadorDTO> getMarcador(String configuracion, Integer inicio, Integer cantidad)
+	public List<MarcadorDTO> getMarcador(ConfiguracionDTO configuracion, Integer inicio, Integer cantidad)
 			throws MarcadorServicioException {
 		MarcadorDTO dto = new MarcadorDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.gets(dto, inicio, cantidad);
 		} catch (QueryException e) {
@@ -192,9 +197,9 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public Integer cantidadServiciosCampoBusqueda(String configuracion) throws MarcadorServicioException {
+	public Integer cantidadServiciosCampoBusqueda(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.countRow(dto);
 		} catch (QueryException e) {
@@ -203,9 +208,9 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public Integer cantidadMarcadorServicio(String configuracion) throws MarcadorServicioException {
+	public Integer cantidadMarcadorServicio(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		MarcadorServicioDTO dto = new MarcadorServicioDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.countRow(dto);
 		} catch (QueryException e) {
@@ -214,9 +219,9 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	}
 
 	@Override
-	public Integer cantidadMarcador(String configuracion) throws MarcadorServicioException {
+	public Integer cantidadMarcador(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		MarcadorDTO dto = new MarcadorDTO();
-		dto.setConfiguracion(configuracion);
+		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
 		try {
 			return query.countRow(dto);
 		} catch (QueryException e) {
@@ -274,13 +279,13 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 			throw new MarcadorServicioException("NO se suministro el usuario.");
 		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new MarcadorServicioException("El código se ensuentra vacio.");
-		if (getMarcador(dto.getConfiguracion()).size() > 0) {
+		if (getMarcador(dto).size() > 0) {
 			throw new MarcadorServicioException("Se encontraron marcadores asignados.");
 		}
-		if (getMarcadorServicio(dto.getConfiguracion()).size() > 0) {
+		if (getMarcadorServicio(dto).size() > 0) {
 			throw new MarcadorServicioException("Se encontraron marcadores asociado a servicio");
 		}
-		if (getServiciosCampoBusqueda(dto.getConfiguracion()).size() > 0) {
+		if (getServiciosCampoBusqueda(dto).size() > 0) {
 			throw new MarcadorServicioException("Se econtraron campos de busqueda en el servicios.");
 		}
 		try {
@@ -371,7 +376,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 			if (list.size() == 1) {
 				for (ConfiguracionDTO dto : list) {
 					ServicioCampoBusquedaDTO marcador = new ServicioCampoBusquedaDTO();
-					marcador.setConfiguracion(dto.getConfiguracion());
+					marcador.setConfiguracion(dto);
 					List<ServicioCampoBusquedaDTO> lista = query.gets(marcador);
 					return lista;
 				}
@@ -406,8 +411,11 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 					}
 				}
 			}
+			var Configuracion = new ConfiguracionDTO();
+			Configuracion.setConfiguracion(nombreConfiguracion);
+			Configuracion = query.get(Configuracion);
 			Map<String, String> mapa = new HashMap<String, String>();
-			List<MarcadorServicioDTO> marcadores = getMarcadorServicio(nombreConfiguracion);
+			List<MarcadorServicioDTO> marcadores = getMarcadorServicio(Configuracion);
 			for (MarcadorServicioDTO marcador : marcadores) {
 				if (servicio.contains(marcador.getServicio())) {
 					mapa.put(marcador.getNombreCampo(), marcador.getMarcador());
@@ -438,8 +446,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 				Bookmark bookmark = getAsociaciones(d, mapa);
 				return (N) bookmark;
 			}
-		} catch (ProccesConfigServiceException e) {
-			
+		} catch (ProccesConfigServiceException | QueryException e) {
 		}
 		return null;
 	}
@@ -448,8 +455,7 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	 * Obtiene todas las asociaciones entre campos y el resultado
 	 * 
 	 * @param dto
-	 * @param mapa
-	 *            {@link Map}
+	 * @param mapa {@link Map}
 	 * @return {@link Bookmark}
 	 * @throws MarcadorServicioException
 	 */

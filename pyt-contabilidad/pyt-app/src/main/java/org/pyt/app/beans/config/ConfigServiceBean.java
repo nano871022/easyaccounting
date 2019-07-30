@@ -3,11 +3,9 @@ package org.pyt.app.beans.config;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.PropertiesUtil;
 import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
@@ -198,8 +196,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			lNameFilerOut.setVisible(true);
 		});
 		try {
-		servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load().getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
-		}catch(Exception e) {
+			servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load()
+					.getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
+		} catch (Exception e) {
 			logger.logger(e);
 		}
 		hiddenTabs();
@@ -321,9 +320,11 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			public ServicioCampoBusquedaDTO getFilter() {
 				ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					dto.setConfiguracion(configuracion.getText());
+					var config = new ConfiguracionDTO();
+					config.setConfiguracion(configuracion.getText());
+					dto.setConfiguracion(config);
 				} else {
-					dto.setConfiguracion(".");
+					dto.setConfiguracion(null);
 				}
 				return dto;
 			}
@@ -360,9 +361,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			public MarcadorServicioDTO getFilter() {
 				MarcadorServicioDTO dto = new MarcadorServicioDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					dto.setConfiguracion(configuracion.getText());
-				} else {
-					dto.setConfiguracion(".");
+					dto.setConfiguracion(getConfigurationForm());
 				}
 				return dto;
 			}
@@ -398,9 +397,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			public MarcadorDTO getFilter() {
 				MarcadorDTO dto = new MarcadorDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					dto.setConfiguracion(configuracion.getText());
-				} else {
-					dto.setConfiguracion(".");
+					dto.setConfiguracion(getConfigurationForm());
 				}
 				return dto;
 			}
@@ -411,9 +408,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
 	private void loadServices() {
 		try {
-			var pathServices = StringUtils.isNotBlank(servicePackageList)?servicePackageList:AppConstants.PATH_LIST_SERVICE;
-			listServices = (AbstractListFromProccess) this.getClass().forName(pathServices)
-					.getConstructor().newInstance();
+			var pathServices = StringUtils.isNotBlank(servicePackageList) ? servicePackageList
+					: AppConstants.PATH_LIST_SERVICE;
+			listServices = (AbstractListFromProccess) this.getClass().forName(pathServices).getConstructor()
+					.newInstance();
 			lstServicios.converterProperty().set(new StringConverter<ServicePOJO>() {
 				@Override
 				public String toString(ServicePOJO object) {
@@ -707,7 +705,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	private final void servicioCampoUPDINST() throws MarcadorServicioException {
 		for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
-			servicio.setConfiguracion(config.getConfiguracion());
+			servicio.setConfiguracion(getConfiguration());
 			if (StringUtils.isNotBlank(servicio.getCodigo())) {
 				configMarcadorServicio.updateServicioCampo(servicio, userLogin);
 			} else if (StringUtils.isBlank(servicio.getCodigo())) {
@@ -719,7 +717,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	private final void servicioMarcadorUPDINST() throws MarcadorServicioException {
 		for (MarcadorServicioDTO marcador : marcadoresServicios) {
-			marcador.setConfiguracion(config.getConfiguracion());
+			marcador.setConfiguracion(getConfiguration());
 			if (StringUtils.isNotBlank(marcador.getCodigo())) {
 				configMarcadorServicio.updateServicioMarcador(marcador, userLogin);
 			} else if (StringUtils.isBlank(marcador.getCodigo())) {
@@ -728,9 +726,21 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
+	private final ConfiguracionDTO getConfiguration() {
+		var configuration = new ConfiguracionDTO();
+		configuration.setConfiguracion(config.getConfiguracion());
+		return configuration;
+	}
+
+	private final ConfiguracionDTO getConfigurationForm() {
+		var configuration = new ConfiguracionDTO();
+		configuration.setConfiguracion(configuracion.getText());
+		return configuration;
+	}
+
 	private final void marcadorUPDINST() throws MarcadorServicioException {
 		for (MarcadorDTO marcador : marcadores) {
-			marcador.setConfiguracion(config.getConfiguracion());
+			marcador.setConfiguracion(getConfiguration());
 			if (StringUtils.isNotBlank(marcador.getCodigo())) {
 				configMarcadorServicio.updateMarcador(marcador, userLogin);
 			} else if (StringUtils.isBlank(marcador.getCodigo())) {

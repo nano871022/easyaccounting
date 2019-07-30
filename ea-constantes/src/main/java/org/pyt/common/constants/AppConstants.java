@@ -31,5 +31,5 @@ public final class AppConstants {
 
 	public final static String GET_NAME_FIELDS = "getNameFields";
 	public final static String RESOURCE_BUNDLE = "languages/language";
-	public final static String VERSION_DATABASE = "v001";
+	public final static String VERSION_DATABASE = "v003";
 }
