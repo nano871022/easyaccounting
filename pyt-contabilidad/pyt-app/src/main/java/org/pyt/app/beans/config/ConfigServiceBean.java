@@ -319,12 +319,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			@Override
 			public ServicioCampoBusquedaDTO getFilter() {
 				ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
+				var config = new ConfiguracionDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					var config = new ConfiguracionDTO();
 					config.setConfiguracion(configuracion.getText());
 					dto.setConfiguracion(config);
 				} else {
-					dto.setConfiguracion(null);
+					config.setConfiguracion(".");
+					dto.setConfiguracion(config);
 				}
 				return dto;
 			}
@@ -362,6 +363,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				MarcadorServicioDTO dto = new MarcadorServicioDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(getConfigurationForm());
+				} else {
+					var config = new ConfiguracionDTO();
+					config.setConfiguracion(".");
+					dto.setConfiguracion(config);
 				}
 				return dto;
 			}
@@ -398,6 +403,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				MarcadorDTO dto = new MarcadorDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
 					dto.setConfiguracion(getConfigurationForm());
+				} else {
+					var config = new ConfiguracionDTO();
+					config.setConfiguracion(".");
+					dto.setConfiguracion(config);
 				}
 				return dto;
 			}
@@ -751,15 +760,15 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	public final void saveAll() {
 		try {
-			loadFields();
-			servicioCampoUPDINST();
-			servicioMarcadorUPDINST();
-			marcadorUPDINST();
 			if (StringUtils.isNotBlank(config.getCodigo())) {
 				configMarcadorServicio.updateConfiguracion(config, userLogin);
 			} else {
 				config = configMarcadorServicio.insertConfiguracion(config, userLogin);
 			}
+			loadFields();
+			servicioCampoUPDINST();
+			servicioMarcadorUPDINST();
+			marcadorUPDINST();
 			this.notificar("Se guardaron los registros correctamente.");
 		} catch (Exception e) {
 			error(e);
@@ -777,7 +786,6 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void loaders() {
 		try {
 			controllerPopup(LoaderServiceBean.class).load(config.getConfiguracion());
@@ -789,7 +797,6 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/**
 	 * Se encarga de generar los repores
 	 */
-	@SuppressWarnings("unchecked")
 	public final <T extends Object, M extends Object> void reports() {
 		try {
 			controllerPopup(GenConfigBean.class).load(config.getConfiguracion());

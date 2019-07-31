@@ -1,5 +1,6 @@
 package com.pyt.service.implement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,12 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	public List<ServicioCampoBusquedaDTO> getServiciosCampoBusqueda(ConfiguracionDTO configuracion)
 			throws MarcadorServicioException {
 		ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return new ArrayList<ServicioCampoBusquedaDTO>();
+		}
+		dto.setConfiguracion(list.get(0));
+
 		try {
 			return query.gets(dto);
 		} catch (QueryException e) {
@@ -45,7 +51,12 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	public List<MarcadorServicioDTO> getMarcadorServicio(ConfiguracionDTO configuracion)
 			throws MarcadorServicioException {
 		MarcadorServicioDTO dto = new MarcadorServicioDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return new ArrayList<MarcadorServicioDTO>();
+		}
+		dto.setConfiguracion(list.get(0));
+
 		try {
 			return query.gets(dto);
 		} catch (QueryException e) {
@@ -56,7 +67,12 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	@Override
 	public List<MarcadorDTO> getMarcador(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		MarcadorDTO dto = new MarcadorDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return new ArrayList<MarcadorDTO>();
+		}
+		dto.setConfiguracion(list.get(0));
+
 		try {
 			return query.gets(dto);
 		} catch (QueryException e) {
@@ -160,7 +176,11 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	public List<ServicioCampoBusquedaDTO> getServiciosCampoBusqueda(ConfiguracionDTO configuracion, Integer inicio,
 			Integer cantidad) throws MarcadorServicioException {
 		ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return new ArrayList<ServicioCampoBusquedaDTO>();
+		}
+		dto.setConfiguracion(list.get(0));
 		try {
 			if (StringUtils.isNotBlank(dto.getConfiguracion().getConfiguracion())
 					&& StringUtils.isBlank(dto.getConfiguracion().getCodigo())) {
@@ -176,7 +196,12 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	public List<MarcadorServicioDTO> getMarcadorServicio(ConfiguracionDTO configuracion, Integer inicio,
 			Integer cantidad) throws MarcadorServicioException {
 		MarcadorServicioDTO dto = new MarcadorServicioDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return new ArrayList<MarcadorServicioDTO>();
+		}
+		dto.setConfiguracion(list.get(0));
+
 		try {
 			return query.gets(dto, inicio, cantidad);
 		} catch (QueryException e) {
@@ -188,7 +213,12 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	public List<MarcadorDTO> getMarcador(ConfiguracionDTO configuracion, Integer inicio, Integer cantidad)
 			throws MarcadorServicioException {
 		MarcadorDTO dto = new MarcadorDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return new ArrayList<MarcadorDTO>();
+		}
+		dto.setConfiguracion(list.get(0));
+
 		try {
 			return query.gets(dto, inicio, cantidad);
 		} catch (QueryException e) {
@@ -199,7 +229,12 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	@Override
 	public Integer cantidadServiciosCampoBusqueda(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		ServicioCampoBusquedaDTO dto = new ServicioCampoBusquedaDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return 0;
+		}
+		dto.setConfiguracion(list.get(0));
+
 		try {
 			return query.countRow(dto);
 		} catch (QueryException e) {
@@ -210,7 +245,12 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	@Override
 	public Integer cantidadMarcadorServicio(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		MarcadorServicioDTO dto = new MarcadorServicioDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return 0;
+		}
+		dto.setConfiguracion(list.get(0));
+
 		try {
 			return query.countRow(dto);
 		} catch (QueryException e) {
@@ -221,7 +261,11 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 	@Override
 	public Integer cantidadMarcador(ConfiguracionDTO configuracion) throws MarcadorServicioException {
 		MarcadorDTO dto = new MarcadorDTO();
-		dto.setConfiguracion(getConfiguraciones(configuracion).get(0));
+		var list = getConfiguraciones(configuracion);
+		if (list == null || list.size() == 0) {
+			return 0;
+		}
+		dto.setConfiguracion(list.get(0));
 		try {
 			return query.countRow(dto);
 		} catch (QueryException e) {

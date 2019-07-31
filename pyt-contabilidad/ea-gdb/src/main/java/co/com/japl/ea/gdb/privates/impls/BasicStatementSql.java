@@ -17,7 +17,7 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 
 	@Override
 	public String select(T dto, int init, int size, boolean insertValue, boolean count) throws StatementSqlException {
-		String query = init > 0 && size > 0 ? QueryConstants.SQL_SELECT_LIMIT
+		String query = init >= 0 && size > 0 ? QueryConstants.SQL_SELECT_LIMIT
 				: count ? QueryConstants.SQL_COUNT_ROW : QueryConstants.SQL_SELECT;
 		try {
 			if (!count) {
