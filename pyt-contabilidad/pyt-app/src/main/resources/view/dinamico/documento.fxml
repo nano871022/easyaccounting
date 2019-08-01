@@ -125,6 +125,14 @@
 						<Label fx:id="etiqueta" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Etiqueta" GridPane.columnIndex="2"
 							GridPane.rowIndex="0" />
 						<TextField fx:id="fieldLabel" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+						<Label fx:id="labelFilter" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Filtro" GridPane.columnIndex="0"
+							GridPane.rowIndex="5" />
+						<CheckBox fx:id="fieldFilter" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" 
+							text="Filtro" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+						<Label fx:id="labelColumn" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Columna" GridPane.columnIndex="2"
+							GridPane.rowIndex="5" />
+						<CheckBox fx:id="fieldColumn" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" 
+							text="Columna" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
 					</children>
 					<columnConstraints>
 						<ColumnConstraints hgrow="SOMETIMES" maxWidth="122.0" minWidth="10.0" prefWidth="122.0" />

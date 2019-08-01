@@ -2,15 +2,12 @@ package com.pyt.service.dto;
 
 import org.pyt.common.abstracts.ADto;
 
-import co.com.arquitectura.annotation.proccessor.DelClass;
-import co.com.arquitectura.annotation.proccessor.UpdClass;
-
 /**
  * Se encarga de controlar los campos que se muestran y se configuran por el
  * formulario dinamico
  * 
  * @author Alejandro Parra
- * @since  30-06-2018
+ * @since 30-06-2018
  */
 
 public class DocumentosDTO extends ADto {
@@ -28,75 +25,113 @@ public class DocumentosDTO extends ADto {
 	private Boolean putFieldName;
 	@SuppressWarnings("rawtypes")
 	private Class claseControlar;
-	
+	private Boolean fieldFilter;
+	private Boolean fieldColumn;
+
 	public String getPutNameShow() {
 		return putNameShow;
 	}
+
 	public void setPutNameShow(String putNameShow) {
 		this.putNameShow = putNameShow;
 	}
+
 	public String getPutNameAssign() {
 		return putNameAssign;
 	}
+
 	public void setPutNameAssign(String putNameAssign) {
 		this.putNameAssign = putNameAssign;
 	}
+
 	@SuppressWarnings("rawtypes")
 	public Class getClaseControlar() {
 		return claseControlar;
 	}
+
 	@SuppressWarnings("rawtypes")
 	public void setClaseControlar(Class claseControlar) {
 		this.claseControlar = claseControlar;
 	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends ADto> Class<T> getObjectSearchDto() {
 		return objectSearchDto;
 	}
+
 	public <T extends Object> void setObjectSearchDto(Class<T> class1) {
 		this.objectSearchDto = class1;
 	}
+
 	public String getFieldLabel() {
 		return fieldLabel;
 	}
+
 	public void setFieldLabel(String fieldLabel) {
 		this.fieldLabel = fieldLabel;
 	}
+
 	public String getFieldName() {
 		return fieldName;
 	}
+
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
 	}
+
 	public ParametroDTO getDoctype() {
 		return doctype;
 	}
+
 	public void setDoctype(ParametroDTO doctype) {
 		this.doctype = doctype;
 	}
+
 	public Boolean getEdit() {
 		return edit;
 	}
+
 	public void setEdit(Boolean edit) {
 		this.edit = edit;
 	}
+
 	public Boolean getNullable() {
 		return nullable;
 	}
+
 	public void setNullable(Boolean nullable) {
 		this.nullable = nullable;
 	}
+
 	public String getSelectNameGroup() {
 		return selectNameGroup;
 	}
+
 	public void setSelectNameGroup(String selectNameGroup) {
 		this.selectNameGroup = selectNameGroup;
 	}
+
 	public Boolean getPutFieldName() {
 		return putFieldName;
 	}
+
 	public void setPutFieldName(Boolean putFieldName) {
 		this.putFieldName = putFieldName;
 	}
-	
+
+	public Boolean getFieldFilter() {
+		return this.fieldFilter;
+	}
+
+	public void setFieldFilter(Boolean fieldFilter) {
+		this.fieldFilter = fieldFilter;
+	}
+
+	public Boolean getFieldColumn() {
+		return this.fieldColumn;
+	}
+
+	public void setFieldColumn(Boolean fieldColumn) {
+		this.fieldColumn = fieldColumn;
+	}
 }

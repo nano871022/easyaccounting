@@ -91,6 +91,10 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private CheckBox manejaGrupo;
 	@FXML
+	private CheckBox fieldFilter;
+	@FXML
+	private CheckBox fieldColumn;
+	@FXML
 	private HBox paginator;
 	@FXML
 	private Label etiqueta;
@@ -104,6 +108,10 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Label lNombreCampo;
 	@FXML
 	private Label lBusqueda;
+	@FXML
+	private Label labelFilter;
+	@FXML
+	private Label labelColumn;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
 	private List<ParametroDTO> listGrupo;
@@ -156,7 +164,11 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		nombreCampo.setVisible(false);
 		etiqueta.setVisible(false);
 		lNombreCampo.setVisible(false);
+		fieldColumn.setVisible(false);
+		fieldFilter.setVisible(false);
 		fieldLabel.setVisible(false);
+		labelFilter.setVisible(false);
+		labelColumn.setVisible(false);
 		guardar.setVisible(false);
 		cancelar.setVisible(false);
 		lazy();
@@ -186,6 +198,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			fieldLabel.setText(docs.getFieldLabel());
 			editable.setSelected(docs.getEdit());
 			obligatorio.setSelected(docs.getNullable());
+			fieldFilter.setSelected(docs.getFieldFilter());
+			fieldFilter.setSelected(docs.getFieldFilter());
 			SelectList.selectItem(busqueda, mapa_claseBusqueda, docs.getObjectSearchDto());
 			SelectList.selectItem(grupo, listGrupo, FIELD_NAME, docs, "selectNameGroup");
 			SelectList.selectItem(campoMostrar, mapa_campoMostrar, docs.getPutNameShow());
@@ -263,38 +277,61 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			}
 		}
 		if (obj != null) {
-			editable.setVisible(true);
-			obligatorio.setVisible(true);
+			showFieldEdited();
 			if (!instans) {
-				manejaLista.setVisible(true);
-				lCampoMostrar.setVisible(false);
-				campoMostrar.setVisible(false);
-				grupo.setVisible(false);
-				lGrupo.setVisible(false);
+				showFieldWhenManejaLista();
 			} else {
-				manejaLista.setVisible(false);
-				lCampoMostrar.setVisible(true);
-				campoMostrar.setVisible(true);
-				mapa_campoMostrar.clear();
-				getFieldShow(campo);
-				SelectList.put(campoMostrar, mapa_campoMostrar);
-				campoMostrar.getSelectionModel().selectFirst();
-				grupo.setVisible(param);
-				lGrupo.setVisible(param);
+				showFieldWhenNotManejaLista(campo, param);
 			}
-			addItem.setVisible(true);
-			modifyItem.setVisible(true);
-			delItem.setVisible(true);
-			clearItem.setVisible(true);
 		} else {
-			editable.setVisible(false);
-			obligatorio.setVisible(false);
-			manejaLista.setVisible(false);
-			addItem.setVisible(false);
-			modifyItem.setVisible(false);
-			delItem.setVisible(false);
-			clearItem.setVisible(false);
+			hiddenFieldEdited();
 		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private final void showFieldWhenNotManejaLista(Class field, Boolean hasParams) {
+		manejaLista.setVisible(false);
+		lCampoMostrar.setVisible(true);
+		campoMostrar.setVisible(true);
+		mapa_campoMostrar.clear();
+		getFieldShow(field);
+		SelectList.put(campoMostrar, mapa_campoMostrar);
+		campoMostrar.getSelectionModel().selectFirst();
+		grupo.setVisible(hasParams);
+		lGrupo.setVisible(hasParams);
+	}
+
+	private final void showFieldWhenManejaLista() {
+		manejaLista.setVisible(true);
+		lCampoMostrar.setVisible(false);
+		campoMostrar.setVisible(false);
+		grupo.setVisible(false);
+		lGrupo.setVisible(false);
+	}
+
+	private final void showFieldEdited() {
+		editable.setVisible(true);
+		obligatorio.setVisible(true);
+		labelFilter.setVisible(true);
+		labelColumn.setVisible(true);
+		fieldFilter.setVisible(true);
+		fieldColumn.setVisible(true);
+		addItem.setVisible(true);
+		modifyItem.setVisible(true);
+		delItem.setVisible(true);
+		clearItem.setVisible(true);
+	}
+
+	private final void hiddenFieldEdited() {
+		editable.setVisible(false);
+		obligatorio.setVisible(false);
+		manejaLista.setVisible(false);
+		addItem.setVisible(false);
+		modifyItem.setVisible(false);
+		delItem.setVisible(false);
+		clearItem.setVisible(false);
+		fieldFilter.setVisible(false);
+		fieldColumn.setVisible(false);
 	}
 
 	public final void tipoDocumento() {
@@ -405,6 +442,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dto.setFieldLabel(fieldLabel.getText());
 		dto.setEdit(editable.isSelected());
 		dto.setNullable(obligatorio.isSelected());
+		dto.setFieldFilter(fieldFilter.isSelected());
+		dto.setFieldColumn(fieldColumn.isSelected());
 		if (grupo.isVisible()) {
 			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
 		}
@@ -480,6 +519,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		this.campoAsignar.getSelectionModel().selectFirst();
 		this.campoMostrar.getSelectionModel().selectFirst();
 		this.fieldLabel.setText("");
+		fieldFilter.setSelected(false);
+		fieldColumn.setSelected(false);
 	}
 
 	public void modificarItem() {
