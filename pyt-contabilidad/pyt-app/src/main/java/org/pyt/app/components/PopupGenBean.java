@@ -1,6 +1,5 @@
 package org.pyt.app.components;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -104,44 +103,20 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
 		});
 		gridFilter.getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
-		gridFilter.add(util.buttonGenericWithEventClicked(() -> table.search(),
-				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH), FontAwesome.Glyph.SEARCH), 0,
-				indices.rowIndex + 1);
-		gridFilter.add(util.buttonGenericWithEventClicked(() -> cleanFilter(),
-				i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN), FontAwesome.Glyph.REMOVE), 1,
-				indices.rowIndex + 1);
+		gridFilter.add(
+				util.buttonGenericWithEventClicked(() -> table.search(),
+						i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH), FontAwesome.Glyph.SEARCH),
+				0, indices.rowIndex + 1);
+		gridFilter.add(
+				util.buttonGenericWithEventClicked(() -> cleanFilter(),
+						i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN), FontAwesome.Glyph.REMOVE),
+				1, indices.rowIndex + 1);
 
-	}
-
-	private final <O extends Object> void assingsValueToField(String nameField, O value) {
-		try {
-			if (value == null) {
-				logger.warn(i18n().valueBundle(String.format(LanguageConstant.LANGUAGE_FIELD_ASSIGN_EMPTY, nameField,
-						getInstaceOfGenericADto().getClass().getSimpleName())));
-			} else {
-				filter.set(nameField, value);
-			}
-		} catch (ReflectionException | InvocationTargetException | IllegalAccessException | InstantiationException
-				| NoSuchMethodException e) {
-			logger().logger(e);
-		}
 	}
 
 	protected class Index {
 		Integer columnIndex = 0;
 		Integer rowIndex = 0;
-	}
-
-	private final void cleanFilter() {
-		try {
-			var util = new UtilControlFieldFX();
-			filter = assingValuesParameterized(getInstaceOfGenericADto());
-			gridFilter.getChildren().forEach(child -> util.cleanValueByFieldFX(child));
-		} catch (InvocationTargetException | IllegalAccessException | InstantiationException
-				| NoSuchMethodException e) {
-			logger().logger(e);
-		}
-
 	}
 
 	/**
@@ -252,6 +227,21 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	@Override
+	public T getFilter() {
+		return filter;
+	}
+
+	@Override
+	public GridPane getGridPaneFilter() {
+		return gridFilter;
+	}
+
+	@Override
+	public void setFilter(T filter) {
+		this.filter = filter;
 	}
 
 }

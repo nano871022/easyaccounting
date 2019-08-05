@@ -1,11 +1,7 @@
 package org.pyt.common.abstracts;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
@@ -29,7 +25,7 @@ import javafx.stage.Stage;
  * @since 10/04/2019
  * @param <T>
  */
-public abstract class AGenericToBean<T extends ADto> extends Application implements IBean<T> {
+public abstract class AGenericToBean<T extends ADto> extends Application implements IBean<T>, IGenericFilter<T> {
 	protected T registro;
 	protected BorderPane panel;
 	protected UsuarioDTO userLogin;
@@ -44,7 +40,6 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
-	private Map<String, Object> defaultValuesGenericParametrized;
 	private I18n languages;
 
 	public AGenericToBean() {
@@ -106,30 +101,15 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 		primaryStage.setScene(scene);
 		primaryStage.hide();
 	}
-	
+
 	protected void showWindow() {
 		primaryStage.show();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public final <S extends AGenericToBean<T>> S setWidth(double width) {
 		primaryStage.setWidth(width);
 		return (S) this;
-	}
-
-	/**
-	 * Se encarhad e obtener una nueva instancia de la clase usada como generico de
-	 * la aplicacion
-	 * 
-	 * @return T generico usado, extiende de {@link ADto}
-	 * @throws {@link InvocationTargetException}
-	 * @throws {@link IllegalAccessException}
-	 * @throws {@link InstantiationException}
-	 * @throws {@link NoSuchMethodException}
-	 */
-	protected final T getInstaceOfGenericADto()
-			throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
-		return clazz.getConstructor().newInstance();
 	}
 
 	/**
@@ -146,19 +126,6 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 		return defaultValuesGenericParametrized;
 	}
 
-	@SuppressWarnings("unchecked")
-	public final <S extends AGenericToBean<T>> S addDefaultValuesToGenericParametrized(String key, Object value) {
-		if (defaultValuesGenericParametrized == null) {
-			defaultValuesGenericParametrized = new HashMap<String, Object>();
-		}
-		defaultValuesGenericParametrized.put(key, value);
-		return (S) this;
-	}
-
-	public final void setDefaultValuesToGenericParametrized(Map<String, Object> defaultParameterized) {
-		this.defaultValuesGenericParametrized = defaultParameterized;
-	}
-
 	public Class<T> getClassParameterized() {
 		return clazz;
 	}
@@ -167,42 +134,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 		this.clazz = clazz;
 	}
 
-	protected T assingValuesParameterized(T dto) {
-		if (defaultValuesGenericParametrized == null) {
-			defaultValuesGenericParametrized = new HashMap<String, Object>();
-		}
-		defaultValuesGenericParametrized.forEach((key, value) -> {
-			try {
-				dto.set(key, value);
-			} catch (ReflectionException e) {
-				logger().logger(e);
-			}
-		});
-		return assingValueAnnotations(dto);
-	}
-	/**
-	 * Se encarga asignar las anotaciones para poner los valores en el dto
-	 * @param dto extends {@link Object}
-	 * @return extends {@link Object}
-	 */
-	@SuppressWarnings("unchecked")
-	private final T assingValueAnnotations(T dto) {
-		Class<T> clazz = (Class<T>) dto.getClass();
-		Arrays.asList(clazz.getDeclaredFields()).stream()
-		.filter(field->field.getAnnotation(AssingValue.class)!=null)
-		.forEach(field->{
-			Arrays.asList(field.getAnnotationsByType(AssingValue.class)).forEach(annotation->{
-				try {
-					dto.set(annotation.nameField(), annotation.value());
-				} catch (ReflectionException e) {
-					logger().logger(e);
-				}
-			});
-		});
-		return dto;
-	}
-	
-	protected void sizeWindow(Integer width,Integer height) {
+	protected void sizeWindow(Integer width, Integer height) {
 		this.width = width.doubleValue();
 		this.height = height.doubleValue();
 	}
@@ -212,6 +144,18 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 			languages = new I18n();
 		}
 		return languages;
+	}
+
+	public Class<T> getClazz() {
+		return clazz;
+	}
+
+	public I18n getI18n() {
+		return languages;
+	}
+
+	public Log getLogger() {
+		return logger;
 	}
 
 }

@@ -18,6 +18,7 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -37,6 +38,7 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> {
 	@FXML
 	private HBox titulo;
 	private DataTableFXML<DocumentoDTO, DocumentoDTO> dataTable;
+	private GridPane filterTable;
 
 	@FXML
 	public void initialize() {
