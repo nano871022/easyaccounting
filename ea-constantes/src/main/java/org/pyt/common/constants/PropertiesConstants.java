@@ -10,4 +10,5 @@ public class PropertiesConstants {
 	public final static String PROP_LOG = "log.properties";
 	public final static String PROP_SIMPLE_SERVICE = "simple-service.properties";
 	public final static String PROP_DATA = "data.properties";
+	public final static String PROP_MENU = "menu.properties";
 }

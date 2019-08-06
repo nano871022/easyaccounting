@@ -24,14 +24,14 @@ import co.com.japl.ea.beans.AGenericToBean;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public interface IGenericFilter <T extends ADto> {
-	
+public interface IGenericFilter<T extends ADto> {
+
 	public Map<String, Object> defaultValuesGenericParametrized = new HashMap<String, Object>();
 
-	Map<String,GenericPOJO<T>> getFilters();
-	
-	void  setFilters(Map<String,GenericPOJO<T>> filters);
-	
+	Map<String, GenericPOJO<T>> getFilters();
+
+	void setFilters(Map<String, GenericPOJO<T>> filters);
+
 	Log getLogger();
 
 	I18n getI18n();
@@ -41,13 +41,12 @@ public interface IGenericFilter <T extends ADto> {
 	void setClazz(Class<T> clazz);
 
 	T getFilter();
-	
+
 	void setFilter(T filter);
 
 	GridPane getGridPaneFilter();
-	
-	DataTableFXML<T,T> getTable();
 
+	DataTableFXML<T, T> getTable();
 
 	default <O extends Object> void assingsValueToField(String nameField, O value) {
 		try {
@@ -122,7 +121,7 @@ public interface IGenericFilter <T extends ADto> {
 		}
 
 	}
-	
+
 	/**
 	 * Se encarga de configurar el mapa de filtros y agregar los campos de filtros a
 	 * la pantalla
@@ -130,23 +129,24 @@ public interface IGenericFilter <T extends ADto> {
 	 * @throws {@link IllegalAccessException}
 	 */
 	default void configFilters() throws IllegalAccessException {
-		var filters =  getMapFieldsByObject(getFilter(), GenericPOJO.Type.FILTER);
+		var filters = getMapFieldsByObject(getFilter(), GenericPOJO.Type.FILTER);
 		setFilters(filters);
 		final var indices = new Index();
 		var util = new UtilControlFieldFX();
 		getFilters().forEach((key, value) -> {
-			Label label = new Label(getI18n().valueBundle(LanguageConstant.GENERIC_FILTER_LBL
-					+ getClazz().getSimpleName() + "." + value.getNameShow()));
-			getGridPaneFilter().add(label, indices.columnIndex, indices.rowIndex);
-
 			var input = util.getFieldByField(value.getField());
-			if (value.getWidth() > 0) {
-				input.prefWidth(value.getWidth());
+			if (input != null) {
+				var label = new Label(getI18n().valueBundle(
+						LanguageConstant.GENERIC_FILTER_LBL + getClazz().getSimpleName() + "." + value.getNameShow()));
+				getGridPaneFilter().add(label, indices.columnIndex, indices.rowIndex);
+				if (value.getWidth() > 0) {
+					input.prefWidth(value.getWidth());
+				}
+				util.inputListenerToAssingValue(input, (obj) -> assingsValueToField(value.getField().getName(), obj));
+				getGridPaneFilter().add(input, indices.columnIndex + 1, indices.rowIndex);
+				indices.columnIndex = indices.columnIndex == 4 ? 0 : indices.columnIndex + 2;
+				indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
 			}
-			util.inputListenerToAssingValue(input, (obj) -> assingsValueToField(value.getField().getName(), obj));
-			getGridPaneFilter().add(input, indices.columnIndex + 1, indices.rowIndex);
-			indices.columnIndex = indices.columnIndex == 4 ? 0 : indices.columnIndex + 2;
-			indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
 		});
 		getGridPaneFilter().getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
 		getGridPaneFilter().add(
@@ -160,8 +160,6 @@ public interface IGenericFilter <T extends ADto> {
 
 	}
 
-	
-
 	@SuppressWarnings("unchecked")
 	default <S extends AGenericToBean<T>> S addDefaultValuesToGenericParametrized(String key, Object value) {
 		defaultValuesGenericParametrized.put(key, value);
@@ -171,7 +169,7 @@ public interface IGenericFilter <T extends ADto> {
 	default void setDefaultValuesToGenericParametrized(Map<String, Object> defaultParameterized) {
 		defaultParameterized.forEach((key, value) -> defaultValuesGenericParametrized.put(key, value));
 	}
-	
+
 	/**
 	 * Se encarga de generar un mapa con todos los campos que se encuentran dentro
 	 * de un objeto
@@ -192,6 +190,7 @@ public interface IGenericFilter <T extends ADto> {
 				.forEach(field -> addFieldIntoMap(maps, field, instance, typeGeneric));
 		return maps;
 	}
+
 	/**
 	 * Se encarga de agregar el field dentro de un wrapper para para poder ser
 	 * puesto en un mapa
@@ -209,14 +208,14 @@ public interface IGenericFilter <T extends ADto> {
 				DefaultFieldToGeneric[] annotated = field.getAnnotationsByType(DefaultFieldToGeneric.class);
 				valid = Arrays.asList(annotated).stream()
 						.filter(annotate -> annotate.use() == DefaultFieldToGeneric.Uses.FILTER
-								&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName())
-						).toArray().length > 0;
+								&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName()))
+						.toArray().length > 0;
 			} else if (GenericPOJO.Type.COLUMN == typeGeneric) {
 				DefaultFieldToGeneric[] annotated = field.getAnnotationsByType(DefaultFieldToGeneric.class);
 				valid = Arrays.asList(annotated).stream()
-						.filter(annotate -> annotate.use() == DefaultFieldToGeneric.Uses.COLUMN 
-						&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName())
-						).toArray().length > 0;
+						.filter(annotate -> annotate.use() == DefaultFieldToGeneric.Uses.COLUMN
+								&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName()))
+						.toArray().length > 0;
 			}
 			if (valid) {
 				if (!field.canAccess(instance)) {
@@ -228,7 +227,7 @@ public interface IGenericFilter <T extends ADto> {
 			getLogger().logger(e);
 		}
 	}
-	
+
 	/**
 	 * Se encarga de crear una instancia del generic pojo con la instancia usada, el
 	 * campo y el tipo de la instancia
@@ -246,15 +245,11 @@ public interface IGenericFilter <T extends ADto> {
 			field.trySetAccessible();
 		}
 		DefaultFieldToGeneric dftg = field.getDeclaredAnnotation(DefaultFieldToGeneric.class);
-		if(dftg != null) {
-			return new GenericPOJO(field.getName(), field, field.get(instance), type,dftg.width());
+		if (dftg != null) {
+			return new GenericPOJO(field.getName(), field, field.get(instance), type, dftg.width());
 		}
 		return new GenericPOJO(field.getName(), field, field.get(instance), type);
 	}
-
-
-
-	
 
 	class Index {
 		Integer columnIndex = 0;

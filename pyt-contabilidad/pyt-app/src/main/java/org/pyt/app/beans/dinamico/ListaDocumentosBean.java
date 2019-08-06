@@ -19,12 +19,12 @@ import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import co.com.arquitectura.annotation.proccessor.FXMLFile;
 
 /**
  * Se encarga de controlar la intefase que enlista todos los documentos creados
@@ -45,17 +45,17 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 	private DataTableFXML<DocumentoDTO, DocumentoDTO> dataTable;
 	@FXML
 	private GridPane filterTable;
-	private DocumentoDTO filter;
+	protected DocumentoDTO filter;
 	private Map<String, GenericPOJO<DocumentoDTO>> filters;
 
 	@FXML
 	public void initialize() {
 		try {
-		registro = new DocumentoDTO();
-		filter = assingValuesParameterized(getInstaceOfGenericADto());
-		configFilters();
-		lazy();
-		}catch(Exception e) {
+			registro = new DocumentoDTO();
+			filter = assingValuesParameterized(getInstaceOfGenericADto());
+			configFilters();
+			lazy();
+		} catch (Exception e) {
 			error(e);
 		}
 	}
@@ -86,7 +86,6 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 
 			@Override
 			public DocumentoDTO getFilter() {
-				DocumentoDTO filter = new DocumentoDTO();
 				return filter;
 			}
 		};
@@ -167,7 +166,7 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 	@Override
 	public void setClazz(Class<DocumentoDTO> clazz) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
