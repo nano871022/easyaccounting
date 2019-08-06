@@ -1,17 +1,14 @@
-package org.pyt.common.interfaces;
+package co.com.japl.ea.beans;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.abstracts.AGenericToBean;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.constants.AppConstants;
-import org.pyt.common.controller.LocatorController;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.reflection.Reflection;
 
+import co.com.japl.ea.controllers.LocatorController;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -87,7 +84,7 @@ public interface IBean<T extends ADto> extends Reflection {
 		return null;
 	}
 
-	default <S extends AGenericToBean<D>, D extends ADto> S controllerPopup(S genericBean) {
+	default <S extends AGenericToBean<D>,D extends ADto> S controllerPopup(S genericBean) {
 		try {
 			return LoadAppFxml.loadBeanFX(genericBean);
 		} catch (LoadAppFxmlException e) {

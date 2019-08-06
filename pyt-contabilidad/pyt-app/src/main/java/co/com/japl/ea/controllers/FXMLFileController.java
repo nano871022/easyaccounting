@@ -1,13 +1,12 @@
-package org.pyt.common.controller;
+package co.com.japl.ea.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.abstracts.ABean;
-import org.pyt.common.interfaces.IBean;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.IBean;
 
 /**
  * Se encarga de usar para generalizar el proceso de obtencion del controlador

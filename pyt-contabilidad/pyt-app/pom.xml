@@ -36,6 +36,11 @@
 			<version>${project.version}</version>
 			<!-- <scope>${project.scope}</scope> -->
 		</dependency>
+				<dependency>
+			<groupId>co.com.arquitectura.anotaciones</groupId>
+			<artifactId>arquitetura-anotaciones</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-common</artifactId>

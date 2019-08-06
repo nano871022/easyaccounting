@@ -2,24 +2,29 @@ package org.pyt.app.beans.dinamico;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
+import org.pyt.app.components.IGenericFilter;
 import org.pyt.app.components.PopupBean;
-import org.pyt.common.abstracts.ABean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.I18n;
+import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.pojo.GenericPOJO;
 
-import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 
 /**
  * Se encarga de controlar la intefase que enlista todos los documentos creados
@@ -28,7 +33,7 @@ import javafx.scene.layout.HBox;
  * @since 02-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "listaDocumentos.fxml", nombreVentana = "Lista de Documentos")
-public class ListaDocumentosBean extends ABean<DocumentoDTO> {
+public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGenericFilter<DocumentoDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
 	@FXML
@@ -38,12 +43,21 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> {
 	@FXML
 	private HBox titulo;
 	private DataTableFXML<DocumentoDTO, DocumentoDTO> dataTable;
+	@FXML
 	private GridPane filterTable;
+	private DocumentoDTO filter;
+	private Map<String, GenericPOJO<DocumentoDTO>> filters;
 
 	@FXML
 	public void initialize() {
+		try {
 		registro = new DocumentoDTO();
+		filter = assingValuesParameterized(getInstaceOfGenericADto());
+		configFilters();
 		lazy();
+		}catch(Exception e) {
+			error(e);
+		}
 	}
 
 	public void lazy() {
@@ -108,6 +122,57 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> {
 				error(e);
 			}
 		}
+	}
+
+	@Override
+	public Log getLogger() {
+		return logger;
+	}
+
+	@Override
+	public I18n getI18n() {
+		return i18n();
+	}
+
+	@Override
+	public Class<DocumentoDTO> getClazz() {
+		return DocumentoDTO.class;
+	}
+
+	@Override
+	public DocumentoDTO getFilter() {
+		return filter;
+	}
+
+	@Override
+	public GridPane getGridPaneFilter() {
+		return filterTable;
+	}
+
+	@Override
+	public void setFilter(DocumentoDTO filter) {
+		this.filter = filter;
+	}
+
+	@Override
+	public Map<String, GenericPOJO<DocumentoDTO>> getFilters() {
+		return filters;
+	}
+
+	@Override
+	public void setFilters(Map<String, GenericPOJO<DocumentoDTO>> filters) {
+		this.filters = filters;
+	}
+
+	@Override
+	public void setClazz(Class<DocumentoDTO> clazz) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public DataTableFXML<DocumentoDTO, DocumentoDTO> getTable() {
+		return dataTable;
 	}
 
 }

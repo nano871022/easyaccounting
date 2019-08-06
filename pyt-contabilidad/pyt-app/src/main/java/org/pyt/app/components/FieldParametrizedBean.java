@@ -11,6 +11,7 @@ import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
+import javafx.scene.layout.GridPane;
 
 @FXMLFile(path = "/", file = ".", nombreVentana = "FieldParametrizedBean")
 public class FieldParametrizedBean <T extends ADto> extends GenericInterfacesReflection<T>{
@@ -72,6 +73,36 @@ public class FieldParametrizedBean <T extends ADto> extends GenericInterfacesRef
 	
 	public final Boolean isPopup() {
 		return isPopup;
+	}
+
+	@Override
+	public T getFilter() {
+		return filter;
+	}
+
+	@Override
+	public GridPane getGridPaneFilter() {
+		return null;
+	}
+
+	@Override
+	public void setFilter(T filter) {
+		this.filter = filter;
+	}
+
+	@Override
+	public Map<String, GenericPOJO<T>> getFilters() {
+		return filtros;
+	}
+
+	@Override
+	public void setFilters(Map<String, GenericPOJO<T>> filters) {
+		filtros = filters;
+	}
+
+	@Override
+	public DataTableFXML<T, T> getTable() {
+		return null;
 	}
 
 }

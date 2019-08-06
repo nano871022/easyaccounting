@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.annotations.NoEdit;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
@@ -19,6 +20,7 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 public class DocumentoDTO extends ADto{
 	private static final long serialVersionUID = 284440016164488458L;
+	@DefaultFieldToGeneric(simpleNameClazzBean = "ListaDocumentosBean", use = DefaultFieldToGeneric.Uses.FILTER)
 	private ParametroDTO tipoDocumento;
 	private ParametroDTO estado;
 	private Date fechaNota;

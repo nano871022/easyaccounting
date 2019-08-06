@@ -6,9 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.abstracts.ABean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.DetalleDTO;
@@ -16,6 +14,8 @@ import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.LoadAppFxml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

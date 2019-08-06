@@ -3,6 +3,7 @@ package org.pyt.common.common;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.interfaces.IAssingValueToField;
 import org.pyt.common.interfaces.ICaller;
 
@@ -43,6 +44,9 @@ public final class UtilControlFieldFX {
 		}
 		if (Pattern.compile(CONTS_EXP_REG_TO_CHECKBOX).matcher(field.getType().getSimpleName()).find()) {
 			return (T) new CheckBox();
+		}
+		if(ADto.class.isAssignableFrom(field.getType())) {
+			return (T) new ChoiceBox();
 		}
 		return null;
 	}

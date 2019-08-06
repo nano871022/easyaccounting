@@ -1,16 +1,16 @@
-package org.pyt.common.controller;
+package co.com.japl.ea.controllers;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.ReflectionConstants;
-import org.pyt.common.interfaces.IBean;
 import org.pyt.common.reflection.ReflectionUtils;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.IBean;
+import co.com.japl.ea.beans.LoadAppFxml;
 
 /**
  * Se encarga de localizar el controlador
@@ -41,7 +41,6 @@ public class LocatorController {
 	private final <T extends FXMLFileController> T getController(String nombre) throws Exception {
 		String clase = PACKAGE_CONTROLLER_PRE + nombre + PACKAGE_CONTROLLER_LAST;
 		Class clases = null;
-//			logger.info("Clase a cargar :: "+clase);
 		if (this.clase == null) {
 			clases = Class.forName(clase);
 		} else {
@@ -112,7 +111,7 @@ public class LocatorController {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	private final <T extends IBean, L extends FXMLFileController> L locator(Class<T> controller) throws Exception {
-		FXMLFile fxml = controller.getAnnotation(FXMLFile.class);
+		var fxml = controller.getAnnotation(FXMLFile.class);
 		try {
 			if (StringUtils.isNotBlank(fxml.name()))
 				return getController(fxml.name());

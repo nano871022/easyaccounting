@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.controlsfx.glyphfont.FontAwesome;
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
@@ -20,7 +18,6 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -79,47 +76,6 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	}
 
 	/**
-	 * Se encarga de configurar el mapa de filtros y agregar los campos de filtros a
-	 * la pantalla
-	 * 
-	 * @throws {@link IllegalAccessException}
-	 */
-	private final void configFilters() throws IllegalAccessException {
-		filtros = getMapFieldsByObject(filter, GenericPOJO.Type.FILTER);
-		final var indices = new Index();
-		var util = new UtilControlFieldFX();
-		filtros.forEach((key, value) -> {
-			Label label = new Label(i18n().valueBundle(LanguageConstant.GENERIC_FILTER_LBL
-					+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
-			gridFilter.add(label, indices.columnIndex, indices.rowIndex);
-
-			var input = util.getFieldByField(value.getField());
-			if (value.getWidth() > 0) {
-				input.prefWidth(value.getWidth());
-			}
-			util.inputListenerToAssingValue(input, (obj) -> assingsValueToField(value.getField().getName(), obj));
-			gridFilter.add(input, indices.columnIndex + 1, indices.rowIndex);
-			indices.columnIndex = indices.columnIndex == 4 ? 0 : indices.columnIndex + 2;
-			indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
-		});
-		gridFilter.getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
-		gridFilter.add(
-				util.buttonGenericWithEventClicked(() -> table.search(),
-						i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_SEARCH), FontAwesome.Glyph.SEARCH),
-				0, indices.rowIndex + 1);
-		gridFilter.add(
-				util.buttonGenericWithEventClicked(() -> cleanFilter(),
-						i18n().valueBundle(LanguageConstant.GENERIC_FILTER_BTN_CLEAN), FontAwesome.Glyph.REMOVE),
-				1, indices.rowIndex + 1);
-
-	}
-
-	protected class Index {
-		Integer columnIndex = 0;
-		Integer rowIndex = 0;
-	}
-
-	/**
 	 * Se encarga de ralizar la configuracion del mapa de columnas y agregar las
 	 * columnas a la tabla indicada
 	 * 
@@ -130,7 +86,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
 			var tableColumn = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN
-					+ getClassParameterized().getSimpleName() + "." + value.getNameShow()));
+					+ getClazz().getSimpleName() + "." + value.getNameShow()));
 			if (value.getWidth() > 0) {
 				tableColumn.setPrefWidth(value.getWidth());
 			}
@@ -211,7 +167,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 		} else if (cantidad == 0) {
 			this.closeWindow();
 			throw new Exception(String.format(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText),
-					i18n().valueBundle(LanguageConstant.GENERIC_DOT + getClassParameterized().getSimpleName())));
+					i18n().valueBundle(LanguageConstant.GENERIC_DOT + getClazz().getSimpleName())));
 		} else {
 			showWindow();
 		}
@@ -228,12 +184,17 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			error(e);
 		}
 	}
+	
+	@Override
+	public DataTableFXML<T,T> getTable(){
+		return table;
+	}
 
 	@Override
 	public T getFilter() {
 		return filter;
 	}
-
+	
 	@Override
 	public GridPane getGridPaneFilter() {
 		return gridFilter;
@@ -243,5 +204,13 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	public void setFilter(T filter) {
 		this.filter = filter;
 	}
-
+	
+	public void setFilters(Map<String,GenericPOJO<T>> filters) {
+		filtros = filters;
+	}
+	
+	public Map<String,GenericPOJO<T>> getFilters() {
+		return filtros;
+	}
+	
 }

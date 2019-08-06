@@ -1,4 +1,4 @@
-package org.pyt.common.common;
+package co.com.japl.ea.beans;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -6,9 +6,8 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.abstracts.AGenericToBean;
+import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
@@ -187,7 +186,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
 		}
 		try {
-			FXMLFile fxml = controller.getAnnotation(FXMLFile.class);
+			var fxml = controller.getAnnotation(FXMLFile.class);
 			if (fxml != null) {
 
 				file = fxml.path() + AppConstants.SLASH + fxml.file();

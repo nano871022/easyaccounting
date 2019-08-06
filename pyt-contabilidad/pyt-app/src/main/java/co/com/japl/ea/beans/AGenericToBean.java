@@ -1,17 +1,16 @@
-package org.pyt.common.abstracts;
+package co.com.japl.ea.beans;
 
-import java.util.Map;
-
+import org.pyt.app.components.IGenericFilter;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.CSSConstant;
-import org.pyt.common.controller.LocatorController;
 import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.interfaces.IBean;
 
+import co.com.japl.ea.controllers.LocatorController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -122,18 +121,6 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 
 	public abstract void initialize();
 
-	protected final Map<String, Object> getDefaultValuesToGenericParametrized() {
-		return defaultValuesGenericParametrized;
-	}
-
-	public Class<T> getClassParameterized() {
-		return clazz;
-	}
-
-	public void setClassParameterized(Class<T> clazz) {
-		this.clazz = clazz;
-	}
-
 	protected void sizeWindow(Integer width, Integer height) {
 		this.width = width.doubleValue();
 		this.height = height.doubleValue();
@@ -149,7 +136,11 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	public Class<T> getClazz() {
 		return clazz;
 	}
-
+	
+	public void setClazz(Class<T> clazz) {
+		this.clazz= clazz;
+	}
+	
 	public I18n getI18n() {
 		return languages;
 	}
@@ -157,5 +148,5 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	public Log getLogger() {
 		return logger;
 	}
-
+	
 }

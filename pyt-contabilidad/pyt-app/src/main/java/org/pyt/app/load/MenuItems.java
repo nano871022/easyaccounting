@@ -19,10 +19,10 @@ import org.pyt.app.beans.persona.PersonaBean;
 import org.pyt.app.beans.repuesto.RepuestoBean;
 import org.pyt.app.beans.servicio.ServicioBean;
 import org.pyt.app.beans.trabajador.TrabajadorBean;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
+import co.com.japl.ea.beans.LoadAppFxml;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

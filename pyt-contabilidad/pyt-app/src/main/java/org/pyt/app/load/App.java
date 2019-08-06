@@ -1,7 +1,6 @@
 package org.pyt.app.load;
 
-import org.pyt.common.common.LoadAppFxml;
-
+import co.com.japl.ea.beans.LoadAppFxml;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

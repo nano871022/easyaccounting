@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.abstracts.ABean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroInventarioConstants;
 import org.pyt.common.exceptions.inventario.InventarioException;
@@ -18,6 +17,7 @@ import com.pyt.service.interfaces.inventarios.IInventarioSvc;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.abstracts.ABean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SearchService;
@@ -37,6 +36,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.arquitectura.annotation.proccessor.Services;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
+import co.com.japl.ea.beans.ABean;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
