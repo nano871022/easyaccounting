@@ -6,11 +6,11 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
 import co.com.japl.ea.controllers.LocatorController;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;

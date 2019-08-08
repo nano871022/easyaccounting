@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -17,6 +16,8 @@ import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class DocumentosSvc extends Services implements IDocumentosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

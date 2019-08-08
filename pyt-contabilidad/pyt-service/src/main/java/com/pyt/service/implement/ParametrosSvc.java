@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
@@ -19,6 +18,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

@@ -3,8 +3,9 @@ package com.pyt.service.interfaces;
 import java.util.List;
 
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.GenericServiceException;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre los registros de {@link T}

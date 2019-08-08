@@ -2,12 +2,13 @@ package com.pyt.service.interfaces.inventarios;
 
 import java.util.List;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.inventario.AlmacenException;
 
 import com.pyt.service.dto.inventario.AlmacenDTO;
 import com.pyt.service.dto.inventario.ProductoUbicacionDTO;
 import com.pyt.service.dto.inventario.UbicacionDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realizar ingreso de regisros de los almacenes, ubicacion y asignacion de producctos a las ubicaciones

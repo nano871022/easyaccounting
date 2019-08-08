@@ -1,10 +1,17 @@
 package org.pyt.common.constants;
+
+import java.util.ResourceBundle;
+
 /**
  * Constantes a usar que contienen referencia a las key de {@link ResourceBundle} sobre I18n de lenguages
  * @author Alejandro Parra
  * @since 15/04/2019
  */
 public class LanguageConstant {
+	public final static String CONST_CODE_BUNDLE_LANGUAGES = "code";
+	public final static String CONST_TEXT_BUNDLE_LANGUAGES = "text";
+	public final static String CONST_ERR_MSG_ADDED_LANGUAGES = "Executed error, when it was added new languages form DB, over I18n.";
+
 	public final static String GENERIC_FILTER_BTN_SEARCH = "generic.filter.btn.search";
 	public final static String GENERIC_FILTER_BTN_CLEAN = "generic.filter.btn.clean";
 	public final static String GENERIC_FILTER_LBL = "generic.filter.lbl.";

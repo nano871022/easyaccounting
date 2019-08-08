@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.swing.text.Document;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.ConceptoDTO;
@@ -12,6 +11,8 @@ import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre doccumentos

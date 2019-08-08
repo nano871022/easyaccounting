@@ -1,13 +1,12 @@
 package co.com.japl.ea.mybatis;
 
-import org.pyt.common.common.UsuarioDTO;
-
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DepartamentoDTO;
 import com.pyt.service.dto.PaisDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.ParametroGrupoDTO;
 
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.mybatis.impl.QueryMyBatisSvc;
 
 public class Main {

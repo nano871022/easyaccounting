@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.QueryException;
@@ -14,6 +13,8 @@ import org.pyt.common.exceptions.QueryException;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.interfaces.IGenericServiceSvc;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class GenericServiceSvc<T extends ADto> extends Services implements IGenericServiceSvc<T> {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

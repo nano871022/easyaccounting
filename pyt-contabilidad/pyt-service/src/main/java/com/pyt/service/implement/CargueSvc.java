@@ -13,7 +13,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CargueException;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.ProccesConfigServiceException;
@@ -29,6 +28,7 @@ import com.pyt.service.pojo.ProccessPOJO;
 import com.pyt.service.proccess.AnalizedAnnotationProcces;
 import com.pyt.service.proccess.ProccesConfigService;
 
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.loader.implement.FileLoadText;
 import co.com.japl.ea.loader.interfaces.IFileLoader;
 import co.com.japl.ea.loader.pojo.FilePOJO;

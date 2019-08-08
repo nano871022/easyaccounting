@@ -16,7 +16,6 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.common.RefreshCodeValidation;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.RefreshCodeConstant;
 import org.pyt.common.exceptions.QueryException;
@@ -27,6 +26,7 @@ import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.query.interfaces.IQuerySvc;
 
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.gdb.privates.impls.ConnectionJDBC;
 import co.com.japl.ea.gdb.privates.impls.StatementFactory;

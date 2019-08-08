@@ -2,12 +2,13 @@ package com.pyt.service.interfaces.inventarios;
 
 import java.util.List;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.inventario.MovimientoException;
 
 import com.pyt.service.dto.inventario.MovimientoDTO;
 import com.pyt.service.dto.inventario.RestarCantidadDTO;
 import com.pyt.service.dto.inventario.SaldoDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realizar los movimientos de los productos

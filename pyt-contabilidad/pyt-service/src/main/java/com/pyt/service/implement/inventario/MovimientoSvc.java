@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.inventario.MovimientoException;
 
@@ -18,6 +17,7 @@ import com.pyt.service.interfaces.inventarios.IMovimientoSvc;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class MovimientoSvc extends Services implements IMovimientoSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

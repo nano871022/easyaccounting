@@ -2,10 +2,11 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CuentaContableException;
 
 import com.pyt.service.dto.CuentaContableDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se implementa la interfaz para modificar lass cuenta contables

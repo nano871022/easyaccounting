@@ -2,10 +2,11 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ActividadIcaException;
 
 import com.pyt.service.dto.ActividadIcaDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se realiza un servicio para realizar crud de actividades iva

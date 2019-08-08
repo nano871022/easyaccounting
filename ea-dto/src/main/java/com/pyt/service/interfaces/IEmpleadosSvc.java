@@ -2,11 +2,12 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpleadoException;
 
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de relizar crud sobre la rabla de trabajadores y personas

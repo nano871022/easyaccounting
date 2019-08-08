@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -14,6 +13,8 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.inventario.ParametroGrupoInventarioDTO;
 import com.pyt.service.dto.inventario.ParametroInventarioDTO;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class ParametroInventariosSvc extends Services implements IParametroInventariosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

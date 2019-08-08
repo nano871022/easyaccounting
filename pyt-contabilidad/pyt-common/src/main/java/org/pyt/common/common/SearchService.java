@@ -204,7 +204,13 @@ public class SearchService {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private final void addCampos(List<String> listaCampos, Class parametro) {
-		if (excludeUsuarioDTO && parametro.isAssignableFrom(UsuarioDTO.class)) {
+		Class clazz;
+		try {
+			clazz = Class.forName(DtoConstants.CONST_CLASS_USER_DTO);
+		}catch(Exception e) {
+			clazz = null;
+		}
+		if (excludeUsuarioDTO && parametro.isAssignableFrom(clazz)) {
 			return;
 		}
 		List<String> campos = allFields(parametro);
@@ -252,7 +258,8 @@ public class SearchService {
 	private final <T extends Object> void addCampos(T obj, Class clase, String retornoSimpleName) {
 		try {
 			if (obj instanceof ADto) {
-				if (excludeUsuarioDTO && obj instanceof UsuarioDTO) {
+				if (excludeUsuarioDTO && obj.getClass().getSimpleName()
+						.contentEquals(DtoConstants.CONST_CLASS_SIMPLE_NAME_USER_DTO)) {
 					return;
 				}
 				List<String> campos;

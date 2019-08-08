@@ -23,5 +23,11 @@
 			<artifactId>ea-exceptions</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-dto</artifactId>
+			<version>${project.version}</version>
+			<scope>${project.scope}</scope>
+		</dependency>
 	</dependencies>
 </project>

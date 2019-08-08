@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
 import com.pyt.service.abstracts.Services;
@@ -12,6 +11,8 @@ import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.dto.MarcadorDTO;
 import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realizar el crud sobre asociacion de marcadores y servicios

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.ParametroInventarioConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.inventario.InventarioException;
@@ -28,6 +27,7 @@ import com.pyt.service.interfaces.inventarios.IProductosSvc;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class InventarioSvc extends Services implements IInventarioSvc {
 	@Inject(resource = "com.pyt.service.implement.inventario.MovimientoSvc")

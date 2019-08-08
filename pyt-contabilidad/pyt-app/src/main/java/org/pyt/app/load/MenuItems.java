@@ -1,18 +1,24 @@
 package org.pyt.app.load;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.PropertiesConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.properties.PropertiesUtils;
 
+import com.pyt.service.interfaces.IGenericServiceSvc;
+
 import co.com.japl.ea.beans.ABean;
 import co.com.japl.ea.beans.LoadAppFxml;
+import co.com.japl.ea.dto.system.MenuDTO;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,7 +35,8 @@ import javafx.scene.control.ScrollPane;
  * @since 22-06-2018
  */
 public class MenuItems {
-
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<MenuDTO> menusSvc;
 	private Properties propertiesMenu;
 	private I18n i18n;
 
@@ -54,7 +61,26 @@ public class MenuItems {
 		}
 	}
 
+	private final List<MenuDTO> getMenusFromDB() {
+		List<MenuDTO> list = new ArrayList<MenuDTO>();
+		try {
+			var dto = new MenuDTO();
+			list = menusSvc.getAll(dto);
+		} catch (Exception e) {
+			logger.logger(e);
+		}
+		return list;
+	}
+
 	private final void loadMenus() {
+		var list = getMenusFromDB();
+		if (list != null && list.size() > 0) {
+			list.forEach(menuDto -> {
+				var menus = menuDto.getUrl().split("/");
+				var menu = getMenu(menus[0]);
+				processMenu(menu, menuDto.getClassPath(), 0, menus);
+			});
+		}
 		propertiesMenu.keySet().forEach(key -> {
 			var menus = ((String)key).split("/");
 			var menu = getMenu(menus[0]);

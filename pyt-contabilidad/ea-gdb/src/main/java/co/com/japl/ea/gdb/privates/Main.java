@@ -2,12 +2,11 @@ package co.com.japl.ea.gdb.privates;
 
 import java.time.LocalDate;
 
-import org.pyt.common.common.UsuarioDTO;
-
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.BancoDTO;
 import com.pyt.service.dto.ParametroDTO;
 
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.gdb.impls.QueryGDBSvc;
 
 public final class Main {

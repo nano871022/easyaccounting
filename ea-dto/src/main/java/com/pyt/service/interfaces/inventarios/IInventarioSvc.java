@@ -1,9 +1,10 @@
 package com.pyt.service.interfaces.inventarios;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.inventario.InventarioException;
 
 import com.pyt.service.dto.inventario.MovimientoDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realiazar ingresos de inventarios como movimientos de los

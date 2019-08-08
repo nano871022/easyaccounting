@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.inventario.AlmacenException;
 
@@ -14,6 +13,8 @@ import com.pyt.service.dto.inventario.AlmacenDTO;
 import com.pyt.service.dto.inventario.ProductoUbicacionDTO;
 import com.pyt.service.dto.inventario.UbicacionDTO;
 import com.pyt.service.interfaces.inventarios.IAlmacenSvc;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class AlmacenSvc extends Services implements IAlmacenSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

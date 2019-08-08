@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.ProccesConfigServiceException;
@@ -25,6 +24,8 @@ import com.pyt.service.dto.MarcadorServicioDTO;
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 import com.pyt.service.proccess.ProccesConfigService;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcadorServicio {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

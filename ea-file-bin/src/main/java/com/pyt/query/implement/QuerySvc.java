@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Compare;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.FileBinException;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
@@ -24,6 +23,7 @@ import com.pyt.query.interfaces.IQuerySvc;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class QuerySvc implements IQuerySvc {
 	private FileBin fb;
