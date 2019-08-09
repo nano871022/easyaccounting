@@ -1,5 +1,6 @@
 package org.pyt.app.load;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +89,6 @@ public class MenuItems {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private final <T extends ADto,B extends ABean<T>> void processMenu(Menu menu, String classString, Integer position, String... menusSplit) {
 		var nameLabel = nameLabel(menusSplit[position + 1]);
 		if (menusSplit.length > position) {
@@ -99,17 +99,15 @@ public class MenuItems {
 			if (founds == null || founds.length == 0) {
 
 				if (menusSplit.length - 1 == position + 1) {
-					var menuItem = new MenuItem(nameLabel);
+					var nameLabel2 = "";
+					if(nameLabel.contains("?"))  {
+						nameLabel2 = nameLabel.substring(0, nameLabel.indexOf("?"));
+					}else{
+						nameLabel2 = nameLabel;
+					}
+					var menuItem = new MenuItem(nameLabel2);
 					menu.getItems().add(menuItem);
-					menuItem.onActionProperty().set(
-					 event -> {
-								try {
-									Class<B> beanToLoad = (Class<B>) Class.forName(classString);
-									LoadAppFxml.BeanFxmlScroller(scroll, beanToLoad);
-								} catch (LoadAppFxmlException | ClassNotFoundException e) {
-									logger.logger(e);
-								}
-							});
+					menuItem.onActionProperty().set( event -> onActionProperty(classString,nameLabel));
 					return;
 				} else {
 					found = new Menu(nameLabel);
@@ -122,6 +120,32 @@ public class MenuItems {
 			if (found != null) {
 				processMenu(found, classString, position + 1, menusSplit);
 			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private final <B extends ABean<T>,T extends ADto> void onActionProperty(String classString,String nameLabel)  {
+		try {
+			Class<?> [] parametersType = null;
+			Object[] parameters = null;
+			if(nameLabel.contains("?")) {
+				var nameParameters = nameLabel.substring(nameLabel.indexOf("?")+1);
+				parameters = nameParameters.split("&");
+				parametersType = new Class<?>[parameters.length];
+				for(var i = 0; i< parameters.length;i++) {
+					parametersType[i] = (parameters[i]).getClass();
+				}
+			}
+			Class<B> beanToLoad = (Class<B>) Class.forName(classString);
+			var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, beanToLoad);
+			if(parametersType != null && parametersType.length > 0) {
+				var methodLoadParameters = beanFxml.getClass().getDeclaredMethod("loadParameters", parametersType);
+				if(methodLoadParameters != null) {
+					methodLoadParameters.invoke(beanFxml, parameters);
+				}
+			}
+		} catch (LoadAppFxmlException | ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			logger.logger(e);
 		}
 	}
 

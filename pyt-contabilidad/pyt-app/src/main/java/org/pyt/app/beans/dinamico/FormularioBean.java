@@ -26,6 +26,7 @@ import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.dto.inventario.ProductoDTO;
@@ -122,6 +123,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Map<String, Object> mapa_claseBusqueda;
 	private Boolean instans;
 	private final static String FIELD_NAME = "nombre";
+	private ParametroDTO tipoDeDocumento;
 
 	@FXML
 	public void initialize() {

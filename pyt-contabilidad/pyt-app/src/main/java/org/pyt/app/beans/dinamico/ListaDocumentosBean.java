@@ -12,11 +12,15 @@ import org.pyt.app.components.PopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import com.pyt.service.dto.DocumentoDTO;
+import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -36,6 +40,9 @@ import javafx.scene.layout.HBox;
 public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGenericFilter<DocumentoDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
+	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
+	private IParametrosSvc parametroSvc;
+	
 	@FXML
 	private TableView<DocumentoDTO> tabla;
 	@FXML
@@ -47,6 +54,7 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 	private GridPane filterTable;
 	protected DocumentoDTO filter;
 	private Map<String, GenericPOJO<DocumentoDTO>> filters;
+	private ParametroDTO tipoDocumento;
 
 	@FXML
 	public void initialize() {
@@ -86,6 +94,9 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 
 			@Override
 			public DocumentoDTO getFilter() {
+				if(tipoDocumento != null && StringUtils.isNotBlank(tipoDocumento.getCodigo())) {
+					filter.setTipoDocumento(tipoDocumento);
+				}
 				return filter;
 			}
 		};
@@ -172,6 +183,22 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 	@Override
 	public DataTableFXML<DocumentoDTO, DocumentoDTO> getTable() {
 		return dataTable;
+	}
+	
+	public final void loadParameters(String tipoDocumento) {
+		try {
+		if(tipoDocumento.trim().contains("tipoDocumento")) {
+			var grupo = parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+			var parametro = new ParametroDTO();
+			parametro.setValor2(tipoDocumento.substring(tipoDocumento.indexOf("$")+1));
+			parametro.setEstado("1");
+			parametro.setGrupo(grupo);
+			var tdoc = parametroSvc.getParametro(parametro);
+			this.tipoDocumento = tdoc;
+		}
+		}catch(Exception e) {
+			logger.logger("Se presento error en el procesamiento del parametro que identifica el tipo de documento.",e);
+		}
 	}
 
 }
