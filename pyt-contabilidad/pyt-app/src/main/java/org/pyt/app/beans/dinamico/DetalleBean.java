@@ -16,6 +16,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -131,7 +132,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	}
 
 	@Override
-	protected final void methodChanges() {
+	public void methodChanges() {
 		try {
 			getField("valorIva");
 			getField("impuestoConsumo");
@@ -180,5 +181,10 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		} catch (ValidateValueException e) {
 			error(e);
 		}
+	}
+
+	@Override
+	public javafx.scene.layout.GridPane GridPane() {
+		return new GridPane();
 	}
 }

@@ -27,6 +27,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -172,5 +173,10 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	 */
 	public final void cancelar() {
 		getController(ListaDocumentosBean.class);
+	}
+
+	@Override
+	public javafx.scene.layout.GridPane GridPane() {
+		return new GridPane();
 	}
 }

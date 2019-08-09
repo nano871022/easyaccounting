@@ -17,7 +17,8 @@ public class VerifyDB implements IVerifyStructuredDB {
 	private ConnectionJDBC connectJDBC = null;
 	private Log log = Log.Log(this.getClass());
 	private final static String CONST_PACKAGE = "com.pyt.service.dto";
-	private final static String[] CONST_SUB_PACKAGES = { "", "dels", "inventario", "upds" };
+	private final static String[] CONST_SUB_PACKAGES = { CONST_PACKAGE, CONST_PACKAGE + ".dels",
+			CONST_PACKAGE + ".inventario", CONST_PACKAGE + ".upds", "co.com.japl.ea.dto.system" };
 	private final static String CONST_DOT = ".";
 	private final static String CONST_2_DOT = "..";
 	private final static String CONST_DTO = "DTO";
@@ -45,10 +46,12 @@ public class VerifyDB implements IVerifyStructuredDB {
 			throws ClassNotFoundException {
 		Class<T> dtoClass = null;
 		try {
-			var pathAllDTO = CONST_PACKAGE + CONST_DOT + CONST_SUB_PACKAGES[posPackage] + CONST_DOT
+			if (CONST_SUB_PACKAGES.length > posPackage) {
+				var pathAllDTO = CONST_SUB_PACKAGES[posPackage] + CONST_DOT
 					+ nameDto.substring(0, 1).toUpperCase() + nameDto.substring(1) + CONST_DTO;
-			pathAllDTO = pathAllDTO.replace(CONST_2_DOT, CONST_DOT);
-			dtoClass = (Class<T>) Class.forName(pathAllDTO);
+				pathAllDTO = pathAllDTO.replace(CONST_2_DOT, CONST_DOT);
+				dtoClass = (Class<T>) Class.forName(pathAllDTO);
+			}
 			posPackage = 0;
 		} catch (ClassNotFoundException e) {
 			posPackage++;
@@ -104,7 +107,7 @@ public class VerifyDB implements IVerifyStructuredDB {
 			try {
 				connectJDBC.runScript(script.getAbsolutePath());
 			} catch (Exception e) {
-				log.logger(e);
+				log.logger("Error en el " + nameJPA + " " + script.getAbsolutePath(), e);
 			}
 		}
 	}

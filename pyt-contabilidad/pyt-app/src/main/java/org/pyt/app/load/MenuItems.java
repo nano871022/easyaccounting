@@ -1,6 +1,5 @@
 package org.pyt.app.load;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +17,7 @@ import org.pyt.common.properties.PropertiesUtils;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.IUrlLoadBean;
 import co.com.japl.ea.beans.LoadAppFxml;
 import co.com.japl.ea.dto.system.MenuDTO;
 import javafx.application.Platform;
@@ -47,6 +47,8 @@ public class MenuItems {
 	private final static String MENU_PRINCIPAL = "Inicio";
 	private final static String BTN_CERRAR = "Cerrar";
 	private final static String LBL_MENU = "lbl.menu.";
+	private final static String CONST_URL_INIT_PARAMS = "?";
+	private final static String CONST_URL_SPLIT_PARAMS = "&";
 	private Log logger = Log.Log(this.getClass());
 
 	public MenuItems(MenuBar menu, ScrollPane scroll) {
@@ -126,26 +128,30 @@ public class MenuItems {
 	@SuppressWarnings("unchecked")
 	private final <B extends ABean<T>,T extends ADto> void onActionProperty(String classString,String nameLabel)  {
 		try {
-			Class<?> [] parametersType = null;
-			Object[] parameters = null;
-			if(nameLabel.contains("?")) {
-				var nameParameters = nameLabel.substring(nameLabel.indexOf("?")+1);
-				parameters = nameParameters.split("&");
-				parametersType = new Class<?>[parameters.length];
-				for(var i = 0; i< parameters.length;i++) {
-					parametersType[i] = (parameters[i]).getClass();
-				}
-			}
 			Class<B> beanToLoad = (Class<B>) Class.forName(classString);
 			var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, beanToLoad);
-			if(parametersType != null && parametersType.length > 0) {
-				var methodLoadParameters = beanFxml.getClass().getDeclaredMethod("loadParameters", parametersType);
-				if(methodLoadParameters != null) {
-					methodLoadParameters.invoke(beanFxml, parameters);
-				}
-			}
-		} catch (LoadAppFxmlException | ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			invokeLoadParameters(nameLabel, beanFxml);
+		} catch (LoadAppFxmlException | ClassNotFoundException | SecurityException | IllegalArgumentException e) {
 			logger.logger(e);
+		}
+	}
+
+	/**
+	 * Se encarga de obtener los parameteros apartir del nombre del menu a cargar y
+	 * imvoicar los parametros si contiene parametros, ademas que debe ser
+	 * implemetacion de la interfaz {@link IUrlLoadBean}
+	 * 
+	 * @param nameLabel {@link String}
+	 * @param beanFxml  {@link ABean}
+	 */
+	private final <B extends ABean<T>, T extends ADto> void invokeLoadParameters(String nameLabel, B beanFxml) {
+		String[] parameters = null;
+		if (nameLabel.contains(CONST_URL_INIT_PARAMS)) {
+			var nameParameters = nameLabel.substring(nameLabel.indexOf(CONST_URL_INIT_PARAMS) + 1);
+			parameters = nameParameters.split(CONST_URL_SPLIT_PARAMS);
+		}
+		if (beanFxml instanceof IUrlLoadBean && parameters != null && parameters.length > 0) {
+			((IUrlLoadBean) beanFxml).loadParameters(parameters);
 		}
 	}
 

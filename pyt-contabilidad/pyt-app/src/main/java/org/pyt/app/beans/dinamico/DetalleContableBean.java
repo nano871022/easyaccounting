@@ -13,6 +13,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -112,5 +113,10 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	@Override
+	public javafx.scene.layout.GridPane GridPane() {
+		return new GridPane();
 	}
 }

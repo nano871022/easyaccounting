@@ -7,25 +7,27 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.app.components.IGenericFilter;
 import org.pyt.app.components.PopupBean;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentoDTO;
+import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
-import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.IUrlLoadBean;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -37,34 +39,54 @@ import javafx.scene.layout.HBox;
  * @since 02-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "listaDocumentos.fxml", nombreVentana = "Lista de Documentos")
-public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGenericFilter<DocumentoDTO> {
+public class ListaDocumentosBean extends ABean<DocumentoDTO>
+		implements IGenericFieldLoad, IGenericLoadValueFromField, IUrlLoadBean {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
-	
+	@Inject(resource = "com.pyt.query.implement.QuerySvc")
+	private IQuerySvc querySvc;
 	@FXML
 	private TableView<DocumentoDTO> tabla;
 	@FXML
 	private HBox paginador;
 	@FXML
 	private HBox titulo;
+	@FXML
+	private Label lblTitle;
 	private DataTableFXML<DocumentoDTO, DocumentoDTO> dataTable;
 	@FXML
 	private GridPane filterTable;
 	protected DocumentoDTO filter;
-	private Map<String, GenericPOJO<DocumentoDTO>> filters;
 	private ParametroDTO tipoDocumento;
+	private List<DocumentosDTO> genericFields;
+	private Map<String, Object> configFields;
+	private Map<String, Object> configFieldList;
 
 	@FXML
 	public void initialize() {
 		try {
 			registro = new DocumentoDTO();
-			filter = assingValuesParameterized(getInstaceOfGenericADto());
-			configFilters();
+			filter = new DocumentoDTO();
 			lazy();
 		} catch (Exception e) {
 			error(e);
+		}
+	}
+
+	private void searchFilters() {
+		try {
+			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+			}
+			var documentos = new DocumentosDTO();
+			documentos.setClaseControlar(DocumentoDTO.class);
+			documentos.setDoctype(tipoDocumento);
+			documentos.setFieldFilter(true);
+			genericFields = documentosSvc.getDocumentos(documentos);
+		} catch (Exception e) {
+			logger.logger(e);
 		}
 	}
 
@@ -118,7 +140,7 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 	public final void eliminar() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{ListaDocumentosBean.delete}",
-					"¿Desea eliminar este registro?");
+					i18n().valueBundle("want_delete_this_record"));
 		} catch (LoadAppFxmlException e) {
 			error(e);
 		}
@@ -127,7 +149,8 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 	public final void setDelete(Boolean valid) {
 		if (valid) {
 			try {
-				controllerPopup(PopupBean.class).load("Esta funcionalidad no esta activada.", PopupBean.TIPOS.WARNING);
+				controllerPopup(PopupBean.class).load(i18n().valueBundle("this_functionality_isnt_active"),
+						PopupBean.TIPOS.WARNING);
 			} catch (LoadAppFxmlException e) {
 				error(e);
 			}
@@ -144,61 +167,66 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO> implements IGeneric
 		return i18n();
 	}
 
-	@Override
-	public Class<DocumentoDTO> getClazz() {
-		return DocumentoDTO.class;
-	}
-
-	@Override
-	public DocumentoDTO getFilter() {
-		return filter;
-	}
-
-	@Override
-	public GridPane getGridPaneFilter() {
-		return filterTable;
-	}
-
-	@Override
-	public void setFilter(DocumentoDTO filter) {
-		this.filter = filter;
-	}
-
-	@Override
-	public Map<String, GenericPOJO<DocumentoDTO>> getFilters() {
-		return filters;
-	}
-
-	@Override
-	public void setFilters(Map<String, GenericPOJO<DocumentoDTO>> filters) {
-		this.filters = filters;
-	}
-
-	@Override
-	public void setClazz(Class<DocumentoDTO> clazz) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public DataTableFXML<DocumentoDTO, DocumentoDTO> getTable() {
-		return dataTable;
-	}
-	
-	public final void loadParameters(String tipoDocumento) {
+	public final void loadParameters(String... tipoDocumento) {
 		try {
-		if(tipoDocumento.trim().contains("tipoDocumento")) {
-			var grupo = parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
-			var parametro = new ParametroDTO();
-			parametro.setValor2(tipoDocumento.substring(tipoDocumento.indexOf("$")+1));
-			parametro.setEstado("1");
-			parametro.setGrupo(grupo);
-			var tdoc = parametroSvc.getParametro(parametro);
-			this.tipoDocumento = tdoc;
+			if (tipoDocumento.length == 1 && tipoDocumento[0].trim().contains("tipoDocumento")) {
+				var grupo = parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+				var parametro = new ParametroDTO();
+				parametro.setValor2(tipoDocumento[0].substring(tipoDocumento[0].indexOf("$") + 1));
+				parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				parametro.setGrupo(grupo);
+				var tdoc = parametroSvc.getParametro(parametro);
+				this.tipoDocumento = tdoc;
+				lblTitle.setText(this.tipoDocumento.getNombre());
+				dataTable.search();
+				searchFilters();
+
 		}
 		}catch(Exception e) {
-			logger.logger("Se presento error en el procesamiento del parametro que identifica el tipo de documento.",e);
+			logger.logger(i18n().valueBundle("document_type_had_error_in_its_processing"), e);
 		}
+	}
+
+	@Override
+	public Map<String, Object> getConfigFields() {
+		return configFields;
+	}
+
+	@Override
+	public Map<String, Object> getConfigFieldTypeList() {
+		return configFieldList;
+	}
+
+	@Override
+	public void warning(String msn) {
+		alerta(msn);
+	}
+
+	@Override
+	public void error(Throwable error) {
+		error(error);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ADto> T getInstanceDTOUse() {
+		return (T) filter;
+	}
+
+
+	@Override
+	public List<DocumentosDTO> getFields() {
+		return genericFields;
+	}
+
+	@Override
+	public IQuerySvc getServiceSvc() {
+		return querySvc;
+	}
+
+	@Override
+	public javafx.scene.layout.GridPane GridPane() {
+		return filterTable;
 	}
 
 }

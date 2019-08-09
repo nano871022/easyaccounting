@@ -7,7 +7,7 @@ CREATE TABLE TBL_LANGUAGES (
 	,ddelete  DATETIME           NULL
 	,dupdate  DATETIME           NULL
 	,scodename VARCHAR2(100)     NOT NULL
-	,stext     VARCAHR2(500)     NOT NULL
+	,stext     VARCHAR2(500)     NOT NULL
 	,sidiom    VARCHAR2(10)      NOT NULL
 	,siconpath VARCHAR2(300)     NULL
 	,siconcss  VARCHAR2(100)     NULL

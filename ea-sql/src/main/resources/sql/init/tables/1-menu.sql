@@ -9,7 +9,7 @@ CREATE TABLE TBL_MENU(
 	,surl     VARCHAR2(300)      NOT NULL
 	,sclasspath VARCHAR2(300)    NOT NULL
 	,siconapth VARCHAR2(300)     NULL
-	,siconcss  VARCAHR2(200)     NULL
+	,siconcss  VARCHAR2(200)     NULL
 	,nstate    NUMBER            NOT NULL default 0
 );
 ALTER TABLE TBL_MENU ADD CONSTRAINT k_menu_primary PRIMARY KEY (scode);

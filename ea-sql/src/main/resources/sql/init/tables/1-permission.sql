@@ -8,7 +8,7 @@ CREATE TABLE TBL_PERMISSION(
 	,dupdate  DATETIME           NULL
 	,sname    VARCHAR2(100)      NOT NULL
 	,sdescription VARCHAR2(200)  NULL
-	,saction  VARCAHR2(100)      NULL
+	,saction  VARCHAR2(100)      NULL
 	,nstate   NUMBER             NOT NULL DEFAULT 0
 );
 ALTER TABLE TBL_PERMISSION ADD CONSTRAINT k_perm_primary PRIMARY KEY (scode);
