@@ -714,7 +714,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	private final void servicioCampoUPDINST() throws MarcadorServicioException {
 		for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
-			servicio.setConfiguracion(getConfiguration());
+			servicio.setConfiguracion(config);
 			if (StringUtils.isNotBlank(servicio.getCodigo())) {
 				configMarcadorServicio.updateServicioCampo(servicio, userLogin);
 			} else if (StringUtils.isBlank(servicio.getCodigo())) {
@@ -726,19 +726,13 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	private final void servicioMarcadorUPDINST() throws MarcadorServicioException {
 		for (MarcadorServicioDTO marcador : marcadoresServicios) {
-			marcador.setConfiguracion(getConfiguration());
+			marcador.setConfiguracion(config);
 			if (StringUtils.isNotBlank(marcador.getCodigo())) {
 				configMarcadorServicio.updateServicioMarcador(marcador, userLogin);
 			} else if (StringUtils.isBlank(marcador.getCodigo())) {
 				marcador = configMarcadorServicio.insertMarcadorServicio(marcador, userLogin);
 			}
 		}
-	}
-
-	private final ConfiguracionDTO getConfiguration() {
-		var configuration = new ConfiguracionDTO();
-		configuration.setConfiguracion(config.getConfiguracion());
-		return configuration;
 	}
 
 	private final ConfiguracionDTO getConfigurationForm() {
@@ -749,7 +743,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	private final void marcadorUPDINST() throws MarcadorServicioException {
 		for (MarcadorDTO marcador : marcadores) {
-			marcador.setConfiguracion(getConfiguration());
+			marcador.setConfiguracion(config);
 			if (StringUtils.isNotBlank(marcador.getCodigo())) {
 				configMarcadorServicio.updateMarcador(marcador, userLogin);
 			} else if (StringUtils.isBlank(marcador.getCodigo())) {
@@ -760,12 +754,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	public final void saveAll() {
 		try {
+			loadFields();
 			if (StringUtils.isNotBlank(config.getCodigo())) {
 				configMarcadorServicio.updateConfiguracion(config, userLogin);
 			} else {
 				config = configMarcadorServicio.insertConfiguracion(config, userLogin);
 			}
-			loadFields();
 			servicioCampoUPDINST();
 			servicioMarcadorUPDINST();
 			marcadorUPDINST();

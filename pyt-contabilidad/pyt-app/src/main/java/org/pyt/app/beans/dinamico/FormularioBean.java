@@ -109,10 +109,6 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Label lNombreCampo;
 	@FXML
 	private Label lBusqueda;
-	@FXML
-	private Label labelFilter;
-	@FXML
-	private Label labelColumn;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
 	private List<ParametroDTO> listGrupo;
@@ -169,8 +165,6 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldColumn.setVisible(false);
 		fieldFilter.setVisible(false);
 		fieldLabel.setVisible(false);
-		labelFilter.setVisible(false);
-		labelColumn.setVisible(false);
 		guardar.setVisible(false);
 		cancelar.setVisible(false);
 		lazy();
@@ -314,8 +308,6 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private final void showFieldEdited() {
 		editable.setVisible(true);
 		obligatorio.setVisible(true);
-		labelFilter.setVisible(true);
-		labelColumn.setVisible(true);
 		fieldFilter.setVisible(true);
 		fieldColumn.setVisible(true);
 		addItem.setVisible(true);
@@ -552,6 +544,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	public void eliminarItem() {
 		DocumentosDTO dto = dataTable.getSelectedRow();
 		try {
+			if(dto != null) {
 			if (StringUtils.isNotBlank(dto.getCodigo())) {
 				documentoSvc.delete(dto, userLogin);
 			} else if (StringUtils.isBlank(dto.getCodigo())) {
@@ -570,6 +563,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			notificar("Se ha eliminado el documento.");
 			dataTable.search();
 			cleanItem();
+			}
 		} catch (DocumentosException e) {
 			error(e);
 		}
