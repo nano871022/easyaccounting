@@ -79,11 +79,12 @@ public class CargueSvc extends Services implements ICargue {
 	 */
 	public final List<ServicioCampoBusquedaDTO> getMarcadorServicio(MarcadorDTO marcador,
 			List<ServicioCampoBusquedaDTO> marcadoresServicios) {
-		List<ServicioCampoBusquedaDTO> list = new ArrayList<ServicioCampoBusquedaDTO>();
-		for (ServicioCampoBusquedaDTO marcadorServicio : marcadoresServicios) {
-			if (marcadorServicio.getMarcador().compareTo(marcador.getMarcador()) == 0) {
-				list.add(marcadorServicio);
-			}
+		var list = new ArrayList<ServicioCampoBusquedaDTO>();
+		if (marcador != null) {
+			marcadoresServicios.stream()
+					.filter(marcadorServicio -> marcadorServicio.getMarcador() != null
+							&& marcadorServicio.getMarcador().compareTo(marcador.getMarcador()) == 0)
+					.forEach(marcadorServicio -> list.add(marcadorServicio));
 		}
 		return list;
 	}
@@ -142,7 +143,9 @@ public class CargueSvc extends Services implements ICargue {
 									|| field.getType() == LocalDateTime.class) {
 								inst = aap.DateTime((ADto) inst, field.getName(), columna);
 							}
-							aap.valueInObject((ADto) inst, (marcador.getCampo().split(DOUBLE_2_DOT))[1], columna);
+							if (StringUtils.isNotBlank(columna)) {
+								aap.valueInObject((ADto) inst, (marcador.getCampo().split(DOUBLE_2_DOT))[1], columna);
+							}
 							aap.size((ADto) inst, field.getName());
 						}
 

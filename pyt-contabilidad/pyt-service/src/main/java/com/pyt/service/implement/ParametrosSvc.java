@@ -157,7 +157,7 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 			}
 			dto = querySvc.set(dto, user);
 		} catch (QueryException e) {
-			throw new ParametroException("Se presento un problema en el ingreso del registro.");
+			throw new ParametroException("Se presento un problema en el ingreso del registro.", e);
 		}
 		return dto;
 	}

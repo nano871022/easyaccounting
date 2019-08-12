@@ -2,6 +2,7 @@ package com.pyt.service.pojo;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +58,17 @@ public class ProccessPOJO {
 		if (errores == null) {
 			errores = new ArrayList<>();
 		}
-		if (error.getMessage() == null) {
-			errores.add(error.getStackTrace()[0].toString());
-			errores.add(error.getStackTrace()[1].toString());
-		} else {
+		if (error.getMessage() == null && error.getCause() == null) {
+			Arrays.asList(error.getStackTrace()).stream()
+					.filter(stackTrace -> stackTrace.getClass().getName().contains("pyt")
+							|| stackTrace.getClass().getName().contains("ea")
+							|| stackTrace.getClass().getName().contains("japl")
+							|| stackTrace.getClass().getName().contains("co.com"))
+					.forEach(stackTrace -> errores.add(stackTrace.getClass().getName() + "."
+							+ stackTrace.getMethodName() + ":" + stackTrace.getLineNumber()));
+		} else if(error.getMessage() == null && error.getCause() != null){
+			errores.add(error.getCause().getMessage());
+		}else {
 			errores.add(error.getMessage());
 		}
 	}
