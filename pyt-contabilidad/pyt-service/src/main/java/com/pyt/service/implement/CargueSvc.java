@@ -232,9 +232,6 @@ public class CargueSvc extends Services implements ICargue {
 					params[i] = user;
 				} else {
 					Object param = procces.get(clazz.getSimpleName());
-					if (param instanceof ADto)
-						if (StringUtils.isNotBlank(((ADto) param).getCodigo()))
-							break;
 					if (param != null) {
 						params[i] = param;
 					}

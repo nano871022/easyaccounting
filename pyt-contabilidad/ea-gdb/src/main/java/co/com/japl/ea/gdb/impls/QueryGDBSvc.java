@@ -198,19 +198,9 @@ public class QueryGDBSvc implements IQuerySvc {
 	public <T extends ADto> T set(T obj, UsuarioDTO user) throws QueryException {
 		var newDto = false;
 		try {
-			var statement = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
-			if (StringUtils.isNotBlank(obj.getCodigo())) {
-				obj.setActualizador(user.getNombre());
-				obj.setFechaActualizacion(new Date());
-			} else {
-				obj.setCreador(user.getNombre());
-				obj.setFechaCreacion(new Date());
-				obj.setCodigo(statementQueryUtils.genConsecutivo(obj.getClass(),
-						countRow(obj.getClass().getConstructor().newInstance())));
-				newDto = true;
-			}
-			var query = newDto ? statement.insert(obj) : statement.update(obj);
-			Boolean rs = db.executeIUD(query);
+			newDto = StringUtils.isBlank(obj.getCodigo());
+
+			Boolean rs = newDto ? insert(obj, user) : update(obj, user);
 			if (rs) {
 				if (StringUtils.isNotBlank(obj.getCodigo())) {
 					return get(obj);
@@ -222,12 +212,47 @@ public class QueryGDBSvc implements IQuerySvc {
 			} else {
 				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_EXEC));
 			}
-		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException | StatementSqlException e) {
+		} catch (IllegalArgumentException | SecurityException e) {
 			if (newDto) {
 				obj.setCodigo(null);
 			}
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public final <T extends ADto> Boolean update(T obj, UsuarioDTO user) throws QueryException {
+		try {
+			obj.setActualizador(user.getNombre());
+			obj.setFechaActualizacion(new Date());
+			var statement = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			var query = statement.update(obj);
+			return db.executeIUD(query);
+		} catch (Exception e) {
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT), e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public final <T extends ADto> Boolean insert(T obj, UsuarioDTO user) throws QueryException {
+		try {
+			if (StringUtils.isBlank(obj.getCodigo())) {
+				obj.setCodigo(statementQueryUtils.genConsecutivo(obj.getClass(),
+						countRow(obj.getClass().getConstructor().newInstance())));
+			} else {
+				if (countRow(obj) > 0) {
+					throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_ROW_EXISTS));
+				}
+			}
+			obj.setCreador(user.getNombre());
+			obj.setFechaCreacion(new Date());
+
+			var statement = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			var query = statement.insert(obj);
+
+			return db.executeIUD(query);
+		} catch (Exception e) {
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_UPDATE), e);
 		}
 	}
 

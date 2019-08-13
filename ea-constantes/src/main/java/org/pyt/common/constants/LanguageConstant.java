@@ -3,7 +3,9 @@ package org.pyt.common.constants;
 import java.util.ResourceBundle;
 
 /**
- * Constantes a usar que contienen referencia a las key de {@link ResourceBundle} sobre I18n de lenguages
+ * Constantes a usar que contienen referencia a las key de
+ * {@link ResourceBundle} sobre I18n de lenguages
+ * 
  * @author Alejandro Parra
  * @since 15/04/2019
  */
@@ -27,6 +29,9 @@ public class LanguageConstant {
 	public final static String LANGUAGE_ERROR_QUERY_CREATE_TABLE = "service.error.query.create.table";
 	public final static String LANGUAGE_ERROR_QUERY_CREATE_TRIGGER = "service.error.query.create.trigger";
 	public final static String LANGUAGE_ERROR_QUERY_DROP_TABLE = "service.error.query.drop.table";
+	public final static String LANGUAGE_ERROR_QUERY_UPDATE = "service.error.query.update";
+	public final static String LANGUAGE_ERROR_QUERY_ROW_EXISTS = "service.error.query.row.exists";
+	public final static String LANGUAGE_ERROR_QUERY_INSERT = "service.error.query.insert";
 	public final static String LANGUAGE_ERROR_QUERY_INSERT_UPDATE = "service.error.query.insert.update";
 	public final static String LANGUAGE_ERROR_QUERY_DELETE_ROW = "service.error.query.delete.row";
 	public final static String LANGUAGE_ERROR_QUERY_COUNT_ROWS = "service.error.query.count.rows";
@@ -41,4 +46,3 @@ public class LanguageConstant {
 	public final static String GENERIC_SERVICE_EMPTY_DTO = "generic.service.empty.dto";
 	public final static String GENERIC_SERVICE_CODE_EMPTY_DTO = "generic.service.code.empty.dto";
 }
-

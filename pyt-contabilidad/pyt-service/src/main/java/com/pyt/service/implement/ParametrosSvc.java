@@ -144,7 +144,7 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Override
 	public ParametroDTO insertService(ParametroDTO dto, UsuarioDTO user) throws ParametroException {
 		if (dto == null)
-			throw new ParametroException("Se encontro el parameto grupo vacio.");
+			throw new ParametroException("No se suministro el objeto de parametros para insertar.");
 		if (user == null)
 			throw new ParametroException("Se encontro el usuario vacio.");
 		try {
@@ -155,7 +155,9 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 				parametro = querySvc.get(parametro);
 				dto.setGrupo(parametro.getCodigo());
 			}
-			dto = querySvc.set(dto, user);
+			if (!querySvc.insert(dto, user)) {
+				throw new ParametroException("No se realizo el ingreso del registro.");
+			}
 		} catch (QueryException e) {
 			throw new ParametroException("Se presento un problema en el ingreso del registro.", e);
 		}
