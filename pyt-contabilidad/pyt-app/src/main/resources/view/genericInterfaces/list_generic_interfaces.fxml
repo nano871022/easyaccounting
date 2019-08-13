@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane layoutX="0.0" layoutY="0.0"
+	maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+	style="-fx-background-color: white;"
+	xmlns:fx="http://javafx.com/fxml/1"
+	xmlns="http://javafx.com/javafx/2.2"
+	fx:controller="org.pyt.app.beans.generic.interfaces.ListGenericInterfacesBean">
+	<bottom>
+		<FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
+			<children>
+				<Button mnemonicParsing="false" onAction="#add"
+					text="Agregar" />
+				<Button fx:id="btnMod"  mnemonicParsing="false" 
+					onAction="#set" text="Modificar" visible="false">
+					<FlowPane.margin>
+						<Insets left="10.0" right="10.0" />
+					</FlowPane.margin>
+				</Button>
+				<Button fx:id="btnDel" mnemonicParsing="false" onAction="#del"
+					text="Eliminar"  visible="false"/>
+			</children>
+			<padding>
+				<Insets bottom="5.0" top="5.0" />
+			</padding>
+		</FlowPane>
+	</bottom>
+	<center>
+		<BorderPane prefHeight="200.0" prefWidth="200.0">
+			<bottom>
+				<HBox fx:id="paginador" alignment="CENTER" maxWidth="-1.0"
+				 	prefHeight="40.0" prefWidth="400.0" GridPane.columnIndex="1"
+					GridPane.rowIndex="0"/>
+			</bottom>
+			<center>
+				<HBox fx:id="tableGeneric" alignment="CENTER" maxWidth="-1.0"
+							prefHeight="40.0" prefWidth="400.0" GridPane.columnIndex="1"
+							GridPane.rowIndex="0"/>
+			</center>
+		</BorderPane>
+	</center>
+	<top>
+		<HBox fx:id="filterGeneric" alignment="CENTER" maxWidth="-1.0"
+		 	  prefHeight="40.0" prefWidth="400.0" GridPane.columnIndex="1"
+		  	  GridPane.rowIndex="0"/>
+	</top>
+</BorderPane>

@@ -1,18 +1,32 @@
 package co.com.japl.ea.dto.system;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
+import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
 
 public class ConfigGenericFieldDTO extends ADto {
 	private static final long serialVersionUID = 1L;
+	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
+	@DefaultFieldToGeneric(use = Uses.COLUMN, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private String name;
+	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
+	@DefaultFieldToGeneric(use = Uses.COLUMN, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private String classPath;
+	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private String classPathBean;
 	private String description;
+	@DefaultFieldToGeneric(use = Uses.COLUMN, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private String alias;
+	@DefaultFieldToGeneric(use = Uses.COLUMN, simpleNameClazzBean = "ListGenericInterfacesBean")
+	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private Boolean isFilter;
+	@DefaultFieldToGeneric(use = Uses.COLUMN, simpleNameClazzBean = "ListGenericInterfacesBean")
+	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private Boolean isColumn;
+	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private Boolean isRequired;
 	private Double width;
+	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private Integer state;
 
 	public String getName() {

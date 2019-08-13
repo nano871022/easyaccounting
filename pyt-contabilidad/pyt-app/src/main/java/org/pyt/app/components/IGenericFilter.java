@@ -11,8 +11,6 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
-import org.pyt.common.common.I18n;
-import org.pyt.common.common.Log;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
@@ -24,7 +22,7 @@ import co.com.japl.ea.beans.AGenericToBean;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public interface IGenericFilter<T extends ADto> {
+public interface IGenericFilter<T extends ADto> extends IGenericCommon<T> {
 
 	public Map<String, Object> defaultValuesGenericParametrized = new HashMap<String, Object>();
 
@@ -32,21 +30,11 @@ public interface IGenericFilter<T extends ADto> {
 
 	void setFilters(Map<String, GenericPOJO<T>> filters);
 
-	Log getLogger();
-
-	I18n getI18n();
-
-	Class<T> getClazz();
-
-	void setClazz(Class<T> clazz);
-
 	T getFilter();
 
 	void setFilter(T filter);
 
 	GridPane getGridPaneFilter();
-
-	DataTableFXML<T, T> getTable();
 
 	default <O extends Object> void assingsValueToField(String nameField, O value) {
 		try {
@@ -60,21 +48,6 @@ public interface IGenericFilter<T extends ADto> {
 				| NoSuchMethodException e) {
 			getLogger().logger(e);
 		}
-	}
-
-	/**
-	 * Se encarhad e obtener una nueva instancia de la clase usada como generico de
-	 * la aplicacion
-	 * 
-	 * @return T generico usado, extiende de {@link ADto}
-	 * @throws {@link InvocationTargetException}
-	 * @throws {@link IllegalAccessException}
-	 * @throws {@link InstantiationException}
-	 * @throws {@link NoSuchMethodException}
-	 */
-	default T getInstaceOfGenericADto()
-			throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
-		return getClazz().getConstructor().newInstance();
 	}
 
 	default T assingValuesParameterized(T dto) {
@@ -189,66 +162,6 @@ public interface IGenericFilter<T extends ADto> {
 						&& !Modifier.isAbstract(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
 				.forEach(field -> addFieldIntoMap(maps, field, instance, typeGeneric));
 		return maps;
-	}
-
-	/**
-	 * Se encarga de agregar el field dentro de un wrapper para para poder ser
-	 * puesto en un mapa
-	 * 
-	 * @param maps        {@link Map}
-	 * @param field       {@link Field}
-	 * @param instance    {@link Object}
-	 * @param typeGeneric {@link GenericPOJO#Type}
-	 */
-	private <O extends Object> void addFieldIntoMap(Map<String, GenericPOJO<T>> maps, Field field, O instance,
-			GenericPOJO.Type typeGeneric) {
-		try {
-			Boolean valid = false;
-			if (GenericPOJO.Type.FILTER == typeGeneric) {
-				DefaultFieldToGeneric[] annotated = field.getAnnotationsByType(DefaultFieldToGeneric.class);
-				valid = Arrays.asList(annotated).stream()
-						.filter(annotate -> annotate.use() == DefaultFieldToGeneric.Uses.FILTER
-								&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName()))
-						.toArray().length > 0;
-			} else if (GenericPOJO.Type.COLUMN == typeGeneric) {
-				DefaultFieldToGeneric[] annotated = field.getAnnotationsByType(DefaultFieldToGeneric.class);
-				valid = Arrays.asList(annotated).stream()
-						.filter(annotate -> annotate.use() == DefaultFieldToGeneric.Uses.COLUMN
-								&& annotate.simpleNameClazzBean().contentEquals(this.getClass().getSimpleName()))
-						.toArray().length > 0;
-			}
-			if (valid) {
-				if (!field.canAccess(instance)) {
-					field.trySetAccessible();
-				}
-				maps.put(field.getName(), fillGenericPOJO(instance, field, typeGeneric));
-			}
-		} catch (IllegalAccessException e) {
-			getLogger().logger(e);
-		}
-	}
-
-	/**
-	 * Se encarga de crear una instancia del generic pojo con la instancia usada, el
-	 * campo y el tipo de la instancia
-	 * 
-	 * @param instance {@link Object} instancia que contiene el campo suministrado
-	 * @param field    {@link Field} campo con el cual se debe tener relacion
-	 * @param type     {@link GenericPOJO.Type} tipo de configuracion el objeto
-	 * @return {@link GenericPOJO}
-	 * @throws {@link IllegalAccessException}
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private <O extends Object> GenericPOJO<T> fillGenericPOJO(O instance, Field field, GenericPOJO.Type type)
-			throws IllegalAccessException {
-		if (field.canAccess(instance)) {
-			field.trySetAccessible();
-		}
-		DefaultFieldToGeneric dftg = field.getDeclaredAnnotation(DefaultFieldToGeneric.class);
-		if (dftg != null) {
-			return new GenericPOJO(field.getName(), field, field.get(instance), type, dftg.width());
-		}
-		return new GenericPOJO(field.getName(), field, field.get(instance), type);
 	}
 
 	class Index {
