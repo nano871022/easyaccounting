@@ -15,6 +15,7 @@ public class QueryConstants {
 	public final static String CONST_AND = "AND";
 	public final static String CONST_INSERT = "INSERT";
 	public final static String CONST_WHERE = "WHERE";
+	public final static String CONST_LIMIT = "LIMIT";
 	public final static String CONST_FIELD_COUNT = "size";
 	public final static String CONST_FORMAT_DATE = "yyyy-MM-dd";
 	public final static String CONST_TYPE_INT = "int";

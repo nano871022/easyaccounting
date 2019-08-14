@@ -20,6 +20,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.ABean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -27,33 +28,35 @@ import javafx.scene.layout.HBox;
 @FXMLFile(file = "list_generic_interfaces.fxml", path = "/view/genericInterfaces", nombreVentana = "Lista Interfaces Genericas")
 public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 		implements IGenericFilter<ConfigGenericFieldDTO>, IGenericColumn<ConfigGenericFieldDTO> {
-	@Inject(resource = "org.pyt.service.implement.GenericServiceSvc")
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
 	@FXML
 	private HBox paginador;
 	@FXML
-	private HBox tableGeneric;
+	private TableView<ConfigGenericFieldDTO> tableGeneric;
 	@FXML
 	private HBox filterGeneric;
+	@FXML
+	private Label lblTitle;
 	private ConfigGenericFieldDTO filtro;
 	private GridPane gridPane;
 	private DataTableFXML<ConfigGenericFieldDTO, ConfigGenericFieldDTO> tablaConfigGeneric;
 	private Map<String, GenericPOJO<ConfigGenericFieldDTO>> filtersMap;
 	private Map<String, GenericPOJO<ConfigGenericFieldDTO>> columnsMap;
-	private TableView<ConfigGenericFieldDTO> tableView;
 
 	@FXML
 	private void initialize() {
+		gridPane = new GridPane();
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
 		filtersMap = new HashMap<String, GenericPOJO<ConfigGenericFieldDTO>>();
-		tableView = new TableView<ConfigGenericFieldDTO>();
+		lblTitle.setText(i18n().valueBundle("generic.lbl.list.generic.interfaces"));
 		configTable();
 		load();
 	}
 
 	private final void configTable() {
-		tablaConfigGeneric = new DataTableFXML<ConfigGenericFieldDTO, ConfigGenericFieldDTO>(paginador, tableView) {
+		tablaConfigGeneric = new DataTableFXML<ConfigGenericFieldDTO, ConfigGenericFieldDTO>(paginador, tableGeneric) {
 
 			@Override
 			public Integer getTotalRows(ConfigGenericFieldDTO filter) {
@@ -84,7 +87,7 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 	}
 
 	public final void add() {
-		this.getController(GenericIntefacesBean.class).load();
+		this.getController(GenericInterfacesBean.class).load();
 	}
 
 	public final void del() {
@@ -110,7 +113,7 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 	}
 
 	public final void set() {
-		this.getController(GenericIntefacesBean.class).load(tablaConfigGeneric.getSelectedRow());
+		this.getController(GenericInterfacesBean.class).load(tablaConfigGeneric.getSelectedRow());
 	}
 
 	public final void load() {
@@ -183,7 +186,7 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 
 	@Override
 	public TableView<ConfigGenericFieldDTO> getTableView() {
-		return tableView;
+		return tableGeneric;
 	}
 
 }

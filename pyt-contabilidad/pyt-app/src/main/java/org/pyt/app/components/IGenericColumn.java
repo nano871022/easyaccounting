@@ -1,5 +1,6 @@
 package org.pyt.app.components;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.pyt.common.abstracts.ADto;
@@ -25,11 +26,14 @@ public interface IGenericColumn<T extends ADto> extends IGenericCommon<T> {
 	/**
 	 * Se encarga de configurar el mapa de filtros y agregar los campos de filtros a
 	 * la pantalla
+	 * @throws NoSuchMethodException 
+	 * @throws InstantiationException 
+	 * @throws InvocationTargetException 
 	 * 
 	 * @throws {@link IllegalAccessException}
 	 */
-	default void configColumns() throws IllegalAccessException {
-		var filters = getMapFieldsByObject(getColumns(), GenericPOJO.Type.COLUMN);
+	default void configColumns() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+		var filters = getMapFieldsByObject(getInstaceOfGenericADto(), GenericPOJO.Type.COLUMN);
 		setColumns(filters);
 		var util = new UtilControlFieldFX();
 		getColumns().forEach((key, value) -> {

@@ -117,7 +117,7 @@ public interface IGenericFilter<T extends ADto> extends IGenericCommon<T> {
 				}
 				util.inputListenerToAssingValue(input, (obj) -> assingsValueToField(value.getField().getName(), obj));
 				getGridPaneFilter().add(input, indices.columnIndex + 1, indices.rowIndex);
-				indices.columnIndex = indices.columnIndex == 4 ? 0 : indices.columnIndex + 2;
+				indices.columnIndex = indices.columnIndex == 2 ? 0 : indices.columnIndex + 2;
 				indices.rowIndex = indices.columnIndex == 0 ? indices.rowIndex + 1 : indices.rowIndex;
 			}
 		});

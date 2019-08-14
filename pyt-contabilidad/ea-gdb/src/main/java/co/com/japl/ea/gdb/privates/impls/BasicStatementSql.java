@@ -10,7 +10,7 @@ import co.com.japl.ea.gdb.privates.utils.StatementQuerysUtil;
 
 public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 	private StatementQuerysUtil squ;
-
+	private final String CONST_GET_ALL_ROWS = " 1 ";
 	public BasicStatementSql() {
 		squ = StatementQuerysUtil.instance();
 	}
@@ -27,12 +27,23 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 				query = String.format(query, squ.getTableName(dto), squ.fieldToWhere(dto, insertValue),
 						init + QueryConstants.CONST_COMMA + size);
 			}
-			if (query.substring(query.indexOf(QueryConstants.CONST_WHERE)).trim()
-					.replace(QueryConstants.CONST_WHERE, QueryConstants.CONST_EMPTY).length() == 0) {
-				query += " 1";
-			}
+			query = validWhereEmpty(query);
 		} catch (ReflectionException e) {
 			throw new StatementSqlException("Se presento problema en generacion sentencia sql select", e);
+		}
+		return query;
+	}
+	
+	private final String validWhereEmpty(String query) {
+		
+		var limitPosition = query.indexOf(QueryConstants.CONST_LIMIT);
+		var wherePosition = query.indexOf(QueryConstants.CONST_WHERE);
+		var where = limitPosition > 0 ? query.substring(wherePosition, limitPosition): query.substring(wherePosition);
+		var result = where.trim().replace(QueryConstants.CONST_WHERE, QueryConstants.CONST_EMPTY).length() == 0;
+		if(result && limitPosition < 0) {
+			query += CONST_GET_ALL_ROWS;
+		}else if(result && limitPosition > 0) {
+			 query = query.substring(0, wherePosition) + QueryConstants.CONST_WHERE +CONST_GET_ALL_ROWS+query.substring(limitPosition);
 		}
 		return query;
 	}
