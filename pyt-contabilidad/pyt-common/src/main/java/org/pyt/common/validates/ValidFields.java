@@ -37,7 +37,7 @@ public final class ValidFields {
 	@SuppressWarnings("null")
 	public static final Boolean valid(TextField field, Boolean notEmpty, Integer min, Integer max,String msnError) {
 		Boolean valid = true;
-		if (field != null)
+		if (field == null)
 			return false;
 		String value = field.getText();
 		valid &= notEmpty ? StringUtils.isNotBlank(value) : true;
@@ -66,7 +66,7 @@ public final class ValidFields {
 	@SuppressWarnings("null")
 	public static final Boolean valid(TextArea field, Boolean notEmpty, Integer min, Integer max,String msnError) {
 		Boolean valid = true;
-		if (field != null)
+		if (field == null)
 			return false;
 		String value = field.getText();
 		valid &= notEmpty ? StringUtils.isNotBlank(value) : true;

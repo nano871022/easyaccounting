@@ -278,7 +278,7 @@ public final class ValidateValues {
 			if (value.getClass() == BigDecimal.class) {
 				return (T) Integer.valueOf(((BigDecimal) value).intValue());
 			}
-		}
+		} 
 		return null;
 	}
 
@@ -320,6 +320,9 @@ public final class ValidateValues {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <T, S> T stringToClass(S value, Class clazz) {
 		if (value.getClass() == String.class) {
+			if(StringUtils.isBlank( (String) value)) {
+				return null;
+			}
 			if (clazz == Integer.class) {
 				return (T) Integer.valueOf((String) value);
 			}

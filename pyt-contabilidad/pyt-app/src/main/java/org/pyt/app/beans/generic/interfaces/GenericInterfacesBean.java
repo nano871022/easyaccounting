@@ -45,9 +45,9 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@FXML
 	private Label titulo;
 	private ValidateValues validateValues;
-	@FXML
-	private void initialized() {
-		titulo.setText(i18n().valueBundle("generic.lbl.title.generic.interface"));
+	@FXML        
+	private void initialize() {
+		titulo.setText(i18n().valueBundle("fxml.lbl.title.generic.interface"));
 		registro = new ConfigGenericFieldDTO();
 		SelectList.put(chbState, ParametroConstants.mapa_estados_parametros);
 		validateValues = new ValidateValues();
@@ -64,13 +64,28 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	
 	private final void loadFxml() {
 		try {
-		registro.setName(txtName.getText());
-		registro.setAlias(txtAlias.getText());
-		registro.setDescription(txtDescription.getText());
-		registro.setClassPath(txtClassDto.getText());
-		registro.setClassPathBean(txtClassBean.getText());
-		registro.setWidth(validateValues.cast(txtWidth.getText(),Double.class));
-		registro.setState(validateValues.cast(SelectList.get(chbState, ParametroConstants.mapa_estados_parametros),Integer.class));
+			if(!txtName.getText().isEmpty()) {
+				registro.setName(txtName.getText());
+			}
+			if(!txtAlias.getText().isEmpty()) {
+				registro.setAlias(txtAlias.getText());
+			}
+			if(!txtDescription.getText().isEmpty()) {
+				registro.setDescription(txtDescription.getText());
+			}
+			if(!txtClassDto.getText().isEmpty()) {
+				registro.setClassPath(txtClassDto.getText());
+			}
+			if(!txtClassBean.getText().isEmpty()) {
+				registro.setClassPathBean(txtClassBean.getText());
+			}
+			if(!txtWidth.getText().isEmpty()) {
+				registro.setWidth(validateValues.cast(txtWidth.getText(),Double.class));
+			}
+			registro.setState(validateValues.cast(SelectList.get(chbState, ParametroConstants.mapa_estados_parametros),Integer.class));
+			registro.setIsColumn(chkIsColumn.isSelected());
+			registro.setIsFilter(chkIsFilter.isSelected());
+			registro.setIsRequired(chkIsRequired.isSelected());
 		}catch(Exception e) {
 			error(e);
 		}
@@ -89,7 +104,6 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		chkIsRequired.setSelected(registro.getIsRequired());
 	}
 	
-	@SuppressWarnings("static-access")
 	private final boolean validRecord() {
 		var valid = true;
 		valid &= ValidFields.valid(txtName,true,3,100,i18n().valueBundle("msn.form.field.error.empty.name"));
@@ -98,20 +112,13 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		valid &= ValidFields.valid(chbState,ParametroConstants.mapa_estados_parametros,true,i18n().valueBundle("msn.form.field.error.empty.state"));
 		return valid;
 	}
-	
-	public final void isFilter(boolean isFilter) {
-		registro.setIsFilter(isFilter);
-	}
-	public final void isColumn(boolean isColumn) {
-		registro.setIsColumn(isColumn);
-	}
-	public final void isRequired(boolean isRequired) {
-	registro.setIsRequired(isRequired);
-	}
-	public final void cancel() {
+
+	@FXML
+	public void cancel() {
 		getController(ListGenericInterfacesBean.class);
 	}
-	public final void add() {
+	@FXML
+	public void add() {
 		try {
 		loadFxml();
 		if(validRecord()) {

@@ -11,10 +11,12 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.pojo.GenericPOJO;
 
 public interface IGenericCommon<T extends ADto> {
+	ValidateValues validateValues = new ValidateValues();
 	Log getLogger();
 
 	I18n getI18n();

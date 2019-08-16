@@ -8,6 +8,7 @@ import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import com.pyt.service.pojo.GenericPOJO;
 
@@ -35,27 +36,20 @@ public interface IGenericColumn<T extends ADto> extends IGenericCommon<T> {
 	default void configColumns() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
 		var filters = getMapFieldsByObject(getInstaceOfGenericADto(), GenericPOJO.Type.COLUMN);
 		setColumns(filters);
-		var util = new UtilControlFieldFX();
 		getColumns().forEach((key, value) -> {
-			var input = util.getFieldByField(value.getField());
-			if (input != null) {
-				var column = new TableColumn<T, String>(getI18n().valueBundle(
-						LanguageConstant.GENERIC_FORM_COLUMN + getClazz().getSimpleName() + "." + value.getNameShow()));
-				column.setCellValueFactory(table -> {
+ 				var column = new TableColumn<T, String>(getI18n().valueBundle(
+ 						LanguageConstant.GENERIC_FORM_COLUMN + getClazz().getSimpleName() + "." + value.getNameShow()));
+ 				column.setCellValueFactory(table -> {
 					try {
 						var sop = new SimpleObjectProperty<String>();
-						sop.setValue(table.getValue().get(value.getField().getName()));
+						sop.setValue(validateValues.cast(table.getValue().get(value.getField().getName()),String.class));
 						return sop;
-					} catch (ReflectionException e) {
+					} catch (ReflectionException | ValidateValueException e) {
 						getLogger().logger(e);
 					}
 					return null;
 				});
 				getTableView().getColumns().add(column);
-				if (value.getWidth() > 0) {
-					input.prefWidth(value.getWidth());
-				}
-			}
 		});
 		getTableView().getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 
