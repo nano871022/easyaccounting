@@ -60,9 +60,7 @@ public class QuerySvc implements IQuerySvc {
 		try {
 			List<T> list = (List<T>) fb.loadRead(obj.getClass());
 			if (list != null) {
-				list.stream()
-				.filter(filter->(new Compare<T>(filter)).to(obj))
-				.forEach(row->lista.add(row));
+				list.stream().filter(filter -> (new Compare<T>(filter)).to(obj)).forEach(row -> lista.add(row));
 			} else {
 				list = new ArrayList<T>();
 			}
@@ -242,8 +240,8 @@ public class QuerySvc implements IQuerySvc {
 						}
 						list.add(bk);
 						fb.write(list, upd.clase());
-					}else {
-						logger.error("Se encontro problema con copia de "+obj.getClass().getName());
+					} else {
+						logger.error("Se encontro problema con copia de " + obj.getClass().getName());
 					}
 				}
 			}
@@ -294,5 +292,17 @@ public class QuerySvc implements IQuerySvc {
 	public <T extends ADto> Integer countRow(T obj) throws QueryException {
 		List<T> lista = gets(obj);
 		return lista.size();
+	}
+
+	@Override
+	public <T extends ADto> Boolean update(T obj, UsuarioDTO user) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ADto> Boolean insert(T obj, UsuarioDTO user) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

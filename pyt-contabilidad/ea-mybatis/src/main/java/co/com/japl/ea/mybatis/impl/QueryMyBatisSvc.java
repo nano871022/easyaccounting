@@ -182,7 +182,7 @@ public class QueryMyBatisSvc implements IQuerySvc {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private final <T extends Object,S extends Object> Class verifyMapper(T dto, SqlSession session) {
+	private final <T extends Object, S extends Object> Class verifyMapper(T dto, SqlSession session) {
 		try {
 			if (dto != null) {
 				var name = dto.getClass().getSimpleName().replace("DTO", "");
@@ -193,13 +193,13 @@ public class QueryMyBatisSvc implements IQuerySvc {
 						S cclazz = null;
 						try {
 							cclazz = (S) session.getMapper(clazz);
-						}catch(BindingException e) {
+						} catch (BindingException e) {
 							logger.logger(e);
 						}
 						if (cclazz == null) {
 							session.getConfiguration().addMapper(clazz);
 							return clazz;
-						}else {
+						} else {
 							return clazz;
 						}
 					}
@@ -208,6 +208,18 @@ public class QueryMyBatisSvc implements IQuerySvc {
 		} catch (ClassNotFoundException e) {
 			logger.logger(e);
 		}
+		return null;
+	}
+
+	@Override
+	public <T extends ADto> Boolean update(T obj, UsuarioDTO user) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ADto> Boolean insert(T obj, UsuarioDTO user) throws QueryException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

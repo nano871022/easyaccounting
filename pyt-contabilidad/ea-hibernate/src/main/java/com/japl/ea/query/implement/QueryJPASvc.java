@@ -219,4 +219,55 @@ public class QueryJPASvc implements IQuerySvc {
 		db.runScript(fileName);
 	}
 
+	@Override
+	public <T extends ADto> Boolean update(T obj, UsuarioDTO user) throws QueryException {
+		try {
+			if (db.getHibernateConnect() != null) {
+				if (!db.getHibernateConnect().getTransaction().isActive()) {
+					db.getHibernateConnect().beginTransaction();
+				}
+				var builder = db.getHibernateConnect();
+				if (StringUtils.isNotBlank(obj.getCodigo())) {
+					obj.setActualizador(user.getNombre());
+					obj.setFechaActualizacion(new Date());
+				}
+				Class classJpa = getJPAByDto(obj);
+				var jpa = ReflectionUtils.instanciar().copyFromDto(obj, classJpa);
+				builder.saveOrUpdate(jpa);
+				db.getHibernateConnect().getTransaction().commit();
+				return true;
+			}
+		} catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
+		}
+		return false;
+	}
+
+	@Override
+	public <T extends ADto> Boolean insert(T obj, UsuarioDTO user) throws QueryException {
+		try {
+			if (db.getHibernateConnect() != null) {
+				if (!db.getHibernateConnect().getTransaction().isActive()) {
+					db.getHibernateConnect().beginTransaction();
+				}
+				var builder = db.getHibernateConnect();
+				if (StringUtils.isBlank(obj.getCodigo())) {
+					obj.setCreador(user.getNombre());
+					obj.setFechaCreacion(new Date());
+					obj.setCodigo(squ.genConsecutivo(obj.getClass(),
+							countRow(obj.getClass().getConstructor().newInstance())));
+				}
+				Class classJpa = getJPAByDto(obj);
+				var jpa = ReflectionUtils.instanciar().copyFromDto(obj, classJpa);
+				builder.saveOrUpdate(jpa);
+				db.getHibernateConnect().getTransaction().commit();
+				return true;
+			}
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
+		}
+		return false;
+	}
+
 }

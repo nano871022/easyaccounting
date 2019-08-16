@@ -5,18 +5,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.validates.ValidateValues;
 
+import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
+
+import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 
 public interface IGenericCommon<T extends ADto> {
 	ValidateValues validateValues = new ValidateValues();
+
 	Log getLogger();
 
 	I18n getI18n();
@@ -26,6 +34,33 @@ public interface IGenericCommon<T extends ADto> {
 	void setClazz(Class<T> clazz);
 
 	DataTableFXML<T, T> getTable();
+
+	IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc();
+
+	/**
+	 * Se usa para generar la consulta para obtener los registros asociados de la
+	 * configuracion creada en la tabla de configuracion generica de campos.
+	 * 
+	 * @param bean   {@link ABean} clase de bean
+	 * @param column {@link Boolean}
+	 * @param filter {@link Boolean}
+	 * @return {@link List} < {@link ConfigGenericFieldDTO} >
+	 */
+	default <B extends ABean<T>> List<ConfigGenericFieldDTO> getConfigGenericFields(Class<B> bean, Boolean column,
+			Boolean filter) {
+		try {
+			var dto = new ConfigGenericFieldDTO();
+			dto.setClassPath(getClazz().getName());
+			dto.setClassPathBean(bean.getName());
+			dto.setState(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO);
+			dto.setIsColumn(column);
+			dto.setIsFilter(filter);
+			return configGenericFieldSvc().getAll(dto);
+		} catch (GenericServiceException e) {
+			getLogger().logger(e);
+		}
+		return null;
+	}
 
 	/**
 	 * Se encarhad e obtener una nueva instancia de la clase usada como generico de
