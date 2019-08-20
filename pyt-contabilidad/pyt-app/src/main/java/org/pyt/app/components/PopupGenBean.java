@@ -6,15 +6,18 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
 
+import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -42,6 +45,9 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 
 	private Map<String, GenericPOJO<T>> filtros;
 	private Map<String, GenericPOJO<T>> columnas;
+
+	@Inject(resource = "com.pyt.service.impls.GenericServiceSvc")
+	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc;
 
 	private HBox paginador;
 	private GridPane gridFilter;
@@ -82,11 +88,11 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	 * @throws {@link IllegalAccessException}
 	 */
 	private final void configColumnas() throws IllegalAccessException {
-		columnas = getMapFieldsByObject(filter, GenericPOJO.Type.COLUMN);
+		columnas = getConfigFields(filter, true);
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
-			var tableColumn = new TableColumn<T, String>(i18n().valueBundle(LanguageConstant.GENERIC_FORM_COLUMN
-					+ getClazz().getSimpleName() + "." + value.getNameShow()));
+			var tableColumn = new TableColumn<T, String>(i18n().valueBundle(
+					LanguageConstant.GENERIC_FORM_COLUMN + getClazz().getSimpleName() + "." + value.getNameShow()));
 			if (value.getWidth() > 0) {
 				tableColumn.setPrefWidth(value.getWidth());
 			}
@@ -184,9 +190,9 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 			error(e);
 		}
 	}
-	
+
 	@Override
-	public DataTableFXML<T,T> getTable(){
+	public DataTableFXML<T, T> getTable() {
 		return table;
 	}
 
@@ -194,7 +200,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	public T getFilter() {
 		return filter;
 	}
-	
+
 	@Override
 	public GridPane getGridPaneFilter() {
 		return gridFilter;
@@ -204,13 +210,23 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	public void setFilter(T filter) {
 		this.filter = filter;
 	}
-	
-	public void setFilters(Map<String,GenericPOJO<T>> filters) {
+
+	public void setFilters(Map<String, GenericPOJO<T>> filters) {
 		filtros = filters;
 	}
-	
-	public Map<String,GenericPOJO<T>> getFilters() {
+
+	public Map<String, GenericPOJO<T>> getFilters() {
 		return filtros;
 	}
-	
+
+	@Override
+	public IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc() {
+		return configGenericFieldSvc;
+	}
+
+	@Override
+	public Integer countFieldsInRow() {
+		return 2;
+	}
+
 }
