@@ -26,8 +26,17 @@ public class ConfigGenericFieldDTO extends ADto {
 	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private Boolean isRequired;
 	private Double width;
+	private Integer orden;
 	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private Integer state;
+
+	public Integer getOrden() {
+		return this.orden;
+	}
+
+	public void setOrden(Integer order) {
+		this.orden = order;
+	}
 
 	public String getName() {
 		return this.name;

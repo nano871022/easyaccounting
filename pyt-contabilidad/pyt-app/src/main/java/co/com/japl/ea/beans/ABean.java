@@ -9,8 +9,11 @@ import org.pyt.common.exceptions.ReflectionException;
 
 import co.com.japl.ea.controllers.LocatorController;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+
 /**
- * Se encarga de implementar {@link IBean} para contruir controlladores de interfaces creadas en fxml
+ * Se encarga de implementar {@link IBean} para contruir controlladores de
+ * interfaces creadas en fxml
+ * 
  * @author Alejandro Parra
  * @since 10/04/2019
  * @param <T>
@@ -32,23 +35,23 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 			inject();
 			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);
 		} catch (ReflectionException e) {
-			logger.logger("Reflection: ",e);
+			logger.logger("Reflection: ", e);
 		} catch (Exception e) {
 			logger.logger(e);
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public  final Comunicacion comunicacion() {
+	public final Comunicacion comunicacion() {
 		return comunicacion;
 	}
-	
+
 	public final T getRegistro() {
 		return registro;
 	}
 
 	public final void setRegistro(T registro) {
-		this.registro = registro; 
+		this.registro = registro;
 	}
 
 	public final String getNombreVentana() {
@@ -58,7 +61,7 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	public final void setNombreVentana(String nombreVentana) {
 		this.NombreVentana = nombreVentana;
 	}
-	
+
 	@SuppressWarnings({ "hiding", "unchecked" })
 	public final <T extends Object> T meThis() {
 		return (T) this;
@@ -67,10 +70,11 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	public final Log logger() {
 		return logger;
 	}
+
 	public I18n i18n() {
-		if(languages == null) {
+		if (languages == null) {
 			languages = new I18n();
 		}
-	  return languages;
+		return languages;
 	}
 }

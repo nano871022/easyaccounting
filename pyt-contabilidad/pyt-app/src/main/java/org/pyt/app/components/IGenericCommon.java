@@ -7,11 +7,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.validates.ValidateValues;
@@ -36,6 +38,44 @@ public interface IGenericCommon<T extends ADto> {
 	DataTableFXML<T, T> getTable();
 
 	IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc();
+
+	@SuppressWarnings("unchecked")
+	default <O extends Object> Map<String, GenericPOJO<T>> getConfigFields(T instance, Boolean isColumn) {
+		try {
+			var dto = new ConfigGenericFieldDTO();
+			dto.setClassPath(getClazz().getName());
+			dto.setIsColumn(isColumn);
+			dto.setIsFilter(!isColumn);
+			dto.setState(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO);
+			dto.setClassPathBean(((ABean<T>) this).getClass().getName());
+			var list = configGenericFieldSvc().getAll(dto);
+			if (list != null && list.size() > 0) {
+				Map<String, GenericPOJO<T>> maps = new TreeMap<String, GenericPOJO<T>>();
+
+				list.forEach(row -> {
+					try {
+						var clazz = Class.forName(row.getClassPath());
+						var field = clazz.getDeclaredField(row.getName());
+						var typeGeneric = row.getIsColumn() ? GenericPOJO.Type.COLUMN : GenericPOJO.Type.FILTER;
+						var pojo = new GenericPOJO<T>(row.getAlias(), field, null, typeGeneric);
+						pojo.setRequired(row.getIsRequired());
+						pojo.setDescription(row.getDescription());
+						pojo.setOrder(row.getOrden());
+						maps.put(row.getName(), pojo);
+					} catch (Exception e) {
+						getLogger().logger(e);
+					}
+				});
+				return maps;
+			} else {
+				var typeGeneric = isColumn ? GenericPOJO.Type.COLUMN : GenericPOJO.Type.FILTER;
+				return getMapFieldsByObject(instance, typeGeneric);
+			}
+		} catch (Exception e) {
+			getLogger().logger(e);
+		}
+		return null;
+	}
 
 	/**
 	 * Se usa para generar la consulta para obtener los registros asociados de la
@@ -86,7 +126,7 @@ public interface IGenericCommon<T extends ADto> {
 	 * @param instance    {@link Object}
 	 * @param typeGeneric {@link GenericPOJO#Type}
 	 */
-	default <O extends Object> void addFieldIntoMap(Map<String, GenericPOJO<T>> maps, Field field, O instance,
+	private <O extends Object> void addFieldIntoMap(Map<String, GenericPOJO<T>> maps, Field field, O instance,
 			GenericPOJO.Type typeGeneric) {
 		try {
 			Boolean valid = false;
@@ -146,7 +186,7 @@ public interface IGenericCommon<T extends ADto> {
 	 * @return {@link Map} < {@link String},{@link GenericPOJO}<T>>
 	 * @throws {@link IllegalAccessException}
 	 */
-	default <O extends Object> Map<String, GenericPOJO<T>> getMapFieldsByObject(O instance,
+	private <O extends Object> Map<String, GenericPOJO<T>> getMapFieldsByObject(O instance,
 			GenericPOJO.Type typeGeneric) throws IllegalAccessException {
 		Map<String, GenericPOJO<T>> maps = new HashMap<String, GenericPOJO<T>>();
 		Field[] fields = instance.getClass().getDeclaredFields();
@@ -156,5 +196,14 @@ public interface IGenericCommon<T extends ADto> {
 						&& !Modifier.isAbstract(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
 				.forEach(field -> addFieldIntoMap(maps, field, instance, typeGeneric));
 		return maps;
+	}
+
+	default String getNameShowInLabel(GenericPOJO<T> value) {
+		if (value.getField().getName().contains(value.getNameShow())) {
+			return getI18n().valueBundle(LanguageConstant.GENERIC_FILTER_LBL + getClazz().getSimpleName() + "."
+					+ value.getField().getName());
+		} else {
+			return value.getNameShow();
+		}
 	}
 }

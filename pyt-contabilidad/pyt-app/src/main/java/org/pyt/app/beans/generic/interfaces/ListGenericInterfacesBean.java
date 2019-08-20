@@ -1,35 +1,26 @@
 package org.pyt.app.beans.generic.interfaces;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.DataTableFXML;
-import org.pyt.app.components.IGenericColumn;
-import org.pyt.app.components.IGenericFilter;
-import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.I18n;
-import org.pyt.common.common.Log;
-
-import com.pyt.service.interfaces.IGenericServiceSvc;
-import com.pyt.service.pojo.GenericPOJO;
+import org.pyt.common.constants.AppConstants;
+import org.pyt.common.constants.LanguageConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.AGenericInterfacesBean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 @FXMLFile(file = "list_generic_interfaces.fxml", path = "/view/genericInterfaces", nombreVentana = "Lista Interfaces Genericas")
-public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
-		implements IGenericFilter<ConfigGenericFieldDTO>, IGenericColumn<ConfigGenericFieldDTO> {
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
+public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGenericFieldDTO> {
 	@FXML
 	private HBox paginador;
 	@FXML
@@ -38,19 +29,23 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 	private HBox filterGeneric;
 	@FXML
 	private Label lblTitle;
-	private ConfigGenericFieldDTO filtro;
 	private GridPane gridPane;
 	private DataTableFXML<ConfigGenericFieldDTO, ConfigGenericFieldDTO> tablaConfigGeneric;
-	private Map<String, GenericPOJO<ConfigGenericFieldDTO>> filtersMap;
-	private Map<String, GenericPOJO<ConfigGenericFieldDTO>> columnsMap;
+
+	@FXML
+	private Button btnDel;
+	@FXML
+	private Button btnMod;
 
 	@FXML
 	private void initialize() {
 		gridPane = new GridPane();
+		gridPane.setHgap(10);
+		gridPane.setVgap(10);
+		setClazz(ConfigGenericFieldDTO.class);
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
-		filtersMap = new HashMap<String, GenericPOJO<ConfigGenericFieldDTO>>();
-		lblTitle.setText(i18n().valueBundle("generic.lbl.list.generic.interfaces"));
+		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES));
 		configTable();
 		load();
 	}
@@ -61,7 +56,7 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 			@Override
 			public Integer getTotalRows(ConfigGenericFieldDTO filter) {
 				try {
-					return configGenericSvc.getTotalRows(filter);
+					return configGenericFieldSvc().getTotalRows(filter);
 				} catch (Exception e) {
 					error(e);
 				}
@@ -72,7 +67,7 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 			public List<ConfigGenericFieldDTO> getList(ConfigGenericFieldDTO filter, Integer page, Integer rows) {
 				List<ConfigGenericFieldDTO> list = new ArrayList<ConfigGenericFieldDTO>();
 				try {
-					list = configGenericSvc.gets(filter, page, rows);
+					list = configGenericFieldSvc().gets(filter, page, rows);
 				} catch (Exception e) {
 					error(e);
 				}
@@ -81,6 +76,24 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 
 			@Override
 			public ConfigGenericFieldDTO getFilter() {
+				if (StringUtils.isNotBlank(filtro.getClassPath())) {
+					filtro.setClassPath(
+							AppConstants.CONST_PERCENT + filtro.getClassPath() + AppConstants.CONST_PERCENT);
+				}
+				if (StringUtils.isNotBlank(filtro.getClassPathBean())) {
+					filtro.setClassPath(
+							AppConstants.CONST_PERCENT + filtro.getClassPathBean() + AppConstants.CONST_PERCENT);
+				}
+				if (StringUtils.isNotBlank(filtro.getDescription())) {
+					filtro.setClassPath(
+							AppConstants.CONST_PERCENT + filtro.getDescription() + AppConstants.CONST_PERCENT);
+				}
+				if (StringUtils.isNotBlank(filtro.getName())) {
+					filtro.setClassPath(AppConstants.CONST_PERCENT + filtro.getName() + AppConstants.CONST_PERCENT);
+				}
+				if (StringUtils.isNotBlank(filtro.getAlias())) {
+					filtro.setClassPath(AppConstants.CONST_PERCENT + filtro.getAlias() + AppConstants.CONST_PERCENT);
+				}
 				return filtro;
 			}
 		};
@@ -93,7 +106,7 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 	public final void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{ListGenericInterfacesBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n().valueBundle(LanguageConstant.LANGUAGE_WARNING_DELETE_ROW));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -103,8 +116,10 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 		if (del) {
 			tablaConfigGeneric.getSelectedRows().forEach(row -> {
 				try {
-					configGenericSvc.delete(row, userLogin);
-					notificar("Se elimino la configuración con codigo " + row.getCodigo());
+					configGenericFieldSvc().delete(row, userLogin);
+					notificar(
+							String.format(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE),
+									row.getCodigo()));
 				} catch (Exception e) {
 					error(e);
 				}
@@ -116,6 +131,16 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 		this.getController(GenericInterfacesBean.class).load(tablaConfigGeneric.getSelectedRow());
 	}
 
+	public final void clickTable() {
+		if (tablaConfigGeneric.getSelectedRow() != null) {
+			btnDel.setVisible(true);
+			btnMod.setVisible(true);
+		} else {
+			btnDel.setVisible(false);
+			btnMod.setVisible(false);
+		}
+	}
+
 	public final void load() {
 		try {
 			configFilters();
@@ -125,53 +150,14 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 		}
 	}
 
-	@Override
-	public Map<String, GenericPOJO<ConfigGenericFieldDTO>> getFilters() {
-		return filtersMap;
-	}
-
-	@Override
-	public void setFilters(Map<String, GenericPOJO<ConfigGenericFieldDTO>> filters) {
-		filtersMap = filters;
-	}
-
-	@Override
-	public Map<String, GenericPOJO<ConfigGenericFieldDTO>> getColumns() {
-		return columnsMap;
-	}
-
-	@Override
-	public void setColumns(Map<String, GenericPOJO<ConfigGenericFieldDTO>> columns) {
-		columnsMap = columns;
-	}
-
-	@Override
-	public Log getLogger() {
-		return logger;
-	}
-
-	@Override
-	public I18n getI18n() {
-		return i18n();
-	}
-
-	@Override
-	public Class<ConfigGenericFieldDTO> getClazz() {
-		return ConfigGenericFieldDTO.class;
-	}
-
-	@Override
-	public void setClazz(Class<ConfigGenericFieldDTO> clazz) {
-	}
-
-	@Override
-	public ConfigGenericFieldDTO getFilter() {
-		return filtro;
-	}
-
-	@Override
-	public void setFilter(ConfigGenericFieldDTO filter) {
-		filtro = filter;
+	public void copy() {
+		try {
+			var dto = tablaConfigGeneric.getSelectedRow();
+			dto.setCodigo(null);
+			this.getController(GenericInterfacesBean.class).load(dto);
+		} catch (Exception e) {
+			error(e);
+		}
 	}
 
 	@Override
@@ -189,4 +175,8 @@ public class ListGenericInterfacesBean extends ABean<ConfigGenericFieldDTO>
 		return tableGeneric;
 	}
 
+	@Override
+	public Integer countFieldsInRow() {
+		return 2;
+	}
 }

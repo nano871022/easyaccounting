@@ -25,6 +25,7 @@ public final class I18n {
 	private ResourceBundle bundle;
 	private String bundleNoDefault;
 	private Map<String, Object> languagesDB;
+	private List listLanguages;
 
 	/**
 	 * Se encarga de retornar la lista de lenguages que se encuentran en el
@@ -60,15 +61,15 @@ public final class I18n {
 	 */
 	public final String valueBundle(String key) {
 		try {
-			if (languagesDB.containsKey(key)) {
+			if (languagesDB != null && languagesDB.containsKey(key)) {
 				return ((ADto) languagesDB.get(key)).get(LanguageConstant.CONST_TEXT_BUNDLE_LANGUAGES);
 			} else {
 				return getLanguages().getString(key);
 			}
-		}catch(Exception exception) {
+		} catch (Exception exception) {
 			try {
-			logger.logger(String.format(getLanguages().getString(LanguageConstant.LANGUAGE_KEY_NOT_FOUND),key));
-			}catch(MissingResourceException e) {
+				logger.logger(String.format(getLanguages().getString(LanguageConstant.LANGUAGE_KEY_NOT_FOUND), key));
+			} catch (MissingResourceException e) {
 				logger.logger(exception);
 				logger.logger(e);
 			}
@@ -89,16 +90,14 @@ public final class I18n {
 	}
 
 	public final <T extends ADto> void setLanguagesDB(List<T> listLanguages) {
-		if(listLanguages != null && listLanguages.size() > 0 ) {
-			if(languagesDB != null) {
-			 languagesDB = new HashMap<String, Object>();
+		if (listLanguages != null && listLanguages.size() > 0) {
+			if (languagesDB != null) {
+				languagesDB = new HashMap<String, Object>();
 			}
-			listLanguages.forEach(languageDto->{
+			listLanguages.forEach(languageDto -> {
 				try {
 					String key = languageDto.get(LanguageConstant.CONST_CODE_BUNDLE_LANGUAGES);
-					if (!languagesDB.containsKey(key)) {
-						languagesDB.put(key, languageDto);
-					}
+					languagesDB.put(key, languageDto);
 				} catch (ReflectionException e) {
 					logger.logger(LanguageConstant.CONST_ERR_MSG_ADDED_LANGUAGES, e);
 				}

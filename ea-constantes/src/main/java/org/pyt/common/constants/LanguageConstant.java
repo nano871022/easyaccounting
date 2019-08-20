@@ -16,6 +16,7 @@ public class LanguageConstant {
 
 	public final static String GENERIC_FILTER_BTN_SEARCH = "generic.filter.btn.search";
 	public final static String GENERIC_FILTER_BTN_CLEAN = "generic.filter.btn.clean";
+	public final static String GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE = "generic.field.not.found.field.to.use";
 	public final static String GENERIC_FILTER_LBL = "generic.filter.lbl.";
 	public final static String GENERIC_FORM_COLUMN = "generic.form.column.";
 	public final static String GENERIC_WINDOW_POPUP_TITTLE = "generic.window.popup.tittle.";
@@ -25,6 +26,8 @@ public class LanguageConstant {
 	public final static String POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE = "popup-parametrized.error.clean-value";
 	public final static String LANGUAGE_KEY_NOT_FOUND = "languages.key.not-found";
 	public final static String LANGUAGE_FIELD_ASSIGN_EMPTY = "generic.field.assign.empty";
+	public final static String LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE = "configuration.with.code.was.removed";
+	public final static String LANGUAGE_WARNING_DELETE_ROW = "Do.wish.you.delete.this.selected.row";
 	public final static String LANGUAGE_ERROR_QUERY_SEARCH = "service.error.query.search";
 	public final static String LANGUAGE_ERROR_QUERY_CREATE_TABLE = "service.error.query.create.table";
 	public final static String LANGUAGE_ERROR_QUERY_CREATE_TRIGGER = "service.error.query.create.trigger";
@@ -45,4 +48,6 @@ public class LanguageConstant {
 	public final static String LANGUAGE_ERROR_QUERY_FOUND_ROWS = "service.error.query.found.rows";
 	public final static String GENERIC_SERVICE_EMPTY_DTO = "generic.service.empty.dto";
 	public final static String GENERIC_SERVICE_CODE_EMPTY_DTO = "generic.service.code.empty.dto";
+	public final static String GENERIC_LBL_LIST_GENERIC_INTERFACES = "generic.lbl.list.generic.interfaces";
+	public final static String FXML_LBL_TITLE_GENERIC_INTERFACES = "fxml.lbl.title.generic.interface";
 }
