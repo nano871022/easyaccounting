@@ -2,6 +2,8 @@ package org.pyt.app.beans.languages;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
@@ -20,6 +22,9 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	private GridPane gridPaneLanguages;
 	@FXML
 	private Label lblTitle;
+	public static final String CONST_FIELD_NAME_LANGUAGES_CODE = "code";
+	public static final String CONST_FIELD_NAME_LANGUAGES_TEXT = "text";
+	public static final String CONST_FIELD_NAME_LANGUAGES_STATE = "state";
 
 	@FXML
 	public void initialize() {
@@ -38,6 +43,8 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	public final void load(LanguagesDTO dto) {
 		registro = dto;
+		var util = new UtilControlFieldFX();
+		util.loadValuesInFxml(dto, gridPaneLanguages);
 	}
 
 	@Override
@@ -47,7 +54,12 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-
+		valid &= ValidFields.valid(CONST_FIELD_NAME_LANGUAGES_CODE, true, i18n().valueBundle("msn.error.field.empty"),
+				gridPaneLanguages);
+		valid &= ValidFields.valid(CONST_FIELD_NAME_LANGUAGES_TEXT, true, i18n().valueBundle("msn.error.field.empty"),
+				gridPaneLanguages);
+		valid &= ValidFields.valid(CONST_FIELD_NAME_LANGUAGES_STATE, true, i18n().valueBundle("msn.error.field.empty"),
+				gridPaneLanguages);
 		return valid;
 	}
 

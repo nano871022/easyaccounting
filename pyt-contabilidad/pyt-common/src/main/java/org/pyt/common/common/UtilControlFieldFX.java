@@ -1,10 +1,13 @@
 package org.pyt.common.common;
 
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.interfaces.IAssingValueToField;
 import org.pyt.common.interfaces.ICaller;
 
@@ -15,6 +18,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 
 /**
  * 
@@ -25,6 +29,7 @@ import javafx.scene.control.TextField;
  * @since 12/04/2019
  */
 public final class UtilControlFieldFX {
+	private final Log logger = Log.Log(this.getClass());
 	private final static String CONTS_EXP_REG_TO_TEXTFIELD = "(String|Long|Integer|BigDecimal|LongDecimal|Float|Char|char|long|int|floar|Decimal)";
 	private final static String CONTS_EXP_REG_TO_CHECKBOX = "(Boolean|bool|boolean)";
 
@@ -124,4 +129,65 @@ public final class UtilControlFieldFX {
 			((ChoiceBox<?>) child).getSelectionModel().clearSelection();
 		}
 	}
+
+	/**
+	 * Se encarga de obtener todos los campos de tipo texto y chechbox y agregarles
+	 * el valor encontrado en el dto suministrado
+	 * 
+	 * @param dto      {@link Object}
+	 * @param gridPane {@link GridPane}
+	 */
+	@SuppressWarnings({})
+	public <T extends Control, D extends ADto, M extends ADto> void loadValuesInFxml(D dto, GridPane gridPane) {
+		gridPane.getChildren().forEach(node -> {
+			try {
+				var value = dto.get(node.getId());
+				if (value != null) {
+					if (node instanceof TextField) {
+						((TextField) node).setText(String.valueOf(value));
+					}
+					if (node instanceof CheckBox) {
+						((CheckBox) node).setSelected(Boolean.valueOf((boolean) value));
+					}
+				}
+			} catch (Exception e) {
+				logger.logger(e);
+			}
+		});
+	}
+
+	/**
+	 * Se encarga de buscar los choice box dentro del {@link GridPane} y seleccionar
+	 * un valor segun la info del campo indicado en el {@link ADto dto}
+	 * 
+	 * @param fieldName {@link String} nombre del campo a buscar para choice
+	 * @param dto       {@link ADto} contiene el valor del campo a buscar
+	 * @param map       {@link Map} opcional si no se pone list
+	 * @param list      {@link List} opcional va con nameshow
+	 * @param nameShow  {@link String} opcional va con list
+	 * @param gridPane  {@link GridPane} DOnde se encuentran todos los campos
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public <T extends Control, D extends ADto, M extends ADto> void loadValuesInFxmlToChoice(String fieldName, D dto,
+			Map map, List<M> list, String nameShow, GridPane gridPane) {
+		gridPane.getChildren().stream().filter(node -> node.getId().contentEquals(fieldName)).forEach(node -> {
+			try {
+				var value = dto.get(node.getId());
+				if (value != null) {
+					if (node instanceof ChoiceBox && map == null && list == null) {
+						SelectList.selectItem((ChoiceBox) node, value);
+					}
+					if (node instanceof ChoiceBox && map != null && list == null) {
+						SelectList.selectItem((ChoiceBox) node, map, value);
+					}
+					if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
+						SelectList.selectItem((ChoiceBox) node, list, nameShow, (M) value);
+					}
+				}
+			} catch (Exception e) {
+				logger.logger(e);
+			}
+		});
+	}
+
 }

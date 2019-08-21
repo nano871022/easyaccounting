@@ -49,7 +49,7 @@ public interface IGenericFieldsCommon<T extends ADto> extends IGenericCommon<T> 
 	default void configFields(T dto, GenericPOJO<T> pojo, UtilControlFieldFX util, GridPane gridPane, Index indices) {
 		var input = util.getFieldByField(pojo.getField());
 		if (input != null) {
-
+			input.setId(pojo.getField().getName());
 			var label = new Label(getNameShowInLabel(pojo));
 			gridPane.add(label, indices.columnIndex, indices.rowIndex);
 			if (pojo.getWidth() > 0) {
