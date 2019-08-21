@@ -102,7 +102,7 @@ public final class I18n {
 
 	public final <T extends ADto> void setLanguagesDB(List<T> listLanguages) {
 		if (listLanguages != null && listLanguages.size() > 0) {
-			if (languagesDB != null) {
+			if (languagesDB == null) {
 				languagesDB = new HashMap<String, Object>();
 			}
 			listLanguages.forEach(languageDto -> {

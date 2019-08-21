@@ -12,6 +12,7 @@ import co.com.japl.ea.beans.AGenericInterfacesFieldBean;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(file = "languages.fxml", path = "view/languages")
@@ -25,6 +26,7 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	public static final String CONST_FIELD_NAME_LANGUAGES_CODE = "code";
 	public static final String CONST_FIELD_NAME_LANGUAGES_TEXT = "text";
 	public static final String CONST_FIELD_NAME_LANGUAGES_STATE = "state";
+	public static final String CONST_FIELD_NAME_LANGUAGES_IDIOM = "idiom";
 
 	@FXML
 	public void initialize() {
@@ -54,12 +56,14 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid(CONST_FIELD_NAME_LANGUAGES_CODE, true, i18n().valueBundle("msn.error.field.empty"),
-				gridPaneLanguages);
-		valid &= ValidFields.valid(CONST_FIELD_NAME_LANGUAGES_TEXT, true, i18n().valueBundle("msn.error.field.empty"),
-				gridPaneLanguages);
-		valid &= ValidFields.valid(CONST_FIELD_NAME_LANGUAGES_STATE, true, i18n().valueBundle("msn.error.field.empty"),
-				gridPaneLanguages);
+		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_CODE), true, 1, 100,
+				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_TEXT), true, 1, 100,
+				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_STATE), true, 1, 2,
+				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_IDIOM), true, 2, 10,
+				i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -77,6 +81,11 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	public final void newRow() {
+		load();
+		cleanFields();
 	}
 
 	public final void cancel() {

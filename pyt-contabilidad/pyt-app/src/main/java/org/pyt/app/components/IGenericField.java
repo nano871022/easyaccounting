@@ -25,6 +25,10 @@ public interface IGenericField<T extends ADto> extends IGenericFieldsCommon<T> {
 
 	public GridPane getGridPaneField();
 
+	default T getDto() {
+		return getRegister();
+	}
+
 	default void configFields() throws Exception {
 		var fields = getConfigFields(getInstaceOfGenericADto(), false, false);
 		if (fields == null)
@@ -36,9 +40,17 @@ public interface IGenericField<T extends ADto> extends IGenericFieldsCommon<T> {
 		getFields().entrySet().stream()
 				.sorted((compare1, compare2) -> sortByOrderField(compare1.getValue().getOrder(),
 						compare2.getValue().getOrder()))
-				.forEachOrdered(
-						value -> configFields(getRegister(), value.getValue(), util, getGridPaneField(), indices));
+				.forEachOrdered(value -> configFields(value.getValue(), util, getGridPaneField(), indices));
 		getGridPaneField().getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
+	default void cleanFields() {
+		try {
+			var util = new UtilControlFieldFX();
+			getGridPaneField().getChildren().forEach(child -> util.cleanValueByFieldFX(child));
+		} catch (Exception e) {
+			getLogger().logger(e);
+		}
+
+	}
 }

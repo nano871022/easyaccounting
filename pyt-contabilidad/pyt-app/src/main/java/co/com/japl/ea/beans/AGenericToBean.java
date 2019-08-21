@@ -1,5 +1,8 @@
 package co.com.japl.ea.beans;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.pyt.app.components.IGenericFilter;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
@@ -39,6 +42,15 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
+	private Map<String, Object> mapFieldUseds;
+
+	@Override
+	public Map<String, Object> getMapFieldUseds() {
+		if (mapFieldUseds == null) {
+			mapFieldUseds = new HashMap<String, Object>();
+		}
+		return mapFieldUseds;
+	}
 
 	public AGenericToBean() {
 		try {

@@ -19,6 +19,7 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.beans.ABean;
 import co.com.japl.ea.beans.IUrlLoadBean;
 import co.com.japl.ea.beans.LoadAppFxml;
+import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.MenuDTO;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -38,6 +39,8 @@ import javafx.scene.control.ScrollPane;
 public class MenuItems {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<MenuDTO> menusSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
 	private Properties propertiesMenu;
 
 	private Map<String, Menu> mapaMenu;
@@ -57,6 +60,8 @@ public class MenuItems {
 					.getProperties();
 			this.menu = menu;
 			this.scroll = scroll;
+			var listLanguages = languagesSvc.getAll(new LanguagesDTO());
+			I18n.instance().setLanguagesDB(listLanguages);
 		} catch (Exception e) {
 			logger.logger(e);
 		}

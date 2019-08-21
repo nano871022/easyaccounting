@@ -32,6 +32,10 @@ public interface IGenericFilter<T extends ADto> extends IGenericFieldsCommon<T> 
 
 	GridPane getGridPaneFilter();
 
+	default T getDto() {
+		return getFilter();
+	}
+
 	default T assingValuesParameterized(T dto) {
 		defaultValuesGenericParametrized.forEach((key, value) -> {
 			try {
@@ -98,8 +102,7 @@ public interface IGenericFilter<T extends ADto> extends IGenericFieldsCommon<T> 
 		getFilters().entrySet().stream()
 				.sorted((compare1, compare2) -> sortByOrderField(compare1.getValue().getOrder(),
 						compare2.getValue().getOrder()))
-				.forEachOrdered(
-						value -> configFields(getFilter(), value.getValue(), util, getGridPaneFilter(), indices));
+				.forEachOrdered(value -> configFields(value.getValue(), util, getGridPaneFilter(), indices));
 		getGridPaneFilter().getStyleClass().add(StylesPrincipalConstant.CONST_GRID_STANDARD);
 		getGridPaneFilter().add(
 				util.buttonGenericWithEventClicked(() -> getTable().search(),

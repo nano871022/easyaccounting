@@ -5,6 +5,8 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.common.RefreshCodeValidation;
+import org.pyt.common.constants.RefreshCodeConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
@@ -87,7 +89,8 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 
 	public I18n i18n() {
 		var i18n = I18n.instance();
-		if (i18n.isEmptyDBLanguages()) {
+		if (i18n.isEmptyDBLanguages()
+				|| RefreshCodeValidation.getInstance().validate(RefreshCodeConstant.CONST_ADD_CACHE_LANGUAGE)) {
 			loadLanguagesDB(i18n);
 		}
 		return i18n;

@@ -1,5 +1,6 @@
 package co.com.japl.ea.beans;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.pyt.app.components.DataTableFXML;
@@ -20,10 +21,19 @@ public abstract class AGenericInterfacesFieldBean<T extends ADto> extends ABean<
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
 	private Map<String, GenericPOJO<T>> fields;
 	private Class<T> classTypeDto;
+	private Map<String, Object> mapFieldUseds;
+
+	@Override
+	public Map<String, Object> getMapFieldUseds() {
+		if (mapFieldUseds == null) {
+			mapFieldUseds = new HashMap<String, Object>();
+		}
+		return mapFieldUseds;
+	}
 
 	@Override
 	public Log getLogger() {
-		return getLogger();
+		return super.logger;
 	}
 
 	@Override

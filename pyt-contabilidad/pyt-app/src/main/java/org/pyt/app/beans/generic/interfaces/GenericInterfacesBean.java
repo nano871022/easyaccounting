@@ -113,9 +113,15 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			txtOrder.setText(registro.getOrden().toString());
 		}
 		SelectList.selectItem(chbState, ParametroConstants.mapa_estados_parametros, registro.getState());
-		chkIsColumn.setSelected(registro.getIsColumn());
-		chkIsFilter.setSelected(registro.getIsFilter());
-		chkIsRequired.setSelected(registro.getIsRequired());
+		if (registro.getIsColumn() != null) {
+			chkIsColumn.setSelected(registro.getIsColumn());
+		}
+		if (registro.getIsFilter() != null) {
+			chkIsFilter.setSelected(registro.getIsFilter());
+		}
+		if (registro.getIsRequired() != null) {
+			chkIsRequired.setSelected(registro.getIsRequired());
+		}
 	}
 
 	private final boolean validRecord() {
@@ -151,5 +157,15 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	public void newRow() {
+		load();
+		putFxml();
+	}
+
+	public void copy() {
+		registro.setCodigo(null);
+		load(registro);
 	}
 }

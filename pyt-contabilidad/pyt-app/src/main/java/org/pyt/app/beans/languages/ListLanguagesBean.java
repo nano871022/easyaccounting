@@ -1,9 +1,6 @@
 package org.pyt.app.beans.languages;
 
-import java.util.List;
-
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 
@@ -21,8 +18,6 @@ import javafx.scene.layout.HBox;
 
 @FXMLFile(file = "listLanguages.fxml", path = "view/languages")
 public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
-
-	private DataTableFXML<LanguagesDTO, LanguagesDTO> dataModel;
 
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
@@ -43,48 +38,19 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	@FXML
 	public void initialize() {
 		try {
+			filtro = new LanguagesDTO();
 			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.languages"));
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
-			loadDataModel();
+			loadDataModel(paginator, tableGeneric);
 			setClazz(LanguagesDTO.class);
 			configFilters();
 			configColumns();
 		} catch (Exception e) {
 			error(e);
 		}
-	}
-
-	private void loadDataModel() {
-		dataModel = new DataTableFXML<LanguagesDTO, LanguagesDTO>(paginator, tableGeneric) {
-
-			@Override
-			public Integer getTotalRows(LanguagesDTO filter) {
-				try {
-					return languagesSvc.getTotalRows(filter);
-				} catch (Exception e) {
-					error(e);
-				}
-				return 0;
-			}
-
-			@Override
-			public List<LanguagesDTO> getList(LanguagesDTO filter, Integer page, Integer rows) {
-				try {
-					return languagesSvc.gets(filter, page, rows);
-				} catch (Exception e) {
-					error(e);
-				}
-				return null;
-			}
-
-			@Override
-			public LanguagesDTO getFilter() {
-				return filtro;
-			}
-		};
 	}
 
 	public final void add() {
@@ -107,7 +73,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	public final void setDelete(Boolean valid) {
 		try {
 			if (valid) {
-				var list = dataModel.getSelectedRows();
+				var list = dataTable.getSelectedRows();
 				if (list != null && list.size() > 0) {
 					list.forEach(dto -> {
 						try {
@@ -118,6 +84,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 							error(e);
 						}
 					});
+					dataTable.search();
 				}
 			}
 		} catch (Exception e) {
@@ -126,7 +93,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	}
 
 	public final void clickTable() {
-		if (dataModel.getSelectedRows().size() > 0) {
+		if (dataTable.getSelectedRows().size() > 0) {
 			btnDel.setVisible(true);
 			btnMod.setVisible(true);
 		}
@@ -134,7 +101,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 
 	public final void set() {
 		try {
-			var dto = dataModel.getSelectedRow();
+			var dto = dataTable.getSelectedRow();
 			getController(LanguageBean.class).load(dto);
 		} catch (Exception e) {
 			error(e);
@@ -147,11 +114,6 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	}
 
 	@Override
-	public DataTableFXML<LanguagesDTO, LanguagesDTO> getTable() {
-		return dataModel;
-	}
-
-	@Override
 	public GridPane getGridPaneFilter() {
 		return gridPane;
 	}
@@ -159,5 +121,10 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	@Override
 	public Integer countFieldsInRow() {
 		return 2;
+	}
+
+	@Override
+	public LanguagesDTO getFilterToTable(LanguagesDTO filter) {
+		return filter;
 	}
 }
