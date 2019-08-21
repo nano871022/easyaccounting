@@ -48,7 +48,7 @@ public class QueryGDBSvc implements IQuerySvc {
 	public QueryGDBSvc() {
 		validateValues = new ValidateValues();
 		db = ConnectionJDBC.getInstance();
-		i18n = new I18n();
+		i18n = I18n.instance();
 		sfactory = new StatementFactory();
 		motor = "";
 		mapJoin = new HashMap<String, ADto>();

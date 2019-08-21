@@ -63,12 +63,15 @@ public final class UtilControlFieldFX {
 			property = ((TextField) input).textProperty();
 		}
 		if (input instanceof CheckBox) {
-			property = ((CheckBox) input).textProperty();
+			((CheckBox) input).selectedProperty()
+					.addListener((observable, oldValue, newValue) -> assignValue.assingValueToField(newValue));
 		}
 		if (input instanceof ChoiceBox<?>) {
 			property = ((ChoiceBox<?>) input).idProperty();
 		}
-		property.addListener((observable, oldValue, newValue) -> assignValue.assingValueToField(newValue));
+		if (property != null) {
+			property.addListener((observable, oldValue, newValue) -> assignValue.assingValueToField(newValue));
+		}
 		return input;
 	}
 
@@ -115,7 +118,7 @@ public final class UtilControlFieldFX {
 			((TextField) child).setText(null);
 		}
 		if (child instanceof CheckBox) {
-			((CheckBox) child).setText(null);
+			((CheckBox) child).selectedProperty().setValue(false);
 		}
 		if (child instanceof ChoiceBox) {
 			((ChoiceBox<?>) child).getSelectionModel().clearSelection();

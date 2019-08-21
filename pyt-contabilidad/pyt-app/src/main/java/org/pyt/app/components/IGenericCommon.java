@@ -40,12 +40,17 @@ public interface IGenericCommon<T extends ADto> {
 	IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc();
 
 	@SuppressWarnings("unchecked")
-	default <O extends Object> Map<String, GenericPOJO<T>> getConfigFields(T instance, Boolean isColumn) {
+	default <O extends Object> Map<String, GenericPOJO<T>> getConfigFields(T instance, boolean isColumn,
+			boolean isFilter) {
 		try {
 			var dto = new ConfigGenericFieldDTO();
 			dto.setClassPath(getClazz().getName());
-			dto.setIsColumn(isColumn);
-			dto.setIsFilter(!isColumn);
+			if (isColumn) {
+				dto.setIsColumn(isColumn);
+			}
+			if (isFilter) {
+				dto.setIsFilter(isFilter);
+			}
 			dto.setState(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO);
 			dto.setClassPathBean(((ABean<T>) this).getClass().getName());
 			var list = configGenericFieldSvc().getAll(dto);

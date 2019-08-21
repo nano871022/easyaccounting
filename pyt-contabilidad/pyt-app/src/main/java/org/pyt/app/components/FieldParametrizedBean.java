@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.I18n;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
@@ -117,6 +118,11 @@ public class FieldParametrizedBean<T extends ADto> extends GenericInterfacesRefl
 	@Override
 	public Integer countFieldsInRow() {
 		return 2;
+	}
+
+	@Override
+	public I18n getI18n() {
+		return I18n.instance();
 	}
 
 }

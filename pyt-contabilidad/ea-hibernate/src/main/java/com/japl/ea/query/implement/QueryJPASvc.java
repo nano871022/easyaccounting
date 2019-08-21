@@ -30,7 +30,7 @@ public class QueryJPASvc implements IQuerySvc {
 	public QueryJPASvc() {
 		db = H2Connect.getInstance();
 		squ = new StatementQuerysUtil();
-		i18n = new I18n();
+		i18n = I18n.instance();
 	}
 
 	@SuppressWarnings("unchecked")

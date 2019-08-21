@@ -39,7 +39,6 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
-	private I18n languages;
 
 	public AGenericToBean() {
 		try {
@@ -127,26 +126,19 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	}
 
 	public I18n i18n() {
-		if (languages == null) {
-			languages = new I18n();
-		}
-		return languages;
+		return I18n.instance();
 	}
 
 	public Class<T> getClazz() {
 		return clazz;
 	}
-	
+
 	public void setClazz(Class<T> clazz) {
-		this.clazz= clazz;
-	}
-	
-	public I18n getI18n() {
-		return languages;
+		this.clazz = clazz;
 	}
 
 	public Log getLogger() {
 		return logger;
 	}
-	
+
 }

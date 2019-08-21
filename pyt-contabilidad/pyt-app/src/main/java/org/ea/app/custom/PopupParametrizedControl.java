@@ -15,7 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
-public class PopupParametrizedControl extends HBox   {
+public class PopupParametrizedControl extends HBox {
 	private Log logger = Log.Log(this.getClass());
 	@FXML
 	private TextField value;
@@ -25,10 +25,8 @@ public class PopupParametrizedControl extends HBox   {
 	private Button btnOpen;
 	private ICaller popupOpen;
 	private ICaller cleanValue;
-	private I18n languages;
 
 	public PopupParametrizedControl() {
-		languages = new I18n();
 		FXMLLoader fxmlloader = new FXMLLoader(getClass().getResource(CustomFXMLConstant.POPUP_PARAMETRIZED));
 		fxmlloader.setRoot(this);
 		fxmlloader.setController(this);
@@ -56,19 +54,19 @@ public class PopupParametrizedControl extends HBox   {
 	public void setText(String value) {
 		textProperty().set(value);
 	}
-	
+
 	public void setPopupOpenAction(ICaller caller) {
 		popupOpen = caller;
 	}
-	
+
 	public void setCleanValue(ICaller caller) {
 		cleanValue = caller;
 	}
-	
+
 	@FXML
 	public void openPopup() throws Exception {
 		if (popupOpen == null) {
-			throw new Exception(languages.valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_OPEN_POPUP));
+			throw new Exception(I18n.instance().valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_OPEN_POPUP));
 		}
 		popupOpen.caller();
 	}
@@ -76,7 +74,7 @@ public class PopupParametrizedControl extends HBox   {
 	@FXML
 	public void cleanValue() throws Exception {
 		if (cleanValue == null) {
-			throw new Exception(languages.valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE));
+			throw new Exception(I18n.instance().valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE));
 		}
 		cleanValue.caller();
 		setText(null);

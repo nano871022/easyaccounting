@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.I18n;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
@@ -88,7 +89,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	 * @throws {@link IllegalAccessException}
 	 */
 	private final void configColumnas() throws IllegalAccessException {
-		columnas = getConfigFields(filter, true);
+		columnas = getConfigFields(filter, true, false);
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
 			var tableColumn = new TableColumn<T, String>(i18n().valueBundle(
@@ -227,6 +228,11 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	@Override
 	public Integer countFieldsInRow() {
 		return 2;
+	}
+
+	@Override
+	public I18n getI18n() {
+		return I18n.instance();
 	}
 
 }

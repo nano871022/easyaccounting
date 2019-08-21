@@ -25,8 +25,8 @@ public interface IGenericField<T extends ADto> extends IGenericFieldsCommon<T> {
 
 	public GridPane getGridPaneField();
 
-	default void configFilters() throws Exception {
-		var fields = getConfigFields(getInstaceOfGenericADto(), false);
+	default void configFields() throws Exception {
+		var fields = getConfigFields(getInstaceOfGenericADto(), false, false);
 		if (fields == null)
 			throw new Exception(getI18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE));
 		setFields(fields);

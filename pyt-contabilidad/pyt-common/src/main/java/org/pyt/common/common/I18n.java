@@ -25,7 +25,18 @@ public final class I18n {
 	private ResourceBundle bundle;
 	private String bundleNoDefault;
 	private Map<String, Object> languagesDB;
-	private List listLanguages;
+	private static I18n instances;
+
+	private I18n() {
+
+	}
+
+	public final static I18n instance() {
+		if (instances == null) {
+			instances = new I18n();
+		}
+		return instances;
+	}
 
 	/**
 	 * Se encarga de retornar la lista de lenguages que se encuentran en el
@@ -97,7 +108,9 @@ public final class I18n {
 			listLanguages.forEach(languageDto -> {
 				try {
 					String key = languageDto.get(LanguageConstant.CONST_CODE_BUNDLE_LANGUAGES);
-					languagesDB.put(key, languageDto);
+					if (!languagesDB.containsKey(key)) {
+						languagesDB.put(key, languageDto);
+					}
 				} catch (ReflectionException e) {
 					logger.logger(LanguageConstant.CONST_ERR_MSG_ADDED_LANGUAGES, e);
 				}
@@ -105,4 +118,7 @@ public final class I18n {
 		}
 	}
 
+	public final Boolean isEmptyDBLanguages() {
+		return languagesDB == null || languagesDB.size() == 0;
+	}
 }

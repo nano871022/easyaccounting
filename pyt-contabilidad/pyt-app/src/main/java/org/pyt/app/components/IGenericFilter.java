@@ -88,7 +88,7 @@ public interface IGenericFilter<T extends ADto> extends IGenericFieldsCommon<T> 
 	 * @throws                           {@link IllegalAccessException}
 	 */
 	default void configFilters() throws Exception {
-		var filters = getConfigFields(getInstaceOfGenericADto(), false);
+		var filters = getConfigFields(getInstaceOfGenericADto(), false, true);
 		if (filters == null)
 			throw new Exception(getI18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE));
 		setFilters(filters);

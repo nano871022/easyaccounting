@@ -39,7 +39,6 @@ public class MenuItems {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<MenuDTO> menusSvc;
 	private Properties propertiesMenu;
-	private I18n i18n;
 
 	private Map<String, Menu> mapaMenu;
 	private MenuBar menu;
@@ -56,7 +55,6 @@ public class MenuItems {
 			mapaMenu = new HashMap<String, Menu>();
 			propertiesMenu = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_MENU).load()
 					.getProperties();
-			i18n = new I18n();
 			this.menu = menu;
 			this.scroll = scroll;
 		} catch (Exception e) {
@@ -85,31 +83,31 @@ public class MenuItems {
 			});
 		}
 		propertiesMenu.keySet().forEach(key -> {
-			var menus = ((String)key).split("/");
+			var menus = ((String) key).split("/");
 			var menu = getMenu(menus[0]);
 			processMenu(menu, (String) propertiesMenu.get(key), 0, menus);
 		});
 	}
 
-	private final <T extends ADto,B extends ABean<T>> void processMenu(Menu menu, String classString, Integer position, String... menusSplit) {
+	private final <T extends ADto, B extends ABean<T>> void processMenu(Menu menu, String classString, Integer position,
+			String... menusSplit) {
 		var nameLabel = nameLabel(menusSplit[position + 1]);
 		if (menusSplit.length > position) {
-			var founds = menu.getItems().stream()
-					.filter(menuFilter -> menuFilter.getText().contentEquals(nameLabel))
+			var founds = menu.getItems().stream().filter(menuFilter -> menuFilter.getText().contentEquals(nameLabel))
 					.toArray(Menu[]::new);
 			Menu found = null;
 			if (founds == null || founds.length == 0) {
 
 				if (menusSplit.length - 1 == position + 1) {
 					var nameLabel2 = "";
-					if(nameLabel.contains("?"))  {
+					if (nameLabel.contains("?")) {
 						nameLabel2 = nameLabel.substring(0, nameLabel.indexOf("?"));
-					}else{
+					} else {
 						nameLabel2 = nameLabel;
 					}
 					var menuItem = new MenuItem(nameLabel2);
 					menu.getItems().add(menuItem);
-					menuItem.onActionProperty().set( event -> onActionProperty(classString,nameLabel));
+					menuItem.onActionProperty().set(event -> onActionProperty(classString, nameLabel));
 					return;
 				} else {
 					found = new Menu(nameLabel);
@@ -124,9 +122,9 @@ public class MenuItems {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private final <B extends ABean<T>,T extends ADto> void onActionProperty(String classString,String nameLabel)  {
+	private final <B extends ABean<T>, T extends ADto> void onActionProperty(String classString, String nameLabel) {
 		try {
 			Class<B> beanToLoad = (Class<B>) Class.forName(classString);
 			var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, beanToLoad);
@@ -157,7 +155,7 @@ public class MenuItems {
 
 	private final String nameLabel(String key) {
 		var search = LBL_MENU + key;
-		var result = i18n.valueBundle(search);
+		var result = I18n.instance().valueBundle(search);
 		if (!search.contains(result)) {
 			key = result;
 		}

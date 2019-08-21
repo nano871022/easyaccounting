@@ -95,7 +95,9 @@ public interface Reflection {
 					if (obj == null) {
 						obj = locatorServices(field);
 						if (obj == null && StringUtils.isNotBlank(inject.resource())) {
-							obj = (T) Class.forName(inject.resource()).getConstructor().newInstance();
+							var resource = inject.resource();
+							var clazz = Class.forName(resource);
+							obj = (T) clazz.getConstructor().newInstance();
 						} else if (obj == null) {
 							obj = getSingletonAnnotated(inject.resource(), field);
 						}

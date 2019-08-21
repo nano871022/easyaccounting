@@ -7,7 +7,10 @@ import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.ReflectionException;
 
+import com.pyt.service.interfaces.IGenericServiceSvc;
+
 import co.com.japl.ea.controllers.LocatorController;
+import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
@@ -20,13 +23,14 @@ import co.com.japl.ea.dto.system.UsuarioDTO;
  */
 public abstract class ABean<T extends ADto> implements IBean<T> {
 	protected T registro;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
 	protected UsuarioDTO userLogin;
 	protected String NombreVentana;
 	@SuppressWarnings("rawtypes")
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
-	private I18n languages;
 
 	public ABean() {
 		try {
@@ -71,10 +75,21 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 		return logger;
 	}
 
-	public I18n i18n() {
-		if (languages == null) {
-			languages = new I18n();
+	private void loadLanguagesDB(I18n language) {
+		try {
+			var dto = new LanguagesDTO();
+			var list = languagesSvc.getAll(dto);
+			language.setLanguagesDB(list);
+		} catch (Exception e) {
+			logger.logger(e);
 		}
-		return languages;
+	}
+
+	public I18n i18n() {
+		var i18n = I18n.instance();
+		if (i18n.isEmptyDBLanguages()) {
+			loadLanguagesDB(i18n);
+		}
+		return i18n;
 	}
 }

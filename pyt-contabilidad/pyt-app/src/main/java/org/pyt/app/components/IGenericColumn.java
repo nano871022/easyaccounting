@@ -34,7 +34,7 @@ public interface IGenericColumn<T extends ADto> extends IGenericCommon<T> {
 	 * @throws                           {@link IllegalAccessException}
 	 */
 	default void configColumns() throws Exception {
-		var filters = getConfigFields(getInstaceOfGenericADto(), true);
+		var filters = getConfigFields(getInstaceOfGenericADto(), true, false);
 		if (filters == null)
 			throw new Exception(getI18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE));
 		setColumns(filters);
