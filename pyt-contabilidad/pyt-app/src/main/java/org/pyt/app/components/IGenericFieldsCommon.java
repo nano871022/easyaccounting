@@ -3,6 +3,7 @@ package org.pyt.app.components;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.LanguageConstant;
@@ -11,6 +12,7 @@ import org.pyt.common.exceptions.ReflectionException;
 import com.pyt.service.pojo.GenericPOJO;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 
 public interface IGenericFieldsCommon<T extends ADto> extends IGenericCommon<T> {
@@ -56,6 +58,10 @@ public interface IGenericFieldsCommon<T extends ADto> extends IGenericCommon<T> 
 		if (input != null) {
 			input.setId(pojo.getField().getName());
 			var label = new Label(getNameShowInLabel(pojo));
+			if (StringUtils.isNotBlank(pojo.getDescription())) {
+				var toolTip = new Tooltip(pojo.getDescription());
+				label.setTooltip(toolTip);
+			}
 			gridPane.add(label, indices.columnIndex, indices.rowIndex);
 			if (pojo.getWidth() > 0) {
 				input.prefWidth(pojo.getWidth());

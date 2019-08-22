@@ -31,7 +31,8 @@ public interface IGenericColumn<T extends ADto> extends IGenericCommon<T> {
 	 * @throws InstantiationException
 	 * @throws InvocationTargetException
 	 * 
-	 * @throws                           {@link IllegalAccessException}
+	 * @throws {@link
+	 *             IllegalAccessException}
 	 */
 	default void configColumns() throws Exception {
 		var filters = getConfigFields(getInstaceOfGenericADto(), true, false);

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.menu.ListMenusBean">
+  <bottom>
+    <FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
+      <children>
+        <Button mnemonicParsing="false" onAction="#add" text="%fxml.form.button.add" />
+        <Button fx:id="btnMod" mnemonicParsing="false" onAction="#set" text="%fxml.form.button.edit" visible="false">
+          <FlowPane.margin>
+            <Insets left="10.0" right="10.0" />
+          </FlowPane.margin>
+        </Button>
+        <Button fx:id="btnDel" mnemonicParsing="false" onAction="#del" text="%fxml.form.button.delete" visible="false" />
+      </children>
+      <padding>
+        <Insets bottom="5.0" top="5.0" />
+      </padding>
+    </FlowPane>
+  </bottom>
+  <center>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <bottom>
+        <HBox fx:id="paginator" alignment="CENTER" maxWidth="-1.0" prefHeight="40.0" prefWidth="400.0" />
+      </bottom>
+      <center>
+        <TableView fx:id="tableGeneric" onMouseClicked="#clickTable" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" tableMenuButtonVisible="false" BorderPane.alignment="CENTER">
+          <BorderPane.margin>
+            <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+          </BorderPane.margin>
+        </TableView>
+      </center>
+      <top>
+        <HBox fx:id="filterGeneric" alignment="CENTER" maxWidth="-1.0" prefHeight="40.0" prefWidth="400.0" />
+      </top>
+    </BorderPane>
+  </center>
+  <top>
+    <HBox prefHeight="31.0" prefWidth="400.0">
+      <children>
+        <Label fx:id="lblTitle" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="-1.0" prefHeight="21.0" prefWidth="366.0" text="Lista" textAlignment="CENTER">
+          <HBox.margin>
+            <Insets bottom="5.0" left="20.0" right="10.0" top="5.0" />
+          </HBox.margin>
+        </Label>
+      </children>
+    </HBox>
+  </top>
+</BorderPane>

@@ -28,6 +28,7 @@ public class LanguageConstant {
 	public final static String LANGUAGE_FIELD_ASSIGN_EMPTY = "generic.field.assign.empty";
 	public final static String LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE = "configuration.with.code.was.removed";
 	public final static String LANGUAGE_SUCCESS_DELETE_LANGUAGES_ROW_CODE = "languages.with.code.was.removed";
+	public final static String LANGUAGE_SUCCESS_DELETE_MENUS_ROW_CODE = "menus.with.code.was.removed";
 	public final static String LANGUAGE_WARNING_DELETE_ROW = "Do.wish.you.delete.this.selected.row";
 	public final static String LANGUAGE_ERROR_QUERY_SEARCH = "service.error.query.search";
 	public final static String LANGUAGE_ERROR_QUERY_CREATE_TABLE = "service.error.query.create.table";
