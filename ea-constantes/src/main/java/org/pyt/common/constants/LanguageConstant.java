@@ -29,6 +29,11 @@ public class LanguageConstant {
 	public final static String LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE = "configuration.with.code.was.removed";
 	public final static String LANGUAGE_SUCCESS_DELETE_LANGUAGES_ROW_CODE = "languages.with.code.was.removed";
 	public final static String LANGUAGE_SUCCESS_DELETE_MENUS_ROW_CODE = "menus.with.code.was.removed";
+	public final static String LANGUAGE_SUCCESS_DELETE_HELPS_ROW_CODE = "helps.with.code.was.removed";
+	public final static String LANGUAGE_SUCCESS_DELETE_GROUP_USERS_ROW_CODE = "group.users.with.code.was.removed";
+	public final static String LANGUAGE_SUCCESS_DELETE_PERMISSION_ROW_CODE = "permission.with.code.was.removed";
+	public final static String LANGUAGE_SUCCESS_DELETE_USERS_ROW_CODE = "user.with.code.was.removed";
+	public final static String LANGUAGE_SUCCESS_DELETE_MENU_PERMISSION_USERS_ROW_CODE = "menu.permission.user.with.code.was.removed";
 	public final static String LANGUAGE_WARNING_DELETE_ROW = "Do.wish.you.delete.this.selected.row";
 	public final static String LANGUAGE_ERROR_QUERY_SEARCH = "service.error.query.search";
 	public final static String LANGUAGE_ERROR_QUERY_CREATE_TABLE = "service.error.query.create.table";
