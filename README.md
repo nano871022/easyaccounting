@@ -9,5 +9,5 @@ infraestructura no tienen acceso a
  internet por lo cual no es desarrollada
  para estar en la nube, además es usada 
 Por una sola persona y se encuentra en 
-Un solo equipo de cómputo.
-<\p>
+Un solo equipo de cómputo.</p>
+
