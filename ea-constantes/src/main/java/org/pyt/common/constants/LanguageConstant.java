@@ -54,6 +54,7 @@ public class LanguageConstant {
 	public final static String LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW = "service.error.query.not.found.row";
 	public final static String LANGUAGE_ERROR_QUERY_FOUND_ROWS = "service.error.query.found.rows";
 	public final static String GENERIC_SERVICE_EMPTY_DTO = "generic.service.empty.dto";
+	public final static String GENERIC_SERVICE_CLASS_NOT_PERM = "generic.service.class.not.permission";
 	public final static String GENERIC_SERVICE_CODE_EMPTY_DTO = "generic.service.code.empty.dto";
 	public final static String GENERIC_LBL_LIST_GENERIC_INTERFACES = "generic.lbl.list.generic.interfaces";
 	public final static String FXML_LBL_TITLE_GENERIC_INTERFACES = "fxml.lbl.title.generic.interface";

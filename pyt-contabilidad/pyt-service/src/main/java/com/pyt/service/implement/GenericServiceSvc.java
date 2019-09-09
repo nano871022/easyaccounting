@@ -24,6 +24,9 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 		List<T> lista = new ArrayList<T>();
 		if (dto == null)
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+		if (!isValidClass(dto.getClass())) {
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+		}
 		try {
 			lista = querySvc.gets(dto, init, end);
 		} catch (QueryException e) {
@@ -36,6 +39,10 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 		List<T> lista = new ArrayList<T>();
 		if (dto == null)
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+		if (!isValidClass(dto.getClass())) {
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+		}
+
 		try {
 			lista = querySvc.gets(dto);
 		} catch (QueryException e) {
@@ -47,6 +54,10 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 	public T get(T dto) throws GenericServiceException {
 		if (dto == null)
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+		if (!isValidClass(dto.getClass())) {
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+		}
+
 		try {
 			return querySvc.get(dto);
 		} catch (QueryException e) {
@@ -57,7 +68,11 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 	public void update(T dto, UsuarioDTO user) throws GenericServiceException {
 		if (dto == null)
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
-		if (StringUtils.isBlank(dto.getCodigo() ))
+		if (!isValidClass(dto.getClass())) {
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+		}
+
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO));
 		try {
 			querySvc.set(dto, user);
@@ -69,6 +84,10 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 	public T insert(T dto, UsuarioDTO user) throws GenericServiceException {
 		if (dto == null)
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+		if (!isValidClass(dto.getClass())) {
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+		}
+
 		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO));
 		try {
@@ -81,6 +100,9 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 	public void delete(T dto, UsuarioDTO user) throws GenericServiceException {
 		if (dto == null)
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+		if (!isValidClass(dto.getClass())) {
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+		}
 		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO));
 		try {
@@ -93,7 +115,11 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 
 	@Override
 	public Integer getTotalRows(T dto) throws GenericServiceException {
-		if(dto == null)throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+		if (dto == null)
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+		if (!isValidClass(dto.getClass())) {
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+		}
 		try {
 			return querySvc.countRow(dto);
 		} catch (QueryException e) {
@@ -101,4 +127,9 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 		}
 	}
 
+	public final <D extends ADto> boolean isValidClass(Class<D> clazz) {
+		var valid = true;
+		valid &= clazz != UsuarioDTO.class;
+		return valid;
+	}
 }
