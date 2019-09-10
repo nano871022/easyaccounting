@@ -4,7 +4,7 @@ import org.pyt.app.load.Template;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.validates.ValidFields;
 
-import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.ABean;
@@ -31,8 +31,8 @@ public class LoginBean extends ABean<UsuarioDTO> {
 	private final static String CONST_MSN_PASSWORD_ERROR = "form.lbl.msn.error.password";
 	private final static String CONST_TITLE_LOGIN = "form.title.login";
 
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<UsuarioDTO> usersSvc;
+	@Inject(resource = "com.pyt.service.implement.UserSvc")
+	private IUsersSvc usersSvc;
 	@FXML
 	private TextField user;
 	@FXML
@@ -62,11 +62,11 @@ public class LoginBean extends ABean<UsuarioDTO> {
 			if (valid()) {
 				registro.setNombre(user.getText());
 				registro.setPassword(password.getText());
-				var user = usersSvc.get(registro);
+				var user = usersSvc.login(registro, remember.isSelected());
 				user.setPassword(null);
 				this.userLogin = user;
-				LoadAppFxml.loadFxml(new Stage(), Template.class);
 				this.destroy();
+				LoadAppFxml.loadFxml(new Stage(), Template.class);
 			}
 		} catch (Exception e) {
 			error(e);
@@ -87,8 +87,13 @@ public class LoginBean extends ABean<UsuarioDTO> {
 	}
 
 	public void cancel() {
-		registro = new UsuarioDTO();
-		clearAll();
+		try {
+			usersSvc.logout(registro);
+			registro = new UsuarioDTO();
+			clearAll();
+		} catch (Exception e) {
+			error(e);
+		}
 	}
 
 }

@@ -16,7 +16,7 @@ public interface IUsersSvc {
 
 	public void update(UsuarioDTO updUser, UsuarioDTO user) throws Exception;
 
-	public void countRow(UsuarioDTO updUser) throws Exception;
+	public Integer countRow(UsuarioDTO updUser) throws Exception;
 
 	public UsuarioDTO login(UsuarioDTO user, Boolean remember) throws Exception;
 

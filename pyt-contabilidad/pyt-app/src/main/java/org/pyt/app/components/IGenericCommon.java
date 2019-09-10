@@ -86,9 +86,12 @@ public interface IGenericCommon<T extends ADto> {
 	 * Se usa para generar la consulta para obtener los registros asociados de la
 	 * configuracion creada en la tabla de configuracion generica de campos.
 	 * 
-	 * @param bean   {@link ABean} clase de bean
-	 * @param column {@link Boolean}
-	 * @param filter {@link Boolean}
+	 * @param bean
+	 *            {@link ABean} clase de bean
+	 * @param column
+	 *            {@link Boolean}
+	 * @param filter
+	 *            {@link Boolean}
 	 * @return {@link List} < {@link ConfigGenericFieldDTO} >
 	 */
 	default <B extends ABean<T>> List<ConfigGenericFieldDTO> getConfigGenericFields(Class<B> bean, Boolean column,
@@ -112,10 +115,14 @@ public interface IGenericCommon<T extends ADto> {
 	 * la aplicacion
 	 * 
 	 * @return T generico usado, extiende de {@link ADto}
-	 * @throws {@link InvocationTargetException}
-	 * @throws {@link IllegalAccessException}
-	 * @throws {@link InstantiationException}
-	 * @throws {@link NoSuchMethodException}
+	 * @throws {@link
+	 *             InvocationTargetException}
+	 * @throws {@link
+	 *             IllegalAccessException}
+	 * @throws {@link
+	 *             InstantiationException}
+	 * @throws {@link
+	 *             NoSuchMethodException}
 	 */
 	default T getInstaceOfGenericADto()
 			throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
@@ -126,10 +133,14 @@ public interface IGenericCommon<T extends ADto> {
 	 * Se encarga de agregar el field dentro de un wrapper para para poder ser
 	 * puesto en un mapa
 	 * 
-	 * @param maps        {@link Map}
-	 * @param field       {@link Field}
-	 * @param instance    {@link Object}
-	 * @param typeGeneric {@link GenericPOJO#Type}
+	 * @param maps
+	 *            {@link Map}
+	 * @param field
+	 *            {@link Field}
+	 * @param instance
+	 *            {@link Object}
+	 * @param typeGeneric
+	 *            {@link GenericPOJO#Type}
 	 */
 	private <O extends Object> void addFieldIntoMap(Map<String, GenericPOJO<T>> maps, Field field, O instance,
 			GenericPOJO.Type typeGeneric) {
@@ -163,11 +174,15 @@ public interface IGenericCommon<T extends ADto> {
 	 * Se encarga de crear una instancia del generic pojo con la instancia usada, el
 	 * campo y el tipo de la instancia
 	 * 
-	 * @param instance {@link Object} instancia que contiene el campo suministrado
-	 * @param field    {@link Field} campo con el cual se debe tener relacion
-	 * @param type     {@link GenericPOJO.Type} tipo de configuracion el objeto
+	 * @param instance
+	 *            {@link Object} instancia que contiene el campo suministrado
+	 * @param field
+	 *            {@link Field} campo con el cual se debe tener relacion
+	 * @param type
+	 *            {@link GenericPOJO.Type} tipo de configuracion el objeto
 	 * @return {@link GenericPOJO}
-	 * @throws {@link IllegalAccessException}
+	 * @throws {@link
+	 *             IllegalAccessException}
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private <O extends Object> GenericPOJO<T> fillGenericPOJO(O instance, Field field, GenericPOJO.Type type)
@@ -186,10 +201,13 @@ public interface IGenericCommon<T extends ADto> {
 	 * Se encarga de generar un mapa con todos los campos que se encuentran dentro
 	 * de un objeto
 	 * 
-	 * @param instance    {@link Object}
-	 * @param typeGeneric {@link GenericPOJO#Type}
+	 * @param instance
+	 *            {@link Object}
+	 * @param typeGeneric
+	 *            {@link GenericPOJO#Type}
 	 * @return {@link Map} < {@link String},{@link GenericPOJO}<T>>
-	 * @throws {@link IllegalAccessException}
+	 * @throws {@link
+	 *             IllegalAccessException}
 	 */
 	private <O extends Object> Map<String, GenericPOJO<T>> getMapFieldsByObject(O instance,
 			GenericPOJO.Type typeGeneric) throws IllegalAccessException {
@@ -204,11 +222,14 @@ public interface IGenericCommon<T extends ADto> {
 	}
 
 	default String getNameShowInLabel(GenericPOJO<T> value) {
-		if (value.getField().getName().contains(value.getNameShow())) {
+		if (value.getNameShow() != null) {
+			return value.getNameShow();
+		} else if (value.getNameShow() == null || value.getField().getName().contentEquals(value.getNameShow())) {
 			return getI18n().valueBundle(LanguageConstant.GENERIC_FILTER_LBL + getClazz().getSimpleName() + "."
 					+ value.getField().getName());
 		} else {
-			return value.getNameShow();
+			return value.getField().getName();
 		}
 	}
+
 }
