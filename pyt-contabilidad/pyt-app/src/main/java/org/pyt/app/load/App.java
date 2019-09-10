@@ -11,7 +11,7 @@ public class App extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		var stage = new Stage();
-		LoadAppFxml.loadFxml(stage, LoginBean.class);
+		var loginBean = LoadAppFxml.loadFxml(stage, LoginBean.class);
 		stage.setAlwaysOnTop(true);
 		stage.show();
 		stage.setWidth(400);
@@ -19,6 +19,7 @@ public class App extends Application {
 		stage.centerOnScreen();
 		stage.setResizable(false);
 		stage.setMaximized(false);
+		loginBean.load(stage);
 	}
 
 }

@@ -5,7 +5,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
-import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.AGenericInterfacesFieldBean;
@@ -17,8 +17,8 @@ import javafx.scene.layout.GridPane;
 
 @FXMLFile(file = "user.fxml", path = "view/users")
 public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<UsuarioDTO> groupUsersSvc;
+	@Inject(resource = "com.pyt.service.implement.UserSvc")
+	private IUsersSvc usersSvc;
 	@FXML
 	private GridPane gridPane;
 	@FXML
@@ -77,10 +77,10 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					groupUsersSvc.insert(registro, userLogin);
+					usersSvc.create(registro, userLogin);
 					notificar(i18n().valueBundle("mensaje.user.inserted"));
 				} else {
-					groupUsersSvc.update(registro, userLogin);
+					usersSvc.update(registro, userLogin);
 					notificar(i18n().valueBundle("mensaje.user.updated"));
 				}
 			}

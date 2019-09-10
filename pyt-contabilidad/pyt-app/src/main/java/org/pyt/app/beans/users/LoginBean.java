@@ -43,11 +43,16 @@ public class LoginBean extends ABean<UsuarioDTO> {
 	private Label message;
 	@FXML
 	private Label title;
+	private Stage stage;
 
 	@FXML
 	public void initialize() {
 		registro = new UsuarioDTO();
 		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN));
+	}
+
+	public void load(Stage stage) {
+		this.stage = stage;
 	}
 
 	private final boolean valid() {
@@ -66,6 +71,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 				user.setPassword(null);
 				this.userLogin = user;
 				this.destroy();
+				stage.hide();
 				LoadAppFxml.loadFxml(new Stage(), Template.class);
 			}
 		} catch (Exception e) {

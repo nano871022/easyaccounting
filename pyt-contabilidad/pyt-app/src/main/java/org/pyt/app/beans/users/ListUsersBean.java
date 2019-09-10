@@ -1,10 +1,13 @@
 package org.pyt.app.beans.users;
 
+import java.util.List;
+
 import org.pyt.app.components.ConfirmPopupBean;
+import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 
-import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.AGenericInterfacesBean;
@@ -19,8 +22,8 @@ import javafx.scene.layout.HBox;
 @FXMLFile(file = "list_users.fxml", path = "view/users")
 public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<UsuarioDTO> groupUsersSvc;
+	@Inject(resource = "com.pyt.service.implement.UserSvc")
+	private IUsersSvc usersSvc;
 	@FXML
 	private Button btnMod;
 	@FXML
@@ -53,6 +56,36 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 		}
 	}
 
+	@Override
+	protected void loadDataModel(HBox paginator, TableView<UsuarioDTO> tableView) {
+		dataTable = new DataTableFXML<UsuarioDTO, UsuarioDTO>(paginator, tableView) {
+			@Override
+			public Integer getTotalRows(UsuarioDTO filter) {
+				try {
+					return usersSvc.countRow(filter);
+				} catch (Exception e) {
+					error(e);
+				}
+				return 0;
+			}
+
+			@Override
+			public List<UsuarioDTO> getList(UsuarioDTO filter, Integer page, Integer rows) {
+				try {
+					return usersSvc.getAll(filter, page, rows);
+				} catch (Exception e) {
+					error(e);
+				}
+				return null;
+			}
+
+			@Override
+			public UsuarioDTO getFilter() {
+				return filtro;
+			}
+		};
+	}
+
 	public final void add() {
 		try {
 			getController(UserBean.class).load();
@@ -77,7 +110,7 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 				if (list != null && list.size() > 0) {
 					list.forEach(dto -> {
 						try {
-							groupUsersSvc.delete(dto, userLogin);
+							usersSvc.delete(dto, userLogin);
 							alerta(String.format(LanguageConstant.LANGUAGE_SUCCESS_DELETE_USERS_ROW_CODE,
 									dto.getCodigo()));
 						} catch (Exception e) {
@@ -125,6 +158,6 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 
 	@Override
 	public UsuarioDTO getFilterToTable(UsuarioDTO filter) {
-		return filter;
+		return null;
 	}
 }
