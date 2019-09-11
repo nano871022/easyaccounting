@@ -41,30 +41,7 @@
 					</rowConstraints>
 				</GridPane>
 				<GridPane fx:id="filterTable"/>
-				<TableView fx:id="tabla" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="312.0" prefWidth="482.0">
-					<columns>
-						<TableColumn prefWidth="150.0" text="Codigo">
-							<cellValueFactory>
-								<PropertyValueFactory property="codigo" />
-							</cellValueFactory>
-						</TableColumn>
-						<TableColumn prefWidth="150.0" text="Descripcion">
-							<cellValueFactory>
-								<PropertyValueFactory property="descripcion" />
-							</cellValueFactory>
-						</TableColumn>
-						<TableColumn prefWidth="100.0" text="Valor">
-							<cellValueFactory>
-								<PropertyValueFactory property="valor" />
-							</cellValueFactory>
-						</TableColumn>
-						<TableColumn prefWidth="250.0" text="Fecha Nota">
-							<cellValueFactory>
-								<PropertyValueFactory property="fechaNota" />
-							</cellValueFactory>
-						</TableColumn>
-					</columns>
-				</TableView>
+				<TableView fx:id="tabla" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="312.0" prefWidth="482.0"/>
 				<HBox fx:id="paginador" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="301.0" />
 			</children>
 		</VBox>

@@ -16,7 +16,6 @@ import org.pyt.common.common.SelectList;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 
-import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 
@@ -33,7 +32,7 @@ import javafx.scene.layout.GridPane;
 
 public interface IGenericFieldLoad extends IGenericFieldCommon {
 
-	public IQuerySvc getServiceSvc();
+	public Integer maxColumns();
 
 	public GridPane GridPane();
 
@@ -45,7 +44,7 @@ public interface IGenericFieldLoad extends IGenericFieldCommon {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default <N, M extends ADto> GridPane loadGrid() {
-		Integer maxColumn = 2;
+		Integer maxColumn = maxColumns();
 		var campos = getFields();
 		if (campos == null) {
 			warning(getI18n().valueBundle("field_doesnt_found_to_process"));
@@ -75,7 +74,7 @@ public interface IGenericFieldLoad extends IGenericFieldCommon {
 			} else {
 				configNodeField(docs, formulario, columnIndex, rowIndex);
 			}
-			if (countFields < 6 || columnIndex == maxColumn) {
+			if (countFields < 6 && columnIndex == maxColumn) {
 				rowIndex++;
 				columnIndex = 0;
 			} else {

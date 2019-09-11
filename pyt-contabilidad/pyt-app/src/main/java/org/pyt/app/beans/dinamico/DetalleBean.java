@@ -77,7 +77,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		tipoDocumento = tipoDoc;
 		panelCentral = panel;
 		this.codigoDocumento = codigoDocumento;
-		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
+		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -92,7 +92,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 		tipoDocumento = tipoDoc;
 		codigoDocumento = registro.getCodigoDocumento();
 		panelCentral = panel;
-		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
+		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -186,5 +186,10 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	@Override
 	public javafx.scene.layout.GridPane GridPane() {
 		return new GridPane();
+	}
+
+	@Override
+	public Integer maxColumns() {
+		return 2;
 	}
 }

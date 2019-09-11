@@ -179,4 +179,9 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	public javafx.scene.layout.GridPane GridPane() {
 		return new GridPane();
 	}
+
+	@Override
+	public Integer maxColumns() {
+		return 2;
+	}
 }

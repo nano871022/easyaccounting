@@ -2,7 +2,6 @@ package org.pyt.app.beans.dinamico;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
@@ -10,13 +9,10 @@ import org.pyt.app.components.DataTableFXML;
 import org.pyt.app.components.PopupBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.I18n;
-import org.pyt.common.common.Log;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
-import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
@@ -24,8 +20,6 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.ABean;
-import co.com.japl.ea.beans.IUrlLoadBean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -39,14 +33,11 @@ import javafx.scene.layout.HBox;
  * @since 02-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "listaDocumentos.fxml", nombreVentana = "Lista de Documentos")
-public class ListaDocumentosBean extends ABean<DocumentoDTO>
-		implements IGenericFieldLoad, IGenericLoadValueFromField, IUrlLoadBean {
+public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
-	@Inject(resource = "com.pyt.query.implement.QuerySvc")
-	private IQuerySvc querySvc;
 	@FXML
 	private TableView<DocumentoDTO> tabla;
 	@FXML
@@ -60,9 +51,6 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO>
 	private GridPane filterTable;
 	protected DocumentoDTO filter;
 	private ParametroDTO tipoDocumento;
-	private List<DocumentosDTO> genericFields;
-	private Map<String, Object> configFields;
-	private Map<String, Object> configFieldList;
 
 	@FXML
 	public void initialize() {
@@ -85,6 +73,23 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO>
 			documentos.setDoctype(tipoDocumento);
 			documentos.setFieldFilter(true);
 			genericFields = documentosSvc.getDocumentos(documentos);
+			filterTable = loadGrid();
+		} catch (Exception e) {
+			logger.logger(e);
+		}
+	}
+
+	private void searchColumns() {
+		try {
+			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+			}
+			var documentos = new DocumentosDTO();
+			documentos.setClaseControlar(DocumentoDTO.class);
+			documentos.setDoctype(tipoDocumento);
+			documentos.setFieldColumn(true);
+			genericColumns = documentosSvc.getDocumentos(documentos);
+			tabla = loadColumnsIntoTableView();
 		} catch (Exception e) {
 			logger.logger(e);
 		}
@@ -116,7 +121,7 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO>
 
 			@Override
 			public DocumentoDTO getFilter() {
-				if(tipoDocumento != null && StringUtils.isNotBlank(tipoDocumento.getCodigo())) {
+				if (tipoDocumento != null && StringUtils.isNotBlank(tipoDocumento.getCodigo())) {
 					filter.setTipoDocumento(tipoDocumento);
 				}
 				return filter;
@@ -157,16 +162,6 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO>
 		}
 	}
 
-	@Override
-	public Log getLogger() {
-		return logger;
-	}
-
-	@Override
-	public I18n getI18n() {
-		return i18n();
-	}
-
 	public final void loadParameters(String... tipoDocumento) {
 		try {
 			if (tipoDocumento.length == 1 && tipoDocumento[0].trim().contains("tipoDocumento")) {
@@ -180,31 +175,11 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO>
 				lblTitle.setText(this.tipoDocumento.getNombre());
 				dataTable.search();
 				searchFilters();
-
-		}
-		}catch(Exception e) {
+				searchColumns();
+			}
+		} catch (Exception e) {
 			logger.logger(i18n().valueBundle("document_type_had_error_in_its_processing"), e);
 		}
-	}
-
-	@Override
-	public Map<String, Object> getConfigFields() {
-		return configFields;
-	}
-
-	@Override
-	public Map<String, Object> getConfigFieldTypeList() {
-		return configFieldList;
-	}
-
-	@Override
-	public void warning(String msn) {
-		alerta(msn);
-	}
-
-	@Override
-	public void error(Throwable error) {
-		error(error);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -213,20 +188,19 @@ public class ListaDocumentosBean extends ABean<DocumentoDTO>
 		return (T) filter;
 	}
 
-
-	@Override
-	public List<DocumentosDTO> getFields() {
-		return genericFields;
-	}
-
-	@Override
-	public IQuerySvc getServiceSvc() {
-		return querySvc;
-	}
-
 	@Override
 	public javafx.scene.layout.GridPane GridPane() {
 		return filterTable;
+	}
+
+	@Override
+	public Integer maxColumns() {
+		return 4;
+	}
+
+	@Override
+	public TableView getTableView() {
+		return tabla;
 	}
 
 }

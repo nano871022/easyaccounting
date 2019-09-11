@@ -8,6 +8,7 @@ import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.validates.ValidateValues;
 
+import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;
 
 public interface IGenericFieldCommon {
@@ -29,4 +30,5 @@ public interface IGenericFieldCommon {
 
 	public I18n getI18n();
 
+	public IQuerySvc getServiceSvc();
 }

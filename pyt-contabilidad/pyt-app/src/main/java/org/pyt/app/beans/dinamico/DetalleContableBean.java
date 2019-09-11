@@ -70,7 +70,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
-		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
+		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -79,7 +79,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
-		titulo.setText(titulo.getText()+": "+tipoDoc.getNombre());
+		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
 		loadField();
 	}
 
@@ -118,5 +118,10 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 	@Override
 	public javafx.scene.layout.GridPane GridPane() {
 		return new GridPane();
+	}
+
+	@Override
+	public Integer maxColumns() {
+		return 2;
 	}
 }

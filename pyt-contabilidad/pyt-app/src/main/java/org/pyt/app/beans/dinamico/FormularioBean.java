@@ -26,7 +26,6 @@ import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.dto.inventario.ProductoDTO;
@@ -195,7 +194,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			editable.setSelected(docs.getEdit());
 			obligatorio.setSelected(docs.getNullable());
 			fieldFilter.setSelected(docs.getFieldFilter());
-			fieldFilter.setSelected(docs.getFieldFilter());
+			fieldColumn.setSelected(docs.getFieldColumn());
 			SelectList.selectItem(busqueda, mapa_claseBusqueda, docs.getObjectSearchDto());
 			SelectList.selectItem(grupo, listGrupo, FIELD_NAME, docs, "selectNameGroup");
 			SelectList.selectItem(campoMostrar, mapa_campoMostrar, docs.getPutNameShow());
@@ -426,7 +425,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private DocumentosDTO loadItem() {
-		DocumentosDTO dto = new DocumentosDTO();
+		var selectedDoc = dataTable.getSelectedRow();
+		var dto = selectedDoc == null ? new DocumentosDTO() : selectedDoc;
 		if ((dataTable.getSelectedRow() != null && StringUtils.isNotBlank(dataTable.getSelectedRow().getCodigo()))) {
 			dto.setCodigo(dataTable.getSelectedRow().getCodigo());
 		}
@@ -523,6 +523,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			if (validItem(dto)) {
 				if (StringUtils.isNotBlank(dto.getCodigo())) {
 					documentoSvc.update(dto, userLogin);
+
 				} else if (StringUtils.isBlank(dto.getCodigo())) {
 					for (int i = 0; i < documentos.size(); i++) {
 						DocumentosDTO dtos = documentos.get(i);
@@ -544,25 +545,25 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	public void eliminarItem() {
 		DocumentosDTO dto = dataTable.getSelectedRow();
 		try {
-			if(dto != null) {
-			if (StringUtils.isNotBlank(dto.getCodigo())) {
-				documentoSvc.delete(dto, userLogin);
-			} else if (StringUtils.isBlank(dto.getCodigo())) {
-				for (int i = 0; i < documentos.size(); i++) {
-					DocumentosDTO dtos = documentos.get(i);
-					if (new Compare<DocumentosDTO>(dtos).to(dto)) {
-						documentos.remove(i);
-						break;
+			if (dto != null) {
+				if (StringUtils.isNotBlank(dto.getCodigo())) {
+					documentoSvc.delete(dto, userLogin);
+				} else if (StringUtils.isBlank(dto.getCodigo())) {
+					for (int i = 0; i < documentos.size(); i++) {
+						DocumentosDTO dtos = documentos.get(i);
+						if (new Compare<DocumentosDTO>(dtos).to(dto)) {
+							documentos.remove(i);
+							break;
+						}
+					} // end for
+					if (documentos.size() == 0) {
+						guardar.setVisible(false);
+						cancelar.setVisible(false);
 					}
-				} // end for
-				if (documentos.size() == 0) {
-					guardar.setVisible(false);
-					cancelar.setVisible(false);
 				}
-			}
-			notificar("Se ha eliminado el documento.");
-			dataTable.search();
-			cleanItem();
+				notificar("Se ha eliminado el documento.");
+				dataTable.search();
+				cleanItem();
 			}
 		} catch (DocumentosException e) {
 			error(e);
