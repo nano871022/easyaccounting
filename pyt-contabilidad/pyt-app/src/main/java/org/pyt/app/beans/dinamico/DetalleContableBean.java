@@ -1,5 +1,8 @@
 package org.pyt.app.beans.dinamico;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.DocumentosException;
@@ -23,7 +26,7 @@ import javafx.scene.layout.VBox;
  * @since 07-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "detalleContable.fxml")
-public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
+public class DetalleContableBean extends DinamicoBean<DetalleContableDTO, DocumentosDTO, DocumentosDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
@@ -35,6 +38,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 	private Label titulo;
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
+	private Map<String, List> mapListSelects;
 
 	@FXML
 	public void initialize() {
@@ -116,12 +120,17 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 	}
 
 	@Override
-	public javafx.scene.layout.GridPane GridPane() {
+	public GridPane GridPane() {
 		return new GridPane();
 	}
 
 	@Override
 	public Integer maxColumns() {
 		return 2;
+	}
+
+	@Override
+	public Map<String, List> listToChoiceBoxs() {
+		return mapListSelects;
 	}
 }

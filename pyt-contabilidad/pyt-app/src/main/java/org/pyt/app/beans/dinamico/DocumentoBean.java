@@ -2,6 +2,7 @@ package org.pyt.app.beans.dinamico;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -37,7 +38,7 @@ import javafx.scene.layout.VBox;
  * @since 07-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "formulario.fxml", name = "DocumentoDinamico")
-public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
+public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, DocumentosDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
@@ -51,6 +52,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	private ParametroDTO tipoDocumento;
 	private List<ParametroDTO> listTipoDocumento;
 	private ValidateValues valid;
+	private Map<String, List> mapListSelects;
 
 	@FXML
 	public void initialize() {
@@ -183,5 +185,10 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	@Override
 	public Integer maxColumns() {
 		return 2;
+	}
+
+	@Override
+	public Map<String, List> listToChoiceBoxs() {
+		return mapListSelects;
 	}
 }

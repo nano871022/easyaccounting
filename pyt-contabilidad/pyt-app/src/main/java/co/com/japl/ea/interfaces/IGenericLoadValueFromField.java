@@ -22,7 +22,8 @@ import javafx.scene.control.TextField;
  * @author Alejandro Parra
  * @since 09/08/2019
  */
-public interface IGenericLoadValueFromField extends IGenericMethodsCommon {
+public interface IGenericLoadValueFromField<T extends ADto, S extends ADto, F extends ADto>
+		extends IGenericMethodsCommon<T, S, F> {
 	/**
 	 * Se encarga de cargar los datos de los campos
 	 */
@@ -49,14 +50,14 @@ public interface IGenericLoadValueFromField extends IGenericMethodsCommon {
 	 * @param nameField {@link String}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private <T, M extends ADto> void loadValueToField(ChoiceBox obj, String nameField) {
+	private <V, M extends ADto> void loadValueToField(ChoiceBox obj, String nameField) {
 		var list = (List) getConfigFieldTypeList().get(nameField);
 		var nameShow = getShow(nameField);
 		if (StringUtils.isNotBlank(nameShow) && list != null && list.size() > 0) {
 			M value = (M) SelectList.get((ChoiceBox) obj, list, nameShow);
 			var nameAssign = getAssing(nameField);
 			try {
-				T value2 = null;
+				V value2 = null;
 				if (value != null && StringUtils.isNotBlank(nameAssign)) {
 					value2 = value.get(nameAssign);
 				}
@@ -129,9 +130,10 @@ public interface IGenericLoadValueFromField extends IGenericMethodsCommon {
 	 * @param fieldName {@link String}
 	 * @return {@link String}
 	 */
+	@SuppressWarnings("unchecked")
 	private String getShow(String fieldName) {
-		var campos = getFields();
-		for (DocumentosDTO doc : campos) {
+		List<DocumentosDTO> campos = (List<DocumentosDTO>) getFields();
+		for (var doc : campos) {
 			if (doc.getFieldName().contains(fieldName)) {
 				return doc.getPutNameShow();
 			}
@@ -145,9 +147,10 @@ public interface IGenericLoadValueFromField extends IGenericMethodsCommon {
 	 * @param fieldName {@link String}
 	 * @return {@link String}
 	 */
+	@SuppressWarnings("unchecked")
 	private String getAssing(String fieldName) {
-		var campos = getFields();
-		for (DocumentosDTO doc : campos) {
+		List<DocumentosDTO> campos = (List<DocumentosDTO>) getFields();
+		for (var doc : campos) {
 			if (doc.getFieldName().contains(fieldName)) {
 				return doc.getPutNameAssign();
 			}

@@ -9,22 +9,22 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 
-import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.japl.ea.interfaces.IGenericColumnLoad;
 import co.com.japl.ea.interfaces.IGenericFieldLoad;
 import co.com.japl.ea.interfaces.IGenericLoadValueFromField;
 import co.com.japl.ea.interfaces.IUrlLoadBean;
 
-public abstract class AListGenericDinamicBean<T extends ADto> extends ABean<T>
+public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F extends ADto> extends ABean<T>
 		implements IGenericFieldLoad, IGenericLoadValueFromField, IUrlLoadBean, IGenericColumnLoad {
 	protected List<DocumentosDTO> genericFields;
 	protected List<DocumentosDTO> genericColumns;
 	private Map<String, Object> configFields;
 	private Map<String, Object> configFieldList;
-	@Inject(resource = "com.pyt.query.implement.QuerySvc")
-	private IQuerySvc querySvc;
+	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
+	private IGenericServiceSvc<S> querySvc;
 
 	public AListGenericDinamicBean() {
 		configFields = new HashMap<String, Object>();
@@ -32,7 +32,7 @@ public abstract class AListGenericDinamicBean<T extends ADto> extends ABean<T>
 	}
 
 	@Override
-	public IQuerySvc getServiceSvc() {
+	public IGenericServiceSvc<S> getServiceSvc() {
 		return querySvc;
 	}
 

@@ -1,19 +1,17 @@
 package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.NoEdit;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.UtilControlFieldFX;
-import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.dto.DocumentosDTO;
-import com.pyt.service.dto.ParametroDTO;
 
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
@@ -28,6 +26,8 @@ public interface IGenericFieldLoad extends IGenericMethodsCommon {
 
 	public GridPane GridPane();
 
+	public Map<String, List> listToChoiceBoxs();
+
 	/**
 	 * Se encarga de crear la grilla con todos los campos que se encontraton y
 	 * ponerlos en el fxml
@@ -37,7 +37,7 @@ public interface IGenericFieldLoad extends IGenericMethodsCommon {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default <N, M extends ADto> GridPane loadGrid() {
 		Integer maxColumn = maxColumns();
-		var campos = getFields();
+		List<DocumentosDTO> campos = getFields();
 		if (campos == null) {
 			warning(getI18n().valueBundle("field_doesnt_found_to_process"));
 			return new GridPane();
@@ -185,39 +185,29 @@ public interface IGenericFieldLoad extends IGenericMethodsCommon {
 	@SuppressWarnings({ "unchecked" })
 	private <L, T extends Object, S extends ADto> void putList(String nameField, ChoiceBox<String> choiceBox,
 			Class<T> busqueda, String show, String grupo, L value, String assign) {
-		S dto = null;
-		if (busqueda == ParametroDTO.class) {
-			dto = (S) new ParametroDTO();
-			((ParametroDTO) dto).setGrupo(grupo);
-		} else {
+		var list = listToChoiceBoxs().get(busqueda.getCanonicalName());
+		if (list != null) {
 			try {
-				dto = (S) busqueda.getConstructor().newInstance();
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				error(e);
-			}
-		}
-		if (dto != null) {
-			try {
-				List<S> lista = getServiceSvc().gets(dto);
-				SelectList.put(choiceBox, lista, show);
-				getConfigFieldTypeList().put(nameField, lista);
+				SelectList.put(choiceBox, list, show);
+				getConfigFieldTypeList().put(nameField, list);
 				if (StringUtils.isNotBlank(assign)) {
 					if (value != null) {
-						SelectList.selectItem(choiceBox, lista, show, value, assign);
+						SelectList.selectItem(choiceBox, list, show, value, assign);
 					} else {
 						choiceBox.getSelectionModel().selectFirst();
 					}
 				} else {
 					if (value instanceof ADto) {
-						SelectList.selectItem(choiceBox, lista, show, (S) value);
+						SelectList.selectItem(choiceBox, list, show, (S) value);
 					} else {
 						choiceBox.getSelectionModel().selectFirst();
 					}
 				}
-			} catch (QueryException e) {
+			} catch (Exception e) {
 				error(e);
 			}
+		} else {
+			warning(getI18n().valueBundle("generic.message.not.found.list.to.select"));
 		}
 	}
 

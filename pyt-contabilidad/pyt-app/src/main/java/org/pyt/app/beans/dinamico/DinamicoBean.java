@@ -17,9 +17,9 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
 
-import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.interfaces.IGenericFieldLoad;
@@ -35,12 +35,12 @@ import javafx.scene.control.TextField;
  * @since 01-07-2018
  */
 
-public abstract class DinamicoBean<T extends ADto> extends ABean<T>
+public abstract class DinamicoBean<T extends ADto, S extends ADto, F extends ADto> extends ABean<T>
 		implements IGenericFieldLoad, IGenericLoadValueFromField, IGenericFieldValueToField {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	protected IDocumentosSvc documentosSvc;
-	@Inject(resource = "com.pyt.query.implement.QuerySvc")
-	private IQuerySvc querySvc;
+	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
+	private IGenericServiceSvc<S> querySvc;
 	private Map<String, Object> listas;
 	private Map<String, Object> fields;
 	protected List<DocumentosDTO> campos;
@@ -172,7 +172,6 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T>
 		}
 	}
 
-
 	/**
 	 * Se encarga de validar los campos del formulario
 	 * 
@@ -234,13 +233,12 @@ public abstract class DinamicoBean<T extends ADto> extends ABean<T>
 	}
 
 	@Override
-	public IQuerySvc getServiceSvc() {
+	public IGenericServiceSvc<S> getServiceSvc() {
 		return querySvc;
 	}
 
-	@SuppressWarnings({ "unchecked", "hiding" })
 	@Override
-	public <T extends ADto> T getInstanceDTOUse() {
-		return (T) registro;
+	public T getInstanceDTOUse() {
+		return registro;
 	}
 }

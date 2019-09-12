@@ -1,6 +1,8 @@
 package org.pyt.app.beans.dinamico;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
@@ -26,7 +28,7 @@ import javafx.scene.layout.VBox;
  * @since 07-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "detalle.fxml")
-public class DetalleBean extends DinamicoBean<DetalleDTO> {
+public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, DocumentosDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
@@ -38,6 +40,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	private ParametroDTO tipoDocumento;
 	private VBox panelCentral;
 	private String codigoDocumento;
+	private Map<String, List> mapListSelects;
 
 	@FXML
 	public void initialize() {
@@ -184,12 +187,17 @@ public class DetalleBean extends DinamicoBean<DetalleDTO> {
 	}
 
 	@Override
-	public javafx.scene.layout.GridPane GridPane() {
+	public GridPane GridPane() {
 		return new GridPane();
 	}
 
 	@Override
 	public Integer maxColumns() {
 		return 2;
+	}
+
+	@Override
+	public Map<String, List> listToChoiceBoxs() {
+		return mapListSelects;
 	}
 }

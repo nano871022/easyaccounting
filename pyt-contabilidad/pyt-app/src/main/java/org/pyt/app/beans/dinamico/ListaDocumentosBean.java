@@ -2,11 +2,11 @@ package org.pyt.app.beans.dinamico;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupBean;
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
@@ -34,7 +34,7 @@ import javafx.scene.layout.HBox;
  * @since 02-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "listaDocumentos.fxml", nombreVentana = "Lista de Documentos")
-public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO> {
+public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, DocumentosDTO, DocumentosDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -52,6 +52,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO> {
 	private GridPane filterTable;
 	protected DocumentoDTO filter;
 	private ParametroDTO tipoDocumento;
+	private Map<String, List> mapListSelects;
 
 	@FXML
 	public void initialize() {
@@ -183,10 +184,9 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ADto> T getInstanceDTOUse() {
-		return (T) filter;
+	public DocumentoDTO getInstanceDTOUse() {
+		return filter;
 	}
 
 	@Override
@@ -202,6 +202,11 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO> {
 	@Override
 	public TableView getTableView() {
 		return tabla;
+	}
+
+	@Override
+	public Map<String, List> listToChoiceBoxs() {
+		return mapListSelects;
 	}
 
 }
