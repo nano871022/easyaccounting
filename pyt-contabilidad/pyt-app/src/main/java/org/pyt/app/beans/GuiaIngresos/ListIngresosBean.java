@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.IngresoException;
 
@@ -14,6 +13,7 @@ import com.pyt.service.interfaces.IIngresosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,7 +45,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 	private HBox paginador;
 	@FXML
 	private Button eliminar;
-	private DataTableFXML<IngresoDTO, IngresoDTO> dt;
+	private DataTableFXMLUtil<IngresoDTO, IngresoDTO> dt;
 
 	@FXML
 	public void initialize() {
@@ -65,7 +65,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<IngresoDTO, IngresoDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<IngresoDTO, IngresoDTO>(paginador, tabla) {
 			@Override
 			public List<IngresoDTO> getList(IngresoDTO filter, Integer page, Integer rows) {
 				List<IngresoDTO> lista = new ArrayList<IngresoDTO>();
@@ -154,7 +154,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<IngresoDTO, IngresoDTO> getDt() {
+	public DataTableFXMLUtil<IngresoDTO, IngresoDTO> getDt() {
 		return dt;
 	}
 }

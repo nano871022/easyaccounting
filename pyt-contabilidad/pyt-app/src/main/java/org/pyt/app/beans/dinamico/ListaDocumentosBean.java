@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.app.components.PopupBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
@@ -21,6 +20,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -47,7 +47,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO> {
 	private HBox titulo;
 	@FXML
 	private Label lblTitle;
-	private DataTableFXML<DocumentoDTO, DocumentoDTO> dataTable;
+	private DataTableFXMLUtil<DocumentoDTO, DocumentoDTO> dataTable;
 	@FXML
 	private GridPane filterTable;
 	protected DocumentoDTO filter;
@@ -97,7 +97,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO> {
 	}
 
 	public void lazy() {
-		dataTable = new DataTableFXML<DocumentoDTO, DocumentoDTO>(paginador, tabla) {
+		dataTable = new DataTableFXMLUtil<DocumentoDTO, DocumentoDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(DocumentoDTO filter) {

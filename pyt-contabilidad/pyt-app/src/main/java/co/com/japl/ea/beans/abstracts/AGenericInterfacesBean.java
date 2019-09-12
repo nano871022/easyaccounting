@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.app.components.IGenericColumn;
-import org.pyt.app.components.IGenericFilter;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
@@ -16,13 +13,16 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.interfaces.IGenericColumn;
+import co.com.japl.ea.interfaces.IGenericFilter;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 
 public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 		implements IGenericColumn<T>, IGenericFilter<T> {
 
-	protected DataTableFXML<T, T> dataTable;
+	protected DataTableFXMLUtil<T, T> dataTable;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
@@ -34,7 +34,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	private Map<String, Object> mapFieldUseds;
 
 	protected void loadDataModel(HBox paginator, TableView<T> tableView) {
-		dataTable = new DataTableFXML<T, T>(paginator, tableView) {
+		dataTable = new DataTableFXMLUtil<T, T>(paginator, tableView) {
 			@Override
 			public Integer getTotalRows(T filter) {
 				try {
@@ -128,7 +128,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	}
 
 	@Override
-	public DataTableFXML<T, T> getTable() {
+	public DataTableFXMLUtil<T, T> getTable() {
 		return dataTable;
 	}
 }

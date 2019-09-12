@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
@@ -19,6 +18,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -62,7 +62,7 @@ public class BancoBean extends ABean<BancoDTO> {
 	private TableColumn<BancoDTO, String> tipoCuentas;
 	@FXML
 	private TableColumn<BancoDTO, String> estados;
-	private DataTableFXML<BancoDTO, BancoDTO> dt;
+	private DataTableFXMLUtil<BancoDTO, BancoDTO> dt;
 	private final static String FIELD_NOMBRE = "nombre";
 
 	@FXML
@@ -97,7 +97,7 @@ public class BancoBean extends ABean<BancoDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<BancoDTO, BancoDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<BancoDTO, BancoDTO>(paginador, tabla) {
 			@Override
 			public List<BancoDTO> getList(BancoDTO filter, Integer page, Integer rows) {
 				List<BancoDTO> lista = new ArrayList<BancoDTO>();
@@ -231,7 +231,7 @@ public class BancoBean extends ABean<BancoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<BancoDTO, BancoDTO> getDt() {
+	public DataTableFXMLUtil<BancoDTO, BancoDTO> getDt() {
 		return dt;
 	}
 }

@@ -1,4 +1,4 @@
-package org.pyt.app.components;
+package co.com.japl.ea.beans.abstracts;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -8,8 +8,6 @@ import org.pyt.common.annotations.Inject;
 
 import com.pyt.service.interfaces.IQuerysPopup;
 
-import co.com.japl.ea.beans.abstracts.AGenericToBean;
-
 /**
  * Clase encargada de tener codio generico para poder implementar las paginas de
  * creacion dinamica segun el tipo de la clase indicado
@@ -17,7 +15,7 @@ import co.com.japl.ea.beans.abstracts.AGenericToBean;
  * @author Alejandro Parra
  * @since 09/04/2019
  */
-public abstract class GenericInterfacesReflection<T extends ADto> extends AGenericToBean<T> {
+public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends AGenericToBean<T> {
 
 	@Inject(resource = "com.pyt.service.implement.QuerysPopupSvc")
 	protected IQuerysPopup querys;
@@ -28,7 +26,7 @@ public abstract class GenericInterfacesReflection<T extends ADto> extends AGener
 	 * @param clazz {@link Class}
 	 * @throws {@link Exception}
 	 */
-	public GenericInterfacesReflection(Class<T> clazz) throws Exception {
+	public AGenericInterfacesReflectionBean(Class<T> clazz) throws Exception {
 		super();
 		setClazz(clazz);
 		instaceOfGenericDTOAll();

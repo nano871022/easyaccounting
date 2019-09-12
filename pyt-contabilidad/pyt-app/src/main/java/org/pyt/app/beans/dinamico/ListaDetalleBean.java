@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.DocumentosException;
 
@@ -15,6 +14,7 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -56,7 +56,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	@SuppressWarnings("unused")
 	private DetalleDTO filtro;
 	private DetalleDTO registro;
-	private DataTableFXML<DetalleDTO, DetalleDTO> table;
+	private DataTableFXMLUtil<DetalleDTO, DetalleDTO> table;
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
 
@@ -94,7 +94,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 	 * Se encarga de cargar la pagina del listado de detalles agregados
 	 */
 	private final void lazy() {
-		table = new DataTableFXML<DetalleDTO, DetalleDTO>(paginador, tabla) {
+		table = new DataTableFXMLUtil<DetalleDTO, DetalleDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(DetalleDTO filter) {

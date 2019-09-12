@@ -1,4 +1,4 @@
-package org.pyt.app.components;
+package co.com.japl.ea.interfaces;
 
 import java.util.HashMap;
 import java.util.Map;

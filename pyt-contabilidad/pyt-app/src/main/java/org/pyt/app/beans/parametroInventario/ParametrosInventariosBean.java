@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.beans.abstracts.AListBasicBean;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
@@ -17,6 +15,8 @@ import com.pyt.service.dto.inventario.ParametroInventarioDTO;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.AListBasicBean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -61,7 +61,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 	private Button addGroup;
 	@FXML
 	private Button modifyGroup;
-	private DataTableFXML<ParametroInventarioDTO, ParametroInventarioDTO> lazyFiltrar;
+	private DataTableFXMLUtil<ParametroInventarioDTO, ParametroInventarioDTO> lazyFiltrar;
 	private ParametroInventarioDTO filtrarGrupo;
 	private ParametroInventarioDTO seleccionFiltro;
 	@FXML
@@ -85,7 +85,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 	}
 
 	public void lazy2() {
-		lazyFiltrar = new DataTableFXML<ParametroInventarioDTO, ParametroInventarioDTO>(paginador2, filtrar) {
+		lazyFiltrar = new DataTableFXMLUtil<ParametroInventarioDTO, ParametroInventarioDTO>(paginador2, filtrar) {
 
 			@Override
 			public Integer getTotalRows(ParametroInventarioDTO filter) {
@@ -122,7 +122,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 
 	@Override
 	public void lazy() {
-		dataTable = new DataTableFXML<ParametroInventarioDTO, ParametroInventarioDTO>(paginador, tabla) {
+		dataTable = new DataTableFXMLUtil<ParametroInventarioDTO, ParametroInventarioDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(ParametroInventarioDTO filter) {

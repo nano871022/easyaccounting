@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SearchService;
@@ -37,6 +36,7 @@ import co.com.arquitectura.annotation.proccessor.Services;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -149,9 +149,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configMarcadorServicio;
 	private ConfiguracionDTO config;
-	private DataTableFXML<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO> tbServicioCampoBusqueda;
-	private DataTableFXML<MarcadorServicioDTO, MarcadorServicioDTO> tbMarcadorSerivicio;
-	private DataTableFXML<MarcadorDTO, MarcadorDTO> tbMarcador;
+	private DataTableFXMLUtil<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO> tbServicioCampoBusqueda;
+	private DataTableFXMLUtil<MarcadorServicioDTO, MarcadorServicioDTO> tbMarcadorSerivicio;
+	private DataTableFXMLUtil<MarcadorDTO, MarcadorDTO> tbMarcador;
 	@FXML
 	private RadioButton rbIn;
 	@FXML
@@ -287,7 +287,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 * marcadores, servicios Campo busqueda y marcadores servicios
 	 */
 	private void dataTable() {
-		tbServicioCampoBusqueda = new DataTableFXML<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO>(
+		tbServicioCampoBusqueda = new DataTableFXMLUtil<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO>(
 				paginatorMarcadores, lstServicioCampo) {
 
 			@Override
@@ -330,7 +330,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				return dto;
 			}
 		};
-		tbMarcadorSerivicio = new DataTableFXML<MarcadorServicioDTO, MarcadorServicioDTO>(paginatorAsociar,
+		tbMarcadorSerivicio = new DataTableFXMLUtil<MarcadorServicioDTO, MarcadorServicioDTO>(paginatorAsociar,
 				lstMarcadoresCampos) {
 
 			@Override
@@ -371,7 +371,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				return dto;
 			}
 		};
-		tbMarcador = new DataTableFXML<MarcadorDTO, MarcadorDTO>(paginatorMarcadores, lstMarcadores) {
+		tbMarcador = new DataTableFXMLUtil<MarcadorDTO, MarcadorDTO>(paginatorMarcadores, lstMarcadores) {
 
 			@Override
 			public Integer getTotalRows(MarcadorDTO filter) {

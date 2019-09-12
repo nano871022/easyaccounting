@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.EmpresasException;
 
@@ -13,6 +12,7 @@ import com.pyt.service.interfaces.IEmpresasSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -42,7 +42,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	private Button btnDel;
 	@FXML
 	private HBox paginador;
-	private DataTableFXML<EmpresaDTO, EmpresaDTO> dt;
+	private DataTableFXMLUtil<EmpresaDTO, EmpresaDTO> dt;
 
 	@FXML
 	public void initialize() {
@@ -55,7 +55,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<EmpresaDTO, EmpresaDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<EmpresaDTO, EmpresaDTO>(paginador, tabla) {
 			@Override
 			public List<EmpresaDTO> getList(EmpresaDTO filter, Integer page, Integer rows) {
 				List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
@@ -147,7 +147,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<EmpresaDTO, EmpresaDTO> getDt() {
+	public DataTableFXMLUtil<EmpresaDTO, EmpresaDTO> getDt() {
 		return dt;
 	}
 }

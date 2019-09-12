@@ -3,8 +3,6 @@ package co.com.japl.ea.beans.abstracts;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.app.components.IGenericField;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
@@ -14,6 +12,8 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.interfaces.IGenericField;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 
 public abstract class AGenericInterfacesFieldBean<T extends ADto> extends ABean<T> implements IGenericField<T> {
 
@@ -52,7 +52,7 @@ public abstract class AGenericInterfacesFieldBean<T extends ADto> extends ABean<
 	}
 
 	@Override
-	public DataTableFXML<T, T> getTable() {
+	public DataTableFXMLUtil<T, T> getTable() {
 		return null;
 	}
 

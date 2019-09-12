@@ -22,8 +22,7 @@ import javafx.scene.control.TextField;
  * @author Alejandro Parra
  * @since 09/08/2019
  */
-public interface IGenericLoadValueFromField extends IGenericFieldCommon {
-
+public interface IGenericLoadValueFromField extends IGenericMethodsCommon {
 	/**
 	 * Se encarga de cargar los datos de los campos
 	 */
@@ -79,7 +78,7 @@ public interface IGenericLoadValueFromField extends IGenericFieldCommon {
 		var value = ((TextField) obj).getText();
 		try {
 			var clase = getInstanceDTOUse().getType(nameField);
-			var valueEnd = validateValue.cast(value, clase);
+			var valueEnd = validateValues.cast(value, clase);
 			if (valueEnd != null) {
 				getInstanceDTOUse().set(nameField, valueEnd);
 			}
@@ -101,7 +100,7 @@ public interface IGenericLoadValueFromField extends IGenericFieldCommon {
 		Class clase;
 		try {
 			clase = getInstanceDTOUse().getType(nameField);
-			var valueEnd = validateValue.cast(ld, clase);
+			var valueEnd = validateValues.cast(ld, clase);
 			if (valueEnd != null) {
 				getInstanceDTOUse().set(nameField, valueEnd);
 			}

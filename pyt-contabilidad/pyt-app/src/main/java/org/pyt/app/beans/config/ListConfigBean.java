@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
@@ -13,6 +12,7 @@ import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
@@ -41,7 +41,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	private Button btnDel;
 	@FXML
 	private HBox paginador;
-	private DataTableFXML<ConfiguracionDTO, ConfiguracionDTO> dt;
+	private DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> dt;
 
 	@FXML
 	public void initialize() {
@@ -54,7 +54,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ConfiguracionDTO, ConfiguracionDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO>(paginador, tabla) {
 			@Override
 			public List<ConfiguracionDTO> getList(ConfiguracionDTO filter, Integer page, Integer rows) {
 				List<ConfiguracionDTO> lista = new ArrayList<ConfiguracionDTO>();
@@ -137,7 +137,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ConfiguracionDTO, ConfiguracionDTO> getDt() {
+	public DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> getDt() {
 		return dt;
 	}
 }

@@ -13,12 +13,14 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesReflectionBean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(path = "/", file = ".", nombreVentana = "FieldParametrizedBean")
-public class FieldParametrizedBean<T extends ADto> extends GenericInterfacesReflection<T> {
+public class FieldParametrizedBean<T extends ADto> extends AGenericInterfacesReflectionBean<T> {
 	@Inject(resource = "com.pyt.service.impls.GenericServiceSvc")
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc;
 	private PopupGenBean popupGenericBean;
@@ -106,7 +108,7 @@ public class FieldParametrizedBean<T extends ADto> extends GenericInterfacesRefl
 	}
 
 	@Override
-	public DataTableFXML<T, T> getTable() {
+	public DataTableFXMLUtil<T, T> getTable() {
 		return null;
 	}
 

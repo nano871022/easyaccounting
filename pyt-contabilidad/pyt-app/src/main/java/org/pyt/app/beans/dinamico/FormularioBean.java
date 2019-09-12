@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Compare;
@@ -34,6 +33,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -49,7 +49,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private IDocumentosSvc documentoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
-	private DataTableFXML<DocumentosDTO, DocumentosDTO> dataTable;
+	private DataTableFXMLUtil<DocumentosDTO, DocumentosDTO> dataTable;
 	@FXML
 	private Button guardar;
 	@FXML
@@ -368,7 +368,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	}
 
 	public void lazy() {
-		dataTable = new DataTableFXML<DocumentosDTO, DocumentosDTO>(paginator, tabla) {
+		dataTable = new DataTableFXMLUtil<DocumentosDTO, DocumentosDTO>(paginator, tabla) {
 
 			@Override
 			public Integer getTotalRows(DocumentosDTO filter) {

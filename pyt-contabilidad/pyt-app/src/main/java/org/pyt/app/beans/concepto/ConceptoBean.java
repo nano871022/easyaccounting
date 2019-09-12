@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
@@ -21,6 +20,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -62,7 +62,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	private TableColumn<ConceptoDTO, String> columnEmpresa;
 	@FXML
 	private TableColumn<ConceptoDTO, String> columnEstado;
-	private DataTableFXML<ConceptoDTO, ConceptoDTO> dt;
+	private DataTableFXMLUtil<ConceptoDTO, ConceptoDTO> dt;
 	private ConceptoDTO filter;
 
 	@FXML
@@ -83,7 +83,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ConceptoDTO, ConceptoDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ConceptoDTO, ConceptoDTO>(paginador, tabla) {
 			@Override
 			public List<ConceptoDTO> getList(ConceptoDTO filter, Integer page, Integer rows) {
 				List<ConceptoDTO> lista = new ArrayList<ConceptoDTO>();
@@ -206,7 +206,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ConceptoDTO, ConceptoDTO> getDt() {
+	public DataTableFXMLUtil<ConceptoDTO, ConceptoDTO> getDt() {
 		return dt;
 	}
 }

@@ -3,7 +3,6 @@ package co.com.japl.ea.beans.abstracts;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pyt.app.components.IGenericFilter;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
@@ -15,6 +14,7 @@ import org.pyt.common.exceptions.ReflectionException;
 import co.com.japl.ea.controllers.LocatorController;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
+import co.com.japl.ea.interfaces.IGenericFilter;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;

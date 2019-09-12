@@ -11,8 +11,8 @@ import org.pyt.common.validates.ValidateValues;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;
 
-public interface IGenericFieldCommon {
-	ValidateValues validateValue = new ValidateValues();
+public interface IGenericMethodsCommon {
+	final ValidateValues validateValues = new ValidateValues();
 
 	public Map<String, Object> getConfigFields();
 

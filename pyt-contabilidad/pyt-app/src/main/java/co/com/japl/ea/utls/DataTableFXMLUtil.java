@@ -1,4 +1,4 @@
-package org.pyt.app.components;
+package co.com.japl.ea.utls;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -25,7 +25,7 @@ import javafx.scene.layout.HBox;
  * @author Alejandro Parra
  * @since 18/06/2018
  */
-public abstract class DataTableFXML<S extends Object, T extends ADto> extends Table {
+public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extends Table {
 	private Button btnPrimer;
 	private Button btnUltimo;
 	private Button btnSiguiente;
@@ -43,7 +43,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 	private Log logger = Log.Log(this.getClass());
 	private Boolean firstSearch;
 
-	public DataTableFXML() {
+	public DataTableFXMLUtil() {
 		currentPage = 1;
 		rows = 10;
 		total = 5;
@@ -51,7 +51,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		firstSearch = true;
 	}
 
-	public DataTableFXML(HBox paginas, javafx.scene.control.TableView<S> table) {
+	public DataTableFXMLUtil(HBox paginas, javafx.scene.control.TableView<S> table) {
 		this();
 		this.paginas = paginas;
 		this.table = table;
@@ -59,7 +59,7 @@ public abstract class DataTableFXML<S extends Object, T extends ADto> extends Ta
 		search();
 	}
 
-	public DataTableFXML(HBox paginas, javafx.scene.control.TableView<S> table, Boolean firstSearch) {
+	public DataTableFXMLUtil(HBox paginas, javafx.scene.control.TableView<S> table, Boolean firstSearch) {
 		this();
 		this.firstSearch = firstSearch;
 		this.paginas = paginas;

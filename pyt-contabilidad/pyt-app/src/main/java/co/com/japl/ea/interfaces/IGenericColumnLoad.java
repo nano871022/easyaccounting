@@ -14,7 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
-public interface IGenericColumnLoad extends IGenericFieldCommon {
+public interface IGenericColumnLoad extends IGenericMethodsCommon {
 
 	public TableView getTableView();
 

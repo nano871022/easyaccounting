@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.DocumentosException;
 
@@ -15,6 +14,7 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -51,7 +51,7 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	private VBox panelCentral;
 	private DetalleContableDTO filtro;
 	private DetalleContableDTO registro;
-	private DataTableFXML<DetalleContableDTO, DetalleContableDTO> table;
+	private DataTableFXMLUtil<DetalleContableDTO, DetalleContableDTO> table;
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
 
@@ -81,7 +81,7 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	 * Se encarga de cargar la pagina del listado de detalles agregados
 	 */
 	private final void lazy() {
-		table = new DataTableFXML<DetalleContableDTO, DetalleContableDTO>(paginador, tabla) {
+		table = new DataTableFXMLUtil<DetalleContableDTO, DetalleContableDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(DetalleContableDTO filter) {

@@ -2,35 +2,27 @@ package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.NoEdit;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
-public interface IGenericFieldLoad extends IGenericFieldCommon {
+public interface IGenericFieldLoad extends IGenericMethodsCommon {
+	final UtilControlFieldFX genericFormsUtils = new UtilControlFieldFX();
 
 	public Integer maxColumns();
 
@@ -51,7 +43,7 @@ public interface IGenericFieldLoad extends IGenericFieldCommon {
 			return new GridPane();
 		}
 		Integer countFields = campos.size();
-		var formulario = configGridPane();
+		var formulario = genericFormsUtils.configGridPane(GridPane());
 		Integer columnIndex = 0;
 		Integer rowIndex = 0;
 		for (DocumentosDTO docs : campos) {
@@ -85,22 +77,6 @@ public interface IGenericFieldLoad extends IGenericFieldCommon {
 	}
 
 	/**
-	 * Se encarga de configurar el grid panel para el formulario
-	 * 
-	 * @return {@link GridPane}
-	 */
-	private GridPane configGridPane() {
-		var formulario = GridPane();
-		formulario.setHgap(5);
-		formulario.setVgap(5);
-		formulario.setMaxWidth(1.7976931348623157E308);
-		formulario.setPadding(new Insets(10));
-		formulario.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(formulario, Pos.TOP_LEFT);
-		return formulario;
-	}
-
-	/**
 	 * Se encarga de configurar el {@link Node} Field cuando el campo
 	 * {@link DocumentosDTO#PutNameShow Put Name show} se cneuntra vacio
 	 * 
@@ -111,8 +87,8 @@ public interface IGenericFieldLoad extends IGenericFieldCommon {
 	 */
 	private void configNodeField(DocumentosDTO docs, GridPane formulario, Integer columnIndex, Integer rowIndex) {
 		try {
-			Node field = getType(getInstanceDTOUse().getType(docs.getFieldName()),
-					getInstanceDTOUse().get(docs.getFieldName()));
+			Node field = genericFormsUtils.getFieldNodeFormFromTypeAndValue(
+					getInstanceDTOUse().getType(docs.getFieldName()), getInstanceDTOUse().get(docs.getFieldName()));
 			if (field instanceof TextField)
 				((TextField) field).focusedProperty().addListener(e -> methodChanges());
 			if (field != null) {
@@ -245,77 +221,4 @@ public interface IGenericFieldLoad extends IGenericFieldCommon {
 		}
 	}
 
-	/**
-	 * Obtiene el campo en el cual sera usado para poner en el formulario generado
-	 * apartir del tipo de dato que retorna el nombre del campo a usar
-	 * 
-	 * @param type {@link Class}
-	 * @return {@link Node} campos javafx
-	 */
-	@SuppressWarnings("hiding")
-	private <T extends Object> Node getType(Class<T> type, T value) {
-		if (type == Date.class) {
-			DatePicker dp = new DatePicker();
-			if (validateValue.isCast(value, Date.class)) {
-				LocalDate ld = ((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-				dp.setValue(ld);
-			}
-			return dp;
-		}
-		if (type == LocalDate.class) {
-			DatePicker dp = new DatePicker();
-			if (validateValue.isCast(value, LocalDate.class))
-				dp.setValue((LocalDate) value);
-			return dp;
-		}
-		if (type == Boolean.class) {
-			CheckBox cb = new CheckBox();
-			if (validateValue.isCast(value, Boolean.class))
-				cb.setSelected((Boolean) value);
-			return cb;
-		}
-		if (type == String.class) {
-			TextField tf = new TextField();
-			if (validateValue.isCast(value, String.class))
-				tf.setText((String) value);
-			return tf;
-		}
-		if (type == Double.class) {
-			TextField tf = new TextField();
-			if (validateValue.isCast(value, Double.class))
-				tf.setText(String.valueOf((Double) value));
-			return tf;
-		}
-		if (type == Integer.class) {
-			TextField tf = new TextField();
-			if (validateValue.isCast(value, Integer.class))
-				tf.setText(String.valueOf((Integer) value));
-			return tf;
-		}
-		if (type == BigDecimal.class) {
-			TextField tf = new TextField();
-			if (validateValue.isCast(value, BigDecimal.class))
-				tf.setText(String.valueOf((BigDecimal) value));
-			return tf;
-		}
-		if (type == BigInteger.class) {
-			TextField tf = new TextField();
-			if (validateValue.isCast(value, BigInteger.class))
-				tf.setText(String.valueOf((BigInteger) value));
-			return tf;
-		}
-		if (type == Long.class) {
-			TextField tf = new TextField();
-			if (validateValue.isCast(value, Long.class))
-				tf.setText(String.valueOf((Long) value));
-			return tf;
-		}
-		if (type == Float.class) {
-			TextField tf = new TextField();
-			if (validateValue.isCast(value, Float.class))
-				tf.setText(String.valueOf((Float) value));
-			return tf;
-		}
-		return null;
-	}
 }

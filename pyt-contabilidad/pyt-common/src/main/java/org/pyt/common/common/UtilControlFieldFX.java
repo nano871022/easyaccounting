@@ -1,6 +1,11 @@
 package org.pyt.common.common;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -10,14 +15,19 @@ import org.controlsfx.glyphfont.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.interfaces.IAssingValueToField;
 import org.pyt.common.interfaces.ICaller;
+import org.pyt.common.validates.ValidateValues;
 
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -32,6 +42,7 @@ public final class UtilControlFieldFX {
 	private final Log logger = Log.Log(this.getClass());
 	private final static String CONTS_EXP_REG_TO_TEXTFIELD = "(String|Long|Integer|BigDecimal|LongDecimal|Float|Char|char|long|int|floar|Decimal)";
 	private final static String CONTS_EXP_REG_TO_CHECKBOX = "(Boolean|bool|boolean)";
+	private ValidateValues validateValue = new ValidateValues();
 
 	/**
 	 * Se ecarga de retornar un campo de tipo FX segun el tipo(Class) de un
@@ -188,6 +199,96 @@ public final class UtilControlFieldFX {
 				logger.logger(e);
 			}
 		});
+	}
+
+	/**
+	 * Se encarga de configurar el grid panel para el formulario
+	 * 
+	 * @return {@link GridPane}
+	 */
+	public final GridPane configGridPane(GridPane gridPane) {
+		var formulario = gridPane;
+		formulario.setHgap(5);
+		formulario.setVgap(5);
+		formulario.setMaxWidth(1.7976931348623157E308);
+		formulario.setPadding(new Insets(10));
+		formulario.setAlignment(Pos.CENTER);
+		BorderPane.setAlignment(formulario, Pos.TOP_LEFT);
+		return formulario;
+	}
+
+	/**
+	 * Obtiene el campo en el cual sera usado para poner en el formulario generado
+	 * apartir del tipo de dato que retorna el nombre del campo a usar
+	 * 
+	 * @param type {@link Class}
+	 * @return {@link Node} campos javafx
+	 */
+	@SuppressWarnings("hiding")
+	public final <T extends Object> Node getFieldNodeFormFromTypeAndValue(Class<T> type, T value) {
+		if (type == Date.class) {
+			DatePicker dp = new DatePicker();
+			if (validateValue.isCast(value, Date.class)) {
+				LocalDate ld = ((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				dp.setValue(ld);
+			}
+			return dp;
+		}
+		if (type == LocalDate.class) {
+			DatePicker dp = new DatePicker();
+			if (validateValue.isCast(value, LocalDate.class))
+				dp.setValue((LocalDate) value);
+			return dp;
+		}
+		if (type == Boolean.class) {
+			CheckBox cb = new CheckBox();
+			if (validateValue.isCast(value, Boolean.class))
+				cb.setSelected((Boolean) value);
+			return cb;
+		}
+		if (type == String.class) {
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, String.class))
+				tf.setText((String) value);
+			return tf;
+		}
+		if (type == Double.class) {
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Double.class))
+				tf.setText(String.valueOf((Double) value));
+			return tf;
+		}
+		if (type == Integer.class) {
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Integer.class))
+				tf.setText(String.valueOf((Integer) value));
+			return tf;
+		}
+		if (type == BigDecimal.class) {
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, BigDecimal.class))
+				tf.setText(String.valueOf((BigDecimal) value));
+			return tf;
+		}
+		if (type == BigInteger.class) {
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, BigInteger.class))
+				tf.setText(String.valueOf((BigInteger) value));
+			return tf;
+		}
+		if (type == Long.class) {
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Long.class))
+				tf.setText(String.valueOf((Long) value));
+			return tf;
+		}
+		if (type == Float.class) {
+			TextField tf = new TextField();
+			if (validateValue.isCast(value, Float.class))
+				tf.setText(String.valueOf((Float) value));
+			return tf;
+		}
+		return null;
 	}
 
 }

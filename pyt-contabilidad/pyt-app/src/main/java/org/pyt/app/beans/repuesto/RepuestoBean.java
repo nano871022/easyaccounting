@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.inventario.ProductosException;
 
@@ -14,6 +13,7 @@ import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -39,7 +39,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
-	private DataTableFXML<ProductoDTO, ProductoDTO> dt;
+	private DataTableFXMLUtil<ProductoDTO, ProductoDTO> dt;
 
 	@FXML
 	public void initialize() {
@@ -52,7 +52,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ProductoDTO, ProductoDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ProductoDTO, ProductoDTO>(paginador, tabla) {
 			@Override
 			public List<ProductoDTO> getList(ProductoDTO filter, Integer page, Integer rows) {
 				List<ProductoDTO> lista = new ArrayList<ProductoDTO>();
@@ -135,7 +135,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ProductoDTO, ProductoDTO> getDt() {
+	public DataTableFXMLUtil<ProductoDTO, ProductoDTO> getDt() {
 		return dt;
 	}
 }

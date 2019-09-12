@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.beans.abstracts.AListBasicBean;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
@@ -17,6 +15,8 @@ import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.AListBasicBean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -60,7 +60,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	private Button addGroup;
 	@FXML
 	private Button modifyGroup;
-	private DataTableFXML<ParametroDTO, ParametroDTO> lazyFiltrar;
+	private DataTableFXMLUtil<ParametroDTO, ParametroDTO> lazyFiltrar;
 	private ParametroDTO filtrarGrupo;
 	private ParametroDTO seleccionFiltro;
 	@FXML
@@ -84,7 +84,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	}
 
 	public void lazy2() {
-		lazyFiltrar = new DataTableFXML<ParametroDTO, ParametroDTO>(paginador2, filtrar) {
+		lazyFiltrar = new DataTableFXMLUtil<ParametroDTO, ParametroDTO>(paginador2, filtrar) {
 
 			@Override
 			public Integer getTotalRows(ParametroDTO filter) {
@@ -121,7 +121,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	@Override
 	public void lazy() {
-		dataTable = new DataTableFXML<ParametroDTO, ParametroDTO>(paginador, tabla) {
+		dataTable = new DataTableFXMLUtil<ParametroDTO, ParametroDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(ParametroDTO filter) {

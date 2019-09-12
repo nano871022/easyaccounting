@@ -3,7 +3,6 @@ package org.pyt.app.beans.users;
 import java.util.List;
 
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 
@@ -12,6 +11,7 @@ import com.pyt.service.interfaces.IUsersSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -58,7 +58,7 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 
 	@Override
 	protected void loadDataModel(HBox paginator, TableView<UsuarioDTO> tableView) {
-		dataTable = new DataTableFXML<UsuarioDTO, UsuarioDTO>(paginator, tableView) {
+		dataTable = new DataTableFXMLUtil<UsuarioDTO, UsuarioDTO>(paginator, tableView) {
 			@Override
 			public Integer getTotalRows(UsuarioDTO filter) {
 				try {

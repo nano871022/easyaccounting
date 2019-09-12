@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
  * @author Alejandro Parra
  * @since 09/08/2019
  */
-public interface IGenericFieldValueToField extends IGenericFieldCommon {
+public interface IGenericFieldValueToField extends IGenericMethodsCommon {
 	/**
 	 * Se encarga de poner en un campo el valor suministrado
 	 * 
@@ -23,7 +23,7 @@ public interface IGenericFieldValueToField extends IGenericFieldCommon {
 				return;
 			Object obj = getConfigFields().get(nombreCampo);
 			if (obj instanceof TextField) {
-				((TextField) obj).setText(validateValue.cast(value, String.class));
+				((TextField) obj).setText(validateValues.cast(value, String.class));
 			}
 		} catch (ValidateValueException e) {
 			error(e);

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.ActividadIcaException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
@@ -15,6 +14,7 @@ import com.pyt.service.interfaces.IActividadIcaSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -44,7 +44,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 	private Button btnDel;
 	@FXML
 	private HBox paginador;
-	private DataTableFXML<ActividadIcaDTO, ActividadIcaDTO> dt;
+	private DataTableFXMLUtil<ActividadIcaDTO, ActividadIcaDTO> dt;
 
 	@FXML
 	public void initialize() {
@@ -57,7 +57,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ActividadIcaDTO, ActividadIcaDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ActividadIcaDTO, ActividadIcaDTO>(paginador, tabla) {
 			@Override
 			public List<ActividadIcaDTO> getList(ActividadIcaDTO filter, Integer page, Integer rows) {
 				List<ActividadIcaDTO> lista = new ArrayList<ActividadIcaDTO>();
@@ -147,7 +147,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ActividadIcaDTO, ActividadIcaDTO> getDt() {
+	public DataTableFXMLUtil<ActividadIcaDTO, ActividadIcaDTO> getDt() {
 		return dt;
 	}
 }

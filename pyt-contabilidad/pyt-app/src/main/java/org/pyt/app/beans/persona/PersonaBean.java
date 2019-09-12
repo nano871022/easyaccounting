@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.EmpleadoException;
 
@@ -14,6 +13,7 @@ import com.pyt.service.interfaces.IEmpleadosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -53,7 +53,7 @@ public class PersonaBean extends ABean<PersonaDTO> {
 	private TableColumn<PersonaDTO, String> cedula;
 	@FXML
 	private TableColumn<PersonaDTO, String> fechaNacimiento;
-	private DataTableFXML<PersonaDTO, PersonaDTO> dt;
+	private DataTableFXMLUtil<PersonaDTO, PersonaDTO> dt;
 	private final String formatoFechaShow = "dd/MM/YYY";
 
 	@FXML
@@ -95,7 +95,7 @@ public class PersonaBean extends ABean<PersonaDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<PersonaDTO, PersonaDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<PersonaDTO, PersonaDTO>(paginador, tabla) {
 			@Override
 			public List<PersonaDTO> getList(PersonaDTO filter, Integer page, Integer rows) {
 				List<PersonaDTO> lista = new ArrayList<PersonaDTO>();
@@ -186,7 +186,7 @@ public class PersonaBean extends ABean<PersonaDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<PersonaDTO, PersonaDTO> getDt() {
+	public DataTableFXMLUtil<PersonaDTO, PersonaDTO> getDt() {
 		return dt;
 	}
 }

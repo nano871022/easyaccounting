@@ -1,4 +1,4 @@
-package org.pyt.app.components;
+package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +23,7 @@ import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 
 public interface IGenericCommon<T extends ADto> {
 	ValidateValues validateValues = new ValidateValues();
@@ -35,7 +36,7 @@ public interface IGenericCommon<T extends ADto> {
 
 	void setClazz(Class<T> clazz);
 
-	DataTableFXML<T, T> getTable();
+	DataTableFXMLUtil<T, T> getTable();
 
 	IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc();
 

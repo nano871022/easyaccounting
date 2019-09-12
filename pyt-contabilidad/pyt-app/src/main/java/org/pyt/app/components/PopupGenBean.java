@@ -19,7 +19,9 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesReflectionBean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -40,10 +42,10 @@ import javafx.scene.layout.HBox;
  * @param <T> extends {@link ADto}
  */
 @FXMLFile(path = "/", file = ".", nombreVentana = "PopupGenericBean")
-public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T> {
+public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBean<T> {
 
 	private T filter;
-	private DataTableFXML<T, T> table;
+	private DataTableFXMLUtil<T, T> table;
 
 	private Map<String, GenericPOJO<T>> filtros;
 	private Map<String, GenericPOJO<T>> columnas;
@@ -121,7 +123,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	}
 
 	private void loadTable() {
-		table = new DataTableFXML<T, T>(paginador, tabla, false) {
+		table = new DataTableFXMLUtil<T, T>(paginador, tabla, false) {
 
 			@Override
 			public List<T> getList(T filter, Integer page, Integer rows) {
@@ -203,7 +205,7 @@ public class PopupGenBean<T extends ADto> extends GenericInterfacesReflection<T>
 	}
 
 	@Override
-	public DataTableFXML<T, T> getTable() {
+	public DataTableFXMLUtil<T, T> getTable() {
 		return table;
 	}
 

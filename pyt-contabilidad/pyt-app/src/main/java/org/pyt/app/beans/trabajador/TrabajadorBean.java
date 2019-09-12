@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.EmpleadoException;
 
@@ -15,6 +14,7 @@ import com.pyt.service.interfaces.IEmpleadosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -56,7 +56,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	private TableColumn<TrabajadorDTO, String> estado;
 	@FXML
 	private TableColumn<TrabajadorDTO, String> fechaNacimiento;
-	private DataTableFXML<TrabajadorDTO, TrabajadorDTO> dt;
+	private DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO> dt;
 
 	@FXML
 	public void initialize() {
@@ -102,7 +102,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<TrabajadorDTO, TrabajadorDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO>(paginador, tabla) {
 			@Override
 			public List<TrabajadorDTO> getList(TrabajadorDTO filter, Integer page, Integer rows) {
 				List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
@@ -194,7 +194,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<TrabajadorDTO, TrabajadorDTO> getDt() {
+	public DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO> getDt() {
 		return dt;
 	}
 }
