@@ -14,7 +14,7 @@ import com.pyt.service.interfaces.ICargue;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.loader.pojo.FilePOJO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

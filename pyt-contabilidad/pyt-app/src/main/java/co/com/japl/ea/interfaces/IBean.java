@@ -1,4 +1,4 @@
-package co.com.japl.ea.beans;
+package co.com.japl.ea.interfaces;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -8,7 +8,10 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.reflection.Reflection;
 
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.beans.abstracts.AGenericToBean;
 import co.com.japl.ea.controllers.LocatorController;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 

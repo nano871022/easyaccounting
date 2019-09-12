@@ -2,7 +2,7 @@ package org.pyt.app.load;
 
 import org.pyt.app.beans.users.LoginBean;
 
-import co.com.japl.ea.beans.LoadAppFxml;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

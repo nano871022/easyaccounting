@@ -1,4 +1,4 @@
-package co.com.japl.ea.beans;
+package co.com.japl.ea.utls;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +12,8 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.beans.abstracts.AGenericToBean;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
@@ -73,7 +75,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				file = AppConstants.SLASH + file;
 			}
 			URL url = class1.getResource(file);
-			FXMLLoader loader = new FXMLLoader(url,getLanguage());
+			FXMLLoader loader = new FXMLLoader(url, getLanguage());
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			loadApp().getStage().setTitle(title);
@@ -96,13 +98,14 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("Problema en I/O.", e);
 		}
 	}
-	
-	public final static <T extends AGenericToBean<D>, D extends ADto> T loadBeanFX(T genericBean) throws LoadAppFxmlException {
+
+	public final static <T extends AGenericToBean<D>, D extends ADto> T loadBeanFX(T genericBean)
+			throws LoadAppFxmlException {
 		try {
 			Stage stg = new Stage();
 			genericBean.start(stg);
 			genericBean.initialize();
-			
+
 		} catch (InstantiationException e) {
 			throw new LoadAppFxmlException("Problema en instanciacion.", e);
 		} catch (IllegalAccessException e) {
@@ -146,7 +149,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				file = AppConstants.SLASH + file;
 			}
 			URL url = class1.getResource(file);
-			FXMLLoader loader = new FXMLLoader(url,getLanguage());
+			FXMLLoader loader = new FXMLLoader(url, getLanguage());
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
 			loadApp().getStage().setTitle(title);
@@ -195,7 +198,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 					file = AppConstants.SLASH + file;
 				}
 				URL url = controller.getResource(file);
-				FXMLLoader loader = new FXMLLoader(url,getLanguage());
+				FXMLLoader loader = new FXMLLoader(url, getLanguage());
 				Parent root = loader.load();
 				root.autosize();
 				Scene scene = new Scene(root);
@@ -247,7 +250,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				file = AppConstants.SLASH + file;
 			}
 			URL url = bean.getResource(file);
-			FXMLLoader loader = new FXMLLoader(url,getLanguage());
+			FXMLLoader loader = new FXMLLoader(url, getLanguage());
 			Parent root = loader.load();
 			loadApp().getLastLayout().getChildren().clear();
 			loadApp().getLastLayout().getChildren().add(root);
@@ -280,7 +283,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				file = AppConstants.SLASH + file;
 			}
 			URL url = bean.getResource(file);
-			FXMLLoader loader = new FXMLLoader(url,getLanguage());
+			FXMLLoader loader = new FXMLLoader(url, getLanguage());
 			return loader.getController();
 		} catch (InstantiationException e) {
 			throw new LoadAppFxmlException("Problema en instanciacion.", e);
@@ -318,7 +321,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				file = AppConstants.SLASH + file;
 			}
 			url = bean.getResource(file);
-			return new FXMLLoader(url,getLanguage());
+			return new FXMLLoader(url, getLanguage());
 		} catch (InstantiationException e) {
 			throw new LoadAppFxmlException("Problema en instanciacion.", e);
 		} catch (IllegalAccessException e) {
@@ -430,7 +433,8 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	public final Boolean isLastContro() {
 		return lastContro != null;
 	}
+
 	private final static ResourceBundle getLanguage() {
-		return ResourceBundle.getBundle(AppConstants.RESOURCE_BUNDLE,Locale.getDefault());
+		return ResourceBundle.getBundle(AppConstants.RESOURCE_BUNDLE, Locale.getDefault());
 	}
 }

@@ -1,4 +1,4 @@
-package co.com.japl.ea.beans;
+package co.com.japl.ea.beans.abstracts;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
@@ -14,6 +14,7 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.controllers.LocatorController;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.interfaces.IBean;
 
 /**
  * Se encarga de implementar {@link IBean} para contruir controlladores de

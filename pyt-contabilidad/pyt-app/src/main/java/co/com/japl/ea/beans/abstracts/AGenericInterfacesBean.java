@@ -1,4 +1,4 @@
-package co.com.japl.ea.beans;
+package co.com.japl.ea.beans.abstracts;
 
 import java.util.HashMap;
 import java.util.List;

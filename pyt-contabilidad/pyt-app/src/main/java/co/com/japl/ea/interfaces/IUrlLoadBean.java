@@ -1,4 +1,4 @@
-package co.com.japl.ea.beans;
+package co.com.japl.ea.interfaces;
 
 /**
  * Esta interfaz se encarga de especificar si un bean recibe parametros por la

@@ -11,7 +11,7 @@ import org.pyt.common.validates.ValidateValues;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;

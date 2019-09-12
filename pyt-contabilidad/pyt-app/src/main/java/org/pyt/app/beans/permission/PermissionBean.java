@@ -8,7 +8,7 @@ import org.pyt.common.validates.ValidFields;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.AGenericInterfacesFieldBean;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
 import co.com.japl.ea.dto.system.PermissionDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

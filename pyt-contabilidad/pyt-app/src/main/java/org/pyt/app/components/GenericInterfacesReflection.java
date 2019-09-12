@@ -8,7 +8,7 @@ import org.pyt.common.annotations.Inject;
 
 import com.pyt.service.interfaces.IQuerysPopup;
 
-import co.com.japl.ea.beans.AGenericToBean;
+import co.com.japl.ea.beans.abstracts.AGenericToBean;
 
 /**
  * Clase encargada de tener codio generico para poder implementar las paginas de

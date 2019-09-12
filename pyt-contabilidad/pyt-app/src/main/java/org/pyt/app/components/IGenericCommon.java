@@ -21,7 +21,7 @@ import org.pyt.common.validates.ValidateValues;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
-import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 
 public interface IGenericCommon<T extends ADto> {

@@ -1,4 +1,4 @@
-package org.pyt.app.beans.dinamico;
+package co.com.japl.ea.beans.abstracts;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +12,10 @@ import org.pyt.common.common.Log;
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;
 
-import co.com.japl.ea.beans.ABean;
-import co.com.japl.ea.beans.IUrlLoadBean;
+import co.com.japl.ea.interfaces.IGenericColumnLoad;
+import co.com.japl.ea.interfaces.IGenericFieldLoad;
+import co.com.japl.ea.interfaces.IGenericLoadValueFromField;
+import co.com.japl.ea.interfaces.IUrlLoadBean;
 
 public abstract class AListGenericDinamicBean<T extends ADto> extends ABean<T>
 		implements IGenericFieldLoad, IGenericLoadValueFromField, IUrlLoadBean, IGenericColumnLoad {

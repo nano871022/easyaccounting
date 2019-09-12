@@ -21,7 +21,10 @@ import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 
-import co.com.japl.ea.beans.ABean;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.interfaces.IGenericFieldLoad;
+import co.com.japl.ea.interfaces.IGenericFieldValueToField;
+import co.com.japl.ea.interfaces.IGenericLoadValueFromField;
 import javafx.scene.control.TextField;
 
 /**

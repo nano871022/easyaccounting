@@ -13,7 +13,7 @@ import org.pyt.common.interfaces.IComunicacion;
 import org.pyt.common.reflection.Reflection;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.LoadAppFxml;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;

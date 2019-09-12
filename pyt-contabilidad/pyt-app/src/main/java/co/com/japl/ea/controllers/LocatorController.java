@@ -9,8 +9,8 @@ import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.reflection.ReflectionUtils;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.IBean;
-import co.com.japl.ea.beans.LoadAppFxml;
+import co.com.japl.ea.interfaces.IBean;
+import co.com.japl.ea.utls.LoadAppFxml;
 
 /**
  * Se encarga de localizar el controlador

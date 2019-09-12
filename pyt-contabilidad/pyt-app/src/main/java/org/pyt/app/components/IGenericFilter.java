@@ -15,7 +15,7 @@ import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.pojo.GenericPOJO;
 
-import co.com.japl.ea.beans.AGenericToBean;
+import co.com.japl.ea.beans.abstracts.AGenericToBean;
 import javafx.scene.layout.GridPane;
 
 public interface IGenericFilter<T extends ADto> extends IGenericFieldsCommon<T> {

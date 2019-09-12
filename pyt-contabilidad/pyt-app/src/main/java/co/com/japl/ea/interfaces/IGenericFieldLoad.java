@@ -1,4 +1,4 @@
-package org.pyt.app.beans.dinamico;
+package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

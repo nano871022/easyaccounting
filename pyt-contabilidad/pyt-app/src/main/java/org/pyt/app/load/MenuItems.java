@@ -16,11 +16,11 @@ import org.pyt.common.properties.PropertiesUtils;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
-import co.com.japl.ea.beans.ABean;
-import co.com.japl.ea.beans.IUrlLoadBean;
-import co.com.japl.ea.beans.LoadAppFxml;
+import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.MenuDTO;
+import co.com.japl.ea.interfaces.IUrlLoadBean;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

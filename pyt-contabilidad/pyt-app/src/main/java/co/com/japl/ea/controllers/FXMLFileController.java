@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.IBean;
+import co.com.japl.ea.interfaces.IBean;
 
 /**
  * Se encarga de usar para generalizar el proceso de obtencion del controlador

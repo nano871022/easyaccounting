@@ -13,8 +13,8 @@ import com.pyt.service.dto.inventario.ProductoDTO;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.ABean;
-import co.com.japl.ea.beans.LoadAppFxml;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;

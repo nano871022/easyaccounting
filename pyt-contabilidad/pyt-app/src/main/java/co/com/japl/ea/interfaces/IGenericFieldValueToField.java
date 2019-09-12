@@ -1,4 +1,4 @@
-package org.pyt.app.beans.dinamico;
+package co.com.japl.ea.interfaces;
 
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
