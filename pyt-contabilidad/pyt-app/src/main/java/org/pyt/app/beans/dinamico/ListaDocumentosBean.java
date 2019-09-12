@@ -209,4 +209,8 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 		return mapListSelects;
 	}
 
+	@Override
+	public void setColumns(Map columns) {
+	}
+
 }

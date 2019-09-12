@@ -4,27 +4,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.common.I18n;
-import org.pyt.common.common.Log;
-import org.pyt.common.validates.ValidateValues;
 
-import com.pyt.service.interfaces.IGenericServiceSvc;
-
-public interface IGenericMethodsCommon<T extends ADto, S extends ADto, F extends ADto> {
-	final ValidateValues validateValues = new ValidateValues();
-
-	public Log getLogger();
-
-	public I18n getI18n();
-
-	public void warning(String msn);
-
-	public void error(Throwable error);
-
-	public IGenericServiceSvc<S> getServiceSvc();
-
+public interface IGenericMethodsCommon<T extends ADto, S extends ADto, F extends ADto> extends ICommonMethods<S> {
+	/**
+	 * Se elamacenan los campos que fueron creados en el formulario
+	 * 
+	 * @return
+	 */
 	public Map<String, Object> getConfigFields();
 
+	/**
+	 * Se encarga de almacenar las lista para poner en los choicebox
+	 * 
+	 * @return
+	 */
 	public Map<String, Object> getConfigFieldTypeList();
 
 	public List<F> getFields();

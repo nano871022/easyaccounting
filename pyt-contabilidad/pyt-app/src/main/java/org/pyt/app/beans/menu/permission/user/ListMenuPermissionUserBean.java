@@ -47,7 +47,7 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 			loadDataModel(paginator, tableGeneric);
 			setClazz(MenuPermUsersDTO.class);
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}

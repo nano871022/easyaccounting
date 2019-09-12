@@ -47,7 +47,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 			loadDataModel(paginator, tableGeneric);
 			setClazz(MenuDTO.class);
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}

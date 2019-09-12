@@ -11,7 +11,10 @@ import org.pyt.common.common.Log;
 import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
+import com.pyt.service.interfaces.IGenericServiceSvc;
+
 import co.com.japl.ea.controllers.LocatorController;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
 import co.com.japl.ea.interfaces.IGenericFilter;
@@ -154,4 +157,17 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 		return logger;
 	}
 
+	@Override
+	public void warning(String msn) {
+		alerta(msn);
+	}
+
+	@Override
+	public void error(Throwable error) {
+		error(error);
+	}
+
+	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
+		return null;
+	}
 }

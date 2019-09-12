@@ -113,7 +113,7 @@ public class FieldParametrizedBean<T extends ADto> extends AGenericInterfacesRef
 	}
 
 	@Override
-	public IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc() {
+	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
 		return configGenericFieldSvc;
 	}
 

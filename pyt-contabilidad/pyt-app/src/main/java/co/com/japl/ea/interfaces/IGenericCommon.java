@@ -11,28 +11,17 @@ import java.util.TreeMap;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
-import org.pyt.common.common.I18n;
-import org.pyt.common.common.Log;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.GenericServiceException;
-import org.pyt.common.validates.ValidateValues;
 
-import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.pojo.GenericPOJO;
 
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
 
-public interface IGenericCommon<T extends ADto> {
-	ValidateValues validateValues = new ValidateValues();
-
-	Log getLogger();
-
-	I18n getI18n();
-
-	IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc();
+public interface IGenericCommon<T extends ADto> extends ICommonMethods<ConfigGenericFieldDTO> {
 
 	Class<T> getClazz();
 
@@ -54,7 +43,7 @@ public interface IGenericCommon<T extends ADto> {
 			}
 			dto.setState(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO);
 			dto.setClassPathBean(((ABean<T>) this).getClass().getName());
-			var list = configGenericFieldSvc().getAll(dto);
+			var list = getServiceSvc().getAll(dto);
 			if (list != null && list.size() > 0) {
 				Map<String, GenericPOJO<T>> maps = new TreeMap<String, GenericPOJO<T>>();
 
@@ -101,7 +90,7 @@ public interface IGenericCommon<T extends ADto> {
 			dto.setState(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO);
 			dto.setIsColumn(column);
 			dto.setIsFilter(filter);
-			return configGenericFieldSvc().getAll(dto);
+			return getServiceSvc().getAll(dto);
 		} catch (GenericServiceException e) {
 			getLogger().logger(e);
 		}

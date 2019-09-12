@@ -47,7 +47,7 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 			loadDataModel(paginator, tableGeneric);
 			setClazz(HelpDTO.class);
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}

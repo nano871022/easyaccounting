@@ -118,7 +118,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	}
 
 	@Override
-	public IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc() {
+	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
 		return configGenericSvc;
 	}
 
@@ -130,5 +130,15 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	@Override
 	public DataTableFXMLUtil<T, T> getTable() {
 		return dataTable;
+	}
+
+	@Override
+	public void warning(String msn) {
+		alerta(msn);
+	}
+
+	@Override
+	public void error(Throwable error) {
+		error(error);
 	}
 }

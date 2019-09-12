@@ -47,7 +47,7 @@ public class ListPermissionBean extends AGenericInterfacesBean<PermissionDTO> {
 			loadDataModel(paginator, tableGeneric);
 			setClazz(PermissionDTO.class);
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}

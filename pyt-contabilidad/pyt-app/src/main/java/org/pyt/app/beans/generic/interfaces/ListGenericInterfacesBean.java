@@ -60,7 +60,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		if (del) {
 			dataTable.getSelectedRows().forEach(row -> {
 				try {
-					configGenericFieldSvc().delete(row, userLogin);
+					getServiceSvc().delete(row, userLogin);
 					notificar(
 							String.format(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE),
 									row.getCodigo()));
@@ -88,7 +88,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	public final void load() {
 		try {
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}

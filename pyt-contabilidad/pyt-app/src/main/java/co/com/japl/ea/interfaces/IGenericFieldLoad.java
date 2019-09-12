@@ -35,7 +35,7 @@ public interface IGenericFieldLoad extends IGenericMethodsCommon {
 	 * @throws org.pyt.common.exceptions.ReflectionException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default <N, M extends ADto> GridPane loadGrid() {
+	default GridPane configFields() {
 		Integer maxColumn = maxColumns();
 		List<DocumentosDTO> campos = getFields();
 		if (campos == null) {

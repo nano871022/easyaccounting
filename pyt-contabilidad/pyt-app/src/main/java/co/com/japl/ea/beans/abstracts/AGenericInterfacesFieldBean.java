@@ -57,7 +57,7 @@ public abstract class AGenericInterfacesFieldBean<T extends ADto> extends ABean<
 	}
 
 	@Override
-	public IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc() {
+	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
 		return configGenericSvc;
 	}
 
@@ -79,5 +79,15 @@ public abstract class AGenericInterfacesFieldBean<T extends ADto> extends ABean<
 	@Override
 	public void setRegister(T filter) {
 		registro = filter;
+	}
+
+	@Override
+	public void warning(String msn) {
+		alerta(msn);
+	}
+
+	@Override
+	public void error(Throwable error) {
+		error(error);
 	}
 }

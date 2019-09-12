@@ -67,8 +67,10 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 	}
 
 	@Override
-	public List<DocumentosDTO> getColumns() {
-		return genericColumns;
+	public Map<String, DocumentosDTO> getColumns() {
+		Map<String, DocumentosDTO> map = new HashMap<String, DocumentosDTO>();
+		genericColumns.forEach(column -> map.put(column.getFieldName(), column));
+		return map;
 	}
 
 	@Override

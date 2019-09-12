@@ -47,7 +47,7 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 			loadDataModel(paginator, tableGeneric);
 			setClazz(GroupUsersDTO.class);
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}

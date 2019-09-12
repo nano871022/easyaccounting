@@ -47,7 +47,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 			loadDataModel(paginator, tableGeneric);
 			setClazz(LanguagesDTO.class);
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}

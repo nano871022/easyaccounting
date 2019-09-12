@@ -1,7 +1,6 @@
 package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.constants.LanguageConstant;
@@ -15,13 +14,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-public interface IGenericColumn<T extends ADto> extends IGenericCommon<T> {
-
-	Map<String, GenericPOJO<T>> getColumns();
-
-	void setColumns(Map<String, GenericPOJO<T>> columns);
-
-	TableView<T> getTableView();
+public interface IGenericColumn<T extends ADto> extends IGenericCommon<T>, IColumnCommon<T, GenericPOJO<T>> {
 
 	/**
 	 * Se encarga de configurar el mapa de filtros y agregar los campos de filtros a
@@ -31,14 +24,14 @@ public interface IGenericColumn<T extends ADto> extends IGenericCommon<T> {
 	 * @throws InstantiationException
 	 * @throws InvocationTargetException
 	 * 
-	 * @throws {@link
-	 *             IllegalAccessException}
+	 * @throws                           {@link IllegalAccessException}
 	 */
-	default void configColumns() throws Exception {
-		var filters = getConfigFields(getInstaceOfGenericADto(), true, false);
-		if (filters == null)
+	@Override
+	default TableView<T> loadColumnsIntoTableView() throws Exception {
+		var columns = getConfigFields(getInstaceOfGenericADto(), true, false);
+		if (columns == null)
 			throw new Exception(getI18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE));
-		setColumns(filters);
+		setColumns(columns);
 		getColumns().entrySet().stream().sorted((compare1, compare2) -> {
 			if (compare1 == null || compare1.getValue().getOrder() == null)
 				return -1;
@@ -60,6 +53,6 @@ public interface IGenericColumn<T extends ADto> extends IGenericCommon<T> {
 			getTableView().getColumns().add(column);
 		});
 		getTableView().getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
-
+		return getTableView();
 	}
 }

@@ -26,6 +26,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -291,4 +292,15 @@ public final class UtilControlFieldFX {
 		return null;
 	}
 
+	/**
+	 * Se encarga de configurar el grid panel para el formulario
+	 * 
+	 * @return {@link GridPane}
+	 */
+	public final TableView configTableView(TableView table) {
+		table.setMaxWidth(1.7976931348623157E308);
+		table.setPadding(new Insets(10));
+		BorderPane.setAlignment(table, Pos.TOP_LEFT);
+		return table;
+	}
 }

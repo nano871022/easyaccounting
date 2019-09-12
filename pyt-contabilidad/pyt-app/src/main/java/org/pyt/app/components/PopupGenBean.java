@@ -233,7 +233,7 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 	}
 
 	@Override
-	public IGenericServiceSvc<ConfigGenericFieldDTO> configGenericFieldSvc() {
+	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
 		return configGenericFieldSvc;
 	}
 

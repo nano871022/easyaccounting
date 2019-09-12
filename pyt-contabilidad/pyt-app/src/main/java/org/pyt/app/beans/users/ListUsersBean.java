@@ -50,7 +50,7 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 			loadDataModel(paginator, tableGeneric);
 			setClazz(UsuarioDTO.class);
 			configFilters();
-			configColumns();
+			loadColumnsIntoTableView();
 		} catch (Exception e) {
 			error(e);
 		}
