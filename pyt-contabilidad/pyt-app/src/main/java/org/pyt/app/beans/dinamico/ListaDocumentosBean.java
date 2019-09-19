@@ -75,7 +75,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 			documentos.setDoctype(tipoDocumento);
 			documentos.setFieldFilter(true);
 			genericFields = documentosSvc.getDocumentos(documentos);
-			filterTable = loadGrid();
+			filterTable = this.configFields();
 		} catch (Exception e) {
 			logger.logger(e);
 		}
@@ -132,7 +132,9 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	}
 
 	public final void agregar() {
-		getController(PanelBean.class).load(new DocumentoDTO());
+		var documento = new DocumentoDTO();
+		documento.setTipoDocumento(tipoDocumento);
+		getController(PanelBean.class).load(documento);
 	}
 
 	public final void modificar() {

@@ -65,7 +65,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, Documen
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(loadGrid());
+		central.getChildren().add(this.configFields());
 	}
 
 	/**

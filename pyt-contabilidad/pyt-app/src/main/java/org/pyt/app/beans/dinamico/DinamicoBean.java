@@ -149,7 +149,7 @@ public abstract class DinamicoBean<T extends ADto, S extends ADto, F extends ADt
 				}
 			}
 		} // end for
-		loadGrid();
+		this.configFields();
 	}
 
 	/**

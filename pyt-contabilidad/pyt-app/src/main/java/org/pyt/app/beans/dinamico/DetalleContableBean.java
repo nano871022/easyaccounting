@@ -63,7 +63,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO, Docume
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(loadGrid());
+		central.getChildren().add(this.configFields());
 	}
 
 	/**

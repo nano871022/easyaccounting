@@ -66,7 +66,7 @@ public interface IGenericFieldLoad extends IGenericMethodsCommon {
 			} else {
 				configNodeField(docs, formulario, columnIndex, rowIndex);
 			}
-			if (countFields < 6 && columnIndex == maxColumn) {
+			if (columnIndex == maxColumn) {
 				rowIndex++;
 				columnIndex = 0;
 			} else {
@@ -185,6 +185,10 @@ public interface IGenericFieldLoad extends IGenericMethodsCommon {
 	@SuppressWarnings({ "unchecked" })
 	private <L, T extends Object, S extends ADto> void putList(String nameField, ChoiceBox<String> choiceBox,
 			Class<T> busqueda, String show, String grupo, L value, String assign) {
+		if (listToChoiceBoxs() == null) {
+			warning(getI18n().valueBundle("generic.message.error.map.choice.box.empty"));
+			return;
+		}
 		var list = listToChoiceBoxs().get(busqueda.getCanonicalName());
 		if (list != null) {
 			try {

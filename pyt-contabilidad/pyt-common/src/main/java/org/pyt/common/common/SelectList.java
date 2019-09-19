@@ -59,6 +59,7 @@ public final class SelectList {
 		}
 	}
 
+
 	/**
 	 * Se encarga de limpiiar la lista de items y agrega string seleccione
 	 * 
@@ -103,8 +104,10 @@ public final class SelectList {
 		if (lista.get(0) instanceof String) {
 			observable.add((S) AppConstants.SELECCIONE);
 		}
+
 		lista.forEach(valor -> observable.add(valor));
 	}
+
 
 	/**
 	 * Se encarga de configurar el choice box para agregar los registros a ser

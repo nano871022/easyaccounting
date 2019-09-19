@@ -48,7 +48,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 	@FXML
 	private Label titulo;
 	@FXML
-	private ChoiceBox<String> tipoDocumentos;
+	private ChoiceBox<ParametroDTO> tipoDocumentos;
 	private ParametroDTO tipoDocumento;
 	private List<ParametroDTO> listTipoDocumento;
 	private ValidateValues valid;
@@ -67,7 +67,21 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 		}
 		tipoDocumento = new ParametroDTO();
 		tipoDocumentos.onActionProperty().set(e -> loadField());
-		SelectList.put(tipoDocumentos, listTipoDocumento, FIELD_NAME);
+		tipoDocumentos.setConverter(new javafx.util.StringConverter<ParametroDTO>() {
+
+			@Override
+			public String toString(ParametroDTO object) {
+				return object.getNombre();
+			}
+
+			@Override
+			public ParametroDTO fromString(String string) {
+				return listTipoDocumento.stream().filter(parametro -> parametro.getNombre().contains(string))
+						.findFirst().get();
+			}
+
+		});
+		SelectList.put(tipoDocumentos, listTipoDocumento);
 		titulo.setText("");
 	}
 
@@ -77,7 +91,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 	 */
 	public final void loadField() {
 		DocumentosDTO docs = new DocumentosDTO();
-		ParametroDTO tipoDoc = SelectList.get(tipoDocumentos, listTipoDocumento, FIELD_NAME);
+		ParametroDTO tipoDoc = SelectList.get(tipoDocumentos);
 		if (tipoDoc != null) {
 			docs.setDoctype(tipoDoc);
 			docs.setClaseControlar(DocumentoDTO.class);
@@ -88,22 +102,24 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(loadGrid());
+		central.getChildren().add(this.configFields());
 	}
 
 	/**
 	 * Se encarga de cargar un nuevo registro
 	 */
-	public final void load() {
+	public final void load(ParametroDTO tipoDocumento) {
 		registro = new DocumentoDTO();
+		registro.setTipoDocumento(tipoDocumento);
+		this.tipoDocumentos.setDisable(true);
+		SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
 	}
 
 	public final void load(DocumentoDTO registro) {
 		try {
 			this.registro = registro;
 			BigDecimal valores = sumaDetalles();
-			SelectList.selectItem(tipoDocumentos, listTipoDocumento, FIELD_NAME, registro.getTipoDocumento().getValor(),
-					"valor");
+			SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
 			if (valores.compareTo(registro.getValor()) != 0) {
 				this.registro.setValor(valores);
 				documentosSvc.update(registro, userLogin);
@@ -155,7 +171,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 		loadData();
 		if (valid()) {
 			try {
-				registro.setTipoDocumento(SelectList.get(tipoDocumentos, listTipoDocumento, FIELD_NAME));
+				registro.setTipoDocumento(SelectList.get(tipoDocumentos));
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					documentosSvc.update(registro, userLogin);
 					notificar("Se agrego el nuevo documento.");

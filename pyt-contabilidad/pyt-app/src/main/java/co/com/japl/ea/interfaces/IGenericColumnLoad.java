@@ -26,7 +26,8 @@ public interface IGenericColumnLoad<V extends ADto, O> extends IGenericMethodsCo
 			return new TableView();
 		}
 		var table = controlFieldUtils.configTableView(getTableView());
-		campos.entrySet().stream().forEach(docs -> {
+		campos.entrySet().stream().forEach(set -> {
+			var docs = set.getValue();
 			var column = new TableColumn(((DocumentosDTO) docs).getFieldLabel());
 			column.setCellValueFactory(new PropertyValueFactory(((DocumentosDTO) docs).getFieldName()));
 			table.getColumns().add(column);

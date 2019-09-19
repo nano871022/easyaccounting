@@ -61,7 +61,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 			loadType(mapa);
 			getController(central, DocumentoBean.class).load(registro);
 		} else if (registro == null || StringUtils.isBlank(registro.getCodigo())) {
-			getController(central, DocumentoBean.class).load();
+			getController(central, DocumentoBean.class).load(registro.getTipoDocumento());
 		}
 	}
 
@@ -93,7 +93,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 					if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 						getController(central, DocumentoBean.class).load(registro);
 					} else {
-						getController(central, DocumentoBean.class).load();
+						getController(central, DocumentoBean.class).load(registro.getTipoDocumento());
 					}
 				});
 			}
