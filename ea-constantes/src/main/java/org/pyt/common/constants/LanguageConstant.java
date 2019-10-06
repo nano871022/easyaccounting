@@ -58,4 +58,5 @@ public class LanguageConstant {
 	public final static String GENERIC_SERVICE_CODE_EMPTY_DTO = "generic.service.code.empty.dto";
 	public final static String GENERIC_LBL_LIST_GENERIC_INTERFACES = "generic.lbl.list.generic.interfaces";
 	public final static String FXML_LBL_TITLE_GENERIC_INTERFACES = "fxml.lbl.title.generic.interface";
+	public final static String GENERIC_FIELDS_NOT_FOUND = "field_doesnt_found_to_process";
 }

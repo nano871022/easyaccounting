@@ -33,8 +33,9 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
  *
  */
 public interface Reflection {
+	
 	public Log logger();
-
+	
 	/**
 	 * Se encarga de verificar la cclase y objeter la anotacion inject, con la ccual
 	 * por medio del recurso puesto dentro de la anotacion se obtiene una instancia

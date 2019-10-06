@@ -26,6 +26,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -44,7 +45,27 @@ public final class UtilControlFieldFX {
 	private final static String CONTS_EXP_REG_TO_TEXTFIELD = "(String|Long|Integer|BigDecimal|LongDecimal|Float|Char|char|long|int|floar|Decimal)";
 	private final static String CONTS_EXP_REG_TO_CHECKBOX = "(Boolean|bool|boolean)";
 	private ValidateValues validateValue = new ValidateValues();
-
+	
+	/**
+	 * Se encarga de obenetr un campo tipo label
+	 * @param name {@link String} nombre de la etiqueta
+	 * @param value Se recibiran los campos :
+	 * <li>
+	 * <ul>
+	 * 	tooltip
+	 * </ul>
+	 * <ul>
+	 * Mensaje tooltip
+	 * </ul>
+	 * </li>
+	 * @return {@link Label}
+	 */
+	public final Label createLabel(String name,String...value) {
+		var label = new Label();
+		label.setText(name);
+		return label;
+	}
+	
 	/**
 	 * Se ecarga de retornar un campo de tipo FX segun el tipo(Class) de un
 	 * {@link Field}
@@ -74,7 +95,7 @@ public final class UtilControlFieldFX {
 	 *                    lambda para asignar el valor
 	 * @return {@link Control} el mismo campo FX ingresado
 	 */
-	public <T extends Control> T inputListenerToAssingValue(T input, IAssingValueToField assignValue) {
+	public <T extends Node> T inputListenerToAssingValue(T input, IAssingValueToField assignValue) {
 		StringProperty property = null;
 		if (input instanceof TextField) {
 			property = ((TextField) input).textProperty();

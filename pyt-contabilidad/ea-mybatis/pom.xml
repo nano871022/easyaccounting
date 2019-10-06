@@ -26,12 +26,6 @@
 			<scope>${project.scope}</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-exceptions</artifactId>
 			<version>${project.version}</version>
