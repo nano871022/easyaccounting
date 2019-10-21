@@ -1,7 +1,6 @@
 package org.pyt.app.components;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,15 +55,6 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 	private HBox paginador;
 	private GridPane gridFilter;
 	private TableView<T> tabla;
-	private Map<String, Object> mapFieldUseds;
-
-	@Override
-	public Map<String, Object> getMapFieldUseds() {
-		if (mapFieldUseds == null) {
-			mapFieldUseds = new HashMap<String, Object>();
-		}
-		return mapFieldUseds;
-	}
 
 	public PopupGenBean(Class<T> clazz) throws Exception {
 		super(clazz);

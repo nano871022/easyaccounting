@@ -1,8 +1,7 @@
 package co.com.japl.ea.beans.abstracts;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
@@ -11,14 +10,15 @@ import org.pyt.common.common.Log;
 import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
+import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.japl.ea.controllers.LocatorController;
-import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
-import co.com.japl.ea.interfaces.IGenericFilter;
+import co.com.japl.ea.interfaces.IGenericFields;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -31,7 +31,7 @@ import javafx.stage.Stage;
  * @since 10/04/2019
  * @param <T>
  */
-public abstract class AGenericToBean<T extends ADto> extends Application implements IBean<T>, IGenericFilter<T> {
+public abstract class AGenericToBean<T extends ADto> extends Application implements IBean<T>, IGenericFields<T, T> {
 	protected T registro;
 	protected BorderPane panel;
 	protected UsuarioDTO userLogin;
@@ -46,12 +46,14 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
-	private Map<String, Object> mapFieldUseds;
+	private MultiValuedMap<String, Node> mapFieldUseds;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ParametroDTO> parametrosSvc;
 
 	@Override
-	public Map<String, Object> getMapFieldUseds() {
+	public MultiValuedMap<String, Node> getMapFields() {
 		if (mapFieldUseds == null) {
-			mapFieldUseds = new HashMap<String, Object>();
+			mapFieldUseds = new ArrayListValuedHashMap<>();
 		}
 		return mapFieldUseds;
 	}
@@ -120,6 +122,10 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 		primaryStage.show();
 	}
 
+	public final void setClazz(Class clazz) {
+		this.clazz = clazz;
+	}
+
 	@SuppressWarnings("unchecked")
 	public final <S extends AGenericToBean<T>> S setWidth(double width) {
 		primaryStage.setWidth(width);
@@ -145,29 +151,18 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 		return I18n.instance();
 	}
 
+	@Override
+	public IGenericServiceSvc<ParametroDTO> getParametersSvc() {
+		return parametrosSvc;
+	}
+
+	@Override
 	public Class<T> getClazz() {
 		return clazz;
 	}
 
-	public void setClazz(Class<T> clazz) {
-		this.clazz = clazz;
-	}
-
-	public Log getLogger() {
-		return logger;
-	}
-
 	@Override
-	public void warning(String msn) {
-		alerta(msn);
-	}
-
-	@Override
-	public void error(Throwable error) {
-		error(error);
-	}
-
-	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
-		return null;
+	public T getInstanceDto() {
+		return registro;
 	}
 }

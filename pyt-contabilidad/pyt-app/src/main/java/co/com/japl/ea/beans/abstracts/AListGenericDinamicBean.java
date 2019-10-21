@@ -1,80 +1,58 @@
 package co.com.japl.ea.beans.abstracts;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
-import org.pyt.common.common.Log;
 
 import com.pyt.service.dto.DocumentosDTO;
+import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
-import co.com.japl.ea.interfaces.IGenericColumnLoad;
-import co.com.japl.ea.interfaces.IGenericFieldLoad;
-import co.com.japl.ea.interfaces.IGenericLoadValueFromField;
+import co.com.japl.ea.interfaces.IGenericColumns;
+import co.com.japl.ea.interfaces.IGenericFields;
 import co.com.japl.ea.interfaces.IUrlLoadBean;
+import javafx.scene.Node;
 
 public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F extends ADto> extends ABean<T>
-		implements IGenericFieldLoad, IGenericLoadValueFromField, IUrlLoadBean, IGenericColumnLoad {
+		implements IUrlLoadBean, IGenericFields<T, F>, IGenericColumns<T, F> {
 	protected List<DocumentosDTO> genericFields;
 	protected List<DocumentosDTO> genericColumns;
-	private Map<String, Object> configFields;
-	private Map<String, Object> configFieldList;
+	private MultiValuedMap<String, Node> configFields;
 	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
 	private IGenericServiceSvc<S> querySvc;
+	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ParametroDTO> parametrosSvc;
 
 	public AListGenericDinamicBean() {
-		configFields = new HashMap<String, Object>();
-		configFieldList = new HashMap<String, Object>();
+		configFields = new ArrayListValuedHashMap<>();
 	}
 
-	@Override
 	public IGenericServiceSvc<S> getServiceSvc() {
 		return querySvc;
 	}
 
 	@Override
-	public Log getLogger() {
-		return logger;
-	}
-
-	@Override
-	public I18n getI18n() {
+	public I18n i18n() {
 		return i18n();
 	}
 
 	@Override
-	public void warning(String msn) {
-		alerta(msn);
-	}
-
-	@Override
-	public void error(Throwable error) {
-		error(error);
-	}
-
-	@Override
-	public Map<String, Object> getConfigFields() {
+	public MultiValuedMap<String, Node> getMapFields() {
 		return configFields;
 	}
 
 	@Override
-	public Map<String, Object> getConfigFieldTypeList() {
-		return configFieldList;
+	public IGenericServiceSvc<ParametroDTO> getParametersSvc() {
+		return parametrosSvc;
 	}
 
-	@Override
-	public Map<String, DocumentosDTO> getColumns() {
-		Map<String, DocumentosDTO> map = new HashMap<String, DocumentosDTO>();
-		genericColumns.forEach(column -> map.put(column.getFieldName(), column));
-		return map;
+	@SuppressWarnings("unchecked")
+	public List<T> getListGenericsFields() {
+		return (List<T>) genericFields;
 	}
 
-	@Override
-	public List<DocumentosDTO> getFields() {
-		return genericFields;
-	}
 }

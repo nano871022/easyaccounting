@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.interfaces.IAssingValueToField;
 import org.pyt.common.interfaces.ICaller;
 import org.pyt.common.validates.ValidateValues;
@@ -24,11 +25,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
@@ -42,30 +45,34 @@ import javafx.scene.layout.GridPane;
  */
 public final class UtilControlFieldFX {
 	private final Log logger = Log.Log(this.getClass());
-	private final static String CONTS_EXP_REG_TO_TEXTFIELD = "(String|Long|Integer|BigDecimal|LongDecimal|Float|Char|char|long|int|floar|Decimal)";
+	private final static String CONTS_EXP_REG_TO_TEXTFIELD = "(String|Long|Integer|BigDecimal|LongDecimal|Float|Char|char|long|int|float|Decimal)";
 	private final static String CONTS_EXP_REG_TO_CHECKBOX = "(Boolean|bool|boolean)";
+	private final static String CONTS_EXP_REG_TO_DATETIME = "(Date|DateTime|Time|LocalDate|LocalDateTime)";
 	private ValidateValues validateValue = new ValidateValues();
-	
+
 	/**
-	 * Se encarga de obenetr un campo tipo label
-	 * @param name {@link String} nombre de la etiqueta
+	 * Se encarga de obtener un campo tipo label
+	 * 
+	 * @param name  {@link String} nombre de la etiqueta
 	 * @param value Se recibiran los campos :
-	 * <li>
-	 * <ul>
-	 * 	tooltip
-	 * </ul>
-	 * <ul>
-	 * Mensaje tooltip
-	 * </ul>
-	 * </li>
+	 *              <li>
+	 *              <ul>
+	 *              tooltip
+	 *              </ul>
+	 *              </li>
 	 * @return {@link Label}
 	 */
-	public final Label createLabel(String name,String...value) {
+	public final Label createLabel(String name, String... value) {
 		var label = new Label();
 		label.setText(name);
+		if (value.length > 0) {
+			Tooltip toolTip = new Tooltip();
+			toolTip.setText(value[0]);
+			label.setTooltip(toolTip);
+		}
 		return label;
 	}
-	
+
 	/**
 	 * Se ecarga de retornar un campo de tipo FX segun el tipo(Class) de un
 	 * {@link Field}
@@ -74,14 +81,31 @@ public final class UtilControlFieldFX {
 	 * @return {@link Control} extends
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Control> T getFieldByField(Field field) {
+	public <N extends Node, T> N getFieldByField(Field field) {
 		if (Pattern.compile(CONTS_EXP_REG_TO_TEXTFIELD).matcher(field.getType().getSimpleName()).find()) {
-			return (T) new TextField();
+			return (N) new TextField();
+		} else if (Pattern.compile(CONTS_EXP_REG_TO_CHECKBOX).matcher(field.getType().getSimpleName()).find()) {
+			return (N) new CheckBox();
+		} else if (Pattern.compile(CONTS_EXP_REG_TO_DATETIME).matcher(field.getType().getSimpleName()).find()) {
+			return (N) new DatePicker();
+		} else {
+			try {
+				if (field.getType().asSubclass(ADto.class) != null) {
+					return (N) new ComboBox<T>();
+				}
+			} catch (ClassCastException e) {
+			}
 		}
-		if (Pattern.compile(CONTS_EXP_REG_TO_CHECKBOX).matcher(field.getType().getSimpleName()).find()) {
-			return (T) new CheckBox();
-		}
+
 		return null;
+	}
+
+	public <N extends Node> boolean isChoiceBox(N field) {
+		return field instanceof ChoiceBox;
+	}
+
+	public <N extends Node> boolean isDatePicker(N field) {
+		return field instanceof DatePicker;
 	}
 
 	/**
@@ -99,14 +123,16 @@ public final class UtilControlFieldFX {
 		StringProperty property = null;
 		if (input instanceof TextField) {
 			property = ((TextField) input).textProperty();
-		}
-		if (input instanceof CheckBox) {
+		} else if (input instanceof CheckBox) {
 			((CheckBox) input).selectedProperty()
 					.addListener((observable, oldValue, newValue) -> assignValue.assingValueToField(newValue));
-		}
-		if (input instanceof ChoiceBox<?>) {
+		} else if (input instanceof ChoiceBox<?>) {
 			property = ((ChoiceBox<?>) input).idProperty();
+		} else if (input instanceof DatePicker) {
+			((DatePicker) input).valueProperty()
+					.addListener((observable, oldValue, newValue) -> assignValue.assingValueToField(newValue));
 		}
+
 		if (property != null) {
 			property.addListener((observable, oldValue, newValue) -> assignValue.assingValueToField(newValue));
 		}
@@ -175,18 +201,21 @@ public final class UtilControlFieldFX {
 		gridPane.getChildren().forEach(node -> {
 			try {
 				var value = dto.get(node.getId());
-				if (value != null) {
-					if (node instanceof TextField) {
-						((TextField) node).setText(String.valueOf(value));
-					}
-					if (node instanceof CheckBox) {
-						((CheckBox) node).setSelected(Boolean.valueOf((boolean) value));
-					}
-				}
-			} catch (Exception e) {
+				loadValuesInFxml(node, value);
+			} catch (ReflectionException e) {
 				logger.logger(e);
 			}
 		});
+	}
+
+	public <D extends ADto, N extends Node, V> void loadValuesInFxml(N node, V value) throws ReflectionException {
+		if (value != null) {
+			if (node instanceof TextField) {
+				((TextField) node).setText(String.valueOf(value));
+			} else if (node instanceof CheckBox) {
+				((CheckBox) node).setSelected(Boolean.valueOf((boolean) value));
+			}
+		}
 	}
 
 	/**
@@ -200,27 +229,33 @@ public final class UtilControlFieldFX {
 	 * @param nameShow  {@link String} opcional va con list
 	 * @param gridPane  {@link GridPane} DOnde se encuentran todos los campos
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	public <T extends Control, D extends ADto, M extends ADto> void loadValuesInFxmlToChoice(String fieldName, D dto,
 			Map map, List<M> list, String nameShow, GridPane gridPane) {
 		gridPane.getChildren().stream().filter(node -> node.getId().contentEquals(fieldName)).forEach(node -> {
 			try {
 				var value = dto.get(node.getId());
-				if (value != null) {
-					if (node instanceof ChoiceBox && map == null && list == null) {
-						SelectList.selectItem((ChoiceBox) node, value);
-					}
-					if (node instanceof ChoiceBox && map != null && list == null) {
-						SelectList.selectItem((ChoiceBox) node, map, value);
-					}
-					if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
-						SelectList.selectItem((ChoiceBox) node, list, nameShow, (M) value);
-					}
-				}
+				loadValuesInFxmlToChoice(nameShow, node, value, map, list);
 			} catch (Exception e) {
 				logger.logger(e);
 			}
 		});
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public <M extends ADto, N extends Node, V> void loadValuesInFxmlToChoice(String nameShow, N node, V value, Map map,
+			List<M> list) {
+		if (value != null) {
+			if (node instanceof ChoiceBox && map == null && list == null) {
+				SelectList.selectItem((ChoiceBox) node, value);
+			}
+			if (node instanceof ChoiceBox && map != null && list == null) {
+				SelectList.selectItem((ChoiceBox) node, map, value);
+			}
+			if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
+				SelectList.selectItem((ChoiceBox) node, list, nameShow, (M) value);
+			}
+		}
 	}
 
 	/**
@@ -246,7 +281,6 @@ public final class UtilControlFieldFX {
 	 * @param type {@link Class}
 	 * @return {@link Node} campos javafx
 	 */
-	@SuppressWarnings("hiding")
 	public final <T extends Object> Node getFieldNodeFormFromTypeAndValue(Class<T> type, T value) {
 		if (type == Date.class) {
 			DatePicker dp = new DatePicker();

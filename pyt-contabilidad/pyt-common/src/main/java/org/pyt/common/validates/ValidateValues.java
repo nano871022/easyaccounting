@@ -278,7 +278,7 @@ public final class ValidateValues {
 			if (value.getClass() == BigDecimal.class) {
 				return (T) Integer.valueOf(((BigDecimal) value).intValue());
 			}
-		} 
+		}
 		return null;
 	}
 
@@ -320,7 +320,7 @@ public final class ValidateValues {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <T, S> T stringToClass(S value, Class clazz) {
 		if (value.getClass() == String.class) {
-			if(StringUtils.isBlank( (String) value)) {
+			if (StringUtils.isBlank((String) value)) {
 				return null;
 			}
 			if (clazz == Integer.class) {
@@ -531,5 +531,39 @@ public final class ValidateValues {
 			logger.logger(e);
 		}
 		return null;
+	}
+
+	public final <V1, V2> int compareNumbers(V1 value1, V2 value2) {
+		if (value1 instanceof Integer) {
+			if (value2 instanceof Integer) {
+				return ((Integer) value1).compareTo((Integer) value2);
+			}
+		}
+		if (value1 instanceof BigInteger) {
+			if (value2 instanceof BigInteger) {
+				return ((BigInteger) value1).compareTo((BigInteger) value2);
+			}
+		}
+		if (value1 instanceof BigDecimal) {
+			if (value2 instanceof BigDecimal) {
+				return ((BigDecimal) value1).compareTo((BigDecimal) value2);
+			}
+		}
+		if (value1 instanceof Float) {
+			if (value2 instanceof Float) {
+				return ((Float) value1).compareTo((Float) value2);
+			}
+		}
+		if (value1 instanceof Double) {
+			if (value2 instanceof Double) {
+				return ((Double) value1).compareTo((Double) value2);
+			}
+		}
+		if (value1 instanceof Short) {
+			if (value2 instanceof Short) {
+				return ((Short) value1).compareTo((Short) value2);
+			}
+		}
+		return -1;
 	}
 }
