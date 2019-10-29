@@ -5,17 +5,18 @@ import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
-import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.controllers.LocatorController;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
+import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
 import javafx.application.Application;
 import javafx.scene.Node;
@@ -31,7 +32,8 @@ import javafx.stage.Stage;
  * @since 10/04/2019
  * @param <T>
  */
-public abstract class AGenericToBean<T extends ADto> extends Application implements IBean<T>, IGenericFields<T, T> {
+public abstract class AGenericToBean<T extends ADto> extends Application
+		implements IBean<T>, IGenericFields<ConfigGenericFieldDTO, T>, IGenericColumns<ConfigGenericFieldDTO, T> {
 	protected T registro;
 	protected BorderPane panel;
 	protected UsuarioDTO userLogin;
@@ -47,11 +49,11 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
 	private MultiValuedMap<String, Node> mapFieldUseds;
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<ParametroDTO> parametrosSvc;
+	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
+	private IParametrosSvc parametrosSvc;
 
 	@Override
-	public MultiValuedMap<String, Node> getMapFields() {
+	public MultiValuedMap<String, Node> getMapFields(TypeGeneric typeGeneric) {
 		if (mapFieldUseds == null) {
 			mapFieldUseds = new ArrayListValuedHashMap<>();
 		}
@@ -147,12 +149,8 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 		this.height = height.doubleValue();
 	}
 
-	public I18n i18n() {
-		return I18n.instance();
-	}
-
 	@Override
-	public IGenericServiceSvc<ParametroDTO> getParametersSvc() {
+	public IParametrosSvc getParametersSvc() {
 		return parametrosSvc;
 	}
 
@@ -162,7 +160,26 @@ public abstract class AGenericToBean<T extends ADto> extends Application impleme
 	}
 
 	@Override
-	public T getInstanceDto() {
+	public T getInstanceDto(TypeGeneric typeGeneric) {
 		return registro;
+	}
+
+	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String nameEstado, Integer estado) {
+		return (M) this;
+	}
+
+	@SuppressWarnings({ "unchecked", "unused" })
+	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String nameGroup,
+			String valueKeyPrameter) {
+		return (M) this;
+	}
+
+	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String grupoParametro,
+			ParametroDTO parametroEstado) {
+		return (M) this;
+	}
+
+	public T assingValuesParameterized(T filter) {
+		return filter;
 	}
 }

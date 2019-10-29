@@ -1,5 +1,6 @@
 package org.pyt.app.beans.permission;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
@@ -32,7 +33,7 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 		try {
 			registro = new PermissionDTO();
 			setClazz(PermissionDTO.class);
-			configFields();
+			loadFields(TypeGeneric.FIELD);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -49,18 +50,18 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneField() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_GROUP_USERS_NAME), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_GROUP_USERS_STATE), true, 1, 2,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_GROUP_USERS_ACTION), true, 1,
-				100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE),
+				true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_ACTION),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -85,8 +86,13 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
 	}
 
 }

@@ -7,12 +7,12 @@ import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 
 public interface INotificationMethods {
-	
+
 	public Log logger();
-	
+
 	@SuppressWarnings("rawtypes")
 	public Comunicacion comunicacion();
-	
+
 	@SuppressWarnings("unchecked")
 	default void alerta(String mensaje) {
 		comunicacion().setComando(AppConstants.COMMAND_POPUP_WARN, mensaje);
@@ -46,9 +46,13 @@ public interface INotificationMethods {
 			comunicacion().setComando(AppConstants.COMMAND_POPUP_ERROR, mensaje);
 		}
 	}
+
 	/**
 	 * Retorna los {@link I18n} configutrado para manejar la internacionalizacion
+	 * 
 	 * @return
 	 */
-	public I18n i18n();
+	default I18n i18n() {
+		return I18n.instance();
+	}
 }

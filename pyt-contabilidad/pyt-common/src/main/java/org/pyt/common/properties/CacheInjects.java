@@ -61,7 +61,7 @@ public final class CacheInjects {
 		}
 	}
 
-	public synchronized final <T> Boolean getConstructorAnnotatedCache(T instance)
+	public synchronized final <T> Boolean invokeConstructorAnnotatedCache(T instance)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		var result = false;
 		cleanCache();

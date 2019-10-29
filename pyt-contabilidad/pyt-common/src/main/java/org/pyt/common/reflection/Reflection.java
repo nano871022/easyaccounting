@@ -3,6 +3,7 @@ package org.pyt.common.reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.ServiceLoader;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +52,6 @@ public interface Reflection {
 			Field[] fields = null;
 			fields = getFields(clase);
 			if (fields != null && fields.length > 0) {
-				Inject injects = clase.getDeclaredAnnotation(Inject.class);
 				inject((S) this, fields, clase);
 				subscriberInject(this, fields, clase);
 			} else {
@@ -86,37 +86,42 @@ public interface Reflection {
 	@SuppressWarnings({ "unchecked" })
 	private <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase) throws ReflectionException {
 		if (fields != null && fields.length > 0 && clase != Object.class && clase != Reflection.class) {
-			try {
-				for (Field field : fields) {
+				Arrays.asList(fields).stream().filter(field->field.getAnnotation(Inject.class)!=null).forEach(field->{
+					try {
 					Inject inject = field.getAnnotation(Inject.class);
-					if (inject == null)
-						continue;
-					T obj = null;
-					obj = CacheInjects.instance().getInjectCache(field);
-					if (obj == null) {
-						obj = locatorServices(field);
-						if (obj == null && StringUtils.isNotBlank(inject.resource())) {
-							var resource = inject.resource();
-							var clazz = Class.forName(resource);
-							obj = (T) clazz.getConstructor().newInstance();
-						} else if (obj == null) {
-							obj = getSingletonAnnotated(inject.resource(), field);
-						}
-					}
+					T obj = CacheInjects.instance().getInjectCache(field);
+					obj = searchInjectFileParameterizeds(obj,field,inject);
 					if (obj != null) {
 						CacheInjects.instance().addInjectToCache(obj, field);
-						if (!CacheInjects.instance().getConstructorAnnotatedCache(obj)) {
+						if (!CacheInjects.instance().invokeConstructorAnnotatedCache(obj)) {
 							postConstructor(obj, obj.getClass());
 						}
 						put(object, field, obj);
 					}
-				} // end for
+					} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException
+							| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+						throw new RuntimeException(e.getMessage(), e);
+					} catch (ReflectionException e) {
+						throw new RuntimeException(e);
+					}
+				});
 				inject(object, clase.getSuperclass().getDeclaredFields(), (Class<S>) clase.getSuperclass());
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				throw new ReflectionException(e.getMessage(), e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> T searchInjectFileParameterizeds(T obj,Field field,Inject inject) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		if (obj == null) {
+			obj = locatorServices(field);
+			if (obj == null && StringUtils.isNotBlank(inject.resource())) {
+				var resource = inject.resource();
+				var clazz = Class.forName(resource);
+				return (T) clazz.getConstructor().newInstance();
+			} else if (obj == null) {
+				return getSingletonAnnotated(inject.resource(), field);
 			}
 		}
+		return obj != null ? obj : null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -170,15 +175,18 @@ public interface Reflection {
 				return;
 			var metodos = clase.getDeclaredMethods();
 			if (metodos != null && metodos.length > 0) {
-				for (Method metodo : metodos) {
-					if (metodo.getAnnotation(PostConstructor.class) != null) {
+				Arrays.asList(metodos).stream().filter(metodo->metodo.getAnnotation(PostConstructor.class) != null)
+				.forEach(metodo->{
+					try {
 						CacheInjects.instance().addConstructorAnnotatedToCache(instance, metodo);
 						metodo.invoke(instance);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						throw new RuntimeException(e);
 					}
-				}
+				});
 				postConstructor(instance, clase.getSuperclass());
 			}
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (RuntimeException e) {
 			throw new ReflectionException("Problema en la ejecucion del metodo anotado con pos constructor", e);
 		}
 	}

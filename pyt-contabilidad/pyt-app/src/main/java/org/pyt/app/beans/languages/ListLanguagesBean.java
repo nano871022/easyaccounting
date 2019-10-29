@@ -1,18 +1,24 @@
 package org.pyt.app.beans.languages;
 
+import java.util.List;
+
+import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.StylesPrincipalConstant;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
@@ -45,9 +51,8 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
 			loadDataModel(paginator, tableGeneric);
-			setClazz(LanguagesDTO.class);
-			configFilters();
-			loadColumnsIntoTableView();
+			loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
+			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -114,17 +119,40 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneFilter() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
 	public LanguagesDTO getFilterToTable(LanguagesDTO filter) {
 		return filter;
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class<LanguagesDTO> getClazz() {
+		return LanguagesDTO.class;
 	}
 }

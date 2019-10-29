@@ -1,8 +1,10 @@
 package org.pyt.app.beans.languages;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
@@ -33,7 +35,7 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 		try {
 			registro = new LanguagesDTO();
 			setClazz(LanguagesDTO.class);
-			configFields();
+			loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -50,20 +52,20 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneField() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPaneLanguages;
 	}
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_CODE), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_TEXT), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_STATE), true, 1, 2,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_LANGUAGES_IDIOM), true, 2, 10,
-				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_CODE),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_TEXT),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_STATE),
+				true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_IDIOM),
+				true, 2, 10, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -85,7 +87,7 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	public final void newRow() {
 		load();
-		cleanFields();
+		this.clearFields(TypeGeneric.FIELD);
 	}
 
 	public final void cancel() {
@@ -93,8 +95,13 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
 	}
 
 }

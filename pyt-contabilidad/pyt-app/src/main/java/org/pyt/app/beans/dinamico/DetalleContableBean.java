@@ -3,8 +3,10 @@ package org.pyt.app.beans.dinamico;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.DetalleContableDTO;
@@ -26,7 +28,7 @@ import javafx.scene.layout.VBox;
  * @since 07-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "detalleContable.fxml")
-public class DetalleContableBean extends DinamicoBean<DetalleContableDTO, DocumentosDTO, DocumentosDTO> {
+public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
@@ -63,7 +65,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO, Docume
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(this.configFields());
+		loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
 	/**
@@ -91,7 +93,6 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO, Docume
 	 * Se encarga de guardar todo
 	 */
 	public final void guardar() {
-		loadData();
 		if (valid()) {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
@@ -120,17 +121,23 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO, Docume
 	}
 
 	@Override
-	public GridPane GridPane() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return new GridPane();
 	}
 
 	@Override
-	public Integer maxColumns() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
-	public Map<String, List> listToChoiceBoxs() {
-		return mapListSelects;
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
 	}
+
+	@Override
+	public Class<DetalleContableDTO> getClazz() {
+		return DetalleContableDTO.class;
+	}
+
 }

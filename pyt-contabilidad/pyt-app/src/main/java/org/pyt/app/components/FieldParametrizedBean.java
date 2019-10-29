@@ -3,10 +3,10 @@ package org.pyt.app.components;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.I18n;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
@@ -15,8 +15,9 @@ import com.pyt.service.pojo.GenericPOJO;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesReflectionBean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(path = "/", file = ".", nombreVentana = "FieldParametrizedBean")
@@ -34,6 +35,7 @@ public class FieldParametrizedBean<T extends ADto> extends AGenericInterfacesRef
 		super(clazz);
 	}
 
+	@Override
 	@FXML
 	public void initialize() {
 		filter = validFilter();
@@ -83,48 +85,37 @@ public class FieldParametrizedBean<T extends ADto> extends AGenericInterfacesRef
 	}
 
 	@Override
-	public T getFilter() {
-		return filter;
-	}
-
-	@Override
-	public GridPane getGridPaneFilter() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return null;
 	}
 
 	@Override
-	public void setFilter(T filter) {
-		this.filter = filter;
-	}
-
-	@Override
-	public Map<String, GenericPOJO<T>> getFilters() {
-		return filtros;
-	}
-
-	@Override
-	public void setFilters(Map<String, GenericPOJO<T>> filters) {
-		filtros = filters;
-	}
-
-	@Override
-	public DataTableFXMLUtil<T, T> getTable() {
-		return null;
-	}
-
-	@Override
-	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
-		return configGenericFieldSvc;
-	}
-
-	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
-	public I18n getI18n() {
-		return I18n.instance();
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public TableView<T> getTableView() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -19,12 +19,16 @@ public interface IGenericCommons<L extends ADto, F extends ADto> extends INotifi
 	final UtilControlFieldFX genericFormsUtils = new UtilControlFieldFX();
 	final ValidateValues validateValuesUtils = new ValidateValues();
 
+	enum TypeGeneric {
+		FIELD, COLUMN, FILTER
+	}
+
 	/**
 	 * Muestra la cantidad de columnas a poner en el objeto usado
 	 * 
 	 * @return {@link Integer}
 	 */
-	public Integer getMaxColumns();
+	public Integer getMaxColumns(TypeGeneric typeGeneric);
 
 	/**
 	 * Contiene la lista de campos genericos a procesar, que fueron configurados en
@@ -32,7 +36,7 @@ public interface IGenericCommons<L extends ADto, F extends ADto> extends INotifi
 	 * 
 	 * @return {@link List} < {@link ADto} >
 	 */
-	public List<L> getListGenericsFields();
+	public List<L> getListGenericsFields(TypeGeneric typeGeneric);
 
 	/**
 	 * Contiene la clase del dto que se esta usando en los campos

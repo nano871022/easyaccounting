@@ -29,7 +29,10 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 
 	@Override
 	public String getLabelText() {
-		return field.getAlias();
+		if (field.getAlias() != null && field.getAlias().trim().isEmpty()) {
+			return field.getAlias();
+		}
+		return notificationMethods.i18n().valueBundle(field.getClassPath().substring(5) + "." + field.getName());
 	}
 
 	@Override
@@ -45,7 +48,7 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	@Override
 	public Node create() {
 		try {
-			Field propertie = field.getClass().getField(field.getName());
+			Field propertie = ConfigGenericFieldDTO.class.getDeclaredField(field.getName());
 			var node = controlFieldUtil.getFieldByField(propertie);
 			return node;
 		} catch (NoSuchFieldException | SecurityException e) {

@@ -2,14 +2,15 @@ package org.pyt.app.beans.dinamico;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
@@ -38,7 +39,7 @@ import javafx.scene.layout.VBox;
  * @since 07-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "formulario.fxml", name = "DocumentoDinamico")
-public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, DocumentosDTO> {
+public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
@@ -52,7 +53,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 	private ParametroDTO tipoDocumento;
 	private List<ParametroDTO> listTipoDocumento;
 	private ValidateValues valid;
-	private Map<String, List> mapListSelects;
+	private MultiValuedMap<String, Object> mapListSelects;
 
 	@FXML
 	public void initialize() {
@@ -63,7 +64,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 		try {
 			listTipoDocumento = parametrosSvc.getAllParametros(tipoDocumento, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 		} catch (ParametroException e) {
-			error(e);
+			this.error(e);
 		}
 		tipoDocumento = new ParametroDTO();
 		tipoDocumentos.onActionProperty().set(e -> loadField());
@@ -102,7 +103,7 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(this.configFields());
+		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
 	/**
@@ -168,7 +169,6 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 	 */
 	@SuppressWarnings("unchecked")
 	public final void guardar() {
-		loadData();
 		if (valid()) {
 			try {
 				registro.setTipoDocumento(SelectList.get(tipoDocumentos));
@@ -194,17 +194,22 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO, DocumentosDTO, Doc
 	}
 
 	@Override
-	public javafx.scene.layout.GridPane GridPane() {
+	public javafx.scene.layout.GridPane getGridPane(TypeGeneric typeGeneric) {
 		return new GridPane();
 	}
 
 	@Override
-	public Integer maxColumns() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
-	public Map<String, List> listToChoiceBoxs() {
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return mapListSelects;
+	}
+
+	@Override
+	public Class<DocumentoDTO> getClazz() {
+		return DocumentoDTO.class;
 	}
 }

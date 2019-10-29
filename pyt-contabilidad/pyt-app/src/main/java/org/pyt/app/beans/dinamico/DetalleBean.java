@@ -1,11 +1,11 @@
 package org.pyt.app.beans.dinamico;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
@@ -28,7 +28,7 @@ import javafx.scene.layout.VBox;
  * @since 07-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "detalle.fxml")
-public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, DocumentosDTO> {
+public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
@@ -40,8 +40,9 @@ public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, Documen
 	private ParametroDTO tipoDocumento;
 	private VBox panelCentral;
 	private String codigoDocumento;
-	private Map<String, List> mapListSelects;
+	private MultiValuedMap<String, Object> mapListSelects;
 
+	@Override
 	@FXML
 	public void initialize() {
 		super.initialize();
@@ -65,7 +66,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, Documen
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(this.configFields());
+		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, Documen
 	 * Se encarga de guardar todo
 	 */
 	public final void guardar() {
-		loadData();
+		// loadData();
 		if (valid()) {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
@@ -134,7 +135,6 @@ public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, Documen
 		}
 	}
 
-	@Override
 	public void methodChanges() {
 		try {
 			getField("valorIva");
@@ -178,26 +178,31 @@ public class DetalleBean extends DinamicoBean<DetalleDTO, DocumentosDTO, Documen
 				registro.setValorNeto(
 						registro.getValorConsumo().add(registro.getValorIva().add(registro.getValorBruto())));
 			}
-			putValueField("valorIva", registro.getValorIva());
-			putValueField("valorConsumo", registro.getValorConsumo());
-			putValueField("valorNeto", registro.getValorNeto());
+			loadValueIntoForm(TypeGeneric.FIELD, "valorIva");
+			loadValueIntoForm(TypeGeneric.FIELD, "valorConsumo");
+			loadValueIntoForm(TypeGeneric.FIELD, "valorNeto");
 		} catch (ValidateValueException e) {
 			error(e);
 		}
 	}
 
 	@Override
-	public GridPane GridPane() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return new GridPane();
 	}
 
 	@Override
-	public Integer maxColumns() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
-	public Map<String, List> listToChoiceBoxs() {
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return mapListSelects;
+	}
+
+	@Override
+	public Class<DetalleDTO> getClazz() {
+		return DetalleDTO.class;
 	}
 }

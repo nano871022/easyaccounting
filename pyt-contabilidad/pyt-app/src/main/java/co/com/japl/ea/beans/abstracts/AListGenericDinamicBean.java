@@ -9,8 +9,8 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 
 import com.pyt.service.dto.DocumentosDTO;
-import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
@@ -24,8 +24,8 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 	private MultiValuedMap<String, Node> configFields;
 	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
 	private IGenericServiceSvc<S> querySvc;
-	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
-	private IGenericServiceSvc<ParametroDTO> parametrosSvc;
+	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
+	private IParametrosSvc parametrosSvc;
 
 	public AListGenericDinamicBean() {
 		configFields = new ArrayListValuedHashMap<>();
@@ -41,12 +41,12 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 	}
 
 	@Override
-	public MultiValuedMap<String, Node> getMapFields() {
+	public MultiValuedMap<String, Node> getMapFields(TypeGeneric typeGeneric) {
 		return configFields;
 	}
 
 	@Override
-	public IGenericServiceSvc<ParametroDTO> getParametersSvc() {
+	public IParametrosSvc getParametersSvc() {
 		return parametrosSvc;
 	}
 

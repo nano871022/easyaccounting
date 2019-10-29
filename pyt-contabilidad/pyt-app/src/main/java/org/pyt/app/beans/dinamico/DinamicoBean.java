@@ -1,18 +1,21 @@
 package org.pyt.app.beans.dinamico;
 
+import static co.com.japl.ea.interfaces.IGenericCommons.TypeGeneric.FIELD;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.Operacion;
 import org.pyt.common.annotations.Operaciones;
 import org.pyt.common.annotations.Operar;
-import org.pyt.common.common.I18n;
-import org.pyt.common.common.Log;
+import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
@@ -20,11 +23,11 @@ import org.pyt.common.validates.ValidateValues;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.interfaces.IGenericFieldLoad;
-import co.com.japl.ea.interfaces.IGenericFieldValueToField;
-import co.com.japl.ea.interfaces.IGenericLoadValueFromField;
+import co.com.japl.ea.interfaces.IGenericFields;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
 /**
@@ -35,21 +38,23 @@ import javafx.scene.control.TextField;
  * @since 01-07-2018
  */
 
-public abstract class DinamicoBean<T extends ADto, S extends ADto, F extends ADto> extends ABean<T>
-		implements IGenericFieldLoad, IGenericLoadValueFromField, IGenericFieldValueToField {
+public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean<F>
+		implements IGenericFields<DocumentosDTO, F> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	protected IDocumentosSvc documentosSvc;
 	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
 	private IGenericServiceSvc<S> querySvc;
 	private Map<String, Object> listas;
-	private Map<String, Object> fields;
+	private MultiValuedMap<String, Node> fields;
 	protected List<DocumentosDTO> campos;
 	public final static String FIELD_NAME = "nombre";
 	private ValidateValues validateValue;
+	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
+	private IParametrosSvc parametroSvc;
 
 	public void initialize() {
 		listas = new HashMap<String, Object>();
-		fields = new HashMap<String, Object>();
+		fields = new ArrayListValuedHashMap<>();
 		validateValue = new ValidateValues();
 	}
 
@@ -118,7 +123,7 @@ public abstract class DinamicoBean<T extends ADto, S extends ADto, F extends ADt
 			if (result != null) {
 				if (validateValue.isCast(result, registro.getType(nombreCampo))) {
 					registro.set(nombreCampo, validateValue.cast(result, registro.getType(nombreCampo)));
-					putValueField(nombreCampo, result);
+					loadValueIntoForm(FIELD, nombreCampo);
 				}
 			}
 		} catch (ReflectionException | ValidateValueException e) {
@@ -149,7 +154,7 @@ public abstract class DinamicoBean<T extends ADto, S extends ADto, F extends ADt
 				}
 			}
 		} // end for
-		this.configFields();
+		this.loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
 	/**
@@ -194,7 +199,7 @@ public abstract class DinamicoBean<T extends ADto, S extends ADto, F extends ADt
 	}
 
 	@Override
-	public Map<String, Object> getConfigFields() {
+	public MultiValuedMap<String, Node> getMapFields(TypeGeneric typGeneric) {
 		return this.fields;
 	}
 
@@ -203,42 +208,17 @@ public abstract class DinamicoBean<T extends ADto, S extends ADto, F extends ADt
 	}
 
 	@Override
-	public void warning(String msn) {
-		super.alerta(msn);
-	}
-
-	@Override
-	public void error(Throwable error) {
-		super.error(error);
-	}
-
-	@Override
-	public Log getLogger() {
-		return logger();
-	}
-
-	@Override
-	public I18n getI18n() {
-		return i18n();
-	}
-
-	@Override
-	public List<DocumentosDTO> getFields() {
+	public List<DocumentosDTO> getListGenericsFields(TypeGeneric typeGeneric) {
 		return campos;
 	}
 
 	@Override
-	public Map<String, Object> getConfigFieldTypeList() {
-		return listas;
-	}
-
-	@Override
-	public IGenericServiceSvc<S> getServiceSvc() {
-		return querySvc;
-	}
-
-	@Override
-	public T getInstanceDTOUse() {
+	public F getInstanceDto(TypeGeneric typeGeneric) {
 		return registro;
+	}
+
+	@Override
+	public IParametrosSvc getParametersSvc() {
+		return parametroSvc;
 	}
 }

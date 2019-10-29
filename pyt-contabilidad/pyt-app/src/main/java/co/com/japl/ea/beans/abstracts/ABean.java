@@ -41,6 +41,8 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 			userLogin.setNombre("nano871022");
 			inject();
 			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);
+		} catch (RuntimeException e) {
+			logger.logger("RunTimeException: ", e);
 		} catch (ReflectionException e) {
 			logger.logger("Reflection: ", e);
 		} catch (Exception e) {

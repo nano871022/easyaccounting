@@ -1,5 +1,12 @@
 package org.pyt.app.beans.menu;
 
+import static co.com.japl.ea.interfaces.IGenericCommons.TypeGeneric.FILTER;
+import static org.pyt.common.constants.StylesPrincipalConstant.CONST_GRID_STANDARD;
+import static org.pyt.common.constants.StylesPrincipalConstant.CONST_TABLE_CUSTOM;
+
+import java.util.List;
+
+import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
@@ -8,11 +15,13 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.MenuDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
@@ -45,9 +54,8 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
 			loadDataModel(paginator, tableGeneric);
-			setClazz(MenuDTO.class);
-			configFilters();
-			loadColumnsIntoTableView();
+			loadFields(FILTER, CONST_GRID_STANDARD);
+			loadColumns(CONST_TABLE_CUSTOM);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -114,17 +122,36 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneFilter() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
-	}
-
-	@Override
-	public Integer countFieldsInRow() {
-		return 2;
 	}
 
 	@Override
 	public MenuDTO getFilterToTable(MenuDTO filter) {
 		return filter;
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
+	}
+
+	@Override
+	public Class<MenuDTO> getClazz() {
+		return MenuDTO.class;
 	}
 }

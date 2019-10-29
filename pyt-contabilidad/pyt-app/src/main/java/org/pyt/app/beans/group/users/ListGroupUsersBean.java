@@ -1,18 +1,24 @@
 package org.pyt.app.beans.group.users;
 
+import java.util.List;
+
+import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.StylesPrincipalConstant;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.GroupUsersDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
@@ -45,9 +51,8 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
 			loadDataModel(paginator, tableGeneric);
-			setClazz(GroupUsersDTO.class);
-			configFilters();
-			loadColumnsIntoTableView();
+			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
+			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -114,17 +119,37 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneFilter() {
-		return gridPane;
+	public GroupUsersDTO getFilterToTable(GroupUsersDTO filter) {
+		return filter;
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public void selectedRow(MouseEvent eventHandler) {
+
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
-	public GroupUsersDTO getFilterToTable(GroupUsersDTO filter) {
-		return filter;
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return gridPane;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
+	}
+
+	@Override
+	public Class<GroupUsersDTO> getClazz() {
+		return GroupUsersDTO.class;
 	}
 }

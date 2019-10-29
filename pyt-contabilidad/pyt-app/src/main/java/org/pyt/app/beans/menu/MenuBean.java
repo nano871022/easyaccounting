@@ -1,5 +1,9 @@
 package org.pyt.app.beans.menu;
 
+import static org.pyt.common.constants.StylesPrincipalConstant.CONST_GRID_STANDARD;
+
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
@@ -13,7 +17,7 @@ import co.com.japl.ea.dto.system.MenuDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.GridPane;;
 
 @FXMLFile(file = "menu.fxml", path = "view/menu")
 public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
@@ -32,7 +36,7 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 		try {
 			registro = new MenuDTO();
 			setClazz(MenuDTO.class);
-			configFields();
+			this.loadFields(TypeGeneric.FIELD, CONST_GRID_STANDARD);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -49,18 +53,18 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneField() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_MENUS_URL), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_MENUS_CLASS_PATH), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_MENUS_STATE), true, 1, 2,
-				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_URL), true, 1,
+				100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_CLASS_PATH),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_STATE), true,
+				1, 2, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -85,8 +89,14 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		var map = new ArrayListValuedHashMap<String, Object>();
+		return map;
 	}
 
 }

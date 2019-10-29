@@ -56,7 +56,7 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 			if (!field.canAccess(this)) {
 				field.trySetAccessible();
 			}
-			field.set(this, getInstanceDto());
+			field.set(this, getInstanceDto(TypeGeneric.FIELD));
 		} catch (Exception exception) {
 			logger().logger(exception);
 		}

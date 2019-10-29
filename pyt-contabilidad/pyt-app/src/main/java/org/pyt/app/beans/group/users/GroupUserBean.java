@@ -1,5 +1,6 @@
 package org.pyt.app.beans.group.users;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
@@ -31,7 +32,7 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 		try {
 			registro = new GroupUsersDTO();
 			setClazz(GroupUsersDTO.class);
-			configFields();
+			loadFields(TypeGeneric.FIELD);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -48,16 +49,16 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneField() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_GROUP_USERS_NAME), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_GROUP_USERS_STATE), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -82,8 +83,13 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
 	}
 
 }

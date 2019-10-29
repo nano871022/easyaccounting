@@ -7,6 +7,7 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.reflection.Reflection;
 
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesReflectionBean;
 import co.com.japl.ea.beans.abstracts.AGenericToBean;
 import co.com.japl.ea.controllers.LocatorController;
 import co.com.japl.ea.utls.LoadAppFxml;
@@ -85,7 +86,16 @@ public interface IBean<T extends ADto> extends Reflection, INotificationMethods 
 		return null;
 	}
 
-	default <S extends AGenericToBean<D>,D extends ADto> S controllerPopup(S genericBean) {
+	/**
+	 * Obtener controlador cuando se extiende de una clase creada con campos
+	 * configurados por pantalla de genericos
+	 * 
+	 * @param <D>
+	 * @param <S>
+	 * @param genericBean
+	 * @return
+	 */
+	default <D extends ADto, S extends AGenericInterfacesReflectionBean<D>> S controllerPopup(S genericBean) {
 		try {
 			return LoadAppFxml.loadBeanFX(genericBean);
 		} catch (LoadAppFxmlException e) {
@@ -95,6 +105,15 @@ public interface IBean<T extends ADto> extends Reflection, INotificationMethods 
 		return null;
 	}
 
+	default <D extends ADto, S extends AGenericToBean<D>> S controllerPopup(S genericBean) {
+		try {
+			return LoadAppFxml.loadBeanFX(genericBean);
+		} catch (LoadAppFxmlException e) {
+			logger().logger("El bean " + genericBean.getClass().getName() + " no puede ser cargado.", e);
+			error(e);
+		}
+		return null;
+	}
 
 	@SuppressWarnings({ "unchecked", "hiding" })
 	default <T extends Exception> void mensajeIzquierdo(T error) {
@@ -157,7 +176,5 @@ public interface IBean<T extends ADto> extends Reflection, INotificationMethods 
 
 	@SuppressWarnings("hiding")
 	public <T extends Object> T meThis();
-
-	
 
 }

@@ -1,7 +1,11 @@
 package org.pyt.app.beans.generic.interfaces;
 
+import java.util.List;
+
+import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.StylesPrincipalConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
@@ -10,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
@@ -35,7 +40,6 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		gridPane = new GridPane();
 		gridPane.setHgap(10);
 		gridPane.setVgap(10);
-		setClazz(ConfigGenericFieldDTO.class);
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
 		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES));
@@ -87,8 +91,8 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	public final void load() {
 		try {
-			configFilters();
-			loadColumnsIntoTableView();
+			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
+			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -105,7 +109,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	}
 
 	@Override
-	public GridPane getGridPaneFilter() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 
@@ -115,12 +119,31 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
 	public ConfigGenericFieldDTO getFilterToTable(ConfigGenericFieldDTO filter) {
 		return filter;
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
+	}
+
+	@Override
+	public Class<ConfigGenericFieldDTO> getClazz() {
+		return ConfigGenericFieldDTO.class;
 	}
 }

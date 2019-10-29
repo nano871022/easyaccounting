@@ -1,5 +1,6 @@
 package org.pyt.app.beans.users;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
@@ -35,7 +36,7 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 		try {
 			registro = new UsuarioDTO();
 			setClazz(UsuarioDTO.class);
-			configFields();
+			loadFields(TypeGeneric.FIELD);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -52,24 +53,24 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 	}
 
 	@Override
-	public GridPane getGridPaneField() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_USERS_GROUP_USER), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_USERS_INIT_DATE), true, 1, 2,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_USERS_NAME), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_USERS_PASSWORD), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_USERS_PERSON), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFieldUseds().get(CONST_FIELD_NAME_USERS_STATE), true, 1, 100,
-				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_GROUP_USER),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_INIT_DATE),
+				true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_NAME), true,
+				1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_PASSWORD),
+				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_PERSON), true,
+				1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_STATE), true,
+				1, 100, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -94,8 +95,14 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

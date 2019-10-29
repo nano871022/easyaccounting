@@ -13,8 +13,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+
 /**
- * Esta clase es la primera que se carga antes de iniciar el proceso de carga de la aplicación completa
+ * Esta clase es la primera que se carga antes de iniciar el proceso de carga de
+ * la aplicación completa
+ * 
  * @author Alejandro Parra
  * @since 15/05/2019
  */
@@ -27,10 +30,15 @@ public class Splash extends Preloader {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.stage = primaryStage;
-		fxml = new FXMLLoader(getClass().getClassLoader().getResource(SPLASH_RESOURCE_FXML));
-		root = fxml.load();
-		var scene = new Scene(root);
-		primaryStage.setScene(scene);
+		try {
+			fxml = new FXMLLoader(getClass().getClassLoader().getResource(SPLASH_RESOURCE_FXML));
+			root = fxml.load();
+			var scene = new Scene(root);
+			primaryStage.setScene(scene);
+		} catch (Throwable e) {
+			System.err.println("Error al cargar el splash.");
+			e.printStackTrace();
+		}
 		primaryStage.setAlwaysOnTop(true);
 		primaryStage.setResizable(false);
 		primaryStage.initStyle(StageStyle.UNDECORATED);
@@ -42,7 +50,8 @@ public class Splash extends Preloader {
 		if (stateChangeNotification.getType() == Type.BEFORE_LOAD) {
 			try {
 				validStructureDB();
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -53,25 +62,30 @@ public class Splash extends Preloader {
 			ft.setFromValue(1);
 			ft.setToValue(0);
 			ft.setCycleCount(1);
-			ft.setOnFinished(e->stage.hide());
+			ft.setOnFinished(e -> stage.hide());
 			ft.play();
 		}
 	}
-	
+
 	public void validStructureDB() throws Exception {
-		var analize = Class.forName("co.com.japl.ea.gdb.privates.impls.VerifyDB");
-		var instance = analize.getConstructor().newInstance();
-		if(instance instanceof IVerifyStructuredDB) {
-			IVerifyStructuredDB verifyDB = (IVerifyStructuredDB) instance;
-			var controller =  fxml.getController();
-			if(controller != null) {
-				((ControllerSplash)controller).setVerifySctructureDB(verifyDB);
+		try {
+
+			var analize = Class.forName("co.com.japl.ea.gdb.privates.impls.VerifyDB");
+			var instance = analize.getConstructor().newInstance();
+			if (instance instanceof IVerifyStructuredDB) {
+				IVerifyStructuredDB verifyDB = (IVerifyStructuredDB) instance;
+				var controller = fxml.getController();
+				if (controller != null) {
+					((ControllerSplash) controller).setVerifySctructureDB(verifyDB);
+				}
+				verifyDB.verifyDB();
+				if (controller != null) {
+					((ControllerSplash) controller).stop();
+				}
+
 			}
-			verifyDB.verifyDB();
-			if(controller != null) {
-				((ControllerSplash)controller).stop();
-			}
-			
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
 }

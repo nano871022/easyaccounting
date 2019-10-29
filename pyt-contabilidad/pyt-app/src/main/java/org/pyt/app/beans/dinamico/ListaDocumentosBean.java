@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
@@ -24,6 +26,7 @@ import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
@@ -34,7 +37,7 @@ import javafx.scene.layout.HBox;
  * @since 02-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "listaDocumentos.fxml", nombreVentana = "Lista de Documentos")
-public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, DocumentosDTO, DocumentosDTO> {
+public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, DocumentosDTO, DocumentoDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -75,7 +78,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 			documentos.setDoctype(tipoDocumento);
 			documentos.setFieldFilter(true);
 			genericFields = documentosSvc.getDocumentos(documentos);
-			filterTable = this.configFields();
+			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 		} catch (Exception e) {
 			logger.logger(e);
 		}
@@ -91,7 +94,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 			documentos.setDoctype(tipoDocumento);
 			documentos.setFieldColumn(true);
 			genericColumns = documentosSvc.getDocumentos(documentos);
-			tabla = loadColumnsIntoTableView();
+			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		} catch (Exception e) {
 			logger.logger(e);
 		}
@@ -187,32 +190,42 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	}
 
 	@Override
-	public DocumentoDTO getInstanceDTOUse() {
-		return filter;
-	}
-
-	@Override
-	public javafx.scene.layout.GridPane GridPane() {
-		return filterTable;
-	}
-
-	@Override
-	public Integer maxColumns() {
-		return 4;
-	}
-
-	@Override
-	public TableView getTableView() {
+	public TableView<DocumentoDTO> getTableView() {
 		return tabla;
 	}
 
 	@Override
-	public Map<String, List> listToChoiceBoxs() {
-		return mapListSelects;
+	public javafx.scene.layout.GridPane getGridPane(TypeGeneric typeGeneric) {
+		return filterTable;
 	}
 
 	@Override
-	public void setColumns(Map columns) {
+	public DocumentoDTO getInstanceDto(TypeGeneric typeGeneric) {
+		return filter;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<DocumentoDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public Class<DocumentoDTO> getClazz() {
+		return DocumentoDTO.class;
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
 	}
 
 }

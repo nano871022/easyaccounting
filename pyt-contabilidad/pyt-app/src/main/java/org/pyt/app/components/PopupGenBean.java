@@ -1,13 +1,15 @@
 package org.pyt.app.components;
 
+import static co.com.japl.ea.interfaces.IGenericCommons.TypeGeneric.FILTER;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.I18n;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ReflectionException;
@@ -56,6 +58,7 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 	private GridPane gridFilter;
 	private TableView<T> tabla;
 
+	@SuppressWarnings("unused")
 	public PopupGenBean(Class<T> clazz) throws Exception {
 		super(clazz);
 		paginador = new HBox();
@@ -69,16 +72,17 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 
 	@SuppressWarnings("static-access")
 	@FXML
+	@Override
 	public void initialize() {
 		loadTable();
 		try {
-			configFilters();
-			configColumnas();
+			loadFields(FILTER);
+			loadColumns();
 			panel.setTop(gridFilter);
 			panel.setCenter(tabla);
 			panel.setAlignment(tabla, Pos.CENTER);
 			panel.setBottom(paginador);
-			filter = assingValuesParameterized(getInstaceOfGenericADto());
+			// filter = assingValuesParameterized(getInstanceDto(FILTER));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -91,7 +95,7 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 	 * @throws {@link IllegalAccessException}
 	 */
 	private final void configColumnas() throws IllegalAccessException {
-		columnas = getConfigFields(filter, true, false);
+		// columnas = getConfigFields(filter, true, false);
 		var validateValues = new ValidateValues();
 		columnas.forEach((key, value) -> {
 			var tableColumn = new TableColumn<T, String>(i18n().valueBundle(
@@ -168,7 +172,7 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 	@SuppressWarnings("unchecked")
 	public final void load(String caller) throws Exception {
 		this.caller = caller;
-		filter = assingValuesParameterized(filter);
+		// filter = assingValuesParameterized(filter);
 		var cantidad = table.getTotalRows(validFilter());
 		if (cantidad == 1) {
 			this.caller(caller, table.getList(validFilter(), 0, 1).get(0));
@@ -182,8 +186,9 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	private void selectedRow(MouseEvent event) {
+	public void selectedRow(MouseEvent event) {
 		try {
 			if (event.getClickCount() > 0 && table.isSelected()) {
 				this.caller(caller, table.getSelectedRow());
@@ -194,22 +199,15 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		}
 	}
 
-	@Override
-	public DataTableFXMLUtil<T, T> getTable() {
-		return table;
-	}
-
-	@Override
 	public T getFilter() {
 		return filter;
 	}
 
 	@Override
-	public GridPane getGridPaneFilter() {
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridFilter;
 	}
 
-	@Override
 	public void setFilter(T filter) {
 		this.filter = filter;
 	}
@@ -222,19 +220,28 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		return filtros;
 	}
 
-	@Override
 	public IGenericServiceSvc<ConfigGenericFieldDTO> getServiceSvc() {
 		return configGenericFieldSvc;
 	}
 
 	@Override
-	public Integer countFieldsInRow() {
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
 
 	@Override
-	public I18n getI18n() {
-		return I18n.instance();
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
+	}
+
+	@Override
+	public TableView<T> getTableView() {
+		return tabla;
 	}
 
 }
