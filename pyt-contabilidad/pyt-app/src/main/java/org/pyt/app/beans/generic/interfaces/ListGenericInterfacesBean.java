@@ -3,9 +3,14 @@ package org.pyt.app.beans.generic.interfaces;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
+import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
+import org.pyt.common.exceptions.ConfigGenericFieldException;
+
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
@@ -34,6 +39,10 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	private Button btnDel;
 	@FXML
 	private Button btnMod;
+	private List<ConfigGenericFieldDTO> listFieldsToFilters;
+	private List<ConfigGenericFieldDTO> listFieldsToColumns;
+	@Inject(resource = "com.pyt.service.implement.ConfigGenericFieldSvc")
+	private IConfigGenericFieldSvc configGenericFieldsSvc;
 
 	@FXML
 	private void initialize() {
@@ -43,6 +52,14 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
 		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES));
+		try {
+			listFieldsToFilters = configGenericFieldsSvc.getFieldToFilters(this.getClass(),
+					ConfigGenericFieldDTO.class);
+			listFieldsToFilters = configGenericFieldsSvc.getFieldToColumns(this.getClass(),
+					ConfigGenericFieldDTO.class);
+		} catch (ConfigGenericFieldException e) {
+			error(e);
+		}
 		loadDataModel(paginador, tableGeneric);
 		load();
 	}
@@ -125,6 +142,21 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	@Override
 	public ConfigGenericFieldDTO getFilterToTable(ConfigGenericFieldDTO filter) {
+		if (StringUtils.isNotBlank(filter.getAlias()) && !filter.getAlias().contains("%")) {
+			filter.setAlias("%" + filter.getAlias() + "%");
+		}
+		if (StringUtils.isNotBlank(filter.getClassPath()) && !filter.getClassPath().contains("%")) {
+			filter.setClassPath("%" + filter.getClassPath() + "%");
+		}
+		if (StringUtils.isNotBlank(filter.getClassPathBean()) && !filter.getClassPathBean().contains("%")) {
+			filter.setClassPathBean("%" + filter.getClassPathBean() + "%");
+		}
+		if (StringUtils.isNotBlank(filter.getDescription()) && !filter.getDescription().contains("%")) {
+			filter.setDescription("%" + filter.getDescription() + "%");
+		}
+		if (StringUtils.isNotBlank(filter.getName()) && !filter.getName().contains("%")) {
+			filter.setName("%" + filter.getName() + "%");
+		}
 		return filter;
 	}
 
@@ -134,7 +166,14 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
-		return null;
+		switch (typeGeneric) {
+		case FILTER:
+			return listFieldsToFilters;
+		case COLUMN:
+			return listFieldsToColumns;
+		default:
+			throw new RuntimeException("Opcion no valida");
+		}
 	}
 
 	@Override

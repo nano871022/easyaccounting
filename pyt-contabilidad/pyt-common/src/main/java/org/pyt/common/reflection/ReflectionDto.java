@@ -37,14 +37,16 @@ public abstract class ReflectionDto {
 		String nameMethod;
 		Field field = null;
 		try {
-			if (value == null)
-				return;
 			field = searchField(nombreCampo, this.getClass());
 			nameMethod = ReflectionConstants.SET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
 			Method method = clase.getMethod(nameMethod, field.getType());
-			ValidateValues vv = new ValidateValues();
-			method.invoke(this, vv.cast(value, field.getType()));
+			if(value == null) {
+				method.invoke(this);
+			}else{
+				ValidateValues vv = new ValidateValues();
+				method.invoke(this, vv.cast(value, field.getType()));
+			}
 		} catch (SecurityException e) {
 			throw new ReflectionException("Problema de seguridad.", e);
 		} catch (NoSuchMethodException e) {

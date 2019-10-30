@@ -228,4 +228,9 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	public void selectedRow(MouseEvent eventHandler) {
 	}
 
+	@Override
+	public DataTableFXMLUtil<DocumentoDTO, DocumentoDTO> getTable() {
+		return dataTable;
+	}
+
 }

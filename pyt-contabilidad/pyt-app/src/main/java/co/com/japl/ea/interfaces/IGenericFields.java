@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
@@ -100,7 +101,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	 * configurados como campos genericos, esto se pone el {@link GridPane}
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "static-access" })
 	default void loadFields(TypeGeneric typeGeneric, String... stylesGrid) {
 		var list = getListGenericsFields(typeGeneric);
 		if (list == null) {
@@ -136,6 +137,17 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				logger().logger("Problema al obtener la lista de valores.", e);
 			}
 		});
+		if (TypeGeneric.FILTER == typeGeneric) {
+			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> {
+				try {
+					((IGenericColumns<L, F>) this).getTable().search();
+				} catch (Exception e) {
+				}
+			}, "Buscar", Glyph.FONT.SEARCH), 0, ++index.row);
+			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> clearFields(typeGeneric),
+					"Limpiar", Glyph.FONT.GAVEL), 1, index.row);
+
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes" })
@@ -214,6 +226,19 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	 */
 	default void clearFields(TypeGeneric typeGeneric) {
 		getMapFields(typeGeneric).values().forEach(field -> genericFormsUtils.cleanValueByFieldFX(field));
+		getMapFields(typeGeneric).keySet().stream().filter(field -> {
+			try {
+				return getInstanceDto(typeGeneric).getType(field) != null;
+			} catch (Exception e) {
+				return false;
+			}
+		}).forEach(field -> {
+			try {
+				getInstanceDto(typeGeneric).set(field, null);
+			} catch (Exception e) {
+				logger().DEBUG("GenericFields.clearFields.keySet::" + e.getMessage());
+			}
+		});
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

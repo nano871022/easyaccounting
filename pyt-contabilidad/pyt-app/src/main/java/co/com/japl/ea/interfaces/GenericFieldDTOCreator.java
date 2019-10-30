@@ -32,7 +32,9 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 		if (field.getAlias() != null && field.getAlias().trim().isEmpty()) {
 			return field.getAlias();
 		}
-		return notificationMethods.i18n().valueBundle(field.getClassPath().substring(5) + "." + field.getName());
+		var classPath = field.getClassPath().contains("Class") ? field.getClassPath().substring(5)
+				: field.getClassPath();
+		return notificationMethods.i18n().valueBundle(classPath + "." + field.getName());
 	}
 
 	@Override

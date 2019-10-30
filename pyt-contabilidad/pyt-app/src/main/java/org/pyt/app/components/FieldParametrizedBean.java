@@ -15,6 +15,7 @@ import com.pyt.service.pojo.GenericPOJO;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesReflectionBean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -114,6 +115,12 @@ public class FieldParametrizedBean<T extends ADto> extends AGenericInterfacesRef
 
 	@Override
 	public TableView<T> getTableView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataTableFXMLUtil<T, T> getTable() {
 		// TODO Auto-generated method stub
 		return null;
 	}

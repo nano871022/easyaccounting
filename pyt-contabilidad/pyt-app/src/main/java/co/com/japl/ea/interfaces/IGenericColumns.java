@@ -9,6 +9,7 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -93,4 +94,6 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 	 * @return {@link TableView}
 	 */
 	public TableView<F> getTableView();
+
+	public DataTableFXMLUtil<F, F> getTable();
 }

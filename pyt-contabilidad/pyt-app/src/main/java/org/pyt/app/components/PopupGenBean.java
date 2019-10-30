@@ -244,4 +244,9 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		return tabla;
 	}
 
+	@Override
+	public DataTableFXMLUtil<T, T> getTable() {
+		return table;
+	}
+
 }

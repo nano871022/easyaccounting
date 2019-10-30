@@ -79,6 +79,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 		return configGenericSvc;
 	}
 
+	@Override
 	public DataTableFXMLUtil<T, T> getTable() {
 		return dataTable;
 	}
