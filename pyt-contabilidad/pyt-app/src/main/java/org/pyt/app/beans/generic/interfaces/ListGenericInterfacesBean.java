@@ -55,7 +55,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		try {
 			listFieldsToFilters = configGenericFieldsSvc.getFieldToFilters(this.getClass(),
 					ConfigGenericFieldDTO.class);
-			listFieldsToFilters = configGenericFieldsSvc.getFieldToColumns(this.getClass(),
+			listFieldsToColumns = configGenericFieldsSvc.getFieldToColumns(this.getClass(),
 					ConfigGenericFieldDTO.class);
 		} catch (ConfigGenericFieldException e) {
 			error(e);
@@ -162,6 +162,9 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
+		if (getTable().isSelected()) {
+			set();
+		}
 	}
 
 	@Override

@@ -37,16 +37,20 @@ public abstract class ReflectionDto {
 		String nameMethod;
 		Field field = null;
 		try {
+			if(value == null) {
+				var campo = clase.getDeclaredField(nombreCampo);
+				if(campo.trySetAccessible()) {
+					campo.set(this, null);
+				}else {
+					return;
+				}
+			}
 			field = searchField(nombreCampo, this.getClass());
 			nameMethod = ReflectionConstants.SET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
 			Method method = clase.getMethod(nameMethod, field.getType());
-			if(value == null) {
-				method.invoke(this);
-			}else{
-				ValidateValues vv = new ValidateValues();
-				method.invoke(this, vv.cast(value, field.getType()));
-			}
+			ValidateValues vv = new ValidateValues();
+			method.invoke(this, vv.cast(value, field.getType()));
 		} catch (SecurityException e) {
 			throw new ReflectionException("Problema de seguridad.", e);
 		} catch (NoSuchMethodException e) {
@@ -70,6 +74,8 @@ public abstract class ReflectionDto {
 			throw new ReflectionException("Problema objeto invocacion.", e);
 		} catch (ValidateValueException e) {
 			throw new ReflectionException("Problema en casting al campo ingreso de informacion.", e);
+		} catch (NoSuchFieldException e) {
+			throw new ReflectionException("Tatando de cambiar valor del campo a nulo", e);
 		}
 	}
 
