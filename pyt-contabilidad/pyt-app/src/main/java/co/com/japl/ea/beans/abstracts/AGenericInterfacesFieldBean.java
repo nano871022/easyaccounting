@@ -21,7 +21,7 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametroSvc")
 	private IParametrosSvc parametrosSvc;
-	private List<ConfigGenericFieldDTO> fields;
+	protected List<ConfigGenericFieldDTO> fields;
 	private Class<F> classTypeDto;
 	private MultiValuedMap<String, Node> mapFieldUseds;
 

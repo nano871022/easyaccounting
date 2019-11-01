@@ -1,5 +1,7 @@
 package org.pyt.app.beans.menu.permission.user;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -7,6 +9,7 @@ import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -39,6 +42,10 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 	@FXML
 	private HBox paginator;
 	private GridPane gridPane;
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
+	private List<ConfigGenericFieldDTO> listFilters;
+	private List<ConfigGenericFieldDTO> listColumns;
 
 	@FXML
 	public void initialize() {
@@ -49,6 +56,8 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
+			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), MenuPermUsersDTO.class);
+			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), MenuPermUsersDTO.class);
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
@@ -135,13 +144,17 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		// TODO Auto-generated method stub
-
+		set();
 	}
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
-		// TODO Auto-generated method stub
+		switch (typeGeneric) {
+		case FILTER:
+			return listFilters;
+		case COLUMN:
+			return listColumns;
+		}
 		return null;
 	}
 

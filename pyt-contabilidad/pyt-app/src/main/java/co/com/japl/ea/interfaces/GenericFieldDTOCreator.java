@@ -50,10 +50,11 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	@Override
 	public Node create() {
 		try {
-			Field propertie = ConfigGenericFieldDTO.class.getDeclaredField(field.getName());
+			var clazz = Class.forName(field.getClassPath());
+			Field propertie = clazz.getDeclaredField(field.getName());
 			var node = controlFieldUtil.getFieldByField(propertie);
 			return node;
-		} catch (NoSuchFieldException | SecurityException e) {
+		} catch (NoSuchFieldException | SecurityException | ClassNotFoundException e) {
 			notificationMethods.logger().logger("Error en creacion del campo", e);
 		}
 		return new TextField("Generic Field");

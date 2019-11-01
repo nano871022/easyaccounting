@@ -1,6 +1,7 @@
 package org.pyt.app.beans.menu;
 
 import static co.com.japl.ea.interfaces.IGenericCommons.TypeGeneric.FILTER;
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
 import static org.pyt.common.constants.StylesPrincipalConstant.CONST_GRID_STANDARD;
 import static org.pyt.common.constants.StylesPrincipalConstant.CONST_TABLE_CUSTOM;
 
@@ -11,6 +12,7 @@ import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -43,6 +45,10 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 	@FXML
 	private HBox paginator;
 	private GridPane gridPane;
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
+	private List<ConfigGenericFieldDTO> listFilters;
+	private List<ConfigGenericFieldDTO> listColumns;
 
 	@FXML
 	public void initialize() {
@@ -53,6 +59,8 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
+			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), MenuDTO.class);
+			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), MenuDTO.class);
 			loadDataModel(paginator, tableGeneric);
 			loadFields(FILTER, CONST_GRID_STANDARD);
 			loadColumns(CONST_TABLE_CUSTOM);
@@ -142,6 +150,12 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		switch (typeGeneric) {
+		case FILTER:
+			return listFilters;
+		case COLUMN:
+			return listColumns;
+		}
 		return null;
 	}
 

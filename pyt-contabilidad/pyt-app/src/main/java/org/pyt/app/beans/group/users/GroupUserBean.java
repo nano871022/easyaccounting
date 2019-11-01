@@ -4,8 +4,10 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.InsertResourceConstants;
 import org.pyt.common.validates.ValidFields;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -26,12 +28,15 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 	private Label lblTitle;
 	public static final String CONST_FIELD_NAME_GROUP_USERS_NAME = "name";
 	public static final String CONST_FIELD_NAME_GROUP_USERS_STATE = "state";
+	@Inject(resource = InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configSvc;
 
 	@FXML
 	public void initialize() {
 		try {
 			registro = new GroupUsersDTO();
 			setClazz(GroupUsersDTO.class);
+			fields = configSvc.getFieldToFields(this.getClass(), GroupUsersDTO.class);
 			loadFields(TypeGeneric.FIELD);
 		} catch (Exception e) {
 			error(e);

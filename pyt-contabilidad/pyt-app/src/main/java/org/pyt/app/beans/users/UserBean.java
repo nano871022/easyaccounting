@@ -1,11 +1,14 @@
 package org.pyt.app.beans.users;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -30,12 +33,15 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 	public static final String CONST_FIELD_NAME_USERS_PERSON = "person";
 	public static final String CONST_FIELD_NAME_USERS_GROUP_USER = "grupoUser";
 	public static final String CONST_FIELD_NAME_USERS_INIT_DATE = "fechaInicio";
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
 
 	@FXML
 	public void initialize() {
 		try {
 			registro = new UsuarioDTO();
 			setClazz(UsuarioDTO.class);
+			fields = configGenericSvc.getFieldToFields(this.getClass(), UsuarioDTO.class);
 			loadFields(TypeGeneric.FIELD);
 		} catch (Exception e) {
 			error(e);

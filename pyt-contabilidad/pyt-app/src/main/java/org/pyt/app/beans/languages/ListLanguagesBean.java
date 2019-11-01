@@ -1,5 +1,8 @@
 package org.pyt.app.beans.languages;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_GENERIC_SERVICE;
+
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -8,6 +11,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -25,7 +29,7 @@ import javafx.scene.layout.HBox;
 @FXMLFile(file = "listLanguages.fxml", path = "view/languages")
 public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_GENERIC_SERVICE)
 	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
 	@FXML
 	private Button btnMod;
@@ -40,6 +44,10 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	@FXML
 	private HBox paginator;
 	private GridPane gridPane;
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
+	private List<ConfigGenericFieldDTO> listFilters;
+	private List<ConfigGenericFieldDTO> listColumns;
 
 	@FXML
 	public void initialize() {
@@ -50,8 +58,10 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
+			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), LanguagesDTO.class);
+			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), LanguagesDTO.class);
 			loadDataModel(paginator, tableGeneric);
-			loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
+			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		} catch (Exception e) {
 			error(e);
@@ -135,13 +145,19 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		// TODO Auto-generated method stub
-
+		set();
 	}
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
-		// TODO Auto-generated method stub
+		switch (typeGeneric) {
+		case FILTER:
+			return listFilters;
+		case COLUMN:
+			return listColumns;
+		default:
+			break;
+		}
 		return null;
 	}
 

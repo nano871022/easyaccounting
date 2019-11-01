@@ -1,5 +1,7 @@
 package org.pyt.app.beans.users;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -7,6 +9,7 @@ import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -40,6 +43,10 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 	@FXML
 	private HBox paginator;
 	private GridPane gridPane;
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
+	private List<ConfigGenericFieldDTO> listFilters;
+	private List<ConfigGenericFieldDTO> listColumns;
 
 	@FXML
 	public void initialize() {
@@ -50,6 +57,8 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
+			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), UsuarioDTO.class);
+			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), UsuarioDTO.class);
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
@@ -165,10 +174,17 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
+		set();
 	}
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		switch (typeGeneric) {
+		case FILTER:
+			return listFilters;
+		case COLUMN:
+			return listColumns;
+		}
 		return null;
 	}
 

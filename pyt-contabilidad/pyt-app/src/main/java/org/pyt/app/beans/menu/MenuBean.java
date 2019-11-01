@@ -1,5 +1,6 @@
 package org.pyt.app.beans.menu;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
 import static org.pyt.common.constants.StylesPrincipalConstant.CONST_GRID_STANDARD;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -9,6 +10,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -30,12 +32,15 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 	public static final String CONST_FIELD_NAME_MENUS_URL = "url";
 	public static final String CONST_FIELD_NAME_MENUS_CLASS_PATH = "classPath";
 	public static final String CONST_FIELD_NAME_MENUS_STATE = "state";
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
 
 	@FXML
 	public void initialize() {
 		try {
 			registro = new MenuDTO();
 			setClazz(MenuDTO.class);
+			fields = configGenericSvc.getFieldToFields(this.getClass(), MenuDTO.class);
 			this.loadFields(TypeGeneric.FIELD, CONST_GRID_STANDARD);
 		} catch (Exception e) {
 			error(e);

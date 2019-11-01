@@ -1,5 +1,7 @@
 package org.pyt.app.beans.permission;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -8,6 +10,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -40,6 +43,10 @@ public class ListPermissionBean extends AGenericInterfacesBean<PermissionDTO> {
 	@FXML
 	private HBox paginator;
 	private GridPane gridPane;
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
+	private List<ConfigGenericFieldDTO> listFilters;
+	private List<ConfigGenericFieldDTO> listColumns;
 
 	@FXML
 	public void initialize() {
@@ -50,6 +57,8 @@ public class ListPermissionBean extends AGenericInterfacesBean<PermissionDTO> {
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
+			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), PermissionDTO.class);
+			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), PermissionDTO.class);
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
@@ -140,6 +149,12 @@ public class ListPermissionBean extends AGenericInterfacesBean<PermissionDTO> {
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		switch (typeGeneric) {
+		case FILTER:
+			return listFilters;
+		case COLUMN:
+			return listColumns;
+		}
 		return null;
 	}
 

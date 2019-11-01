@@ -1,11 +1,14 @@
 package org.pyt.app.beans.menu.permission.user;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -27,12 +30,15 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 	public static final String CONST_FIELD_NAME_MPU_MENU = "menu";
 	public static final String CONST_FIELD_NAME_MPU_PERMSSION = "perm";
 	public static final String CONST_FIELD_NAME_MPU_STATE = "state";
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
 
 	@FXML
 	public void initialize() {
 		try {
 			registro = new MenuPermUsersDTO();
 			setClazz(MenuPermUsersDTO.class);
+			fields = configGenericSvc.getFieldToFields(this.getClass(), MenuPermUsersDTO.class);
 			loadFields(TypeGeneric.FIELD);
 		} catch (Exception e) {
 			error(e);

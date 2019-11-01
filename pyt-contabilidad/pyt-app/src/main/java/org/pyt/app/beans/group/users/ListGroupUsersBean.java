@@ -5,9 +5,11 @@ import java.util.List;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.InsertResourceConstants;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -40,6 +42,10 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	@FXML
 	private HBox paginator;
 	private GridPane gridPane;
+	@Inject(resource = InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configSvc;
+	private List<ConfigGenericFieldDTO> listFilters;
+	private List<ConfigGenericFieldDTO> listColumns;
 
 	@FXML
 	public void initialize() {
@@ -50,6 +56,8 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
+			listFilters = configSvc.getFieldToFilters(this.getClass(), GroupUsersDTO.class);
+			listColumns = configSvc.getFieldToColumns(this.getClass(), GroupUsersDTO.class);
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
@@ -125,7 +133,7 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-
+		set();
 	}
 
 	@Override
@@ -135,6 +143,14 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		switch (typeGeneric) {
+		case FILTER:
+			return listFilters;
+		case COLUMN:
+			return listColumns;
+		default:
+			break;
+		}
 		return null;
 	}
 

@@ -1,11 +1,14 @@
 package org.pyt.app.beans.help;
 
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -27,12 +30,15 @@ public class HelpBean extends AGenericInterfacesFieldBean<HelpDTO> {
 	public static final String CONST_FIELD_NAME_MENUS_URL = "url";
 	public static final String CONST_FIELD_NAME_MENUS_CLASS_PATH = "classPath";
 	public static final String CONST_FIELD_NAME_MENUS_STATE = "state";
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
+	private IConfigGenericFieldSvc configGenericSvc;
 
 	@FXML
 	public void initialize() {
 		try {
 			registro = new HelpDTO();
 			setClazz(HelpDTO.class);
+			fields = configGenericSvc.getFieldToFields(this.getClass(), HelpDTO.class);
 			loadFields(TypeGeneric.FIELD);
 		} catch (Exception e) {
 			error(e);
