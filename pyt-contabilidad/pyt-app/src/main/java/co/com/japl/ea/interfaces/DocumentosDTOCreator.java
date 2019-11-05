@@ -45,7 +45,7 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 	@Override
 	public Node create() {
 		try {
-			Field propertie = field.getClaseControlar().getField(field.getFieldName());
+			Field propertie = field.getClaseControlar().getDeclaredField(field.getFieldName());
 			var node = controlFieldUtil.getFieldByField(propertie);
 			return node;
 		} catch (NoSuchFieldException | SecurityException e) {

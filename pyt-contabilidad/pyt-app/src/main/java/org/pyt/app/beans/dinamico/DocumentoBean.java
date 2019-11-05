@@ -54,10 +54,12 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	private List<ParametroDTO> listTipoDocumento;
 	private ValidateValues valid;
 	private MultiValuedMap<String, Object> mapListSelects;
+	private GridPane gridPane;
 
 	@FXML
 	public void initialize() {
 		super.initialize();
+		gridPane = new GridPane();
 		valid = new ValidateValues();
 		registro = new DocumentoDTO();
 		tipoDocumento = new ParametroDTO();
@@ -103,6 +105,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			}
 		}
 		central.getChildren().clear();
+		central.getChildren().add(gridPane);
 		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
@@ -114,6 +117,14 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		registro.setTipoDocumento(tipoDocumento);
 		this.tipoDocumentos.setDisable(true);
 		SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
+		try {
+			DocumentosDTO docs = new DocumentosDTO();
+			docs.setDoctype(tipoDocumento);
+			docs.setClaseControlar(DocumentoDTO.class);
+			campos = documentosSvc.getDocumentos(docs);
+		} catch (DocumentosException e) {
+			error(e);
+		}
 	}
 
 	public final void load(DocumentoDTO registro) {
@@ -195,7 +206,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 
 	@Override
 	public javafx.scene.layout.GridPane getGridPane(TypeGeneric typeGeneric) {
-		return new GridPane();
+		return gridPane;
 	}
 
 	@Override

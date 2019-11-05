@@ -215,11 +215,6 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	}
 
 	@Override
-	public List<DocumentoDTO> getListGenericsFields(TypeGeneric typeGeneric) {
-		return null;
-	}
-
-	@Override
 	public Class<DocumentoDTO> getClazz() {
 		return DocumentoDTO.class;
 	}

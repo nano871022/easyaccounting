@@ -8,7 +8,6 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 
-import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
@@ -18,9 +17,9 @@ import co.com.japl.ea.interfaces.IUrlLoadBean;
 import javafx.scene.Node;
 
 public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F extends ADto> extends ABean<T>
-		implements IUrlLoadBean, IGenericFields<T, F>, IGenericColumns<T, F> {
-	protected List<DocumentosDTO> genericFields;
-	protected List<DocumentosDTO> genericColumns;
+		implements IUrlLoadBean, IGenericFields<S, F>, IGenericColumns<S, F> {
+	protected List<S> genericFields;
+	protected List<S> genericColumns;
 	private MultiValuedMap<String, Node> configFields;
 	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
 	private IGenericServiceSvc<S> querySvc;
@@ -50,9 +49,15 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 		return parametrosSvc;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<T> getListGenericsFields() {
-		return (List<T>) genericFields;
+	@Override
+	public List<S> getListGenericsFields(TypeGeneric typeGeneric) {
+		switch (typeGeneric) {
+		case FILTER:
+			return genericFields;
+		case COLUMN:
+			return genericColumns;
+		}
+		return null;
 	}
 
 }
