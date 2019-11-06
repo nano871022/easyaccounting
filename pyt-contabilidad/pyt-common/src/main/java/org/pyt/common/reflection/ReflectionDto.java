@@ -202,7 +202,7 @@ public abstract class ReflectionDto {
 				campos += (campos.length() > 3 ? "," : "") + (field.getName() + "=" + this.get(field.getName()));
 			}
 		} catch (ReflectionException e) {
-			logger.error(e.getMensage());
+			logger.error(e.getMessage());
 		}
 		if (clase.getSuperclass() != ReflectionDto.class) {
 			campos += stringAll((Class<T>) clase.getSuperclass());

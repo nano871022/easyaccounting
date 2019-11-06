@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
@@ -247,6 +248,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		var list = getMapListToChoiceBox().get(nameField);
 		if (isParametroDTO(typeField) && list == null) {
 			var parametroDto = factory.getParametroDto();
+			if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
+				parametroDto.setGrupo(getParametersSvc().getIdByParametroGroup(parametroDto.getGrupo()));
+			}
 			var parametros = getParametersSvc().getAllParametros(parametroDto);
 			getMapListToChoiceBox().put(nameField, parametros);
 			return (List<D>) parametros;

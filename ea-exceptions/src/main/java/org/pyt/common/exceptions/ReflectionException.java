@@ -7,7 +7,7 @@ package org.pyt.common.exceptions;
  * @author Alejandro Parra
  * @since 2018-05-19
  */
-public class ReflectionException extends AExceptions {
+public class ReflectionException extends RuntimeException {
 
 	private static final long serialVersionUID = -1647410075727585247L;
 

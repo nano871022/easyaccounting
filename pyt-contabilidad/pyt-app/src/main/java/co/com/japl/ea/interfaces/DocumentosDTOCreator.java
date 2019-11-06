@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.ParametroConstants;
 
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
@@ -63,6 +64,7 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 	public ParametroDTO getParametroDto() {
 		var parametro = new ParametroDTO();
 		parametro.setGrupo(field.getSelectNameGroup());
+		parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
 		return parametro;
 	}
 }

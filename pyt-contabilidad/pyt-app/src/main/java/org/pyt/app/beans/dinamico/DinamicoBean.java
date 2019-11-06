@@ -50,12 +50,14 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 	public final static String FIELD_NAME = "nombre";
 	private ValidateValues validateValue;
 	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
-	private IParametrosSvc parametroSvc;
+	protected IParametrosSvc parametroSvc;
+	protected MultiValuedMap<String, Object> mapListSelects;
 
 	public void initialize() {
 		listas = new HashMap<String, Object>();
 		fields = new ArrayListValuedHashMap<>();
 		validateValue = new ValidateValues();
+		mapListSelects = new ArrayListValuedHashMap<>();
 	}
 
 	/**
@@ -220,5 +222,10 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 	@Override
 	public IParametrosSvc getParametersSvc() {
 		return parametroSvc;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return mapListSelects;
 	}
 }
