@@ -59,4 +59,32 @@ public class LanguageConstant {
 	public final static String GENERIC_LBL_LIST_GENERIC_INTERFACES = "generic.lbl.list.generic.interfaces";
 	public final static String FXML_LBL_TITLE_GENERIC_INTERFACES = "fxml.lbl.title.generic.interface";
 	public final static String GENERIC_FIELDS_NOT_FOUND = "field_doesnt_found_to_process";
+	
+	
+	public final static String CONST_EXC_QUERYS_NOT_SUBMITION_FILTER = "excepcion.checked.querys.popup.not.submision.filter";
+	public final static String CONST_EXC_QUERYS_NOT_SUBMITION_USER = "excepcion.checked.querys.popup.not.submision.user";
+	public final static String CONST_EXC_QUERYS_NOT_SUBMITION_REG_INIT = "excepcion.checked.querys.popup.not.submision.register.init";
+	public final static String CONST_EXC_QUERYS_NOT_SUBMITION_REG_COUNT = "excepcion.checked.querys.popup.not.submision.register.count";
+	public final static String CONST_EXC_QUERYS_COUNT_REG_CANT_0 = "excepcion.checked.querys.popup.count.register.cant0";
+	public final static String CONST_EXC_QUERYS_VAL_REG_INIT_CANT_LESS_0 = "excepcion.checked.querys.popup.value.register.init.cant.less0";
+	public final static String CONST_EXC_QUERYS_COUNT_CANT_LESS_0 = "excepcion.checked.querys.popup.count.cant.less0";
+	
+	public final static String CONST_EXC_SERVICE="excepcion.checked.Services";
+	
+	public final static String CONST_ERR_CREATE_USER_EMPTY = "excepcion.checked.user.create.user.empty";
+	public final static String CONST_ERR_CREATE_USER_CODE_NOT_EMPTY = "excepcion.checked.user.code.filled";
+	public final static String CONST_ERR_DEL_USER_EMPTY = "excepcion.checked.user.empty";
+	public final static String CONST_ERR_DEL_USER_CODE_EMPTY = "excepcion.checked.user.code.empty";
+	public final static String CONST_ERR_GET_ALL_USER_EMPTY = "excepcion.checked.user.empty";
+	public final static String CONST_ERR_GET_ALL_USER_CODE_NOT_EMPTY = "excepcion.checked.user.code.not.empty";
+	public final static String CONST_ERR_GET_ALL_USER_PAGE = "excepcion.checked.user.page";
+	public final static String CONST_ERR_GET_USER_EMPTY = "excepcion.checked.user.empty";
+	public final static String CONST_ERR_GET_USER_CODE_NOT_EMPTY = "excepcion.checked.user.code.filled";
+	public final static String CONST_ERR_UPD_USER_EMPTY = "excepcion.checked.user.empty";
+	public final static String CONST_ERR_UPD_USER_CODE_EMPTY = "excepcion.checked.user.code.empty";
+	public final static String CONST_ERR_COUNT_USER_EMPTY = "excepcion.checked.user.code.empty";
+	public final static String CONST_ERR_COUNT_USER_CODE_EMPTY = "excepcion.checked.user.code.empty";
+	public final static String CONST_ERR_NEW_PASS_USER_DIFERENT = "excepcion.checked.user.pass.new.unlike";
+	public final static String CONST_ERR_OLD_PASS_USER_DIFERENT = "excepcion.checked.user.pass.old.unlike.";
+
 }

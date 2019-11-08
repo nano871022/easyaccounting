@@ -214,6 +214,10 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			} else {
 				throw new LoadAppFxmlException("El " + controller.getName() + " no se encuentra anotado con @FXML");
 			}
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			throw new LoadAppFxmlException(
+					"Se presento un null pointer exception con el procesamiento de " + controller.getCanonicalName());
 		} catch (SecurityException e) {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
 		} catch (IOException e) {

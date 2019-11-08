@@ -7,6 +7,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.CSSConstant;
+import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.pyt.service.dto.ParametroDTO;
@@ -39,7 +40,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 	protected UsuarioDTO userLogin;
 	protected String NombreVentana;
 	protected Stage primaryStage;
-	private Class<T> clazz;
+	protected Class<T> clazz;
 	protected String caller;
 	private Double width;
 	private Double height;
@@ -74,32 +75,39 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		}
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public final Comunicacion comunicacion() {
 		return comunicacion;
 	}
 
+	@Override
 	public final T getRegistro() {
 		return registro;
 	}
 
+	@Override
 	public final void setRegistro(T registro) {
 		this.registro = registro;
 	}
 
+	@Override
 	public final String getNombreVentana() {
 		return NombreVentana;
 	}
 
+	@Override
 	public final void setNombreVentana(String nombreVentana) {
 		this.NombreVentana = nombreVentana;
 	}
 
+	@Override
 	@SuppressWarnings({ "hiding", "unchecked" })
 	public final <T extends Object> T meThis() {
 		return (T) this;
 	}
 
+	@Override
 	public final Log logger() {
 		return logger;
 	}
@@ -124,6 +132,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		primaryStage.show();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final void setClazz(Class clazz) {
 		this.clazz = clazz;
 	}
@@ -164,16 +173,29 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		return registro;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String nameEstado, Integer estado) {
+		registro.set(nameEstado, estado);
+		return (M) this;
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String nameGroup,
+			String valueKeyPrameter) {
+		if (registro instanceof ParametroDTO) {
+			try {
+				var value = parametrosSvc.getIdByParametroGroup(valueKeyPrameter);
+				registro.set(nameGroup, valueKeyPrameter);
+			} catch (ParametroException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			registro.set(nameGroup, valueKeyPrameter);
+		}
 		return (M) this;
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
-	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String nameGroup,
-			String valueKeyPrameter) {
-		return (M) this;
-	}
-
 	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String grupoParametro,
 			ParametroDTO parametroEstado) {
 		return (M) this;

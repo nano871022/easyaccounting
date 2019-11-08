@@ -49,14 +49,8 @@ public interface Reflection {
 			throws ReflectionException {
 		try {
 			Class<S> clase = (Class<S>) this.getClass();
-			Field[] fields = null;
-			fields = getFields(clase);
-			if (fields != null && fields.length > 0) {
-				inject((S) this, fields, clase);
-				subscriberInject(this, fields, clase);
-			} else {
-				logger().warn("No se encontraron campos en la clase.");
-			}
+			inject((S) this, clase);
+			subscriberInject(this, clase);
 		} catch (IllegalArgumentException | SecurityException e) {
 			throw new ReflectionException(e.getMessage(), e);
 		} catch (NullPointerException e) {
@@ -73,20 +67,58 @@ public interface Reflection {
 	 * @return {@link Field}
 	 * @throws {@link Exception}
 	 */
-	private <T extends Object> Field[] getFields(Class<T> clazz) throws Exception {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private <T> Field[] getAnnotedField(Class<T> clazz,Class annotatedClass) throws Exception {
+		if(clazz == Object.class)return null;
 		Field[] fields = null;
 		try {
-			fields = clazz.getDeclaredFields();
+			fields = Arrays.asList(clazz.getDeclaredFields()).stream()
+					.filter(field->field.getAnnotation(annotatedClass)!=null)
+					.toArray(Field[]::new);
 		} catch (Exception e) {
-			fields = clazz.getFields();
+			fields = Arrays.asList(clazz.getFields()).stream()
+					.filter(field->field.getAnnotation(annotatedClass)!=null)
+					.toArray(Field[]::new);
+		}finally {
+			if(fields.length == 0) {
+				return getAnnotedField(clazz.getSuperclass(),annotatedClass);
+			}
 		}
 		return fields;
 	}
+	
+	/**
+	 * Obtiene los campos obtenidos de las clases
+	 * 
+	 * @param clazz {@link Class}
+	 * @return {@link Field}
+	 * @throws {@link Exception}
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private <T> Method[] getAnnotedMethod(Class<T> clazz,Class annotatedClass) throws Exception {
+		if(clazz == Object.class)return null;
+		Method[] methods = null;
+		try {
+			methods = Arrays.asList(clazz.getDeclaredMethods()).stream()
+					.filter(method->method.getAnnotation(annotatedClass)!=null)
+					.toArray(Method[]::new);
+		} catch (Exception e) {
+			methods = Arrays.asList(clazz.getMethods()).stream()
+					.filter(method->method.getAnnotation(annotatedClass)!=null)
+					.toArray(Method[]::new);
+		}finally {
+			if(methods.length == 0) {
+				return getAnnotedMethod(clazz.getSuperclass(),annotatedClass);
+			}
+		}
+		return methods;
+	}
 
 	@SuppressWarnings({ "unchecked" })
-	private <T, S extends Object> void inject(S object, Field[] fields, Class<S> clase) throws ReflectionException {
-		if (fields != null && fields.length > 0 && clase != Object.class && clase != Reflection.class) {
-				Arrays.asList(fields).stream().filter(field->field.getAnnotation(Inject.class)!=null).forEach(field->{
+	private <T, S extends Object> void inject(S object, Class<S> clase) throws Exception {
+		if (object != null && clase != Object.class && clase != Reflection.class) {
+			Field[] fields = getAnnotedField(clase,Inject.class);
+				Arrays.asList(fields).stream().forEach(field->{
 					try {
 					Inject inject = field.getAnnotation(Inject.class);
 					T obj = CacheInjects.instance().getInjectCache(field);
@@ -103,9 +135,11 @@ public interface Reflection {
 						throw new RuntimeException(e.getMessage(), e);
 					} catch (ReflectionException e) {
 						throw new RuntimeException(e);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
 					}
 				});
-				inject(object, clase.getSuperclass().getDeclaredFields(), (Class<S>) clase.getSuperclass());
+				inject(object, (Class<S>) clase.getSuperclass());
 		}
 	}
 	
@@ -169,14 +203,13 @@ public interface Reflection {
 	 * @param instance {@link Object} extends
 	 * @param clase    {@link Class}
 	 */
-	private <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws ReflectionException {
+	private <S, M extends Object> void postConstructor(M instance, Class<S> clase) throws Exception {
 		try {
 			if (clase == null || clase == Object.class || clase == Reflection.class)
 				return;
-			var metodos = clase.getDeclaredMethods();
+			var metodos = getAnnotedMethod(clase, PostConstructor.class);
 			if (metodos != null && metodos.length > 0) {
-				Arrays.asList(metodos).stream().filter(metodo->metodo.getAnnotation(PostConstructor.class) != null)
-				.forEach(metodo->{
+				Arrays.asList(metodos).stream().forEach(metodo->{
 					try {
 						CacheInjects.instance().addConstructorAnnotatedToCache(instance, metodo);
 						metodo.invoke(instance);
@@ -200,36 +233,37 @@ public interface Reflection {
 	 * @throws ReflectionException
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(M instance,
-			Field[] fields, Class<S> clase) throws ReflectionException {
-		if (fields == null || fields.length == 0)
-			return;
-		// procesado despues de injecciones
-		for (Field field : fields) {
+	default <S, M extends Object, L extends Comunicacion, N extends IComunicacion> void subscriberInject(M instance, Class<S> clase) throws Exception {
+		if(instance == null || clase == null)return;
+		Field fieldsSubs[] = getAnnotedField(clase, SubcribcionesToComunicacion.class),
+			  fieldsSub [] = getAnnotedField(clase, SubcribirToComunicacion.class);
+		Arrays.asList(fieldsSubs).stream().forEach(field->{
 			SubcribcionesToComunicacion subs = field.getAnnotation(SubcribcionesToComunicacion.class);
-			SubcribirToComunicacion subsc = field.getAnnotation(SubcribirToComunicacion.class);
 			if (subs != null) {
 				L obj;
 				obj = get(this, field);
 				if (obj != null && (this) instanceof IComunicacion) {
-					for (SubcribirToComunicacion sub : subs.value()) {
+					Arrays.asList(subs.value()).forEach(sub->obj.subscriber((N) instance, sub.comando()));
+				} else {
+					logger().error("El objeto " + clase.getName() + " no tiene la implementacion de "
+							+ IComunicacion.class.getName());
+				}
+			} 
+		});
+		
+		Arrays.asList(fieldsSub).stream().forEach(field->{
+			SubcribirToComunicacion sub = field.getAnnotation(SubcribirToComunicacion.class);
+			 if (sub != null) {
+					L obj = get(this, field);
+					if (obj != null && (this) instanceof IComunicacion) {
 						obj.subscriber((N) instance, sub.comando());
+					} else {
+						logger().error("El objeto " + clase.getName() + " no tiene la implementacion de "
+								+ IComunicacion.class.getName());
 					}
-				} else {
-					logger().error("El objeto " + clase.getName() + " no tiene la implementacion de "
-							+ IComunicacion.class.getName());
 				}
-			} else if (subsc != null) {
-				L obj = get(this, field);
-				if (obj != null && (this) instanceof IComunicacion) {
-					obj.subscriber((N) instance, subsc.comando());
-				} else {
-					logger().error("El objeto " + clase.getName() + " no tiene la implementacion de "
-							+ IComunicacion.class.getName());
-				}
-			}
-		}
-		subscriberInject(instance, clase.getSuperclass().getDeclaredFields(), clase.getSuperclass());
+		});
+		subscriberInject(instance, clase.getSuperclass());
 	}
 
 	/**

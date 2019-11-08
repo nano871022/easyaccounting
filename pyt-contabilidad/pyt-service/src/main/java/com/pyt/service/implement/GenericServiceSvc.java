@@ -38,6 +38,7 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 	public List<T> getAll(T dto) throws GenericServiceException {
 		List<T> lista = new ArrayList<T>();
 		if (dto == null)
+			
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
 		if (!isValidClass(dto.getClass())) {
 			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));

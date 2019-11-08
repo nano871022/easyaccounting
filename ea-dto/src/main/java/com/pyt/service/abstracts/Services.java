@@ -8,6 +8,7 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.ILanguageSvc;
 
 import co.com.japl.ea.dto.system.LanguagesDTO;
 
@@ -21,8 +22,6 @@ import co.com.japl.ea.dto.system.LanguagesDTO;
  */
 public abstract class Services implements Reflection {
 	private Log logger = Log.Log(this.getClass());
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
 
 	@PostConstructor
 	public void load() {
@@ -36,7 +35,7 @@ public abstract class Services implements Reflection {
 	private void loadLanguagesDB(I18n languages) {
 		try {
 			var dto = new LanguagesDTO();
-			var list = languagesSvc.getAll(dto);
+			var list = Languages.instance().getAll(dto);
 			languages.setLanguagesDB(list);
 		} catch (Exception e) {
 			logger.logger(e);

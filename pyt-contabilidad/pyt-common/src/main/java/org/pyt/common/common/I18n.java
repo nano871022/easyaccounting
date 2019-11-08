@@ -1,5 +1,6 @@
 package org.pyt.common.common;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +32,7 @@ public final class I18n {
 
 	}
 
-	public final static I18n instance() {
+	public final static synchronized I18n instance() {
 		if (instances == null) {
 			instances = new I18n();
 		}
@@ -86,6 +87,11 @@ public final class I18n {
 			}
 			return key;
 		}
+	}
+	
+	public final String valueBundle(String key,Object... formats) {
+		var pattern = valueBundle(key);
+		return new MessageFormat(pattern).format(formats);
 	}
 
 	public final void setBunde(String bundle) {

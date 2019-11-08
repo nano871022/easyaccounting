@@ -20,6 +20,8 @@ public final class Log {
 	private final static String WARN = "WARN";
 	private final static String ERROR = "ERROR";
 	private final static String DEBUG = "DEBUG";
+	private final static String NullPointerExceptionMessage = "Null pointer exception";
+	private String lastMessage = "";
 	private LogWriter logWriter;
 
 	private Log(Class clase) {
@@ -40,6 +42,8 @@ public final class Log {
 	}
 
 	public final synchronized void msnBuild(String msn, String type) {
+		if(lastMessage.contentEquals(msn))return;
+		lastMessage = msn;
 		if (logWriter.getModesToPrint().contains(type)) {
 			String line = String.format("%s %s : %s : %s", now(), nameClase, type, msn);
 			logWriter.addImpresion(line);
@@ -51,7 +55,7 @@ public final class Log {
 	 * 
 	 * @param mensaje {@link String}
 	 */
-	public final void warn(String mensaje) {
+	public final synchronized void warn(String mensaje) {
 		msnBuild(mensaje, WARN);
 	}
 
@@ -60,7 +64,7 @@ public final class Log {
 	 * 
 	 * @param mensaje {@link String}
 	 */
-	public final void logger(String mensaje) {
+	public final synchronized void logger(String mensaje) {
 		msnBuild(mensaje, INFO);
 	}
 
@@ -69,17 +73,17 @@ public final class Log {
 	 * 
 	 * @param error {@link Exception}
 	 */
-	public final <T extends Exception> void logger(T error) {
+	public final synchronized <T extends Exception> void logger(T error) {
 		logWriter.printStrace(error);
 		if (error.getCause() instanceof NullPointerException || error instanceof NullPointerException) {
-			msnBuild("Null pointer exception", ERROR);
+			msnBuild(NullPointerExceptionMessage, ERROR);
 		} else {
 			msnBuild(error.getMessage(), ERROR);
 		}
 		printDEBUGCause(error);
 	}
 
-	private final <T extends Throwable> void printDEBUGCause(T error) {
+	private final synchronized <T extends Throwable>  void printDEBUGCause(T error) {
 		if (error.getCause() != null) {
 			if (error.getMessage() != error.getCause().getMessage()) {
 				msnBuild(error.getCause().getMessage(), DEBUG);
@@ -100,9 +104,9 @@ public final class Log {
 	 * 
 	 * @param error {@link Exception}
 	 */
-	public final <T extends Throwable> void logger(T error) {
+	public final synchronized <T extends Throwable> void logger(T error) {
 		if (error.getCause() instanceof NullPointerException) {
-			msnBuild("Null pointer exception", ERROR);
+			msnBuild(NullPointerExceptionMessage, ERROR);
 		} else {
 			msnBuild(error.getMessage(), ERROR);
 		}
@@ -113,15 +117,15 @@ public final class Log {
 	 * 
 	 * @param error {@link Exception}
 	 */
-	public final <T extends Exception> void error(String error) {
+	public final  synchronized<T extends Exception> void error(String error) {
 		msnBuild(error, ERROR);
 	}
 
-	public final void info(String mensaje) {
+	public final synchronized void info(String mensaje) {
 		msnBuild(mensaje, INFO);
 	}
 
-	public final void DEBUG(String mensaje) {
+	public final synchronized void DEBUG(String mensaje) {
 		msnBuild(mensaje, DEBUG);
 	}
 
@@ -131,10 +135,12 @@ public final class Log {
 	 * @param mensaje {@link String}
 	 * @param error   {@link Exception}
 	 */
-	public final <T extends Exception> void logger(String mensaje, T error) {
+	public final synchronized <T extends Exception> void logger(String mensaje, T error) {
 		msnBuild(mensaje, ERROR);
-		Arrays.asList(error.getStackTrace()).forEach(action -> msnBuild(
-				action.getFileName() + "." + action.getMethodName() + ":LN_" + action.getLineNumber(), DEBUG));
+				Arrays.asList(error.getStackTrace()).forEach(action -> 
+				msnBuild(
+						String.format("%s.%s:LN_%s", action.getFileName(),action.getMethodName(),action.getLineNumber())
+				,DEBUG));
 	}
 
 }

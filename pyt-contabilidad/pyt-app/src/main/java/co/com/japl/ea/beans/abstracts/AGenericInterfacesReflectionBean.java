@@ -1,12 +1,23 @@
 package co.com.japl.ea.beans.abstracts;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.StylesPrincipalConstant;
 
+import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IQuerysPopup;
+
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 /**
  * Clase encargada de tener codio generico para poder implementar las paginas de
@@ -19,6 +30,15 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 
 	@Inject(resource = "com.pyt.service.implement.QuerysPopupSvc")
 	protected IQuerysPopup querys;
+	@Inject(resource = "com.pyt.service.implement.ConfigGenericFieldSvc")
+	protected IConfigGenericFieldSvc configGenericFieldsSvc;
+	protected DataTableFXMLUtil<T, T> table;
+	protected HBox paginador;
+	protected TableView<T> tabla;
+	protected GridPane gridFilter;
+	protected List<ConfigGenericFieldDTO> listColumns;
+	protected List<ConfigGenericFieldDTO> listFilters;
+	protected MultiValuedMap<String, Object> mapToChoiceBox;
 
 	/**
 	 * Se debe suministrar la clase con la cual se indica el generico
@@ -26,11 +46,53 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 	 * @param clazz {@link Class}
 	 * @throws {@link Exception}
 	 */
+	@SuppressWarnings("unused")
 	public AGenericInterfacesReflectionBean(Class<T> clazz) throws Exception {
 		super();
+		paginador = new HBox();
+		paginador.getStyleClass().add(StylesPrincipalConstant.CONST_HBOX_PAGINATOR_CUSTOM);
+		gridFilter = new GridPane();
+		tabla = new TableView<T>();
+		tabla.getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		setClazz(clazz);
 		instaceOfGenericDTOAll();
 	}
+
+	@SuppressWarnings("unused")
+	protected void loadTable() {
+		table = new DataTableFXMLUtil<T, T>(paginador, tabla, false) {
+
+			@Override
+			public List<T> getList(T filter, Integer page, Integer rows) {
+				List<T> list = new ArrayList<T>();
+				try {
+					list = querys.list(filter, page, rows, userLogin);
+				} catch (Exception e) {
+					error(e);
+				}
+				return list;
+			}
+
+			@Override
+			public Integer getTotalRows(T filter) {
+				Integer cantidad = 0;
+				try {
+					cantidad = querys.records(filter, userLogin);
+				} catch (Exception e) {
+					error(e);
+				}
+				return cantidad;
+			}
+
+			@Override
+			public T getFilter() {
+				return applyFilterToDataTableSearch();
+			}
+
+		};
+	}
+
+	public abstract T applyFilterToDataTableSearch();
 
 	/**
 	 * Se encarga de recorrer todos los campos de la aplicacion y aquellos que sean
@@ -60,6 +122,38 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 		} catch (Exception exception) {
 			logger().logger(exception);
 		}
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		switch (typeGeneric) {
+		case FILTER:
+			return listFilters;
+		case COLUMN:
+			return listColumns;
+		}
+		return null;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return gridFilter;
+	}
+
+	@Override
+	public TableView<T> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public DataTableFXMLUtil<T, T> getTable() {
+		return table;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return mapToChoiceBox;
 	}
 
 }

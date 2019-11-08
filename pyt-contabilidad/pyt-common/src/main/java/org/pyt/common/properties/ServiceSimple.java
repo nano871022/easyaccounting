@@ -1,7 +1,8 @@
 package org.pyt.common.properties;
 
 import java.util.Properties;
-
+import static org.pyt.common.constants.LanguageConstant.*;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.PropertiesConstants;
 
@@ -19,6 +20,7 @@ import co.com.japl.ea.constants.utils.EnviromentProperties;
 public final class ServiceSimple {
 	private Properties properties;
 	private static ServiceSimple ss;
+	private I18n i18n = I18n.instance();
 
 	protected Log log = Log.Log(ServiceSimple.class);
 
@@ -38,16 +40,19 @@ public final class ServiceSimple {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Object> T getService(Class<T> service) {
+		String className= "";
 		try {
 			if (service.isInterface()) {
 				var key = service.getName();
-				var className = properties.getProperty(key);
+				className = properties.getProperty(key);
+				if(className != null) {
 				var clazz = Class.forName(className);
 				var instance = clazz.getConstructor().newInstance();
 				return (T) instance;
+				}
 			}
 		} catch (Exception e) {
-			log.logger("Error al obtener el servicio "+service.getSimpleName()+".", e);
+			log.logger(i18n.valueBundle(CONST_EXC_SERVICE,service.getSimpleName(),className), e);
 		}
 		return null;
 	}

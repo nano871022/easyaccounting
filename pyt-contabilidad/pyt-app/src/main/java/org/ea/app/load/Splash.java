@@ -35,14 +35,14 @@ public class Splash extends Preloader {
 			root = fxml.load();
 			var scene = new Scene(root);
 			primaryStage.setScene(scene);
+			primaryStage.setAlwaysOnTop(true);
+			primaryStage.setResizable(false);
+			primaryStage.initStyle(StageStyle.UNDECORATED);
+			primaryStage.show();
 		} catch (Throwable e) {
 			System.err.println("Error al cargar el splash.");
 			e.printStackTrace();
 		}
-		primaryStage.setAlwaysOnTop(true);
-		primaryStage.setResizable(false);
-		primaryStage.initStyle(StageStyle.UNDECORATED);
-		primaryStage.show();
 	}
 
 	@Override

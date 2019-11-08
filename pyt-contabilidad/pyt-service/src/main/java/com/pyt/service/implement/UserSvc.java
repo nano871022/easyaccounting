@@ -10,25 +10,10 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
-
+import static org.pyt.common.constants.LanguageConstant.*;
 public class UserSvc extends Services implements IUsersSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
-	private final static String CONST_ERR_CREATE_USER_EMPTY = "";
-	private final static String CONST_ERR_CREATE_USER_CODE_NOT_EMPTY = "";
-	private final static String CONST_ERR_DEL_USER_EMPTY = "";
-	private final static String CONST_ERR_DEL_USER_CODE_EMPTY = "";
-	private final static String CONST_ERR_GET_ALL_USER_EMPTY = "";
-	private final static String CONST_ERR_GET_ALL_USER_CODE_NOT_EMPTY = "";
-	private final static String CONST_ERR_GET_ALL_USER_PAGE = "";
-	private final static String CONST_ERR_GET_USER_EMPTY = "";
-	private final static String CONST_ERR_GET_USER_CODE_NOT_EMPTY = "";
-	private final static String CONST_ERR_UPD_USER_EMPTY = "";
-	private final static String CONST_ERR_UPD_USER_CODE_EMPTY = "";
-	private final static String CONST_ERR_COUNT_USER_EMPTY = "";
-	private final static String CONST_ERR_COUNT_USER_CODE_EMPTY = "";
-	private final static String CONST_ERR_NEW_PASS_USER_DIFERENT = "";
-	private final static String CONST_ERR_OLD_PASS_USER_DIFERENT = "";
 
 	@Override
 	public void create(UsuarioDTO newUser, UsuarioDTO user) throws Exception {

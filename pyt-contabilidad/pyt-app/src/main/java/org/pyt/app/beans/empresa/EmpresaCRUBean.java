@@ -107,8 +107,9 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupPais() {
 		try {
-			((PopupGenBean<PaisDTO>) controllerPopup(new PopupGenBean<PaisDTO>(PaisDTO.class)).setWidth(350))
-					.load("#{EmpresaCRUBean.pais}");
+			((PopupGenBean<PaisDTO>) controllerPopup(PopupGenBean.instance(PaisDTO.class)).setWidth(350)
+					.addDefaultValuesToGenericParametrized("grupo", ParametroConstants.GRUPO_MONEDA)
+					.addDefaultValuesToGenericParametrized("estado", 1)).load("#{EmpresaCRUBean.pais}");
 		} catch (Exception e) {
 			error(e);
 		}
