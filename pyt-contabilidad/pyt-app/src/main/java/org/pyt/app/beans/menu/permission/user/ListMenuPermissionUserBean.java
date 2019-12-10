@@ -90,7 +90,7 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 				if (list != null && list.size() > 0) {
 					list.forEach(dto -> {
 						try {
-							groupUsersSvc.delete(dto, userLogin);
+							groupUsersSvc.delete(dto, getUsuario());
 							alerta(String.format(
 									LanguageConstant.LANGUAGE_SUCCESS_DELETE_MENU_PERMISSION_USERS_ROW_CODE,
 									dto.getCodigo()));

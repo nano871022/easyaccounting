@@ -138,11 +138,11 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					cuentaContableSvc.update(registro, userLogin);
+					cuentaContableSvc.update(registro, getUsuario());
 					notificar("Se guardo la cuenta contable correctamente.");
 					cancel();
 				} else {
-					cuentaContableSvc.insert(registro, userLogin);
+					cuentaContableSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego la cuenta contable correctamente.");
 					cancel();

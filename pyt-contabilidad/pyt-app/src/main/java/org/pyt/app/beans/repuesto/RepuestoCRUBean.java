@@ -206,14 +206,14 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					productosSvc.update(registro.getProducto(), userLogin);
-					productosSvc.update(registro, userLogin);
+					productosSvc.update(registro.getProducto(), getUsuario());
+					productosSvc.update(registro, getUsuario());
 					notificar("Se guardo el repuesto correctamente.");
 					cancel();
 				} else {
-					ProductoDTO prod = productosSvc.insert(registro.getProducto(), userLogin);
+					ProductoDTO prod = productosSvc.insert(registro.getProducto(), getUsuario());
 					registro.setProducto(prod);
-					productosSvc.insert(registro, userLogin);
+					productosSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el repuesto correctamente.");
 					cancel();

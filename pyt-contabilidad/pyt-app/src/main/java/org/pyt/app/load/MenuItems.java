@@ -1,5 +1,7 @@
 package org.pyt.app.load;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +17,14 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.properties.PropertiesUtils;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.MenuDTO;
 import co.com.japl.ea.interfaces.IUrlLoadBean;
 import co.com.japl.ea.utls.LoadAppFxml;
+import co.com.japl.ea.utls.LoginUtil;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,6 +45,8 @@ public class MenuItems {
 	private IGenericServiceSvc<MenuDTO> menusSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
+	@Inject(resource = "com.pyt.service.implement.UserSvc")
+	private IUsersSvc loginSvc;
 	private Properties propertiesMenu;
 
 	private Map<String, Menu> mapaMenu;
@@ -198,6 +204,13 @@ public class MenuItems {
 		Menu principal = getMenu(MENU_PRINCIPAL);
 		ObservableList<MenuItem> items = getItems(principal);
 		items.add(addItem(BTN_CERRAR, event -> {
+			try {
+				loginSvc.logout(LoginUtil.usuarioSystem, InetAddress.getLocalHost().getHostAddress());
+			} catch (UnknownHostException e) {
+				logger.logger(e);
+			} catch (Exception e) {
+				logger.logger(e);
+			}
 			Platform.exit();
 			System.exit(0);
 		}));

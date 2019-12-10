@@ -152,11 +152,11 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		load();
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				empresaSvc.update(registro, userLogin);
+				empresaSvc.update(registro, getUsuario());
 				notificar("Se guardo la empresa correctamente.");
 				cancel();
 			} else {
-				empresaSvc.insert(registro, userLogin);
+				empresaSvc.insert(registro, getUsuario());
 				codigo.setText(registro.getCodigo());
 				notificar("Se agrego la emrpesa correctamente.");
 				cancel();

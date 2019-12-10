@@ -105,11 +105,11 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					actividadIcaSvc.update(registro, userLogin);
+					actividadIcaSvc.update(registro, getUsuario());
 					notificar("Se guardo la actividad ica correctamente.");
 					cancel();
 				} else {
-					actividadIcaSvc.insert(registro, userLogin);
+					actividadIcaSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego la actividad ica correctamente.");
 					cancel();

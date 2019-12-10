@@ -158,11 +158,11 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 		load();
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				empleadosSvc.update(registro, userLogin);
+				empleadosSvc.update(registro, getUsuario());
 				notificar("Se guardo la persona correctamente.");
 				cancel();
 			} else {
-				empleadosSvc.insert(registro, userLogin);
+				empleadosSvc.insert(registro, getUsuario());
 				notificar("Se agrego la persona correctamente.");
 				cancel();
 			}

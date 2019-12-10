@@ -111,7 +111,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 			if(!valid)return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				productosSvc.del(registro, userLogin);
+				productosSvc.del(registro, getUsuario());
 				notificar("Se ha eliminado el repuesto.");
 				dt.search();
 			} else {

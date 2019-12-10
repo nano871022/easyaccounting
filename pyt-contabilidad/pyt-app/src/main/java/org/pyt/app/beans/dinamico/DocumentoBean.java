@@ -129,7 +129,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
 			if (valores.compareTo(registro.getValor()) != 0) {
 				this.registro.setValor(valores);
-				documentosSvc.update(registro, userLogin);
+				documentosSvc.update(registro, getUsuario());
 			}
 		} catch (DocumentosException e) {
 			error(e);
@@ -158,10 +158,10 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			try {
 				registro.setTipoDocumento(SelectList.get(tipoDocumentos));
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					documentosSvc.update(registro, userLogin);
+					documentosSvc.update(registro, getUsuario());
 					notificar("Se agrego el nuevo documento.");
 				} else {
-					registro = documentosSvc.insert(registro, userLogin);
+					registro = documentosSvc.insert(registro, getUsuario());
 					notificar("Se agrego el nuevo documento.");
 				}
 				comunicacion.setComando(AppConstants.COMMAND_PANEL_TIPO_DOC, registro);

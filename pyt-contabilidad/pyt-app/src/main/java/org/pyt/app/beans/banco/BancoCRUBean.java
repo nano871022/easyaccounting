@@ -182,11 +182,11 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					bancoSvc.update(registro, userLogin);
+					bancoSvc.update(registro, getUsuario());
 					notificar("Se guardo el banco correctamente.");
 					cancel();
 				} else {
-					bancoSvc.insert(registro, userLogin);
+					bancoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el banco correctamente.");
 					cancel();

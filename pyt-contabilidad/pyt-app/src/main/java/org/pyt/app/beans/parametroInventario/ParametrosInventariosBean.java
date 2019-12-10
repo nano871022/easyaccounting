@@ -243,7 +243,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 				return;
 			registro = dataTable.getSelectedRow();
 			if (registro != null) {
-				parametrosSvc.delete(registro, userLogin);
+				parametrosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminado el parametro.");
 				dataTable.search();
 			} else {

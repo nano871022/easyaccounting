@@ -476,7 +476,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	public final void setDeleteServicio(Boolean respuesta) {
 		try {
 			if (respuesta) {
-				ingresoServicioSvc.delete(servicioSelect, userLogin);
+				ingresoServicioSvc.delete(servicioSelect, getUsuario());
 				listServicios.remove(servicioSelect);
 				servicio.setText(null);
 				Table.put(tablaServicio, listServicios);
@@ -507,7 +507,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	public final void setDeleteRepuesto(Boolean respuesta) {
 		try {
 			if (respuesta) {
-				ingresoRepuestoSvc.delete(repuestoSelect, userLogin);
+				ingresoRepuestoSvc.delete(repuestoSelect, getUsuario());
 				listRepuestos.remove(repuestoSelect);
 				repuesto.setText(null);
 				Table.put(tablaRepuesto, listRepuestos);
@@ -570,12 +570,12 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		load();
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				ingresosSvc.update(registro, userLogin);
+				ingresosSvc.update(registro, getUsuario());
 				ingresoServiciosYRepuestos();
 				notificar("Se guardo el ingreso correctamente.");
 				cancel();
 			} else {
-				registro = ingresosSvc.insert(registro, userLogin);
+				registro = ingresosSvc.insert(registro, getUsuario());
 				ingresoServiciosYRepuestos();
 				codigo.setText(registro.getCodigo());
 				notificar("Se agrego el ingreso correctamente.");
@@ -589,14 +589,14 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	private final void ingresoServiciosYRepuestos() {
 		listServicios.stream().filter(row -> StringUtils.isBlank(row.getCodigo())).forEach(row -> {
 			try {
-				ingresoServicioSvc.insert(row, userLogin);
+				ingresoServicioSvc.insert(row, getUsuario());
 			} catch (GenericServiceException e) {
 				logger.logger("Error al ingresar un Servicio a ingresos.", e);
 			}
 		});
 		listRepuestos.stream().filter(row -> StringUtils.isBlank(row.getCodigo())).forEach(row -> {
 			try {
-				ingresoRepuestoSvc.insert(row, userLogin);
+				ingresoRepuestoSvc.insert(row, getUsuario());
 			} catch (GenericServiceException e) {
 				logger.logger("Error al ingresar un Servicio a ingresos.", e);
 			}

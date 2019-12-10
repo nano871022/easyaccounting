@@ -75,10 +75,10 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					groupUsersSvc.insert(registro, userLogin);
+					groupUsersSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.group.user.inserted"));
 				} else {
-					groupUsersSvc.update(registro, userLogin);
+					groupUsersSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.group.user.updated"));
 				}
 			}

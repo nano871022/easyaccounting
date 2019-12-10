@@ -220,7 +220,7 @@ public class BancoBean extends ABean<BancoDTO> {
 				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				bancoSvc.delete(registro, userLogin);
+				bancoSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro el banco.");
 				dt.search();
 			} else {

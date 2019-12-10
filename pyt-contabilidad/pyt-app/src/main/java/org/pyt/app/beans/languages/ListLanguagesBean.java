@@ -92,7 +92,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 				if (list != null && list.size() > 0) {
 					list.forEach(dto -> {
 						try {
-							languagesSvc.delete(dto, userLogin);
+							languagesSvc.delete(dto, getUsuario());
 							alerta(String.format(LanguageConstant.LANGUAGE_SUCCESS_DELETE_LANGUAGES_ROW_CODE,
 									dto.getCode()));
 						} catch (Exception e) {

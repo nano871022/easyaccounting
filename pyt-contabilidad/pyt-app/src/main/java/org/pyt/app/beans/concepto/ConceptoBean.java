@@ -182,7 +182,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 			if(!valid)return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				documentoSvc.delete(registro, userLogin);
+				documentoSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminado el concepto.");
 				dt.search();
 			} else {

@@ -109,12 +109,12 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					registro.setCodigoDocumento(codigoDocumento);
-					documentosSvc.update(registro, userLogin);
+					documentosSvc.update(registro, getUsuario());
 					notificar("Se actualizo el detalle.");
 					loadField();
 				} else {
 					registro.setCodigoDocumento(codigoDocumento);
-					registro = documentosSvc.insert(registro, userLogin);
+					registro = documentosSvc.insert(registro, getUsuario());
 					notificar("Se agrego el nuevo detalle.");
 					loadField();
 				}

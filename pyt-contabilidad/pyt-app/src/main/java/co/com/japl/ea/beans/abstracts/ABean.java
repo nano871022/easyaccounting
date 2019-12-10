@@ -1,5 +1,7 @@
 package co.com.japl.ea.beans.abstracts;
 
+import java.util.Optional;
+
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Comunicacion;
@@ -15,6 +17,7 @@ import co.com.japl.ea.controllers.LocatorController;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
+import co.com.japl.ea.utls.LoginUtil;
 
 /**
  * Se encarga de implementar {@link IBean} para contruir controlladores de
@@ -28,7 +31,6 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	protected T registro;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
-	protected UsuarioDTO userLogin;
 	protected String NombreVentana;
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -37,8 +39,6 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 
 	public ABean() {
 		try {
-			userLogin = new UsuarioDTO();
-			userLogin.setNombre("nano871022");
 			inject();
 			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);
 		} catch (ReflectionException e) {
@@ -97,5 +97,13 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 			loadLanguagesDB(i18n);
 		}
 		return i18n;
+	}
+
+	protected final UsuarioDTO getUsuario() {
+		return Optional.ofNullable(LoginUtil.usuarioSystem).orElse(new UsuarioDTO());
+	}
+
+	protected final void setUsuario(UsuarioDTO usuario) {
+		LoginUtil.usuarioSystem = Optional.ofNullable(usuario).orElse(new UsuarioDTO());
 	}
 }

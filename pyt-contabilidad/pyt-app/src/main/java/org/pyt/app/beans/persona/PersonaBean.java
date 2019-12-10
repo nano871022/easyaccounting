@@ -162,7 +162,7 @@ public class PersonaBean extends ABean<PersonaDTO> {
 				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				empleadosSvc.delete(registro, userLogin);
+				empleadosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro la persona.");
 				dt.search();
 			} else {

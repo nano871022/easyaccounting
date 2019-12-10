@@ -123,7 +123,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 			if(!valid)return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				actividadIcaSvc.delete(registro, userLogin);
+				actividadIcaSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro la actividad Ica.");
 				dt.search();
 			} else {

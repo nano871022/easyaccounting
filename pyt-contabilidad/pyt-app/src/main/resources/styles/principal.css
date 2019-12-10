@@ -15,3 +15,17 @@
 	-fx-margin:20;
 	-fx-padding:20;
 }
+.tooltip-error{
+ -fx-background-color:red;
+ -fx-color:white;
+}
+.field-error{
+  -fx-border-color:red;
+}
+.field-ok{
+  -fx-border-color:green;
+}
+.message-error{
+  -fx-background-color:red;
+  -fx-color:white;
+}

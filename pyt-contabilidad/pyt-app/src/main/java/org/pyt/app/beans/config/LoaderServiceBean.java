@@ -105,7 +105,7 @@ public class LoaderServiceBean extends ABean {
 			file.setSize(fileLoad.length());
 			file.setSeparate(";");
 			// llamando al servicio de cargue de datos.
-			FilePOJO out = loader.cargue(configuracion.getConfiguracion(), file, userLogin);
+			FilePOJO out = loader.cargue(configuracion.getConfiguracion(), file, getUsuario());
 			File fileo = new File(out.getNameFile());
 			FileUtils.writeByteArrayToFile(fileo, out.getByte());
 			this.notificar("Se genero el archivo de resultados en "+fileo.getAbsolutePath());

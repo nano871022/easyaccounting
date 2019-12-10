@@ -170,7 +170,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				empleadosSvc.delete(registro, userLogin);
+				empleadosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro la empresa.");
 				dt.search();
 			} else {

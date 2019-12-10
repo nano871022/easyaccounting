@@ -87,4 +87,5 @@ public class LanguageConstant {
 	public final static String CONST_ERR_NEW_PASS_USER_DIFERENT = "excepcion.checked.user.pass.new.unlike";
 	public final static String CONST_ERR_OLD_PASS_USER_DIFERENT = "excepcion.checked.user.pass.old.unlike.";
 
+	public final static String CONST_ERR_NULL_POINTER_EXCEPTION_LOGIN = "exception.nullpointer.login";
 }

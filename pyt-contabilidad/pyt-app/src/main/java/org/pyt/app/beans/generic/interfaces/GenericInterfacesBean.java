@@ -147,10 +147,10 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			loadFxml();
 			if (validRecord()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					configGenericSvc.insert(registro, userLogin);
+					configGenericSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("message.insert.generic.interface"));
 				} else {
-					configGenericSvc.update(registro, userLogin);
+					configGenericSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("message.update.generic.interface"));
 				}
 			}

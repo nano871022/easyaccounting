@@ -199,7 +199,7 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 			Integer i = 0;
 			for (DetalleContableDTO detalle : lista) {
 				try {
-					documentosSvc.delete(detalle, userLogin);
+					documentosSvc.delete(detalle, getUsuario());
 					i++;
 				} catch (DocumentosException e) {
 					error(e);

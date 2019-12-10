@@ -130,11 +130,11 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					centroCostoSvc.update(registro, userLogin);
+					centroCostoSvc.update(registro, getUsuario());
 					notificar("Se guardo el centro de costo correctamente.");
 					cancel();
 				} else {
-					centroCostoSvc.insert(registro, userLogin);
+					centroCostoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el centro de costo correctamente.");
 					cancel();

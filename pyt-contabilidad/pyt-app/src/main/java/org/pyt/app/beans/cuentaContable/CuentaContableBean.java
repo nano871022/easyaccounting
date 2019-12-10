@@ -220,7 +220,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				cuentaContableSvc.delete(registro, userLogin);
+				cuentaContableSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminado la cuenta contable.");
 				dt.search();
 			} else {

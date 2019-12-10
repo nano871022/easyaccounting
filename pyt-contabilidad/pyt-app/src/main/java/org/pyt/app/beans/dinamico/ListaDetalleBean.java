@@ -214,7 +214,7 @@ public class ListaDetalleBean extends ABean<DetalleDTO> {
 			Integer i = 0;
 			for (DetalleDTO detalle : lista) {
 				try {
-					documentosSvc.delete(detalle, userLogin);
+					documentosSvc.delete(detalle, getUsuario());
 					i++;
 				} catch (DocumentosException e) {
 					error(e);

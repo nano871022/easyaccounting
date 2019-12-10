@@ -10,9 +10,11 @@ import org.pyt.common.common.SelectList;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.GridPane;
 
 /**
  * Se encarga de validar los campos,
@@ -21,6 +23,10 @@ import javafx.scene.control.Tooltip;
  * @since 17-12-2018
  */
 public final class ValidFields {
+	public static final String CONST_STYLE_FIELD_ERROR = "field-error";
+	public static final String CONST_STYLE_TOOLTIP_ERROR = "tooltip-error";
+	public static final String CONST_STYLE_FIELD_OK = "field-ok";
+
 	/**
 	 * Se encarga de validar un campo de tipo de texto {@link TextField}
 	 * 
@@ -276,7 +282,7 @@ public final class ValidFields {
 		}
 		if (!valid)
 			error(field, msnError);
-		if (valid)
+		else if (valid)
 			success(field);
 		return valid;
 	}
@@ -289,11 +295,15 @@ public final class ValidFields {
 	 * @param errorMsn {@link String}
 	 */
 	private static final <T extends Control> void error(T control, String errorMsn) {
-		control.setStyle("-fx-border-color:red;");
+		control.getStyleClass().add(CONST_STYLE_FIELD_ERROR);
 		if (StringUtils.isNotBlank(errorMsn)) {
-			Tooltip tooltip = new Tooltip();
+			var tooltip = new Tooltip();
+			tooltip.getStyleClass().add(CONST_STYLE_TOOLTIP_ERROR);
 			tooltip.setText(errorMsn);
-			control.setTooltip(tooltip);
+			
+			Tooltip.install(control, tooltip);
+			tooltip.show(control,control.getScene().getWindow().getX()+control.getLayoutX(),control.getScene().getWindow().getY()+control.getLayoutY()+control.getScaleY()+control.getHeight());
+			control.setOnMouseEntered(event->{tooltip.hide();Tooltip.uninstall(control, tooltip);control.getStyleClass().remove("field-error");});
 		}
 	}
 
@@ -303,7 +313,7 @@ public final class ValidFields {
 	 * @param control {@link Control}
 	 */
 	private static final <T extends Control> void success(T control) {
-		control.setStyle("-fx-border-color:green;");
+		control.getStyleClass().add(CONST_STYLE_FIELD_OK);
 		control.setTooltip(null);
 	}
 }

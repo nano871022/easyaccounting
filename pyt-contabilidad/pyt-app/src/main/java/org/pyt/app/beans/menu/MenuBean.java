@@ -77,10 +77,10 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					menusSvc.insert(registro, userLogin);
+					menusSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.menu.inserted"));
 				} else {
-					menusSvc.update(registro, userLogin);
+					menusSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.menu.updated"));
 				}
 			}

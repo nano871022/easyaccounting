@@ -594,7 +594,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		MarcadorDTO marcador = tbMarcador.getSelectedRow();
 		if (StringUtils.isNotBlank(marcador.getMarcador()) && StringUtils.isNotBlank(marcador.getCodigo())) {
 			try {
-				configMarcadorServicio.deleteMarcador(marcador, userLogin);
+				configMarcadorServicio.deleteMarcador(marcador, getUsuario());
 			} catch (MarcadorServicioException e) {
 				error(e);
 			}
@@ -645,7 +645,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				for (ServicioCampoBusquedaDTO campo : lista) {
 					if (StringUtils.isNotBlank(campo.getCodigo())) {
 						try {
-							configMarcadorServicio.deleteServicioCampo(campo, userLogin);
+							configMarcadorServicio.deleteServicioCampo(campo, getUsuario());
 						} catch (MarcadorServicioException e) {
 							error(e);
 						}
@@ -716,9 +716,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		for (ServicioCampoBusquedaDTO servicio : serviciosCampoBusqueda) {
 			servicio.setConfiguracion(config);
 			if (StringUtils.isNotBlank(servicio.getCodigo())) {
-				configMarcadorServicio.updateServicioCampo(servicio, userLogin);
+				configMarcadorServicio.updateServicioCampo(servicio, getUsuario());
 			} else if (StringUtils.isBlank(servicio.getCodigo())) {
-				servicio = configMarcadorServicio.insertServicioCampoBusqueda(servicio, userLogin);
+				servicio = configMarcadorServicio.insertServicioCampoBusqueda(servicio, getUsuario());
 			}
 		}
 
@@ -728,9 +728,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		for (MarcadorServicioDTO marcador : marcadoresServicios) {
 			marcador.setConfiguracion(config);
 			if (StringUtils.isNotBlank(marcador.getCodigo())) {
-				configMarcadorServicio.updateServicioMarcador(marcador, userLogin);
+				configMarcadorServicio.updateServicioMarcador(marcador, getUsuario());
 			} else if (StringUtils.isBlank(marcador.getCodigo())) {
-				marcador = configMarcadorServicio.insertMarcadorServicio(marcador, userLogin);
+				marcador = configMarcadorServicio.insertMarcadorServicio(marcador, getUsuario());
 			}
 		}
 	}
@@ -745,9 +745,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		for (MarcadorDTO marcador : marcadores) {
 			marcador.setConfiguracion(config);
 			if (StringUtils.isNotBlank(marcador.getCodigo())) {
-				configMarcadorServicio.updateMarcador(marcador, userLogin);
+				configMarcadorServicio.updateMarcador(marcador, getUsuario());
 			} else if (StringUtils.isBlank(marcador.getCodigo())) {
-				marcador = configMarcadorServicio.insertMarcador(marcador, userLogin);
+				marcador = configMarcadorServicio.insertMarcador(marcador, getUsuario());
 			}
 		}
 	}
@@ -756,9 +756,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		try {
 			loadFields();
 			if (StringUtils.isNotBlank(config.getCodigo())) {
-				configMarcadorServicio.updateConfiguracion(config, userLogin);
+				configMarcadorServicio.updateConfiguracion(config, getUsuario());
 			} else {
-				config = configMarcadorServicio.insertConfiguracion(config, userLogin);
+				config = configMarcadorServicio.insertConfiguracion(config, getUsuario());
 			}
 			servicioCampoUPDINST();
 			servicioMarcadorUPDINST();
@@ -815,7 +815,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				for (MarcadorServicioDTO marcador : lista) {
 					if (StringUtils.isNotBlank(marcador.getCodigo())) {
 						try {
-							configMarcadorServicio.deleteServicioMarcador(marcador, userLogin);
+							configMarcadorServicio.deleteServicioMarcador(marcador, getUsuario());
 						} catch (MarcadorServicioException e) {
 							error(e);
 						}

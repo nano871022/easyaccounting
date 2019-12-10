@@ -129,11 +129,11 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					documentoSvc.update(registro, userLogin);
+					documentoSvc.update(registro, getUsuario());
 					notificar("Se guardo el concepto correctamente.");
 					cancel();
 				} else {
-					documentoSvc.insert(registro, userLogin);
+					documentoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el concepto correctamente.");
 					cancel();

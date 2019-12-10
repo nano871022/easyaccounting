@@ -78,10 +78,10 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					languagesSvc.insert(registro, userLogin);
+					languagesSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.language.inserted"));
 				} else {
-					languagesSvc.update(registro, userLogin);
+					languagesSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.language.updated"));
 				}
 			}

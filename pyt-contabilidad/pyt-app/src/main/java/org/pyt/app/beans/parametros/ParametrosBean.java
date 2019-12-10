@@ -242,7 +242,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 				return;
 			registro = dataTable.getSelectedRow();
 			if (registro != null) {
-				parametrosSvc.delete(registro, userLogin);
+				parametrosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminado el parametro.");
 				dataTable.search();
 			} else {

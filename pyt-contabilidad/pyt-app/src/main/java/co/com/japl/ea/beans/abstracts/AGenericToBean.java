@@ -15,7 +15,6 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.controllers.LocatorController;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
-import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
 import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
@@ -37,7 +36,6 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		implements IBean<T>, IGenericFields<ConfigGenericFieldDTO, T>, IGenericColumns<ConfigGenericFieldDTO, T> {
 	protected T registro;
 	protected BorderPane panel;
-	protected UsuarioDTO userLogin;
 	protected String NombreVentana;
 	protected Stage primaryStage;
 	protected Class<T> clazz;
@@ -63,8 +61,6 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 
 	public AGenericToBean() {
 		try {
-			userLogin = new UsuarioDTO();
-			userLogin.setNombre("nano871022");
 			panel = new BorderPane();
 			inject();
 			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);

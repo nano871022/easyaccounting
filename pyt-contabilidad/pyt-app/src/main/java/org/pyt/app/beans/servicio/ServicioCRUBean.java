@@ -105,11 +105,11 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					servicioSvc.update(registro, userLogin);
+					servicioSvc.update(registro, getUsuario());
 					notificar("Se guardo el servicio correctamente.");
 					cancel();
 				} else {
-					servicioSvc.insert(registro, userLogin);
+					servicioSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el servicio correctamente.");
 					cancel();

@@ -112,7 +112,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 		try {
 			if (valid()) {
 				loadFxml();
-				inventarioSvc.agregarInventario(registro, userLogin);
+				inventarioSvc.agregarInventario(registro, getUsuario());
 				notificar("Se agrego la cantidad de productos al inventario.");
 				caller(caller, true);
 				cancelar();

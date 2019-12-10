@@ -93,7 +93,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 				if (list != null && list.size() > 0) {
 					list.forEach(dto -> {
 						try {
-							menusSvc.delete(dto, userLogin);
+							menusSvc.delete(dto, getUsuario());
 							alerta(String.format(LanguageConstant.LANGUAGE_SUCCESS_DELETE_MENUS_ROW_CODE,
 									dto.getCodigo()));
 						} catch (Exception e) {

@@ -75,10 +75,10 @@ public class HelpBean extends AGenericInterfacesFieldBean<HelpDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					helpsSvc.insert(registro, userLogin);
+					helpsSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.help.inserted"));
 				} else {
-					helpsSvc.update(registro, userLogin);
+					helpsSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.help.updated"));
 				}
 			}

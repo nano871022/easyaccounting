@@ -123,7 +123,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				empresaSvc.delete(registro, userLogin);
+				empresaSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro la empresa.");
 				dt.search();
 			} else {

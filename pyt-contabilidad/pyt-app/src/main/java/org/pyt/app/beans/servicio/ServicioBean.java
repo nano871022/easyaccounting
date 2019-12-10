@@ -116,7 +116,7 @@ public class ServicioBean extends ABean<ServicioDTO> {
 				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				serviciosSvc.delete(registro, userLogin);
+				serviciosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro la empresa.");
 				dt.search();
 			} else {

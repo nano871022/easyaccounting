@@ -211,14 +211,14 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		load();
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				personaSvc.update(registro.getPersona(), userLogin);
-				empleadosSvc.update(registro, userLogin);
+				personaSvc.update(registro.getPersona(), getUsuario());
+				empleadosSvc.update(registro, getUsuario());
 				notificar("Se guardo la empresa correctamente.");
 				cancel();
 			} else {
 				registro.getPersona().setEmail(registro.getCorreo());
-				personaSvc.insert(registro.getPersona(), userLogin);
-				empleadosSvc.insert(registro, userLogin);
+				personaSvc.insert(registro.getPersona(), getUsuario());
+				empleadosSvc.insert(registro, getUsuario());
 				notificar("Se agrego la empresa correctamente.");
 				cancel();
 			}

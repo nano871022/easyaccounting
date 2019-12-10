@@ -472,7 +472,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			} else if (documentos.size() > 0) {
 				for (DocumentosDTO dto : documentos) {
 					dto.setDoctype(SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME));
-					dto = documentoSvc.insert(dto, userLogin);
+					dto = documentoSvc.insert(dto, getUsuario());
 				}
 				notificar("Se ha guardado todos los registros correctamente.");
 			}
@@ -522,7 +522,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		try {
 			if (validItem(dto)) {
 				if (StringUtils.isNotBlank(dto.getCodigo())) {
-					documentoSvc.update(dto, userLogin);
+					documentoSvc.update(dto, getUsuario());
 
 				} else if (StringUtils.isBlank(dto.getCodigo())) {
 					for (int i = 0; i < documentos.size(); i++) {
@@ -547,7 +547,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		try {
 			if (dto != null) {
 				if (StringUtils.isNotBlank(dto.getCodigo())) {
-					documentoSvc.delete(dto, userLogin);
+					documentoSvc.delete(dto, getUsuario());
 				} else if (StringUtils.isBlank(dto.getCodigo())) {
 					for (int i = 0; i < documentos.size(); i++) {
 						DocumentosDTO dtos = documentos.get(i);

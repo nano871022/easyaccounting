@@ -172,7 +172,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 			if(!valid)return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				centroCostoSvc.delete(registro, userLogin);
+				centroCostoSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro la empresa.");
 				dt.search();
 			} else {

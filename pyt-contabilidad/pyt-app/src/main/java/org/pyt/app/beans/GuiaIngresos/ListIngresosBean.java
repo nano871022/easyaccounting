@@ -130,7 +130,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				ingresosSvc.delete(registro, userLogin);
+				ingresosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminado el ingreso.");
 				dt.search();
 			} else {

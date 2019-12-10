@@ -66,7 +66,7 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 			public List<T> getList(T filter, Integer page, Integer rows) {
 				List<T> list = new ArrayList<T>();
 				try {
-					list = querys.list(filter, page, rows, userLogin);
+					list = querys.list(filter, page, rows, getUsuario());
 				} catch (Exception e) {
 					error(e);
 				}
@@ -77,7 +77,7 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 			public Integer getTotalRows(T filter) {
 				Integer cantidad = 0;
 				try {
-					cantidad = querys.records(filter, userLogin);
+					cantidad = querys.records(filter, getUsuario());
 				} catch (Exception e) {
 					error(e);
 				}

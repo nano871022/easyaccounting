@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -295,6 +296,17 @@ public final class ValidateValues {
 		if (clazz == LocalDate.class) {
 			if (value.getClass() == Date.class) {
 				return (T) LocalDate.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault());
+			}
+			if(value.getClass() == Timestamp.class) {
+				return (T)LocalDate.ofInstant(((Timestamp)value).toInstant(),ZoneId.systemDefault());
+			}
+		}
+		if(clazz == LocalDateTime.class) {
+			if (value.getClass() == Date.class) {
+				return (T) LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault());
+			}
+			if(value.getClass() == Timestamp.class) {
+				return (T)LocalDateTime.ofInstant(((Timestamp)value).toInstant(),ZoneId.systemDefault());
 			}
 		}
 		return null;

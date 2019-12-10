@@ -1,5 +1,6 @@
 package org.pyt.common.common;
 
+import java.io.EOFException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public final class Log {
 	private final static String ERROR = "ERROR";
 	private final static String DEBUG = "DEBUG";
 	private final static String NullPointerExceptionMessage = "Null pointer exception";
+	private final static String EOFExceptionMessage = "When open file throw EOF exception";
 	private String lastMessage = "";
 	private LogWriter logWriter;
 
@@ -75,7 +77,9 @@ public final class Log {
 	 */
 	public final synchronized <T extends Exception> void logger(T error) {
 		logWriter.printStrace(error);
-		if (error.getCause() instanceof NullPointerException || error instanceof NullPointerException) {
+		if(error instanceof EOFException){
+			msnBuild(EOFExceptionMessage, ERROR);
+		}else if (error.getCause() instanceof NullPointerException || error instanceof NullPointerException) {
 			msnBuild(NullPointerExceptionMessage, ERROR);
 		} else {
 			msnBuild(error.getMessage(), ERROR);

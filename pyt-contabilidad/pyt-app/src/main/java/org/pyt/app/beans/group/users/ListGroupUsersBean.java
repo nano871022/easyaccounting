@@ -90,7 +90,7 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 				if (list != null && list.size() > 0) {
 					list.forEach(dto -> {
 						try {
-							groupUsersSvc.delete(dto, userLogin);
+							groupUsersSvc.delete(dto, getUsuario());
 							alerta(String.format(LanguageConstant.LANGUAGE_SUCCESS_DELETE_GROUP_USERS_ROW_CODE,
 									dto.getCodigo()));
 						} catch (Exception e) {

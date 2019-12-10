@@ -240,10 +240,10 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		try {
 			if (valid()) {
 				validParametroGrupo();
-				registro = parametroSvc.insert(registro, userLogin);
+				registro = parametroSvc.insert(registro, getUsuario());
 				if (StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
-					parametroGrupo = parametroSvc.insert(parametroGrupo, userLogin);
+					parametroGrupo = parametroSvc.insert(parametroGrupo, getUsuario());
 				}
 				codigo.setText(registro.getCodigo());
 				notificar("Se ha creado el parametro correctamente.");
@@ -282,7 +282,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 						throw new Exception("Ya se encuentra asignado este Grupo " + parametroGrupo.getGrupo() + " a "
 								+ parametros.get(0).getNombre());
 					} else {
-						parametroSvc.delete(grupo, userLogin);
+						parametroSvc.delete(grupo, getUsuario());
 					}
 				}
 			}
@@ -297,10 +297,10 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		try {
 			if (valid()) {
 				validParametroGrupo();
-				parametroSvc.update(registro, userLogin);
+				parametroSvc.update(registro, getUsuario());
 				if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
-					parametroSvc.update(parametroGrupo, userLogin);
+					parametroSvc.update(parametroGrupo, getUsuario());
 				}
 				notificar("Se ha modificado el parametro correctamente.");
 			} else {
@@ -332,9 +332,9 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getCodigo())) {
-						parametroSvc.delete(parametroGrupo, userLogin);
+						parametroSvc.delete(parametroGrupo, getUsuario());
 					}
-					parametroSvc.delete(registro, userLogin);
+					parametroSvc.delete(registro, getUsuario());
 					notificar("El parametro fue eliminado correctamente.");
 					cancelBtn();
 				} else {

@@ -113,7 +113,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 		try {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				configMarcadorServicioSvc.deleteConfiguracion(registro, userLogin);
+				configMarcadorServicioSvc.deleteConfiguracion(registro, getUsuario());
 				notificar("Se ha eliminado la configuración.");
 				dt.search();
 			} else {

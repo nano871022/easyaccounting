@@ -96,11 +96,11 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 		if (valid()) {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					documentosSvc.update(registro, userLogin);
+					documentosSvc.update(registro, getUsuario());
 					notificar("Se actualizo el detalle contable.");
 				} else {
 					registro.setCodigoDocumento(codigoDocumento);
-					registro = documentosSvc.insert(registro, userLogin);
+					registro = documentosSvc.insert(registro, getUsuario());
 					notificar("Se agrego el nuevo detalle contable.");
 				}
 			} catch (DocumentosException e) {

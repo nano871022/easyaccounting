@@ -84,10 +84,10 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					usersSvc.create(registro, userLogin);
+					usersSvc.create(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.user.inserted"));
 				} else {
-					usersSvc.update(registro, userLogin);
+					usersSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.user.updated"));
 				}
 			}

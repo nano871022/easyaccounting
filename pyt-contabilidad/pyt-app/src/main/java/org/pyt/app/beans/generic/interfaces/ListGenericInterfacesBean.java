@@ -81,7 +81,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		if (del) {
 			dataTable.getSelectedRows().forEach(row -> {
 				try {
-					getServiceSvc().delete(row, userLogin);
+					getServiceSvc().delete(row, getUsuario());
 					notificar(
 							String.format(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE),
 									row.getCodigo()));

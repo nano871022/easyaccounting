@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
+import org.pyt.common.constants.CSSConstant;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -202,6 +203,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				Parent root = loader.load();
 				root.autosize();
 				Scene scene = new Scene(root);
+				scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
 				loadApp().getStage().setTitle(title);
 				loadApp().getStage().setScene(scene);
 				loadApp().getStage().sizeToScene();
