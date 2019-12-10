@@ -3,10 +3,37 @@
 	<name>pyt-app</name>
 	<comment></comment>
 	<projects>
+		<project>arquitectura-constants</project>
+		<project>arquitectura-exceptions</project>
+		<project>arquitectura-librerias</project>
+		<project>arquitectura-proccessor</project>
+		<project>arquitetura-anotaciones</project>
+		<project>ea-anotaciones</project>
+		<project>ea-constantes</project>
+		<project>ea-dto</project>
+		<project>ea-exceptions</project>
+		<project>ea-file-bin</project>
+		<project>ea-gdb</project>
+		<project>ea-hibernate</project>
+		<project>ea-loader</project>
+		<project>ea-mybatis</project>
+		<project>ea-poi</project>
+		<project>ea-sql</project>
+		<project>ea-write-logger</project>
+		<project>pyt-common</project>
+		<project>pyt-contabilidad</project>
+		<project>pyt-query</project>
+		<project>pyt-service</project>
+		<project>RemoteSystemsTempFiles</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.wst.validation.validationbuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>

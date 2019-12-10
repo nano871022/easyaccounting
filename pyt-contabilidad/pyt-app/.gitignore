@@ -3,6 +3,17 @@
 /hs_err_pid12823.log
 /systemData.zip
 /home/
+home
+home/
+home/*
+home/**
+logger
+logger/
+logger/*
+logger/**
+systemFile/
+systemFile/**
+systemFile
 /docs/
 /logger/
 /systemData/
@@ -28,3 +39,4 @@
 /VersionRunner.bin
 /output_carguecc.txt
 /output_cargueparametros.csv
+/bin/
