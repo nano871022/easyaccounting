@@ -72,6 +72,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 				if (found != null) {
 					LoginUtil.compareUsuariosRememberAndFound(found, login);
 					LoginUtil.writeRemember(found);
+					setUsuario(found);
 					this.login = true;
 				}
 			}

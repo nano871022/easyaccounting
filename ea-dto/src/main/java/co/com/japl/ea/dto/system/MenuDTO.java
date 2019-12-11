@@ -10,6 +10,15 @@ public class MenuDTO extends ADto {
 	private String iconCss;
 	private Integer state;
 
+	public MenuDTO() {
+	}
+
+	public MenuDTO(String url, String value) {
+		this.url = url;
+		this.classPath = value;
+		this.state = 1;
+	}
+
 	public String getUrl() {
 		return this.url;
 	}

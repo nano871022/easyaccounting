@@ -1,9 +1,13 @@
 package org.pyt.app.beans.menu;
 
 import static co.com.japl.ea.interfaces.IGenericCommons.TypeGeneric.FILTER;
+import static org.pyt.common.constants.FxmlBeanConstant.CONST_LIST_MENU_FXML;
+import static org.pyt.common.constants.FxmlBeanConstant.CONST_PATH_MENU;
 import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_GENERIC_SERVICE;
 import static org.pyt.common.constants.StylesPrincipalConstant.CONST_GRID_STANDARD;
 import static org.pyt.common.constants.StylesPrincipalConstant.CONST_TABLE_CUSTOM;
+import static org.pyt.common.constants.languages.Menu.CONST_FXML_LABEL_TITLE_LIST_MENUS;
 
 import java.util.List;
 
@@ -25,12 +29,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox;;
 
-@FXMLFile(file = "listmenus.fxml", path = "view/menu")
+@FXMLFile(file = CONST_LIST_MENU_FXML, path = CONST_PATH_MENU)
 public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_GENERIC_SERVICE)
 	private IGenericServiceSvc<MenuDTO> menusSvc;
 	@FXML
 	private Button btnMod;
@@ -54,7 +58,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 	public void initialize() {
 		try {
 			filtro = new MenuDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.menus"));
+			lblTitle.setText(i18n().valueBundle(CONST_FXML_LABEL_TITLE_LIST_MENUS));
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

@@ -15,9 +15,11 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.controllers.LocatorController;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
 import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
+import co.com.japl.ea.utls.LoginUtil;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -199,5 +201,9 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 
 	public T assingValuesParameterized(T filter) {
 		return filter;
+	}
+
+	public UsuarioDTO getUsuario() {
+		return LoginUtil.usuarioSystem;
 	}
 }

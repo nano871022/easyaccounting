@@ -45,12 +45,13 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 
 			@Override
 			public List<T> getList(T filter, Integer page, Integer rows) {
+				List<T> list = null;
 				try {
-					return serviceSvc.gets(filter, page, rows);
+					list = serviceSvc.gets(filter, page, rows);
 				} catch (Exception e) {
 					error(e);
 				}
-				return null;
+				return list;
 			}
 
 			@Override

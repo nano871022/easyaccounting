@@ -8,10 +8,12 @@ import static org.pyt.common.constants.LanguageConstant.CONST_ERR_DEL_USER_EMPTY
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_GET_ALL_USER_EMPTY;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_GET_ALL_USER_PAGE;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_GET_USER_EMPTY;
+import static org.pyt.common.constants.LanguageConstant.CONST_ERR_IP_MACHINE_NOT_SUBMIT;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_NEW_PASS_USER_DIFERENT;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_OLD_PASS_USER_DIFERENT;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_UPD_USER_CODE_EMPTY;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_UPD_USER_EMPTY;
+import static org.pyt.common.constants.LanguageConstant.CONST_ERR_USER_NOT_SUBMIT;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_MACHINE_EMPTY;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_PUBLIC_EMPTY;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_USER_EMPTY;
@@ -168,6 +170,12 @@ public class UserSvc extends Services implements IUsersSvc {
 
 	@Override
 	public void logout(UsuarioDTO user, String ipMachine) throws Exception {
+		if (!Optional.ofNullable(user).isPresent()) {
+			throw new Exception(CONST_ERR_USER_NOT_SUBMIT);
+		}
+		if (!Optional.ofNullable(user).isPresent()) {
+			throw new Exception(CONST_ERR_IP_MACHINE_NOT_SUBMIT);
+		}
 		var ipPublic = remoteAddr();
 		var founds = searchAllLogins(user).stream().filter(row -> row.getIpMaquina().contains(ipMachine))
 				.filter(row -> row.getIpPublica().contains(ipPublic)).collect(Collectors.toList());

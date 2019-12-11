@@ -1,7 +1,13 @@
 package org.pyt.app.beans.menu;
 
+import static org.pyt.common.constants.FxmlBeanConstant.CONST_MENU_FXML;
+import static org.pyt.common.constants.FxmlBeanConstant.CONST_PATH_MENU;
 import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_GENERIC_SERVICE;
+import static org.pyt.common.constants.LanguageConstant.CONST_MSN_ERR_FIELD_EMPTY;
 import static org.pyt.common.constants.StylesPrincipalConstant.CONST_GRID_STANDARD;
+import static org.pyt.common.constants.languages.Menu.CONST_MSN_MENU_INSERTED;
+import static org.pyt.common.constants.languages.Menu.CONST_MSN_MENU_UPDATED;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
@@ -19,11 +25,11 @@ import co.com.japl.ea.dto.system.MenuDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;;
+import javafx.scene.layout.GridPane;
 
-@FXMLFile(file = "menu.fxml", path = "view/menu")
+@FXMLFile(file = CONST_MENU_FXML, path = CONST_PATH_MENU)
 public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
-	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	@Inject(resource = CONST_RESOURCE_IMPL_SVC_GENERIC_SERVICE)
 	private IGenericServiceSvc<MenuDTO> menusSvc;
 	@FXML
 	private GridPane gridPane;
@@ -65,11 +71,11 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 	public final Boolean valid() {
 		Boolean valid = true;
 		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_URL), true, 1,
-				100, i18n().valueBundle("msn.error.field.empty"));
+				100, i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
 		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_CLASS_PATH),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+				true, 1, 100, i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
 		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_STATE), true,
-				1, 2, i18n().valueBundle("msn.error.field.empty"));
+				1, 2, i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
 		return valid;
 	}
 
@@ -78,10 +84,10 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
 					menusSvc.insert(registro, getUsuario());
-					notificar(i18n().valueBundle("mensaje.menu.inserted"));
+					notificar(i18n().valueBundle(CONST_MSN_MENU_INSERTED));
 				} else {
 					menusSvc.update(registro, getUsuario());
-					notificar(i18n().valueBundle("mensaje.menu.updated"));
+					notificar(i18n().valueBundle(CONST_MSN_MENU_UPDATED));
 				}
 			}
 		} catch (Exception e) {

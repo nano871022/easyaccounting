@@ -88,4 +88,8 @@ public class LanguageConstant {
 	public final static String CONST_ERR_OLD_PASS_USER_DIFERENT = "excepcion.checked.user.pass.old.unlike.";
 
 	public final static String CONST_ERR_NULL_POINTER_EXCEPTION_LOGIN = "exception.nullpointer.login";
+	public final static String CONST_ERR_USER_NOT_SUBMIT = "exception.user.not.submit";
+	public final static String CONST_ERR_IP_MACHINE_NOT_SUBMIT = "exception.ip.machine.not.submit";
+
+	public final static String CONST_MSN_ERR_FIELD_EMPTY = "msn.error.field.empty";
 }

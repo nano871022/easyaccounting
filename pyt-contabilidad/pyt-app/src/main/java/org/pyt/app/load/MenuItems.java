@@ -15,6 +15,7 @@ import org.pyt.common.common.Log;
 import org.pyt.common.constants.PropertiesConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.properties.PropertiesUtils;
+import org.pyt.common.reflection.Reflection;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IUsersSvc;
@@ -40,7 +41,7 @@ import javafx.scene.control.ScrollPane;
  * @author Alejandro Parra
  * @since 22-06-2018
  */
-public class MenuItems {
+public class MenuItems implements Reflection {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<MenuDTO> menusSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
@@ -66,6 +67,7 @@ public class MenuItems {
 					.getProperties();
 			this.menu = menu;
 			this.scroll = scroll;
+			inject();
 			var listLanguages = languagesSvc.getAll(new LanguagesDTO());
 			I18n.instance().setLanguagesDB(listLanguages);
 		} catch (Exception e) {
@@ -223,5 +225,10 @@ public class MenuItems {
 		loadPrincipal();
 		loadMenus();
 		mapaMenu.entrySet().forEach(entry -> add(entry.getValue()));
+	}
+
+	@Override
+	public Log logger() {
+		return logger;
 	}
 }
