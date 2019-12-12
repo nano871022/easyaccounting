@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -40,6 +41,10 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	@FXML
 	private Button btnDel;
 	@FXML
+	private Button btnCargue;
+	@FXML
+	private Button btnReporte;
+	@FXML
 	private HBox paginador;
 	private DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> dt;
 
@@ -47,6 +52,8 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	public void initialize() {
 		NombreVentana = "Lista de Configutaciones";
 		registro = new ConfiguracionDTO();
+		btnCargue.setVisible(false);
+		btnReporte.setVisible(false);
 		lazy();
 	}
 
@@ -81,10 +88,10 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public ConfiguracionDTO getFilter() {
 				ConfiguracionDTO filtro = new ConfiguracionDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					filtro.setConfiguracion("%"+configuracion.getText()+"%");
+					filtro.setConfiguracion("%" + configuracion.getText() + "%");
 				}
 				if (StringUtils.isNotBlank(descripcion.getText())) {
-					filtro.setDescripcion("%"+descripcion.getText()+"%");
+					filtro.setDescripcion("%" + descripcion.getText() + "%");
 				}
 				return filtro;
 			}
@@ -94,6 +101,16 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
 		btnDel.setVisible(isSelected());
+		if (isSelected()) {
+			if (dt.getSelectedRow().getReport()) {
+				btnReporte.setVisible(true);
+				btnCargue.setVisible(false);
+			} else {
+				btnCargue.setVisible(true);
+				btnReporte.setVisible(false);
+			}
+
+		}
 	}
 
 	public void add() {
@@ -139,5 +156,22 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 
 	public DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> getDt() {
 		return dt;
+	}
+
+	public void reporte() {
+		try {
+			controllerPopup(GenConfigBean.class).load(dt.getSelectedRow().getConfiguracion());
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
+
+	public void cargue() {
+		try {
+			controllerPopup(LoaderServiceBean.class).load(dt.getSelectedRow().getConfiguracion());
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+
 	}
 }

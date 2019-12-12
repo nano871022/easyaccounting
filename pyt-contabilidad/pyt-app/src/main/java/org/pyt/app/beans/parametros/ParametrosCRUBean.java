@@ -2,6 +2,7 @@ package org.pyt.app.beans.parametros;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
@@ -222,7 +223,9 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		valid &= ValidFields.valid(nombre, true, 2, 100, i18n().valueBundle("valid.parameter.name.is.empty"));
 		valid &= ValidFields.valid(descripcion, true, 2, 100,
 				i18n().valueBundle("valid.parameter.description.is.empty"));
-		valid &= ValidFields.valid(grupo, true, 2, 100, i18n().valueBundle("valid.parameter.group.is.empty"));
+		if(!(Optional.ofNullable(grupo.getText()).isPresent() && Optional.ofNullable(grupo.getText()).get().contains("*"))) {
+			valid &= ValidFields.valid(grupo, true, 2, 100, i18n().valueBundle("valid.parameter.group.is.empty"));
+		}
 		valid &= ValidFields.valid(estado, true, i18n().valueBundle("valid.parameter.state.is.empty"));
 		if (!registro.getGrupo().contentEquals("*")) {
 			valid &= ValidFields.numeric(valor, true, new BigDecimal("1"), new BigDecimal("10000000000"),

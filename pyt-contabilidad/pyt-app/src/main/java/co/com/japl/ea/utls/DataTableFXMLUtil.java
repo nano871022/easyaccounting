@@ -1,5 +1,9 @@
 package co.com.japl.ea.utls;
 
+import static org.pyt.common.constants.css.DataTable.CONST_CSS_CURSOR_HAND;
+import static org.pyt.common.constants.css.DataTable.CONST_CSS_TEXT_LINK;
+import static org.pyt.common.constants.css.DataTable.CONST_CSS_TEXT_NO_LINK;
+
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +23,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 /**
- * Se encarga de controlar los diferentes aspectos de la tabla como mostrar la
- * informacion necesaria, se desarrolla un sistema de control
+ * ; * Se encarga de controlar los diferentes aspectos de la tabla como mostrar
+ * la informacion necesaria, se desarrolla un sistema de control
  * 
  * @author Alejandro Parra
  * @since 18/06/2018
@@ -81,6 +85,7 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 			btnAtras.onActionProperty().set(e -> before());
 			btnSiguiente.onActionProperty().set(e -> next());
 			btnUltimo.onActionProperty().set(e -> last());
+			btnPaginatorHidden();
 		}
 	}
 
@@ -114,9 +119,9 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 		while (ite.hasNext()) {
 			Node node = ite.next();
 			if (((Label) node).getText().contentEquals(String.valueOf(currentPage))) {
-				((Label) node).setStyle("-fx-text-fill:blue;-fx-underline:true;");
+				((Label) node).setStyle(CONST_CSS_TEXT_LINK);
 			} else {
-				((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
+				((Label) node).setStyle(CONST_CSS_TEXT_NO_LINK);
 			}
 		}
 		search();
@@ -211,17 +216,17 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 			for (int i = 0; i < cantidad; i++) {
 				Label page = new Label(String.valueOf(i + 1));
 				page.setPadding(new Insets(5));
-				page.setStyle("-fx-cursor:hand");
+				page.setStyle(CONST_CSS_CURSOR_HAND);
 				if (i == 0) {
-					page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
+					page.setStyle(CONST_CSS_TEXT_LINK);
 				}
 				page.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
 					Iterator<Node> ite = nPages.getChildren().iterator();
 					while (ite.hasNext()) {
 						Node node = ite.next();
-						((Label) node).setStyle("-fx-text-fill:black;-fx-underline:false;");
+						((Label) node).setStyle(CONST_CSS_TEXT_NO_LINK);
 					}
-					page.setStyle("-fx-text-fill:blue;-fx-underline:true;");
+					page.setStyle(CONST_CSS_TEXT_LINK);
 					currentPage = Integer.valueOf(page.getText());
 					search();
 				});
@@ -230,11 +235,15 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 				btnPrimer.setVisible(false);
 			}
 		} else {
-			btnAtras.setVisible(false);
-			btnPrimer.setVisible(false);
-			btnSiguiente.setVisible(false);
-			btnUltimo.setVisible(false);
+			btnPaginatorHidden();
 		}
+	}
+
+	private void btnPaginatorHidden() {
+		btnAtras.setVisible(false);
+		btnPrimer.setVisible(false);
+		btnSiguiente.setVisible(false);
+		btnUltimo.setVisible(false);
 	}
 
 	/**
