@@ -9,6 +9,8 @@ import static org.pyt.common.constants.languages.Login.CONST_LANGUAGE_ERROR_REME
 import static org.pyt.common.constants.languages.Login.CONST_LANGUAGE_ERROR_REMEMBER_PASSWD;
 import static org.pyt.common.constants.languages.Login.CONST_LANGUAGE_ERROR_REMEMBER_STATE;
 import static org.pyt.common.constants.languages.Login.CONST_LANGUAGE_ERROR_REMEMBER_UPDATED;
+import static org.pyt.common.constants.languages.Login.CONST_LOGIN_CHANGING_CODE_EMPTY;
+import static org.pyt.common.constants.languages.Login.CONST_LOGIN_CHANGING_STATE_INVALID;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,13 +20,31 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.common.I18n;
+import org.pyt.common.common.Log;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class LoginUtil {
-	public static UsuarioDTO usuarioSystem;
+	private static Boolean remember = false;
+	private static UsuarioDTO usuarioSystem;
 	public static final String CONST_FILE_REMEMBER = "rememberme.bin";
 	public static final String CONST_PATH_SAVES = "./";
+	private static final Log LOGGER = Log.Log(LoginUtil.class);
+
+	public final static void deleteRemember() {
+		try {
+			Path path = Paths.get(CONST_PATH_SAVES, CONST_FILE_REMEMBER);
+			Files.deleteIfExists(path);
+			usuarioSystem = null;
+			remember = null;
+		} catch (Exception e) {
+			LOGGER.logger(e);
+		}
+	}
 
 	public final static UsuarioDTO loadLogin() throws IOException, ClassNotFoundException {
 		Path path = Paths.get(CONST_PATH_SAVES, CONST_FILE_REMEMBER);
@@ -41,6 +61,8 @@ public class LoginUtil {
 		Path path = Paths.get(CONST_PATH_SAVES, CONST_FILE_REMEMBER);
 		try (var os = Files.newOutputStream(path); var file = new ObjectOutputStream(os)) {
 			file.writeObject(remember);
+			usuarioSystem = remember;
+			LoginUtil.remember = true;
 		}
 	}
 
@@ -100,4 +122,25 @@ public class LoginUtil {
 		}
 	}
 
+	public static final UsuarioDTO getUsuarioLogin() {
+		return usuarioSystem;
+	}
+
+	public static final void setUsuarioLogin(UsuarioDTO usuario) {
+		if (!Optional.ofNullable(usuarioSystem).isPresent()) {
+			if (StringUtils.isNotBlank(usuario.getCodigo())) {
+				if (usuario.getState() == 1) {
+					usuarioSystem = usuario;
+				} else {
+					throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_CODE_EMPTY));
+				}
+			} else {
+				throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_STATE_INVALID));
+			}
+		}
+	}
+
+	public static final Boolean isRemember() {
+		return Optional.ofNullable(remember).orElse(false);
+	}
 }

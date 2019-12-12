@@ -29,3 +29,7 @@
   -fx-background-color:red;
   -fx-color:white;
 }
+.message-warn{
+  -fx-background-color:orange;
+  -fx-color:white;
+}

@@ -16,4 +16,7 @@ public final class Login {
 	public final static String CONST_MSN_USER_ERROR = "form.lbl.msn.error.user";
 	public final static String CONST_MSN_PASSWORD_ERROR = "form.lbl.msn.error.password";
 	public final static String CONST_TITLE_LOGIN = "form.title.login";
+	public final static String CONST_LOGIN_CHANGING_NOT_ALLOW = "err.login.changing.not.allow";
+	public final static String CONST_LOGIN_CHANGING_CODE_EMPTY= "err.login.changing.code.empty";
+	public final static String CONST_LOGIN_CHANGING_STATE_INVALID = "err.login.changing.state.invalid";
 }

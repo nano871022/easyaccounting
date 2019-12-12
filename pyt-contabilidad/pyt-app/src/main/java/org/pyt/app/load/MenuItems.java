@@ -27,6 +27,7 @@ import co.com.japl.ea.interfaces.IUrlLoadBean;
 import co.com.japl.ea.utls.LoadAppFxml;
 import co.com.japl.ea.utls.LoginUtil;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -55,6 +56,7 @@ public class MenuItems implements Reflection {
 	private ScrollPane scroll;
 	private final static String MENU_PRINCIPAL = "Inicio";
 	private final static String BTN_CERRAR = "Cerrar";
+	private final static String BTN_LOGOUT = "Logout";
 	private final static String LBL_MENU = "lbl.menu.";
 	private final static String CONST_URL_INIT_PARAMS = "?";
 	private final static String CONST_URL_SPLIT_PARAMS = "&";
@@ -205,9 +207,24 @@ public class MenuItems implements Reflection {
 	private final void loadPrincipal() {
 		Menu principal = getMenu(MENU_PRINCIPAL);
 		ObservableList<MenuItem> items = getItems(principal);
+		var logOut = addItem(BTN_LOGOUT, event -> {
+			try {
+				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(),
+						LoginUtil.isRemember());
+				LoginUtil.deleteRemember();
+			} catch (UnknownHostException e) {
+				logger.logger(e);
+			} catch (Exception e) {
+				logger.logger(e);
+			}
+			Platform.exit();
+			System.exit(0);
+		});
+		logOut.visibleProperty().bind(Bindings.createBooleanBinding(() -> LoginUtil.isRemember()));
+		items.add(logOut);
 		items.add(addItem(BTN_CERRAR, event -> {
 			try {
-				loginSvc.logout(LoginUtil.usuarioSystem, InetAddress.getLocalHost().getHostAddress());
+				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(), false);
 			} catch (UnknownHostException e) {
 				logger.logger(e);
 			} catch (Exception e) {

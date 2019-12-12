@@ -134,6 +134,12 @@ public class LoginBean extends ABean<UsuarioDTO> {
 			password.setText(null);
 			message.setText(i18n().valueBundle(LanguageConstant.CONST_ERR_NULL_POINTER_EXCEPTION_LOGIN));
 			message.getStyleClass().add(StylesPrincipalConstant.CONST_MESSAGE_ERROR);
+		} catch (RuntimeException e) {
+			registro.setPassword(null);
+			password.setText(null);
+			alerta(e.getMessage());
+			message.setText(e.getMessage());
+			message.getStyleClass().add(StylesPrincipalConstant.CONST_MESSAGE_WARN);
 		} catch (Exception e) {
 			error(e);
 			registro.setPassword(null);
@@ -155,7 +161,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 
 	public void cancel() {
 		try {
-			usersSvc.logout(registro, remoteAddr());
+			usersSvc.logout(registro, remoteAddr(), false);
 			registro = new UsuarioDTO();
 			clearAll();
 		} catch (Exception e) {

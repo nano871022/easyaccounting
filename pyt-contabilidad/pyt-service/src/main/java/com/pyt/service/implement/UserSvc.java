@@ -37,6 +37,7 @@ import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.japl.ea.dto.system.LoginDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.services.privates.utils.LoginUtil;
 
 public class UserSvc extends Services implements IUsersSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
@@ -114,7 +115,7 @@ public class UserSvc extends Services implements IUsersSvc {
 	private final boolean validRemember(UsuarioDTO login, UsuarioDTO found, String ipMachine, Boolean remember)
 			throws QueryException, UnknownHostException {
 		if (remember) {
-			String ipPublic = remoteAddr();
+			String ipPublic = LoginUtil.remoteAddr();
 			List<LoginDTO> listLogins = searchAllLogins(found).stream()
 					.filter(row -> row.getIpMaquina().contains(ipMachine) && row.getIpPublica().contains(ipPublic))
 					.filter(row -> row.getRecordar() == true).collect(Collectors.toList());
@@ -154,13 +155,13 @@ public class UserSvc extends Services implements IUsersSvc {
 			}
 		}
 		if (Optional.ofNullable(found).isPresent()) {
-			var ipPublic = remoteAddr();
+			var ipPublic = LoginUtil.remoteAddr();
 			List<LoginDTO> list = searchAllLogins(user).stream()
 					.filter(row -> row.getIpMaquina().contains(ipMachine) && row.getIpPublica().contains(ipPublic))
 					.filter(row -> !Optional.ofNullable(row.getFechaFin()).isPresent()|| row.getFechaFin().compareTo(LocalDate.now()) >= 0)
 					.collect(Collectors.toList());
 			if (list.size() > 0) {
-				list.forEach(row -> updateLogin(row, user));
+				list.forEach(row -> {updateLogin(row, user);LoginUtil.INSTANCE().loadLogin(row);});
 			} else {
 				createLogin(found, ipMachine, ipPublic, remember);
 			}
@@ -169,17 +170,20 @@ public class UserSvc extends Services implements IUsersSvc {
 	}
 
 	@Override
-	public void logout(UsuarioDTO user, String ipMachine) throws Exception {
+	public void logout(UsuarioDTO user, String ipMachine,Boolean remember) throws Exception {
 		if (!Optional.ofNullable(user).isPresent()) {
 			throw new Exception(CONST_ERR_USER_NOT_SUBMIT);
 		}
 		if (!Optional.ofNullable(user).isPresent()) {
 			throw new Exception(CONST_ERR_IP_MACHINE_NOT_SUBMIT);
 		}
-		var ipPublic = remoteAddr();
-		var founds = searchAllLogins(user).stream().filter(row -> row.getIpMaquina().contains(ipMachine))
-				.filter(row -> row.getIpPublica().contains(ipPublic)).collect(Collectors.toList());
-		founds.forEach(row -> unEnabledLogin(row, user));
+		var ipPublic = LoginUtil.remoteAddr();
+		var founds = searchAllLogins(user).stream()
+				.filter(row -> row.getIpMaquina().contains(ipMachine))
+				.filter(row -> row.getIpPublica().contains(ipPublic))
+				.filter(row -> row.getRecordar() == remember)
+				.collect(Collectors.toList());
+		founds.forEach(row -> {unEnabledLogin(row, user);LoginUtil.INSTANCE().removeLogin(row);});
 	}
 
 	@Override
@@ -230,6 +234,7 @@ public class UserSvc extends Services implements IUsersSvc {
 		login.setFechaInicio(LocalDate.now());
 		login.setFechaFin(LocalDate.now().plusDays(8));
 		querySvc.insert(login, usuario);
+		LoginUtil.INSTANCE().loadLogin(login);
 	}
 
 	private void updateLogin(LoginDTO login, UsuarioDTO usuario) throws RuntimeException {
@@ -254,11 +259,6 @@ public class UserSvc extends Services implements IUsersSvc {
 		} catch (QueryException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private String remoteAddr() throws UnknownHostException {
-		// return getContext().getRemoteAddr();
-		return InetAddress.getLocalHost().getHostAddress();
 	}
 
 }

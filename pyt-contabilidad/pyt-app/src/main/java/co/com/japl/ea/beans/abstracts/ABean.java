@@ -100,10 +100,10 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	}
 
 	protected final UsuarioDTO getUsuario() {
-		return Optional.ofNullable(LoginUtil.usuarioSystem).orElse(new UsuarioDTO());
+		return Optional.ofNullable(LoginUtil.getUsuarioLogin()).orElse(new UsuarioDTO());
 	}
 
 	protected final void setUsuario(UsuarioDTO usuario) {
-		LoginUtil.usuarioSystem = Optional.ofNullable(usuario).orElse(new UsuarioDTO());
+		LoginUtil.setUsuarioLogin(Optional.ofNullable(usuario).orElse(new UsuarioDTO()));
 	}
 }

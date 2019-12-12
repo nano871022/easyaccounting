@@ -204,6 +204,6 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 	}
 
 	public UsuarioDTO getUsuario() {
-		return LoginUtil.usuarioSystem;
+		return LoginUtil.getUsuarioLogin();
 	}
 }
