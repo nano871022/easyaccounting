@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.pyt.common.properties.LogWriter;
 
@@ -23,6 +24,9 @@ public final class Log {
 	private final static String DEBUG = "DEBUG";
 	private final static String NullPointerExceptionMessage = "Null pointer exception";
 	private final static String EOFExceptionMessage = "When open file throw EOF exception";
+	private final static String CONST_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private final static String CONST_4STR_FORMAT= "%s %s : %s : %s";
+	private final static String CONST_3STR_FORMAT=  "%s.%s:%s";
 	private String lastMessage = "";
 	private LogWriter logWriter;
 
@@ -37,17 +41,16 @@ public final class Log {
 
 	private final String now() {
 		LocalDateTime ldt = LocalDateTime.now();
-		String pattern = "yyyy-MM-dd HH:mm:ss";
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CONST_DATE_TIME_FORMAT);
 		String timer = ldt.format(formatter);
 		return timer;
 	}
 
 	public final synchronized void msnBuild(String msn, String type) {
-		if(lastMessage.contentEquals(msn))return;
+		if(Optional.ofNullable(lastMessage).orElse("").contentEquals(msn))return;
 		lastMessage = msn;
 		if (logWriter.getModesToPrint().contains(type)) {
-			String line = String.format("%s %s : %s : %s", now(), nameClase, type, msn);
+			String line = String.format(CONST_4STR_FORMAT, now(), nameClase, type, msn);
 			logWriter.addImpresion(line);
 		}
 	}
@@ -93,7 +96,7 @@ public final class Log {
 				msnBuild(error.getCause().getMessage(), DEBUG);
 				if (error.getCause().getStackTrace() != null && error.getCause().getStackTrace().length > 0) {
 					Arrays.asList(error.getCause().getStackTrace()).forEach(action -> msnBuild(
-							action.getFileName() + "." + action.getMethodName() + ":LN_" + action.getLineNumber(),
+							action.getFileName() + "." + action.getMethodName() + ":" + action.getLineNumber(),
 							DEBUG));
 				}
 				printDEBUGCause(error.getCause());
@@ -143,7 +146,7 @@ public final class Log {
 		msnBuild(mensaje, ERROR);
 				Arrays.asList(error.getStackTrace()).forEach(action -> 
 				msnBuild(
-				String.format("%s.%s:%s", action.getFileName(), action.getMethodName(), action.getLineNumber())
+				String.format(CONST_3STR_FORMAT, action.getFileName(), action.getMethodName(), action.getLineNumber())
 				,DEBUG));
 	}
 

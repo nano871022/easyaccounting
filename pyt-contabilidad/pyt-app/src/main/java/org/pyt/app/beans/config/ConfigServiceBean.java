@@ -65,13 +65,19 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	@FXML
 	private Button btnSiguiente;
 	@FXML
+	private Button btnUpdateMark;
+	@FXML
 	private Button btnCancelar;
+	@FXML
+	private Button btnAddMark;
 	@FXML
 	private Button btnDelServicio;
 	@FXML
 	private Button btnSaveMarcador;
 	@FXML
 	private Button btnDelMarcador;
+	@FXML
+	private Button btnLimpiar;
 	@FXML
 	private Tab tabServicios;
 	@FXML
@@ -92,6 +98,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private TextField configuracion;
 	@FXML
 	private TextArea descripcion;
+	@FXML
+	private TextField orderMarcador;
 	@FXML
 	private TableView<MarcadorDTO> lstMarcadores;
 	@FXML
@@ -173,6 +181,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		max = ConfigServiceConstant.TAB_CONFIGURACION;
 		group = new ToggleGroup();
 		group2 = new ToggleGroup();
+		btnUpdateMark.setVisible(false);
+		btnLimpiar.setVisible(false);
 		rbIn.setToggleGroup(group);
 		rbOut.setToggleGroup(group);
 		rbCargues.setToggleGroup(group2);
@@ -264,6 +274,20 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 */
 	public final void marcadorSelect() {
 		btnEliminar.setVisible(tbMarcador.isSelected());
+		btnUpdateMark.setVisible(tbMarcador.isSelected());
+		var mark = tbMarcador.getSelectedRow();
+		orderMarcador.setText(String.valueOf(mark.getOrden()));
+		nameMarcador.setText(mark.getMarcador());
+		if (mark.getTipoInOut().contains(rbCargues.getText())) {
+			rbCargues.setSelected(true);
+			rbReportes.setSelected(false);
+		} else if (mark.getTipoInOut().contains(rbReportes.getText())) {
+			rbCargues.setSelected(false);
+			rbReportes.setSelected(true);
+		}
+		btnAddMark.setVisible(false);
+		btnUpdateMark.setVisible(true);
+		btnLimpiar.setVisible(true);
 	}
 
 	/**
@@ -578,14 +602,54 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		if (StringUtils.isNotBlank(marcador)) {
 			MarcadorDTO marca = new MarcadorDTO();
 			marca.setMarcador(marcador);
-			marca.setOrden(tbMarcador.getTotal() + 1);
+			marca.setOrden(Integer.valueOf(orderMarcador.getText()));
 			RadioButton toggle = (RadioButton) group.getSelectedToggle();
 			marca.setTipoInOut(toggle.getText());
 			marcadores.add(marca);
-			// Table.put(lstMarcadores, marcadores);
+			orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
 			nameMarcador.clear();
 			tbMarcador.search();
+			btnLimpiar.setVisible(false);
 		}
+	}
+
+	public final void updMarcador() {
+		try {
+			if (posicion.compareTo(ConfigServiceConstant.TAB_MARCADOR) != 0)
+				return;
+			var mark = tbMarcador.getSelectedRow();
+			mark.setMarcador(nameMarcador.getText());
+			mark.setOrden(Integer.valueOf(orderMarcador.getText()));
+			RadioButton toggle = (RadioButton) group.getSelectedToggle();
+			mark.setTipoInOut(toggle.getText());
+			if (StringUtils.isNotBlank(mark.getCodigo())) {
+				configMarcadorServicio.updateMarcador(mark, getUsuario());
+			} else {
+				for (var i = 0; i < marcadores.size(); i++) {
+					if (marcadores.get(i).equals(mark)) {
+						marcadores.set(i, mark);
+						break;
+					}
+				}
+			}
+			nameMarcador.clear();
+			orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
+			btnAddMark.setVisible(true);
+			btnUpdateMark.setVisible(false);
+			btnLimpiar.setVisible(false);
+			tbMarcador.search();
+		} catch (MarcadorServicioException e) {
+			error(e);
+		}
+
+	}
+
+	public final void cleanMarcador() {
+		nameMarcador.clear();
+		orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
+		btnAddMark.setVisible(true);
+		btnUpdateMark.setVisible(false);
+		btnLimpiar.setVisible(false);
 	}
 
 	public void delMarcador() {

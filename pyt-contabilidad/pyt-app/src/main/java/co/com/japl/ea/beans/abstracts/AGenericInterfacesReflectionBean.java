@@ -55,7 +55,7 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 		tabla = new TableView<T>();
 		tabla.getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		setClazz(clazz);
-		instaceOfGenericDTOAll();
+		instaceOfGenericDTOAll(this.getClass());
 	}
 
 	@SuppressWarnings("unused")
@@ -101,10 +101,13 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 	 * 
 	 * @throws {@link Exception}
 	 */
-	private final void instaceOfGenericDTOAll() throws Exception {
-		Field[] fields = this.getClass().getDeclaredFields();
+	private final void instaceOfGenericDTOAll(Class clazz) throws Exception {
+		if (clazz.equals(Object.class))
+			return;
+		Field[] fields = clazz.getDeclaredFields();
 		Arrays.asList(fields).stream().filter(field -> field.getType() == ADto.class)
 				.forEach(field -> configFieldValue(field));
+		instaceOfGenericDTOAll(clazz.getSuperclass());
 	}
 
 	/**
@@ -118,7 +121,8 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 			if (!field.canAccess(this)) {
 				field.trySetAccessible();
 			}
-			field.set(this, getInstanceDto(TypeGeneric.FIELD));
+			var instance = clazz.getDeclaredConstructor().newInstance();
+			field.set(this, instance);
 		} catch (Exception exception) {
 			logger().logger(exception);
 		}

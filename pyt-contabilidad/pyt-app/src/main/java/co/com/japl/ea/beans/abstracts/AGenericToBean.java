@@ -183,7 +183,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		if (registro instanceof ParametroDTO) {
 			try {
 				var value = parametrosSvc.getIdByParametroGroup(valueKeyPrameter);
-				registro.set(nameGroup, valueKeyPrameter);
+				registro.set(nameGroup, value);
 			} catch (ParametroException e) {
 				throw new RuntimeException(e);
 			}

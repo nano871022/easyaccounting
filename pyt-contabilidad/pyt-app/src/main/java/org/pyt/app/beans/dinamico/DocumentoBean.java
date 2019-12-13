@@ -129,6 +129,28 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 					}
 
 				});
+		getListGenericsFields(TypeGeneric.FIELD).stream().filter(
+				row -> StringUtils.isBlank(row.getSelectNameGroup()) && StringUtils.isNotBlank(row.getPutNameShow()))
+				.forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof EmpresaDTO) {
+								var empresa = new EmpresaDTO();
+								var list = empresasSvc.getAllEmpresas(empresa);
+								list.forEach(reg -> mapListSelects.put(row.getFieldName(), reg));
+							}
+						}
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (EmpresasException e) {
+						logger().logger(e);
+					}
+				});
 
 		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}

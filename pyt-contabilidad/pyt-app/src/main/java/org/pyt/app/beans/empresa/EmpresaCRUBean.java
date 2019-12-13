@@ -168,9 +168,9 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupMonedas() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_MONEDA))).setWidth(350))
+			((PopupGenBean<ParametroDTO>) controllerPopup(
+					new PopupGenBean<ParametroDTO>(ParametroDTO.class).addDefaultValuesToGenericParametrized(
+							ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_MONEDA)).setWidth(350))
 									.load("#{EmpresaCRUBean.moneda}");
 		} catch (Exception e) {
 			error(e);
