@@ -166,11 +166,10 @@ public final class SelectList {
 			String nombreCampoDto) {
 		try {
 			if (list != null) {
-				for (T dto : list) {
-					if (selects.getValue() == dto.get(nombreCampoDto)) {
-						return dto;
-					}
-				}
+				return list.stream()
+						.filter(row -> selects.selectionModelProperty().get().getSelectedItem()
+								.equals(row.get(nombreCampoDto)))
+						.findAny().orElse(null);
 			}
 		} catch (ReflectionException e) {
 			logger.logger(e);

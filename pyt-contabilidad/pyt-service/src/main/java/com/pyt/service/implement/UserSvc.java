@@ -18,7 +18,6 @@ import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_MACHINE_EMPT
 import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_PUBLIC_EMPTY;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_USER_EMPTY;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -116,9 +115,7 @@ public class UserSvc extends Services implements IUsersSvc {
 			throws QueryException, UnknownHostException {
 		if (remember) {
 			String ipPublic = LoginUtil.remoteAddr();
-			List<LoginDTO> listLogins = searchAllLogins(found).stream()
-					.filter(row -> row.getIpMaquina().contains(ipMachine) && row.getIpPublica().contains(ipPublic))
-					.filter(row -> row.getRecordar() == true).collect(Collectors.toList());
+			List<LoginDTO> listLogins = searchAllLogins(found, ipMachine, ipPublic, remember);
 
 			if (listLogins.size() > 0
 					&& login.getPassword() == null && StringUtils.isNotBlank(login
@@ -156,8 +153,7 @@ public class UserSvc extends Services implements IUsersSvc {
 		}
 		if (Optional.ofNullable(found).isPresent()) {
 			var ipPublic = LoginUtil.remoteAddr();
-			List<LoginDTO> list = searchAllLogins(user).stream()
-					.filter(row -> row.getIpMaquina().contains(ipMachine) && row.getIpPublica().contains(ipPublic))
+			List<LoginDTO> list = searchAllLogins(user, ipMachine, ipPublic, remember).stream()
 					.filter(row -> !Optional.ofNullable(row.getFechaFin()).isPresent()|| row.getFechaFin().compareTo(LocalDate.now()) >= 0)
 					.collect(Collectors.toList());
 			if (list.size() > 0) {
@@ -178,11 +174,7 @@ public class UserSvc extends Services implements IUsersSvc {
 			throw new Exception(CONST_ERR_IP_MACHINE_NOT_SUBMIT);
 		}
 		var ipPublic = LoginUtil.remoteAddr();
-		var founds = searchAllLogins(user).stream()
-				.filter(row -> row.getIpMaquina().contains(ipMachine))
-				.filter(row -> row.getIpPublica().contains(ipPublic))
-				.filter(row -> row.getRecordar() == remember)
-				.collect(Collectors.toList());
+		var founds = searchAllLogins(user, ipMachine, ipPublic, remember);
 		founds.forEach(row -> {unEnabledLogin(row, user);LoginUtil.INSTANCE().removeLogin(row);});
 	}
 
@@ -205,9 +197,13 @@ public class UserSvc extends Services implements IUsersSvc {
 
 	}
 
-	private List<LoginDTO> searchAllLogins(UsuarioDTO usuario) throws QueryException {
+	private List<LoginDTO> searchAllLogins(UsuarioDTO usuario, String ipMachine, String ipPublic, Boolean recordar)
+			throws QueryException {
 		var login = new LoginDTO();
 		login.setUsuario(usuario);
+		login.setIpMaquina(ipMachine);
+		login.setIpPublica(ipPublic);
+		login.setRecordar(recordar);
 		var result = querySvc.gets(login);
 		var logins = result.stream().filter(row -> row.getEliminador() == null && row.getFechaEliminacion() == null)
 				.filter(row -> row.getFechaFin() == null || row.getFechaFin().compareTo(LocalDate.now()) >= 0)

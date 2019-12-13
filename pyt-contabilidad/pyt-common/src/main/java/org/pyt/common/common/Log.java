@@ -143,7 +143,7 @@ public final class Log {
 		msnBuild(mensaje, ERROR);
 				Arrays.asList(error.getStackTrace()).forEach(action -> 
 				msnBuild(
-						String.format("%s.%s:LN_%s", action.getFileName(),action.getMethodName(),action.getLineNumber())
+				String.format("%s.%s:%s", action.getFileName(), action.getMethodName(), action.getLineNumber())
 				,DEBUG));
 	}
 

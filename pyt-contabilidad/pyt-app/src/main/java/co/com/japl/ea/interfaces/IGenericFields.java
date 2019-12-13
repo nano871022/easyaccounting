@@ -21,6 +21,7 @@ import com.pyt.service.implement.GenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.GridPane;
@@ -206,14 +207,22 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			Node fieldControl, String nameField) throws ParametroException {
 		if (genericFormsUtils.isChoiceBox(fieldControl)) {
 			var list = getSelectedListToChoiceBox(typeGeneric, nameField, typeField, factory);
+			((ChoiceBox) fieldControl).valueProperty()
+					.bind(Bindings.createObjectBinding(() -> getInstanceDto(typeGeneric).get(nameField)));
 			SelectList.put((ChoiceBox) fieldControl, list, factory.getNameFieldToShowInComboBox());
+			((ChoiceBox) fieldControl).getSelectionModel().selectedItemProperty()
+					.addListener((observable, oldValue, newValue) -> {
+						var value = SelectList.get(((ChoiceBox) fieldControl), list,
+								factory.getNameFieldToShowInComboBox());
+						getInstanceDto(typeGeneric).set(nameField, value);
+					});
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
 	private boolean isParametroDTO(Class clazz) {
 		try {
-			if (clazz.cast(ParametroDTO.class) != null) {
+			if (clazz.cast(new ParametroDTO()) != null) {
 				return true;
 			}
 		} catch (ClassCastException e) {

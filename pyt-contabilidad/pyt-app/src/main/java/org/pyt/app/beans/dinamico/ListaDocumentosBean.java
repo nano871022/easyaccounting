@@ -13,6 +13,7 @@ import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
+import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
@@ -177,6 +178,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 				parametro.setValor2(tipoDocumento[0].substring(tipoDocumento[0].indexOf("$") + 1));
 				parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
 				parametro.setGrupo(grupo);
+				logger.DEBUG("Opcion valor2 Parametro Tipo Documento::" + parametro.getValor2());
 				var tdoc = parametroSvc.getParametro(parametro);
 				this.tipoDocumento = tdoc;
 				lblTitle.setText(this.tipoDocumento.getNombre());
@@ -184,6 +186,8 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 				searchFilters();
 				searchColumns();
 			}
+		} catch (ParametroException e) {
+			error(e);
 		} catch (Exception e) {
 			logger.logger(i18n().valueBundle("document_type_had_error_in_its_processing"), e);
 		}

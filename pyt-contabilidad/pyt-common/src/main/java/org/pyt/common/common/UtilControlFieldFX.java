@@ -91,7 +91,7 @@ public final class UtilControlFieldFX {
 		} else {
 			try {
 				if (field.getType().asSubclass(ADto.class) != null) {
-					return (N) new ComboBox<T>();
+					return (N) new ChoiceBox<T>();
 				}
 			} catch (ClassCastException e) {
 			}
@@ -101,7 +101,7 @@ public final class UtilControlFieldFX {
 	}
 
 	public <N extends Node> boolean isChoiceBox(N field) {
-		return field instanceof ChoiceBox;
+		return field instanceof ChoiceBox || field instanceof ComboBox;
 	}
 
 	public <N extends Node> boolean isDatePicker(N field) {

@@ -1,9 +1,12 @@
 package org.pyt.app.beans.dinamico;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
@@ -87,6 +90,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	 * Se encarga de realizar la busqueda de los campos configurados para el tipo de
 	 * docuumento seleccionado
 	 */
+	@SuppressWarnings("unchecked")
 	public final void loadField() {
 		DocumentosDTO docs = new DocumentosDTO();
 		ParametroDTO tipoDoc = SelectList.get(tipoDocumentos);
@@ -101,6 +105,31 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		}
 		central.getChildren().clear();
 		central.getChildren().add(gridPane);
+		getListGenericsFields(TypeGeneric.FIELD).stream()
+				.filter(row -> Optional.ofNullable(row.getSelectNameGroup()).isPresent()).forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof ParametroDTO) {
+								var param = new ParametroDTO();
+								param.setGrupo(row.getSelectNameGroup());
+								param.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+								getParametersSvc().getAllParametros(param)
+										.forEach(reg -> mapListSelects.put(row.getFieldName(), reg));
+							}
+						}
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (ParametroException e) {
+						logger().logger(e);
+					}
+
+				});
+
 		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 

@@ -57,7 +57,7 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 
 	@Override
 	public String getNameFieldToShowInComboBox() {
-		return field.getPutNameAssign();
+		return field.getPutNameShow();
 	}
 
 	@Override

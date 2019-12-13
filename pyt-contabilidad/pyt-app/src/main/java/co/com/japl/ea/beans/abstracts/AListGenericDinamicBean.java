@@ -36,7 +36,7 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 
 	@Override
 	public I18n i18n() {
-		return i18n();
+		return I18n.instance();
 	}
 
 	@Override
