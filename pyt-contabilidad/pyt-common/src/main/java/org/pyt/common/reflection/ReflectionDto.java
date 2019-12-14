@@ -23,6 +23,19 @@ import org.pyt.common.validates.ValidateValues;
 public abstract class ReflectionDto {
 	private Log logger = Log.Log(this.getClass());
 
+	@SuppressWarnings("unchecked")
+	private <S extends ADto> Field searchField(Class<S> clazz, String name) {
+		try {
+			return clazz.getDeclaredField(name);
+		} catch (NoSuchFieldException e) {
+			try {
+				return searchField((Class<S>) clazz.getSuperclass(), name);
+			} catch (ClassCastException e2) {
+				return null;
+			}
+		}
+	}
+
 	/**
 	 * Se encarga de poder realiar set sobre los valores de los campos del dto por
 	 * medio de refleccion
@@ -38,8 +51,8 @@ public abstract class ReflectionDto {
 		Field field = null;
 		try {
 			if(value == null) {
-				var campo = clase.getDeclaredField(nombreCampo);
-				if(campo.trySetAccessible()) {
+				var campo = searchField(clase, nombreCampo);
+				if (campo != null && campo.trySetAccessible()) {
 					campo.set(this, null);
 				}else {
 					return;
@@ -74,8 +87,6 @@ public abstract class ReflectionDto {
 			throw new ReflectionException("Problema objeto invocacion.", e);
 		} catch (ValidateValueException e) {
 			throw new ReflectionException("Problema en casting al campo ingreso de informacion.", e);
-		} catch (NoSuchFieldException e) {
-			throw new ReflectionException("Tatando de cambiar valor del campo a nulo", e);
 		}
 	}
 

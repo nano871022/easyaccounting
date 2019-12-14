@@ -1,6 +1,7 @@
 package com.pyt.service.dto;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
@@ -118,7 +119,8 @@ public class PersonaDTO extends ADto {
 	}
 
 	public String getNombres() {
-		return this.getNombre() + " " + this.getApellido();
+		return String.format("%s %s", Optional.ofNullable(getNombre()).orElse(""),
+				Optional.ofNullable(getApellido()).orElse("")).trim();
 	}
 
 }

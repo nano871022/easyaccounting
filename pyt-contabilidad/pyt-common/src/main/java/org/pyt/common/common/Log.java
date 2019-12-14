@@ -144,10 +144,21 @@ public final class Log {
 	 */
 	public final synchronized <T extends Exception> void logger(String mensaje, T error) {
 		msnBuild(mensaje, ERROR);
-				Arrays.asList(error.getStackTrace()).forEach(action -> 
-				msnBuild(
+		printThrowable(error);
+		if (error.getSuppressed() != null && error.getSuppressed().length > 0) {
+			Arrays.asList(error.getSuppressed()).forEach(row -> printThrowable(row));
+		}
+		Arrays.asList(error.getStackTrace()).forEach(action -> 
+		msnBuild(
 				String.format(CONST_3STR_FORMAT, action.getFileName(), action.getMethodName(), action.getLineNumber())
-				,DEBUG));
+				, DEBUG));
+	}
+
+	public final synchronized void printThrowable(Throwable throwable) {
+		if (throwable != null) {
+			msnBuild(throwable.getMessage(), ERROR);
+			printThrowable(throwable.getCause());
+		}
 	}
 
 }

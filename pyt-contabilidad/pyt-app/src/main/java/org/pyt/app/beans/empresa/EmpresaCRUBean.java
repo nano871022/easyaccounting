@@ -107,9 +107,8 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupPais() {
 		try {
-			((PopupGenBean<PaisDTO>) controllerPopup(PopupGenBean.instance(PaisDTO.class)).setWidth(350)
-					.addDefaultValuesToGenericParametrized("grupo", ParametroConstants.GRUPO_MONEDA)
-					.addDefaultValuesToGenericParametrized("estado", 1)).load("#{EmpresaCRUBean.pais}");
+			PopupGenBean.instance(PaisDTO.class).addDefaultValuesToGenericParametrized("estado", 1).setWidth(350)
+					.load("#{EmpresaCRUBean.pais}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -130,7 +129,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		direccion.setText(registro.getDireccion());
 		email.setText(registro.getCorreoElectronico());
 		telefono.setText(registro.getTelefono());
-		this.moneda.setText(registro.getMonedaDefecto().getDescripcion());
+		moneda.setText(registro.getMonedaDefecto().getDescripcion());
 		representante.setText(registro.getRepresentante().getNombres());
 		contador.setText(registro.getContador().getNombres());
 		nContador.setText(registro.getContador().getNumeroTarjetaProfesional());
@@ -168,10 +167,10 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupMonedas() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(
-					new PopupGenBean<ParametroDTO>(ParametroDTO.class).addDefaultValuesToGenericParametrized(
-							ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_MONEDA)).setWidth(350))
-									.load("#{EmpresaCRUBean.moneda}");
+			PopupGenBean.instance(ParametroDTO.class)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_MONEDA)
+					.setWidth(350).load("#{EmpresaCRUBean.moneda}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -184,8 +183,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupRepresentante() {
 		try {
-			((PopupGenBean<PersonaDTO>) controllerPopup(new PopupGenBean<PersonaDTO>(PersonaDTO.class)).setWidth(350))
-					.load("#{EmpresaCRUBean.representante}");
+			PopupGenBean.instance(PersonaDTO.class).setWidth(350).load("#{EmpresaCRUBean.representante}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -198,8 +196,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupContador() {
 		try {
-			((PopupGenBean<PersonaDTO>) controllerPopup(new PopupGenBean<PersonaDTO>(PersonaDTO.class)).setWidth(350))
-					.load("#{EmpresaCRUBean.contador}");
+			PopupGenBean.instance(PersonaDTO.class).setWidth(350).load("#{EmpresaCRUBean.contador}");
 		} catch (Exception e) {
 			error(e);
 		}

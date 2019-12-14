@@ -28,9 +28,18 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		sizeWindow(750, 500);
 	}
 
-	@SuppressWarnings("unused")
+	/**
+	 * Realiza la carga del controlador con el fxml y la ratorna , para no usar el
+	 * controllerPopup para este Bean generico
+	 * 
+	 * @param <T>
+	 * @param clazz
+	 * @return
+	 * @throws Exception
+	 */
 	public static final <T extends ADto> PopupGenBean<T> instance(Class<T> clazz) throws Exception {
-		return new PopupGenBean<T>(clazz);
+		var popup = new PopupGenBean<T>(clazz);
+		return popup.controllerPopup(popup);
 	}
 
 	@SuppressWarnings("static-access")
@@ -86,6 +95,24 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public PopupGenBean<T> setWidth(double width) {
+		super.setWidth(width);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public PopupGenBean<T> addDefaultValuesToGenericParametrized(String nameGroup, String valueKeyPrameter) {
+		super.addDefaultValuesToGenericParametrized(nameGroup, valueKeyPrameter);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public PopupGenBean<T> addDefaultValuesToGenericParametrized(String nameEstado, Integer estado) {
+		super.addDefaultValuesToGenericParametrized(nameEstado, estado);
+		return this;
 	}
 
 	@Override

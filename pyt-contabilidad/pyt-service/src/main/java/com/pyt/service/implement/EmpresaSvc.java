@@ -56,7 +56,7 @@ public class EmpresaSvc extends Services implements IEmpresasSvc {
 	public void update(EmpresaDTO dto, UsuarioDTO user) throws EmpresasException {
 		if (dto == null)
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
-		if (StringUtils.isNotBlank(dto.getCodigo()))
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new EmpresasException("El id de empresa se encuentra vacia.");
 		try {
 			querySvc.set(dto, user);

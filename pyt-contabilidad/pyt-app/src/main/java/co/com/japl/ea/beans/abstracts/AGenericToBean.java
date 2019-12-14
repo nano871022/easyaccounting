@@ -136,7 +136,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <S extends AGenericToBean<T>> S setWidth(double width) {
+	public <S extends AGenericToBean<T>> S setWidth(double width) {
 		primaryStage.setWidth(width);
 		return (S) this;
 	}
