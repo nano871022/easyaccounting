@@ -12,6 +12,7 @@ import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
+import org.pyt.common.constants.languages.Documento;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.ParametroException;
@@ -62,8 +63,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		tipoDocumento = new ParametroDTO();
 		try {
 			listTipoDocumento = parametroSvc.getAllParametros(tipoDocumento, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
-			mapListSelects.put("tercero", empresasSvc.getAllEmpresas(new EmpresaDTO()));
-		} catch (ParametroException | EmpresasException e) {
+		} catch (ParametroException e) {
 			this.error(e);
 		}
 		tipoDocumento = new ParametroDTO();
@@ -176,6 +176,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	public final void load(DocumentoDTO registro) {
 		try {
 			this.registro = registro;
+			tipoDocumento = registro.getTipoDocumento();
 			BigDecimal valores = sumaDetalles();
 			SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
 			if (valores.compareTo(registro.getValor()) != 0) {
@@ -210,10 +211,10 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 				registro.setTipoDocumento(SelectList.get(tipoDocumentos));
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					documentosSvc.update(registro, getUsuario());
-					notificar("Se agrego el nuevo documento.");
+					notificar(i18n().valueBundle(Documento.CONST_DOCUMENT_CREATED));
 				} else {
 					registro = documentosSvc.insert(registro, getUsuario());
-					notificar("Se agrego el nuevo documento.");
+					notificar(i18n().valueBundle(Documento.CONST_DOCUMENT_UPDATED));
 				}
 				comunicacion.setComando(AppConstants.COMMAND_PANEL_TIPO_DOC, registro);
 			} catch (DocumentosException e) {
@@ -226,7 +227,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	 * Se encarga de cancelar el almacenamiento de los datos
 	 */
 	public final void cancelar() {
-		getController(ListaDocumentosBean.class);
+		getController(ListaDocumentosBean.class).loadParameters(tipoDocumento.getValor2());
 	}
 
 	@Override

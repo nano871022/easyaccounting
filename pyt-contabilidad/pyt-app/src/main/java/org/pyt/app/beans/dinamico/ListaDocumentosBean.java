@@ -185,11 +185,24 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 				dataTable.search();
 				searchFilters();
 				searchColumns();
+			} else if (tipoDocumento.length == 1 && !tipoDocumento[0].trim().contains("tipoDocumento")) {
+				var grupo = parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+				var parametro = new ParametroDTO();
+				parametro.setValor2(tipoDocumento[0]);
+				parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				parametro.setGrupo(grupo);
+				logger.DEBUG("Opcion valor2 Parametro Tipo Documento::" + parametro.getValor2());
+				var tdoc = parametroSvc.getParametro(parametro);
+				this.tipoDocumento = tdoc;
+				lblTitle.setText(this.tipoDocumento.getNombre());
+				dataTable.search();
+				searchFilters();
+				searchColumns();
 			}
 		} catch (ParametroException e) {
 			error(e);
 		} catch (Exception e) {
-			logger.logger(i18n().valueBundle("document_type_had_error_in_its_processing"), e);
+			logger.logger(i18n().valueBundle("document.type.had.error.in.its.processing"), e);
 		}
 	}
 

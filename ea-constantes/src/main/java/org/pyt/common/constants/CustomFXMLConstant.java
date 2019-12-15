@@ -7,4 +7,7 @@ package org.pyt.common.constants;
 public class CustomFXMLConstant {
 	public final static String POPUP_PARAMETRIZED = "/view/custom/popup_parametrized.fxml";
 	public final static String FIELD_PARAMETRIZED = "/view/custom/field_parametrized.fxml";
+	public final static String PACKAGE_DINAMIC = "view/dinamico";
+	public final static String FILE_NAME_PANEL = "panel.fxml";
+	public final static String WINDOW_NAME_PANEl = "Panel Navegación";
 }

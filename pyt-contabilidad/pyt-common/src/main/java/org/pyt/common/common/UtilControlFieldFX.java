@@ -83,20 +83,26 @@ public final class UtilControlFieldFX {
 	@SuppressWarnings("unchecked")
 	public <N extends Node, T> N getFieldByField(Field field) {
 		if (Pattern.compile(CONTS_EXP_REG_TO_TEXTFIELD).matcher(field.getType().getSimpleName()).find()) {
-			return (N) new TextField();
+			var node = new TextField();
+			node.setId(field.getName());
+			return (N) node;
 		} else if (Pattern.compile(CONTS_EXP_REG_TO_CHECKBOX).matcher(field.getType().getSimpleName()).find()) {
-			return (N) new CheckBox();
+			var node = new CheckBox();
+			node.setId(field.getName());
+			return (N) node;
 		} else if (Pattern.compile(CONTS_EXP_REG_TO_DATETIME).matcher(field.getType().getSimpleName()).find()) {
 			return (N) new DatePicker();
 		} else {
 			try {
 				if (field.getType().asSubclass(ADto.class) != null) {
-					return (N) new ChoiceBox<T>();
+					var node = new ChoiceBox<T>();
+					node.setId(field.getName());
+					return (N) node;
 				}
 			} catch (ClassCastException e) {
+				logger.DEBUG(e);
 			}
 		}
-
 		return null;
 	}
 
@@ -198,7 +204,7 @@ public final class UtilControlFieldFX {
 	 */
 	@SuppressWarnings({})
 	public <T extends Control, D extends ADto, M extends ADto> void loadValuesInFxml(D dto, GridPane gridPane) {
-		gridPane.getChildren().forEach(node -> {
+		gridPane.getChildren().stream().filter(row -> row.getId() != null && !(row instanceof Label)).forEach(node -> {
 			try {
 				var value = dto.get(node.getId());
 				loadValuesInFxml(node, value);

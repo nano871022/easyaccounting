@@ -17,11 +17,10 @@ import org.pyt.common.properties.LogWriter;
  */
 public final class Log {
 
+	public static enum LEVEL {
+		INFO, WARN, ERROR, DEBUG
+	};
 	private String nameClase;
-	private final static String INFO = "INFO";
-	private final static String WARN = "WARN";
-	private final static String ERROR = "ERROR";
-	private final static String DEBUG = "DEBUG";
 	private final static String NullPointerExceptionMessage = "Null pointer exception";
 	private final static String EOFExceptionMessage = "When open file throw EOF exception";
 	private final static String CONST_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -46,10 +45,10 @@ public final class Log {
 		return timer;
 	}
 
-	public final synchronized void msnBuild(String msn, String type) {
+	public final synchronized void msnBuild(String msn, LEVEL type) {
 		if(Optional.ofNullable(lastMessage).orElse("").contentEquals(msn))return;
 		lastMessage = msn;
-		if (logWriter.getModesToPrint().contains(type)) {
+		if (logWriter.getModesToPrint().contains(type.toString())) {
 			String line = String.format(CONST_4STR_FORMAT, now(), nameClase, type, msn);
 			logWriter.addImpresion(line);
 		}
@@ -61,7 +60,7 @@ public final class Log {
 	 * @param mensaje {@link String}
 	 */
 	public final synchronized void warn(String mensaje) {
-		msnBuild(mensaje, WARN);
+		msnBuild(mensaje, LEVEL.WARN);
 	}
 
 	/**
@@ -70,7 +69,7 @@ public final class Log {
 	 * @param mensaje {@link String}
 	 */
 	public final synchronized void logger(String mensaje) {
-		msnBuild(mensaje, INFO);
+		msnBuild(mensaje, LEVEL.INFO);
 	}
 
 	/**
@@ -81,11 +80,11 @@ public final class Log {
 	public final synchronized <T extends Exception> void logger(T error) {
 		logWriter.printStrace(error);
 		if(error instanceof EOFException){
-			msnBuild(EOFExceptionMessage, ERROR);
+			msnBuild(EOFExceptionMessage, LEVEL.ERROR);
 		}else if (error.getCause() instanceof NullPointerException || error instanceof NullPointerException) {
-			msnBuild(NullPointerExceptionMessage, ERROR);
+			msnBuild(NullPointerExceptionMessage, LEVEL.ERROR);
 		} else {
-			msnBuild(error.getMessage(), ERROR);
+			msnBuild(error.getMessage(), LEVEL.ERROR);
 		}
 		printDEBUGCause(error);
 	}
@@ -93,11 +92,11 @@ public final class Log {
 	private final synchronized <T extends Throwable>  void printDEBUGCause(T error) {
 		if (error.getCause() != null) {
 			if (error.getMessage() != error.getCause().getMessage()) {
-				msnBuild(error.getCause().getMessage(), DEBUG);
+				msnBuild(error.getCause().getMessage(), LEVEL.DEBUG);
 				if (error.getCause().getStackTrace() != null && error.getCause().getStackTrace().length > 0) {
 					Arrays.asList(error.getCause().getStackTrace()).forEach(action -> msnBuild(
 							action.getFileName() + "." + action.getMethodName() + ":" + action.getLineNumber(),
-							DEBUG));
+							LEVEL.DEBUG));
 				}
 				printDEBUGCause(error.getCause());
 			} else {
@@ -113,9 +112,9 @@ public final class Log {
 	 */
 	public final synchronized <T extends Throwable> void logger(T error) {
 		if (error.getCause() instanceof NullPointerException) {
-			msnBuild(NullPointerExceptionMessage, ERROR);
+			msnBuild(NullPointerExceptionMessage, LEVEL.ERROR);
 		} else {
-			msnBuild(error.getMessage(), ERROR);
+			msnBuild(error.getMessage(), LEVEL.ERROR);
 		}
 	}
 
@@ -125,15 +124,28 @@ public final class Log {
 	 * @param error {@link Exception}
 	 */
 	public final  synchronized<T extends Exception> void error(String error) {
-		msnBuild(error, ERROR);
+		msnBuild(error, LEVEL.ERROR);
 	}
 
 	public final synchronized void info(String mensaje) {
-		msnBuild(mensaje, INFO);
+		msnBuild(mensaje, LEVEL.INFO);
 	}
 
 	public final synchronized void DEBUG(String mensaje) {
-		msnBuild(mensaje, DEBUG);
+		msnBuild(mensaje, LEVEL.DEBUG);
+	}
+
+	public final synchronized <T extends Throwable> void DEBUG(T mensaje) {
+		printThrowable(mensaje, LEVEL.DEBUG);
+		printSuppressed(LEVEL.DEBUG, mensaje.getSuppressed());
+		printStackTrace(LEVEL.DEBUG, mensaje.getStackTrace());
+	}
+
+	public final synchronized <T extends Throwable> void DEBUG(String message, T error) {
+		msnBuild(message, LEVEL.DEBUG);
+		printThrowable(error, LEVEL.DEBUG);
+		printSuppressed(LEVEL.DEBUG, error.getSuppressed());
+		printStackTrace(LEVEL.DEBUG, error.getStackTrace());
 	}
 
 	/**
@@ -143,21 +155,29 @@ public final class Log {
 	 * @param error   {@link Exception}
 	 */
 	public final synchronized <T extends Exception> void logger(String mensaje, T error) {
-		msnBuild(mensaje, ERROR);
-		printThrowable(error);
-		if (error.getSuppressed() != null && error.getSuppressed().length > 0) {
-			Arrays.asList(error.getSuppressed()).forEach(row -> printThrowable(row));
-		}
-		Arrays.asList(error.getStackTrace()).forEach(action -> 
-		msnBuild(
-				String.format(CONST_3STR_FORMAT, action.getFileName(), action.getMethodName(), action.getLineNumber())
-				, DEBUG));
+		msnBuild(mensaje, LEVEL.ERROR);
+		printThrowable(error, LEVEL.ERROR);
+		printSuppressed(LEVEL.ERROR, error.getSuppressed());
+		printStackTrace(LEVEL.ERROR, error.getStackTrace());
 	}
 
-	public final synchronized void printThrowable(Throwable throwable) {
+	private final synchronized void printSuppressed(LEVEL nivel, Throwable... throwable) {
+		if(throwable != null && throwable.length > 0) {
+			Arrays.asList(throwable).forEach(row -> printThrowable(row, nivel));
+		}
+	}
+	
+	private final synchronized void printStackTrace(LEVEL nivel, StackTraceElement... elements) {
+		if (elements != null && elements.length > 0) {
+			Arrays.asList(elements).forEach(action -> msnBuild(String.format(CONST_3STR_FORMAT, action.getFileName(),
+					action.getMethodName(), action.getLineNumber()), nivel));
+		}
+	}
+
+	private final synchronized void printThrowable(Throwable throwable, LEVEL nivel) {
 		if (throwable != null) {
-			msnBuild(throwable.getMessage(), ERROR);
-			printThrowable(throwable.getCause());
+			msnBuild(throwable.getMessage(), nivel);
+			printThrowable(throwable.getCause(), nivel);
 		}
 	}
 

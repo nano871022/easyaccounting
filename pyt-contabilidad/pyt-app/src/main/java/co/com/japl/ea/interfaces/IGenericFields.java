@@ -226,7 +226,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				return true;
 			}
 		} catch (ClassCastException e) {
-			logger().logger("Problema al realizar casteo.", e);
+			logger().DEBUG("Problema al realizar casteo.", e);
 		}
 		return false;
 	}
