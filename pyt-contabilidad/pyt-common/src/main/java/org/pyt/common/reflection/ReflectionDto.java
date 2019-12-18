@@ -1,5 +1,12 @@
 package org.pyt.common.reflection;
 
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_ACCESS_ILEGAL;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_ARGUMENT_ILEGAL;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_CAST_FIELD_INPUT_VALUE;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_METHOD_NOT_FOUND;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_OBJECT_INVOKE;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_SECURITY;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,6 +28,8 @@ import org.pyt.common.validates.ValidateValues;
  * @since 2018-05-18
  */
 public abstract class ReflectionDto {
+	private final static String CONST_SERIAL_VERSION_UID = "serialVersionUID";
+
 	private Log logger = Log.Log(this.getClass());
 
 	@SuppressWarnings("unchecked")
@@ -65,28 +74,28 @@ public abstract class ReflectionDto {
 			ValidateValues vv = new ValidateValues();
 			method.invoke(this, vv.cast(value, field.getType()));
 		} catch (SecurityException e) {
-			throw new ReflectionException("Problema de seguridad.", e);
+			throw new ReflectionException(CONST_ERR_SECURITY, e);
 		} catch (NoSuchMethodException e) {
 			if (field != null) {
 				field.setAccessible(true);
 				try {
 					field.set(this, value);
 				} catch (IllegalArgumentException e1) {
-					throw new ReflectionException("Problema argumento ilegal.", e);
+					throw new ReflectionException(CONST_ERR_ARGUMENT_ILEGAL, e);
 				} catch (IllegalAccessException e1) {
-					throw new ReflectionException("Problema de acceso ilegal.", e);
+					throw new ReflectionException(CONST_ERR_ACCESS_ILEGAL, e);
 				}
 			} else {
-				throw new ReflectionException("El metodo no fue encontrado.", e);
+				throw new ReflectionException(CONST_ERR_METHOD_NOT_FOUND, e);
 			}
 		} catch (IllegalAccessException e) {
-			throw new ReflectionException("Problema de acceso ilegal.", e);
+			throw new ReflectionException(CONST_ERR_ACCESS_ILEGAL, e);
 		} catch (IllegalArgumentException e) {
-			throw new ReflectionException("Problema argumento ilegal.", e);
+			throw new ReflectionException(CONST_ERR_ARGUMENT_ILEGAL, e);
 		} catch (InvocationTargetException e) {
-			throw new ReflectionException("Problema objeto invocacion.", e);
+			throw new ReflectionException(CONST_ERR_OBJECT_INVOKE, e);
 		} catch (ValidateValueException e) {
-			throw new ReflectionException("Problema en casting al campo ingreso de informacion.", e);
+			throw new ReflectionException(CONST_ERR_CAST_FIELD_INPUT_VALUE, e);
 		}
 	}
 
@@ -118,20 +127,20 @@ public abstract class ReflectionDto {
 			}
 			return null;
 		} catch (SecurityException e) {
-			throw new ReflectionException("Problema de seguridad.", e);
+			throw new ReflectionException(CONST_ERR_SECURITY, e);
 		} catch (NoSuchMethodException e) {
 			if (field != null) {
 				field.setAccessible(true);
 				try {
 					return (T) field.get(this);
 				} catch (IllegalArgumentException | IllegalAccessException e1) {
-					throw new ReflectionException("Problema de acceso ilegal.", e1);
+					throw new ReflectionException(CONST_ERR_ACCESS_ILEGAL, e1);
 				}
 			} else {
-				throw new ReflectionException("El metodo no fue encontrado.", e);
+				throw new ReflectionException(CONST_ERR_METHOD_NOT_FOUND, e);
 			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new ReflectionException("Problema objeto invocacion.", e);
+			throw new ReflectionException(CONST_ERR_OBJECT_INVOKE, e);
 		}
 	}
 
@@ -210,10 +219,11 @@ public abstract class ReflectionDto {
 		Field[] fields = clase.getDeclaredFields();
 		try {
 			for (Field field : fields) {
-				campos += (campos.length() > 3 ? "," : "") + (field.getName() + "=" + this.get(field.getName()));
+				campos += String.format("%s%s=%s", campos.length() > 3 ? "," : "", field.getName(),
+						get(field.getName()));
 			}
 		} catch (ReflectionException e) {
-			logger.error(e.getMessage());
+			logger.DEBUG(e.getMessage());
 		}
 		if (clase.getSuperclass() != ReflectionDto.class) {
 			campos += stringAll((Class<T>) clase.getSuperclass());
@@ -244,7 +254,7 @@ public abstract class ReflectionDto {
 		Field[] fields = clase.getDeclaredFields();
 		for (Field field : fields) {
 			try {
-				if (field.getName().contains("serialVersionUID"))
+				if (field.getName().contains(CONST_SERIAL_VERSION_UID))
 					continue;
 				get(field.getName());
 				list.add(field.getName());
@@ -284,7 +294,7 @@ public abstract class ReflectionDto {
 				return ((ADto) obj).getCodigo().equals(((ADto) this).getCodigo());
 			}
 		} catch (Exception e) {
-			logger.logger(e);
+			logger.DEBUG(e);
 		}
 		return false;
 	}

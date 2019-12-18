@@ -26,6 +26,7 @@ public final class Log {
 	private final static String CONST_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	private final static String CONST_4STR_FORMAT= "%s %s : %s : %s";
 	private final static String CONST_3STR_FORMAT=  "%s.%s:%s";
+	private final static String CONST_EMPTY = "";
 	private String lastMessage = "";
 	private LogWriter logWriter;
 
@@ -46,7 +47,9 @@ public final class Log {
 	}
 
 	public final synchronized void msnBuild(String msn, LEVEL type) {
-		if(Optional.ofNullable(lastMessage).orElse("").contentEquals(msn))return;
+		if (Optional.ofNullable(lastMessage).orElse(CONST_EMPTY)
+				.contentEquals(Optional.ofNullable(msn).orElse(CONST_EMPTY)))
+			return;
 		lastMessage = msn;
 		if (logWriter.getModesToPrint().contains(type.toString())) {
 			String line = String.format(CONST_4STR_FORMAT, now(), nameClase, type, msn);

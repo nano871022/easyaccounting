@@ -18,6 +18,7 @@ import org.pyt.common.interfaces.IAssingValueToField;
 import org.pyt.common.interfaces.ICaller;
 import org.pyt.common.validates.ValidateValues;
 
+import co.com.japl.ea.common.fxml.ControlValueUtils;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -184,15 +185,7 @@ public final class UtilControlFieldFX {
 	 * @param child {@link Node}
 	 */
 	public <T extends Control> void cleanValueByFieldFX(Node child) {
-		if (child instanceof TextField) {
-			((TextField) child).setText(null);
-		}
-		if (child instanceof CheckBox) {
-			((CheckBox) child).selectedProperty().setValue(false);
-		}
-		if (child instanceof ChoiceBox) {
-			((ChoiceBox<?>) child).getSelectionModel().clearSelection();
-		}
+		ControlValueUtils.INSTANCE().cleanValue(child);
 	}
 
 	/**
@@ -215,13 +208,7 @@ public final class UtilControlFieldFX {
 	}
 
 	public <D extends ADto, N extends Node, V> void loadValuesInFxml(N node, V value) throws ReflectionException {
-		if (value != null) {
-			if (node instanceof TextField) {
-				((TextField) node).setText(String.valueOf(value));
-			} else if (node instanceof CheckBox) {
-				((CheckBox) node).setSelected(Boolean.valueOf((boolean) value));
-			}
-		}
+		ControlValueUtils.INSTANCE().setValue(node, value);
 	}
 
 	/**

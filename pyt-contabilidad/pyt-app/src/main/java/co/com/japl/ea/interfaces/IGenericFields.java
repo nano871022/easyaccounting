@@ -1,5 +1,17 @@
 package co.com.japl.ea.interfaces;
 
+import static org.pyt.common.constants.LanguageConstant.CONST_FXML_BTN_CLEAN;
+import static org.pyt.common.constants.LanguageConstant.CONST_FXML_BTN_SEARCH;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_CLEAN_FIELDS;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_CONFIG_FIELD_NOT_FOUND_;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_DO_CASTING;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_GET_FIELD;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_GET_LIST_VALUES;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_GET_TYPE_FIELD;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_IN_PARAMETERS;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_IN_REFLECTION;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_VALID_VALUES;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -134,9 +146,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				loadValueIntoForm(typeGeneric, typeField, nameField, factory, fieldControl);
 				calcNextColumnAndRow(typeGeneric, index);
 			} catch (ReflectionException e) {
-				logger().logger("Problema al obtener el tipo del campo.", e);
+				logger().DEBUG(i18n().valueBundle(CONST_ERR_GET_TYPE_FIELD), e);
 			} catch (ParametroException e) {
-				logger().logger("Problema al obtener la lista de valores.", e);
+				logger().DEBUG(i18n().valueBundle(CONST_ERR_GET_LIST_VALUES), e);
 			}
 		});
 		if (TypeGeneric.FILTER == typeGeneric) {
@@ -145,9 +157,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					((IGenericColumns<L, F>) this).getTable().search();
 				} catch (Exception e) {
 				}
-			}, "Buscar", Glyph.FONT.SEARCH), 0, ++index.row);
+			}, i18n().valueBundle(CONST_FXML_BTN_SEARCH), Glyph.FONT.SEARCH), 0, ++index.row);
 			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> clearFields(typeGeneric),
-					"Limpiar", Glyph.FONT.GAVEL), 1, index.row);
+					i18n().valueBundle(CONST_FXML_BTN_CLEAN), Glyph.FONT.GAVEL), 1, index.row);
 
 		}
 	}
@@ -160,14 +172,14 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			genericFormsUtils.loadValuesInFxmlToChoice(factory.getNameFieldToShowInComboBox(), node,
 					getInstanceDto(typeGeneric).get(fieldName), null, list);
 		} else {
-			genericFormsUtils.loadValuesInFxml(getInstanceDto(typeGeneric), getGridPane(typeGeneric));
+			genericFormsUtils.loadValuesInFxml(node, getInstanceDto(typeGeneric).get(fieldName));
 		}
 	}
 
 	default void loadValueIntoForm(TypeGeneric typeGeneric, String fieldName) {
 		try {
 			if (!getMapFields(typeGeneric).containsKey(fieldName)) {
-				throw new RuntimeException("No se encontro el campo configurado.");
+				throw new RuntimeException(i18n().valueBundle(CONST_ERR_CONFIG_FIELD_NOT_FOUND_));
 			}
 			var field = getInstanceDto(typeGeneric);
 			var factory = LoadFieldsFactory.getInstance(field);
@@ -177,13 +189,13 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				try {
 					loadValueIntoForm(typeGeneric, typeField, fieldName, factory, node);
 				} catch (ReflectionException e) {
-					logger().logger("Error en reflecion", e);
+					logger().DEBUG(i18n().valueBundle(CONST_ERR_IN_REFLECTION), e);
 				} catch (ParametroException e) {
-					logger().logger("Error en parametros", e);
+					logger().DEBUG(i18n().valueBundle(CONST_ERR_IN_PARAMETERS), e);
 				}
 			});
 		} catch (ReflectionException e) {
-			logger().logger("Error en  refleccion", e);
+			logger().DEBUG(i18n().valueBundle(CONST_ERR_IN_REFLECTION), e);
 		}
 	}
 
@@ -194,9 +206,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			try {
 				getInstanceDto(typeGeneric).set(nameField, validateValuesUtils.cast(value, typeField));
 			} catch (ReflectionException e) {
-				logger().logger("Problema al obtener el campo.", e);
+				logger().DEBUG(i18n().valueBundle(CONST_ERR_GET_FIELD), e);
 			} catch (ValidateValueException e) {
-				logger().logger("Problema al validar el valor.", e);
+				logger().DEBUG(i18n().valueBundle(CONST_ERR_VALID_VALUES), e);
 			}
 		});
 
@@ -226,7 +238,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				return true;
 			}
 		} catch (ClassCastException e) {
-			logger().DEBUG("Problema al realizar casteo.", e);
+			logger().DEBUG(i18n().valueBundle(CONST_ERR_DO_CASTING), e);
 		}
 		return false;
 	}
@@ -246,7 +258,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			try {
 				getInstanceDto(typeGeneric).set(field, null);
 			} catch (Exception e) {
-				logger().DEBUG("GenericFields.clearFields.keySet::" + e.getMessage());
+				logger().DEBUG(i18n().valueBundle(CONST_ERR_CLEAN_FIELDS) + e.getMessage());
 			}
 		});
 	}
@@ -285,7 +297,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 						try {
 							dto.set(annotation.nameField(), annotation.value());
 						} catch (ReflectionException e) {
-							logger().logger(e);
+							logger().DEBUG(e);
 						}
 					});
 				});

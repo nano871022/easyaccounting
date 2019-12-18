@@ -5,12 +5,14 @@ import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -274,6 +276,8 @@ public final class ValidateValues {
 		} else if (clazz == BigDecimal.class) {
 			if (value.getClass() == Integer.class) {
 				return (T) new BigDecimal((int) value);
+			} else if (value.getClass() == String.class) {
+				return (T) new BigDecimal((String) value);
 			}
 		} else if (clazz == Integer.class) {
 			if (value.getClass() == BigDecimal.class) {
@@ -418,68 +422,18 @@ public final class ValidateValues {
 	public final <T, L extends Object> Boolean isCast(T value, Class<L> clase) {
 		try {
 			clase = convertFromPrimitive(clase);
-			if (clase == Integer.class) {
-				if (value != null && value instanceof Integer) {
-					return true;
-				} else if (value.getClass() == String.class) {
-					Integer.valueOf((String) value);
-					return true;
-				}
+			var numeric = isNumber(value, clase);
+			if (numeric) {
+				return true;
 			}
-			if (clase == BigDecimal.class) {
-				if (value != null && value instanceof BigDecimal) {
-					return true;
-				}
-				if (value instanceof String) {
-					try {
-						new BigDecimal((String) value);
-						return true;
-					} catch (Exception e) {
-						return false;
-					}
-				}
+			var date = isDate(value, clase);
+			if (date) {
+				return true;
 			}
-			if (clase == BigInteger.class) {
-				if (value != null && value instanceof BigInteger) {
-					return true;
-				}
+			var str = isString(value, clase);
+			if (str) {
+				return true;
 			}
-			if (clase == Long.class) {
-				if (value != null && value instanceof Long) {
-					return true;
-				} else if (value.getClass() == String.class) {
-					Long.valueOf((String) value);
-					return true;
-				}
-			}
-			if (clase == Double.class) {
-				if (value != null && value instanceof Double) {
-					return true;
-				} else if (value.getClass() == String.class) {
-					Double.valueOf((String) value);
-					return true;
-				}
-			}
-			if (clase == Short.class) {
-				if (value != null && value instanceof Short) {
-					return true;
-				} else if (value.getClass() == String.class) {
-					Short.valueOf((String) value);
-					return true;
-				}
-			}
-			if (clase == Date.class) {
-				if (value != null && value instanceof Date)
-					return true;
-				if (value != null && value instanceof LocalDate)
-					return true;
-			}
-			if (clase == Number.class)
-				if (value != null && value instanceof Number)
-					return true;
-			if (clase == String.class)
-				if (value != null && value instanceof String && StringUtils.isNotBlank((String) value))
-					return true;
 			if (clase.getConstructor().newInstance() instanceof ADto) {
 				if (value instanceof ADto) {
 					try {
@@ -498,10 +452,97 @@ public final class ValidateValues {
 			if (clase == ADto.class)
 				if (value instanceof ADto)
 					return true;
-			return false;
+			return clase == value.getClass();
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	private final <V, T> Boolean isString(V value, Class<T> clazz) {
+		if (clazz == String.class) {
+			return true;
+		}
+		return false;
+	}
+
+	private final <V, T> Boolean isDate(V value, Class<T> clazz) {
+		try {
+			if (clazz == Date.class) {
+				if (value instanceof Date || value instanceof Long) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(Date.parse((String) value)).isPresent();
+				}
+			} else if (clazz == Instant.class) {
+				if (value instanceof Instant || value instanceof Long) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(Instant.parse((String) value)).isPresent();
+				}
+			} else if (clazz == LocalDate.class) {
+				if (value instanceof LocalDate || value instanceof Long || value instanceof Instant) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(LocalDate.parse((String) value)).isPresent();
+				}
+			} else if (clazz == LocalDateTime.class) {
+				if (value instanceof LocalDateTime || value instanceof Long || value instanceof Instant) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(LocalDateTime.parse((String) value)).isPresent();
+				}
+			}
+		} catch (ClassCastException e) {
+			logger.DEBUG(e);
+		}
+		return false;
+	}
+
+	private final <V, T> Boolean isNumber(V value, Class<T> clazz) {
+		try {
+		if (clazz == BigDecimal.class) {
+			if (value instanceof BigInteger || value instanceof Long || value instanceof Double) {
+				return true;
+			} else if (value instanceof String) {
+				return Optional.ofNullable(new BigDecimal((String) value)).isPresent();
+			}
+		} else if (clazz == Integer.class) {
+				if (value instanceof Integer) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(Integer.valueOf((String) value)).isPresent();
+				}
+		} else if (clazz == BigInteger.class) {
+				if (value instanceof Long || value instanceof Integer) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(new BigInteger((String) value)).isPresent();
+				}
+		} else if (clazz == Double.class) {
+				if (value instanceof Double) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(Double.valueOf((String) value)).isPresent();
+				}
+		} else if (clazz == Long.class) {
+				if (value instanceof Long) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(Long.valueOf((String) value)).isPresent();
+				}
+			} else if (clazz == Short.class) {
+				if (value instanceof Short) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(Short.valueOf((String) value)).isPresent();
+				}
+		} else if ( clazz == Number.class && value instanceof Number) {
+				return true;
+		}
+		} catch (ClassCastException e) {
+			logger.DEBUG(e);
+		}
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -92,4 +92,7 @@ public class LanguageConstant {
 	public final static String CONST_ERR_IP_MACHINE_NOT_SUBMIT = "exception.ip.machine.not.submit";
 
 	public final static String CONST_MSN_ERR_FIELD_EMPTY = "msn.error.field.empty";
+
+	public final static String CONST_FXML_BTN_CLEAN = "fxml.btn.clean";
+	public final static String CONST_FXML_BTN_SEARCH = "fxml.btn.search";
 }
