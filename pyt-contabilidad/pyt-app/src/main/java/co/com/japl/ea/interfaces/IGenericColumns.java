@@ -1,5 +1,9 @@
 package co.com.japl.ea.interfaces;
 
+import static org.pyt.common.constants.AppConstants.CONST_FIELD_ORDER;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_NOT_FOUND_PROCCES;
+import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_ORDER_VALIDATION;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,7 +52,7 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 			var typeField = getUsesByUsedTypeGeneric(TypeGeneric.COLUMN);
 			var generics = LoadFieldsFactory.getAnnotatedField(ConfigGenericFieldDTO.class, getClazz(), typeField);
 			if (generics == null) {
-				alerta(i18n().valueBundle("field_doesnt_found_to_process"));
+				alerta(i18n().valueBundle(CONST_ERR_FIELD_NOT_FOUND_PROCCES));
 				return;
 			} else {
 				list = (List<L>) generics;
@@ -57,13 +61,13 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 		list.stream().sorted((object1, object2) -> {
 			try {
 				Object order1;
-				order1 = object1.get("order");
-				var order2 = object2.get("order");
+				order1 = object1.get(CONST_FIELD_ORDER);
+				var order2 = object2.get(CONST_FIELD_ORDER);
 				if (order1 != null && order2 != null) {
 					return validateValuesUtils.compareNumbers(order1, order2);
 				}
 			} catch (ReflectionException e) {
-				logger().logger("Problema en validacion de campos de order.", e);
+				logger().DEBUG(i18n().valueBundle(CONST_ERR_FIELD_ORDER_VALIDATION), e);
 			}
 			return 0;
 		}).forEach(field -> {
@@ -73,10 +77,16 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 			column.setCellValueFactory(cellValue -> {
 				try {
 					var sop = new SimpleObjectProperty<String>();
-					sop.setValue(validateValuesUtils.cast(cellValue.getValue().get(fieldName), String.class));
+					var valueField = cellValue.getValue().get(fieldName);
+					if (valueField instanceof ADto) {
+						var value = ((ADto) valueField).get(factory.getNameFieldToShowInComboBox());
+						sop.setValue(validateValuesUtils.cast(value, String.class));
+					} else {
+						sop.setValue(validateValuesUtils.cast(valueField, String.class));
+					}
 					return sop;
 				} catch (ReflectionException | ValidateValueException e) {
-					logger().logger(e);
+					logger().DEBUG(e);
 				}
 				return null;
 			});

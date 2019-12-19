@@ -10,4 +10,6 @@ public final class DinamicFields {
 	public final static String CONST_ERR_CLEAN_FIELDS = "err.clean.fields";
 	public final static String CONST_ERR_CONFIG_FIELD_NOT_FOUND_ = "err.config.field.not.found";
 	public final static String CONST_ERR_DO_CASTING = "err.do.casting";
+	public final static String CONST_ERR_FIELD_NOT_FOUND_PROCCES = "err.field.not.found.proccess";
+	public final static String CONST_ERR_FIELD_ORDER_VALIDATION = "err.field.order.validation";
 }

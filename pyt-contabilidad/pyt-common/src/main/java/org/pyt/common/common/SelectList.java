@@ -2,6 +2,7 @@ package org.pyt.common.common;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,13 +50,14 @@ public final class SelectList {
 						observable.add(v);
 					}
 				} catch (ReflectionException e) {
-					logger.logger(e);
+					logger.DEBUG(e);
 				}
 			});
 		}
 		try {
 			choiceBox.getSelectionModel().selectFirst();
 		} catch (Exception e) {
+			logger.DEBUG(e);
 		}
 	}
 
@@ -85,6 +87,7 @@ public final class SelectList {
 		try {
 			choiceBox.getSelectionModel().selectFirst();
 		} catch (Exception e) {
+			logger.DEBUG(e);
 		}
 	}
 
@@ -165,14 +168,14 @@ public final class SelectList {
 	public final static <S extends Object, T extends ADto> T get(ChoiceBox<S> selects, List<T> list,
 			String nombreCampoDto) {
 		try {
-			if (list != null) {
+			if (list != null && selects != null) {
+				var itemSelected = Optional.ofNullable(selects.selectionModelProperty().get().getSelectedItem());
 				return list.stream()
-						.filter(row -> selects.selectionModelProperty().get().getSelectedItem()
-								.equals(row.get(nombreCampoDto)))
+						.filter(row -> itemSelected.isPresent() && itemSelected.get().equals(row.get(nombreCampoDto)))
 						.findAny().orElse(null);
 			}
 		} catch (ReflectionException e) {
-			logger.logger(e);
+			logger.DEBUG(e);
 		}
 		return null;
 	}
@@ -212,9 +215,9 @@ public final class SelectList {
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		} catch (ReflectionException e) {
-			logger.logger(e);
+			logger.DEBUG(e);
 		} catch (ValidateValueException e) {
-			logger.logger(e);
+			logger.DEBUG(e);
 		}
 	}
 
@@ -242,7 +245,7 @@ public final class SelectList {
 					}
 				}
 			} catch (ReflectionException | ValidateValueException e) {
-				logger.logger(e);
+				logger.DEBUG(e);
 			}
 		} // end for
 	}
@@ -275,7 +278,7 @@ public final class SelectList {
 						}
 					}
 			} catch (ReflectionException | ValidateValueException e) {
-				logger.logger(e);
+				logger.DEBUG(e);
 			}
 		} // end for
 	}
@@ -305,7 +308,7 @@ public final class SelectList {
 					break;
 				}
 			} catch (ValidateValueException e) {
-				logger.logger("Se presento problema en la busqueda del objeto seleccionado.", e);
+				logger.DEBUG("Se presento problema en la busqueda del objeto seleccionado.", e);
 				choiceBox.getSelectionModel().selectFirst();
 			}
 		}

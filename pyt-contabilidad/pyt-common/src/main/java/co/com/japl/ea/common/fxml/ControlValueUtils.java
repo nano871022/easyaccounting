@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
+import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.AppConstants;
 import org.pyt.common.validates.ValidateValues;
 
 import javafx.scene.Node;
@@ -25,7 +27,7 @@ public final class ControlValueUtils {
 	private static ControlValueUtils cvu;
 	private ValidateValues vv;
 	private final static String CONST_METHOD_NAME = "controlAssingValue";
-	private final static String CONST_METHOD_CLEAN_NAME = "cleanControl";
+	private final static String CONST_METHOD_CLEAN_NAME = "cleanNode";
 	private final Log logger = Log.Log(this.getClass());
 
 	private ControlValueUtils() {
@@ -72,48 +74,59 @@ public final class ControlValueUtils {
 				.collect(Collectors.toList());
 	}
 
-
+	@SuppressWarnings("unused")
 	private final void controlAssingValue(TextField control, String value) {
 		control.setText(value);
 	}
 
-
+	@SuppressWarnings("unused")
 	private final void controlAssingValue(CheckBox control, Boolean bool) {
 		control.setSelected(bool);
 	}
 
+	@SuppressWarnings("unused")
 	private final void controlAssingValue(DatePicker control, LocalDate date) {
 		control.valueProperty().setValue(date);
 	}
 
+	@SuppressWarnings("unused")
 	private final void controlAssingValue(DatePicker control, Date date) {
 		var localDate = LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
 		control.valueProperty().setValue(localDate);
 	}
 
+	@SuppressWarnings("unused")
 	private final void controlAssingValue(RadioButton control, String value) {
 	}
 
+	@SuppressWarnings("unused")
 	private final <T> void controlAssingValue(ChoiceBox<T> control, T value) {
 	}
 
+	@SuppressWarnings("unused")
 	private final void cleanNode(TextField control) {
 		control.clear();
 	}
 
+	@SuppressWarnings("unused")
 	private final void cleanNode(CheckBox control) {
 		control.setSelected(false);
 	}
 
+	@SuppressWarnings("unused")
 	private final void cleanNode(DatePicker control) {
 		control.valueProperty().set(null);
 	}
 
+	@SuppressWarnings("unused")
 	private final void cleanNode(RadioButton control) {
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 	private final <T> void cleanNode(ChoiceBox control) {
 		control.getSelectionModel().clearSelection();
+		SelectList.selectItem(control, AppConstants.SELECCIONE);
+
 	}
 
 }

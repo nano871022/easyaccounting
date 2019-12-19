@@ -262,7 +262,7 @@ public final class ValidateValues {
 			}
 
 		} catch (IllegalArgumentException e) {
-			throw new ValidateValueException(e.getMessage(), e);
+			throw new ValidateValueException("ERR convert " + value + " to " + clase.getSimpleName(), e);
 		}
 		return null;
 	}

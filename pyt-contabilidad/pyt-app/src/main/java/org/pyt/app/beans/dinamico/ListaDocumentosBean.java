@@ -1,24 +1,30 @@
 package org.pyt.app.beans.dinamico;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupBean;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
+import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -43,6 +49,8 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	private IDocumentosSvc documentosSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
+	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
+	private IEmpresasSvc empresasSvc;
 	@FXML
 	private TableView<DocumentoDTO> tabla;
 	@FXML
@@ -56,7 +64,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	private GridPane filterTable;
 	protected DocumentoDTO filter;
 	private ParametroDTO tipoDocumento;
-	private Map<String, List> mapListSelects;
+	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
 
 	@FXML
 	public void initialize() {
@@ -69,6 +77,58 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private final void loadField() {
+		getListGenericsFields(TypeGeneric.FILTER).stream()
+				.filter(row -> Optional.ofNullable(row.getSelectNameGroup()).isPresent()).forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof ParametroDTO) {
+								var param = new ParametroDTO();
+								param.setGrupo(row.getSelectNameGroup());
+								param.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+								getParametersSvc().getAllParametros(param).forEach(reg -> {
+									mapListSelects.put(row.getFieldName(), reg);
+								});
+							}
+						}
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (ParametroException e) {
+						logger().logger(e);
+					}
+
+				});
+		getListGenericsFields(TypeGeneric.FILTER).stream().filter(
+				row -> StringUtils.isBlank(row.getSelectNameGroup()) && StringUtils.isNotBlank(row.getPutNameShow()))
+				.forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof EmpresaDTO) {
+								var empresa = new EmpresaDTO();
+								var list = empresasSvc.getAllEmpresas(empresa);
+								list.forEach(reg -> mapListSelects.put(row.getFieldName(), reg));
+							}
+						}
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (EmpresasException e) {
+						logger().logger(e);
+					}
+				});
+
+	}
+
 	private void searchFilters() {
 		try {
 			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
@@ -79,6 +139,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 			documentos.setDoctype(tipoDocumento);
 			documentos.setFieldFilter(true);
 			genericFields = documentosSvc.getDocumentos(documentos);
+			loadField();
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 		} catch (Exception e) {
 			logger.logger(e);
@@ -223,7 +284,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return mapListSelects;
 	}
 
 	@Override
