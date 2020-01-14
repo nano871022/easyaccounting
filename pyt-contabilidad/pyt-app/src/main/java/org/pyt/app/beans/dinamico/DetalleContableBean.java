@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 
@@ -41,12 +42,15 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
 	private Map<String, List> mapListSelects;
+	private GridPane gridPane;
 
 	@FXML
 	public void initialize() {
 		super.initialize();
 		registro = new DetalleContableDTO();
 		tipoDocumento = new ParametroDTO();
+		gridPane = new GridPane();
+		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 	}
 
 	/**
@@ -122,7 +126,7 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 
 	@Override
 	public GridPane getGridPane(TypeGeneric typeGeneric) {
-		return new GridPane();
+		return gridPane;
 	}
 
 	@Override

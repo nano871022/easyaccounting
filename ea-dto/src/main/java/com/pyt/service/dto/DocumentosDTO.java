@@ -27,6 +27,9 @@ public class DocumentosDTO extends ADto {
 	private Class claseControlar;
 	private Boolean fieldFilter;
 	private Boolean fieldColumn;
+	private Boolean fieldHasDefaultValue;
+	private Boolean fieldIsVisible;
+	private String  fieldDefaultValue;
 
 	public String getPutNameShow() {
 		return putNameShow;
@@ -133,5 +136,29 @@ public class DocumentosDTO extends ADto {
 
 	public void setFieldColumn(Boolean fieldColumn) {
 		this.fieldColumn = fieldColumn;
+	}
+
+	public Boolean getFieldHasDefaultValue() {
+		return fieldHasDefaultValue;
+	}
+
+	public void setFieldHasDefaultValue(Boolean fieldHasDefaultValue) {
+		this.fieldHasDefaultValue = fieldHasDefaultValue;
+	}
+
+	public Boolean getFieldIsVisible() {
+		return fieldIsVisible;
+	}
+
+	public void setFieldIsVisible(Boolean fieldIsVisible) {
+		this.fieldIsVisible = fieldIsVisible;
+	}
+
+	public String getFieldDefaultValue() {
+		return fieldDefaultValue;
+	}
+
+	public void setFieldDefaultValue(String fieldDefaultValue) {
+		this.fieldDefaultValue = fieldDefaultValue;
 	}
 }

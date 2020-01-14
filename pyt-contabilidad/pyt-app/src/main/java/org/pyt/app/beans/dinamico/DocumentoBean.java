@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
@@ -58,6 +59,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	public void initialize() {
 		super.initialize();
 		gridPane = new GridPane();
+		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		valid = new ValidateValues();
 		registro = new DocumentoDTO();
 		tipoDocumento = new ParametroDTO();
@@ -104,6 +106,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			}
 		}
 		central.getChildren().clear();
+		central.getStyleClass().add("borderView");
 		central.getChildren().add(gridPane);
 		getListGenericsFields(TypeGeneric.FIELD).stream()
 				.filter(row -> Optional.ofNullable(row.getSelectNameGroup()).isPresent()).forEach(row -> {

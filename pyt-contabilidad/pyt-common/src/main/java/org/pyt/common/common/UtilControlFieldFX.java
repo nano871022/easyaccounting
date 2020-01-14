@@ -264,6 +264,7 @@ public final class UtilControlFieldFX {
 		formulario.setPadding(new Insets(10));
 		formulario.setAlignment(Pos.CENTER);
 		BorderPane.setAlignment(formulario, Pos.TOP_LEFT);
+		formulario.getStyleClass().add("borderView");
 		return formulario;
 	}
 

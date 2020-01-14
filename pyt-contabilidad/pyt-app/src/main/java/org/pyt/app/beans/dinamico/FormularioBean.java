@@ -81,6 +81,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private TextField fieldLabel;
 	@FXML
+	private TextField fieldDefaultValue;
+	@FXML
 	private CheckBox editable;
 	@FXML
 	private CheckBox obligatorio;
@@ -95,7 +97,13 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private CheckBox fieldColumn;
 	@FXML
+	private CheckBox fieldHasDefaultValue;
+	@FXML
+	private CheckBox fieldIsVisible;
+	@FXML
 	private HBox paginator;
+	@FXML
+	private Label labelDefaultValue;
 	@FXML
 	private Label etiqueta;
 	@FXML
@@ -166,6 +174,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldLabel.setVisible(false);
 		guardar.setVisible(false);
 		cancelar.setVisible(false);
+		fieldDefaultValue.setVisible(false);
+		fieldIsVisible.setVisible(false);
 		lazy();
 	}
 
@@ -273,6 +283,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		}
 		if (obj != null) {
 			showFieldEdited();
+			showFieldWhenValorDefecto();
 			if (!instans) {
 				showFieldWhenManejaLista();
 			} else {
@@ -313,6 +324,17 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		modifyItem.setVisible(true);
 		delItem.setVisible(true);
 		clearItem.setVisible(true);
+		fieldHasDefaultValue.setVisible(true);
+	}
+
+	private final void showFieldWhenValorDefecto() {
+		if (fieldHasDefaultValue.isSelected()) {
+			fieldDefaultValue.setVisible(true);
+			fieldIsVisible.setVisible(true);
+		} else {
+			fieldDefaultValue.setVisible(false);
+			fieldIsVisible.setVisible(false);
+		}
 	}
 
 	private final void hiddenFieldEdited() {
@@ -325,6 +347,9 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		clearItem.setVisible(false);
 		fieldFilter.setVisible(false);
 		fieldColumn.setVisible(false);
+		fieldHasDefaultValue.setVisible(false);
+		fieldDefaultValue.setVisible(false);
+		fieldIsVisible.setVisible(false);
 	}
 
 	public final void tipoDocumento() {
@@ -438,6 +463,9 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dto.setNullable(obligatorio.isSelected());
 		dto.setFieldFilter(fieldFilter.isSelected());
 		dto.setFieldColumn(fieldColumn.isSelected());
+		dto.setFieldHasDefaultValue(fieldHasDefaultValue.isSelected());
+		dto.setFieldIsVisible(fieldIsVisible.isSelected());
+		dto.setFieldDefaultValue(fieldDefaultValue.getText());
 		if (grupo.isVisible()) {
 			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
 		}
@@ -515,6 +543,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		this.fieldLabel.setText("");
 		fieldFilter.setSelected(false);
 		fieldColumn.setSelected(false);
+		fieldHasDefaultValue.setSelected(false);
 	}
 
 	public void modificarItem() {

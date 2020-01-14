@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
@@ -41,6 +42,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	private VBox panelCentral;
 	private String codigoDocumento;
 	private MultiValuedMap<String, Object> mapListSelects;
+	private GridPane gridPane;
 
 	@Override
 	@FXML
@@ -48,6 +50,8 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		super.initialize();
 		registro = new DetalleDTO();
 		tipoDocumento = new ParametroDTO();
+		gridPane = new GridPane();
+		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 	}
 
 	/**
@@ -188,7 +192,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 
 	@Override
 	public GridPane getGridPane(TypeGeneric typeGeneric) {
-		return new GridPane();
+		return gridPane;
 	}
 
 	@Override
