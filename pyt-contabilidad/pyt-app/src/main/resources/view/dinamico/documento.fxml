@@ -123,7 +123,7 @@
             <TextField fx:id="fieldLabel" maxHeight="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
             <CheckBox fx:id="fieldFilter" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Filtro" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="5" />
             <CheckBox fx:id="fieldColumn" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Columna" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="5" />
-            <CheckBox id="fieldFilter" fx:id="fieldHasDefaultValue" alignment="CENTER_LEFT" contentDisplay="CENTER" disable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Tiene defecto" visible="true" GridPane.columnIndex="0" GridPane.rowIndex="6">
+            <CheckBox fx:id="fieldHasDefaultValue" alignment="CENTER_LEFT" contentDisplay="CENTER" disable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#manejaDefault"  mnemonicParsing="false" text="Tiene defecto" visible="true" GridPane.columnIndex="0" GridPane.rowIndex="6">
               <GridPane.margin>
                 <Insets left="10.0" fx:id="x1" />
               </GridPane.margin>

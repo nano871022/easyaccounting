@@ -224,6 +224,10 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		lBusqueda.setVisible(manejaLista.isSelected());
 	}
 
+	public final void manejaDefault() {
+		showFieldWhenValorDefecto();
+	}
+
 	public final void manejaGrupo() {
 		grupo.setVisible(manejaGrupo.isSelected());
 		lGrupo.setVisible(manejaGrupo.isSelected());
@@ -325,15 +329,18 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		delItem.setVisible(true);
 		clearItem.setVisible(true);
 		fieldHasDefaultValue.setVisible(true);
+		labelDefaultValue.setVisible(true);
 	}
 
 	private final void showFieldWhenValorDefecto() {
 		if (fieldHasDefaultValue.isSelected()) {
 			fieldDefaultValue.setVisible(true);
 			fieldIsVisible.setVisible(true);
+			labelDefaultValue.setVisible(true);
 		} else {
 			fieldDefaultValue.setVisible(false);
 			fieldIsVisible.setVisible(false);
+			labelDefaultValue.setVisible(false);
 		}
 	}
 
@@ -350,6 +357,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldHasDefaultValue.setVisible(false);
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
+		labelDefaultValue.setVisible(false);
 	}
 
 	public final void tipoDocumento() {
