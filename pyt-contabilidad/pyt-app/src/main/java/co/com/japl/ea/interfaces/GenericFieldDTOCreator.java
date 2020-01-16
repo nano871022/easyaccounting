@@ -69,4 +69,20 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	public ParametroDTO getParametroDto() {
 		return new ParametroDTO();
 	}
+
+	@Override
+	public String getValueDefault() {
+		return null;
+	}
+
+	@Override
+	public Boolean isVisible() {
+		return true;
+	}
+
+	@Override
+	public Boolean hasValueDefault() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

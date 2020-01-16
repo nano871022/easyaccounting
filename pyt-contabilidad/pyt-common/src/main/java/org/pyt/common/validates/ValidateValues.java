@@ -457,6 +457,19 @@ public final class ValidateValues {
 			return false;
 		}
 	}
+	
+	public final Boolean isNumber( Class clazz) {
+		return clazz == int.class || clazz == long.class || clazz == double.class || clazz == float.class || clazz == BigDecimal.class || clazz == Integer.class || clazz == BigInteger.class || clazz == Double.class || clazz == Long.class || clazz == Short.class|| clazz == Number.class;
+		
+	}
+	
+	public final Boolean isDate(Class clazz) {
+		return clazz == Date.class || clazz == LocalDate.class || clazz == LocalDateTime.class; 
+	}
+	
+	public final Boolean isString(Class clazz) {
+		return clazz == String.class  || clazz == Character.class;
+	}
 
 	private final <V, T> Boolean isString(V value, Class<T> clazz) {
 		if (clazz == String.class) {

@@ -60,4 +60,10 @@ public interface IFieldsCreator {
 	String getNameFieldToShowInComboBox();
 
 	ParametroDTO getParametroDto();
+
+	String getValueDefault();
+
+	Boolean isVisible();
+
+	Boolean hasValueDefault();
 }

@@ -12,8 +12,12 @@ import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_IN_PARA
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_IN_REFLECTION;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_VALID_VALUES;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -110,6 +114,50 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			return Uses.FIELD;
 	}
 
+	private void assignDefaultValue(TypeGeneric typeGeneric, IFieldsCreator factory) {
+		if (factory.hasValueDefault()) {
+			var eval = factory.getValueDefault();
+			if (StringUtils.isNotBlank(eval)) {
+				var typeField = getInstanceDto(typeGeneric).typeField(factory.getNameField());
+				if (validateValuesUtils.isNumber(typeField)) {
+					getInstanceDto(typeGeneric).set(factory.getNameField(), validateValuesUtils.cast(eval, typeField));
+				}
+				if (validateValuesUtils.isString(typeField)) {
+					getInstanceDto(typeGeneric).set(factory.getNameField(), eval);
+				}
+				if (validateValuesUtils.isDate(typeField)) {
+					var date = "\\d{4}/\\d{2}/\\d{2}";
+					var dateTime = "\\d{4}/\\d{2}/\\d{2}T\\d{2}:\\d{2}\\d{2}";
+					if ("now".equalsIgnoreCase(eval)) {
+						if (typeField == LocalDate.class) {
+							getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDate.now());
+						} else if (typeField == LocalDateTime.class) {
+							getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDateTime.now());
+						} else if (typeField == Date.class) {
+							getInstanceDto(typeGeneric).set(factory.getNameField(), new Date());
+						}
+					} else if (eval.matches(date)) {
+						var loadDate = LocalDate.parse(eval);
+						if (typeField == LocalDate.class) {
+							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
+						} else if (typeField == Date.class) {
+							getInstanceDto(typeGeneric).set(factory.getNameField(),
+									Date.from(loadDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+						}
+					} else if (eval.matches(dateTime)) {
+						var loadDate = LocalDateTime.parse(eval);
+						if (typeField == LocalDate.class) {
+							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
+						} else if (typeField == Date.class) {
+							getInstanceDto(typeGeneric).set(factory.getNameField(),
+									Date.from(loadDate.atZone(ZoneId.systemDefault()).toInstant()));
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Se encarga de configurar los campos que se mostraran en los filtros y fueron
 	 * configurados como campos genericos, esto se pone el {@link GridPane}
@@ -133,18 +181,22 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		list.forEach(field -> {
 			try {
 				var factory = LoadFieldsFactory.getInstance(field);
-				var label = genericFormsUtils.createLabel(factory.getLabelText(), factory.getToolTip());
-				var fieldControl = factory.create();
-				var nameField = factory.getNameField();
-				var typeField = getInstanceDto(typeGeneric).getType(nameField);
-				getMapFields(typeGeneric).put(nameField, fieldControl);
-				loadValuesInChoiceBox(typeGeneric, typeField, factory, fieldControl, nameField);
-				loadValuesFormToDTO(typeGeneric, fieldControl, typeField, nameField);
-				getGridPane(typeGeneric).add(label, index.column, index.row);
-				getGridPane(typeGeneric).add(fieldControl, ++index.column, index.row);
-				Arrays.asList(stylesGrid).forEach(styleGrid -> getGridPane(typeGeneric).getStyleClass().add(styleGrid));
-				loadValueIntoForm(typeGeneric, typeField, nameField, factory, fieldControl);
-				calcNextColumnAndRow(typeGeneric, index);
+				assignDefaultValue(typeGeneric, factory);
+				if (factory.isVisible()) {
+					var label = genericFormsUtils.createLabel(factory.getLabelText(), factory.getToolTip());
+					var fieldControl = factory.create();
+					var nameField = factory.getNameField();
+					var typeField = getInstanceDto(typeGeneric).getType(nameField);
+					getMapFields(typeGeneric).put(nameField, fieldControl);
+					loadValuesInChoiceBox(typeGeneric, typeField, factory, fieldControl, nameField);
+					loadValuesFormToDTO(typeGeneric, fieldControl, typeField, nameField);
+					getGridPane(typeGeneric).add(label, index.column, index.row);
+					getGridPane(typeGeneric).add(fieldControl, ++index.column, index.row);
+					Arrays.asList(stylesGrid)
+							.forEach(styleGrid -> getGridPane(typeGeneric).getStyleClass().add(styleGrid));
+					loadValueIntoForm(typeGeneric, typeField, nameField, factory, fieldControl);
+					calcNextColumnAndRow(typeGeneric, index);
+				}
 			} catch (ReflectionException e) {
 				logger().DEBUG(i18n().valueBundle(CONST_ERR_GET_TYPE_FIELD), e);
 			} catch (ParametroException e) {

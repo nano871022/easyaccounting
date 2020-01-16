@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -205,10 +206,14 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			obligatorio.setSelected(docs.getNullable());
 			fieldFilter.setSelected(docs.getFieldFilter());
 			fieldColumn.setSelected(docs.getFieldColumn());
+			fieldDefaultValue.setText(docs.getFieldDefaultValue());
+			fieldHasDefaultValue.setSelected(Optional.ofNullable(docs.getFieldHasDefaultValue()).orElse(false));
+			fieldIsVisible.setSelected(Optional.ofNullable(docs.getFieldIsVisible()).orElse(true));
 			SelectList.selectItem(busqueda, mapa_claseBusqueda, docs.getObjectSearchDto());
 			SelectList.selectItem(grupo, listGrupo, FIELD_NAME, docs, "selectNameGroup");
 			SelectList.selectItem(campoMostrar, mapa_campoMostrar, docs.getPutNameShow());
 			SelectList.selectItem(campoAsignar, mapa_campoAsignar, docs.getPutNameAssign());
+			manejaDefault();
 		} else {
 			notificar("No se ha seleccionado ningun registro.");
 		}

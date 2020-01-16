@@ -67,4 +67,21 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 		parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
 		return parametro;
 	}
+
+	@Override
+	public String getValueDefault() {
+		return field.getFieldDefaultValue();
+	}
+
+	@Override
+	public Boolean isVisible() {
+		var value = field.getFieldIsVisible();
+		return hasValueDefault() ? value == null || value : true;
+	}
+
+	@Override
+	public Boolean hasValueDefault() {
+		var value = field.getFieldHasDefaultValue();
+		return value != null && value;
+	}
 }
