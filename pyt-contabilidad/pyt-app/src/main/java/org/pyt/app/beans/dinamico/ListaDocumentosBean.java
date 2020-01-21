@@ -102,7 +102,6 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 					} catch (ParametroException e) {
 						logger().logger(e);
 					}
-
 				});
 		getListGenericsFields(TypeGeneric.FILTER).stream().filter(
 				row -> StringUtils.isBlank(row.getSelectNameGroup()) && StringUtils.isNotBlank(row.getPutNameShow()))

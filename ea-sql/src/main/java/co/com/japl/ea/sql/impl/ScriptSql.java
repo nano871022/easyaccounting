@@ -123,6 +123,7 @@ public class ScriptSql {
 
 	private final String[] getFoldersVersions(String packages) {
 		var list = new ArrayList<String>();
+
 		var folder = new File(packages);
 		if (folder.exists() && folder.isDirectory()) {
 			Arrays.stream(folder.listFiles()).filter(file -> validVersion(file))

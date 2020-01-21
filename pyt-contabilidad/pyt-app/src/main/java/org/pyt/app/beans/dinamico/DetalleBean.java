@@ -1,19 +1,32 @@
 package org.pyt.app.beans.dinamico;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.GenericServiceException;
+import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
+import com.pyt.service.dto.ActividadIcaDTO;
+import com.pyt.service.dto.CentroCostoDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentosDTO;
+import com.pyt.service.dto.EmpresaDTO;
+import com.pyt.service.dto.IngresoDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -34,6 +47,16 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentoSvc;
+	@Inject
+	private IGenericServiceSvc<EmpresaDTO> empresaSvc;
+	@Inject
+	private IGenericServiceSvc<ActividadIcaDTO> actividadIcaSvc;
+	@Inject
+	private IGenericServiceSvc<IngresoDTO> ingresoSvc;
+	@Inject
+	private IGenericServiceSvc<ServicioDTO> servicioSvc;
+	@Inject
+	private IGenericServiceSvc<CentroCostoDTO> centroCostoSvc;
 	@FXML
 	private VBox central;
 	@FXML
@@ -41,7 +64,6 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	private ParametroDTO tipoDocumento;
 	private VBox panelCentral;
 	private String codigoDocumento;
-	private MultiValuedMap<String, Object> mapListSelects;
 	private GridPane gridPane;
 
 	@Override
@@ -70,7 +92,54 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 			}
 		}
 		central.getChildren().clear();
+		central.getStyleClass().add("borderView");
+		central.getChildren().add(gridPane);
+
+		genericsLoads();
 		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
+	}
+
+	private <D extends ADto> void loadInMapList(String name, List<D> rows) {
+		rows.stream().forEach(row -> mapListSelects.put(name, row));
+	}
+
+	@SuppressWarnings("unchecked")
+	private void genericsLoads() {
+		getListGenericsFields(TypeGeneric.FILTER).stream()
+				.filter(row -> Optional.ofNullable(row.getSelectNameGroup()).isPresent()).forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof ParametroDTO) {
+								var param = new ParametroDTO();
+								param.setGrupo(row.getSelectNameGroup());
+								param.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+								loadInMapList(row.getFieldName(), getParametersSvc().getAllParametros(param));
+							} else if (instanceClass instanceof ServicioDTO) {
+								loadInMapList(row.getFieldName(), servicioSvc.getAll(new ServicioDTO()));
+							} else if (instanceClass instanceof CentroCostoDTO) {
+								loadInMapList(row.getFieldName(), centroCostoSvc.getAll(new CentroCostoDTO()));
+							} else if (instanceClass instanceof ActividadIcaDTO) {
+								loadInMapList(row.getFieldName(), actividadIcaSvc.getAll(new ActividadIcaDTO()));
+							} else if (instanceClass instanceof IngresoDTO) {
+								loadInMapList(row.getFieldName(), ingresoSvc.getAll(new IngresoDTO()));
+							} else if (instanceClass instanceof EmpresaDTO) {
+								loadInMapList(row.getFieldName(), empresaSvc.getAll(new EmpresaDTO()));
+							}
+						}
+
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (ParametroException e) {
+						logger().logger(e);
+					} catch (GenericServiceException e) {
+						logger().logger(e);
+					}
+				});
 	}
 
 	/**
