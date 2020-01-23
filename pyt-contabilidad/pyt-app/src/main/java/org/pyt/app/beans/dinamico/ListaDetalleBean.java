@@ -32,11 +32,9 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
 import co.com.japl.ea.utls.LoadAppFxml;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -74,12 +72,6 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	@FXML
 	private Button eliminar;
 	@FXML
-	private TableColumn<DetalleDTO, String> centroCosto;
-	@FXML
-	private TableColumn<DetalleDTO, String> categoria;
-	@FXML
-	private TableColumn<DetalleDTO, String> concepto;
-	@FXML
 	private Label sumatoria;
 	@FXML
 	private GridPane filterTable;
@@ -98,24 +90,6 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 		filtro = new DetalleDTO();
 		eliminar.setVisible(false);
 		editar.setVisible(false);
-		centroCosto.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			o.setValue(e.getValue().getCentroCosto().getNombre());
-			return o;
-		});
-		categoria.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			if (e.getValue() != null && e.getValue().getCategoriaGasto() != null
-					&& e.getValue().getCategoriaGasto().getNombre() != null) {
-				o.setValue(e.getValue().getCategoriaGasto().getNombre());
-			}
-			return o;
-		});
-		concepto.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			o.setValue(e.getValue().getConcepto().getNombre());
-			return o;
-		});
 		lazy();
 	}
 

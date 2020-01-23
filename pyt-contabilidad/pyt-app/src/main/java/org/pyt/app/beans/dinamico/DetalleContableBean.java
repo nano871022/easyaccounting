@@ -90,7 +90,19 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 
 	@SuppressWarnings("unchecked")
 	private void genericsLoads() {
-		getListGenericsFields(TypeGeneric.FIELD).stream().forEach(row -> {
+		getListGenericsFields(TypeGeneric.FIELD).stream().filter(row -> {
+			Object instance;
+			try {
+				instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+				var clazz = ((ADto) instance).getType(row.getFieldName());
+				clazz.asSubclass(ADto.class);
+				return true;
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException | ClassCastException e) {
+				logger().logger(e);
+				return false;
+			}
+		}).forEach(row -> {
 			try {
 				var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
 				if (instance instanceof ADto) {
@@ -176,7 +188,7 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return mapListSelects;
 	}
 
 	@Override

@@ -26,11 +26,9 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -61,10 +59,6 @@ public class ListaDetalleContableBean
 	@FXML
 	private Button eliminar;
 	@FXML
-	private TableColumn<DetalleContableDTO, String> cuentaContable;
-	@FXML
-	private TableColumn<DetalleContableDTO, String> concepto;
-	@FXML
 	private Label sumatoria;
 	@FXML
 	private GridPane filterTable;
@@ -83,18 +77,6 @@ public class ListaDetalleContableBean
 		filtro = new DetalleContableDTO();
 		eliminar.setVisible(false);
 		editar.setVisible(false);
-		cuentaContable.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			if (e.getValue() != null && e.getValue().getCuentaContable() != null)
-				o.setValue(e.getValue().getCuentaContable().getNombre());
-			return o;
-		});
-		concepto.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			if (e.getValue() != null && e.getValue().getConcepto() != null)
-				o.setValue(e.getValue().getConcepto().getNombre());
-			return o;
-		});
 		lazy();
 	}
 
