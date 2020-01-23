@@ -1,0 +1,121 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pyt.service.dto.parametro">
+
+	<insert id="insert"
+		parameterType="com.pyt.service.dto.ParametroDTO">
+		INSERT INTO TBL_PARAMETER
+		(scode
+		,sname
+		,nstate
+		,sgroup
+		,sdescription
+		,norder
+		,svalue
+		,svalue2
+		,dcreate
+		,dupdate
+		,ddelete
+		,screater
+		,supdater
+		,sdeleter)
+		VALUES
+		(#{codigo}
+		,#{nombre}
+		,#{estado}
+		,#{grupo}
+		,#{descripcion}
+		,#{orden}
+		,#{valor}
+		,#{valor2}
+		,#{fechaCreacion}
+		,#{fechaActualizacion}
+		,#{fechaEliminacion}
+		,#{creador}
+		,#{actualizador}
+		,#{eliminador});
+	</insert>
+
+	<select id="select"
+		parameterType="com.pyt.service.dto.ParametroDTO"
+		resultType="com.pyt.service.dto.ParametroDTO">
+		SELECT
+		scode as codigo
+		,sname as nombre
+		,nstate as estado
+		,sgroup as grupo
+		,sdescription as descripcion
+		,norder as orden
+		,svalue as valor
+		,svalue2
+		as valor2
+		,dcreate as fechaCreacion
+		,dupdate as fechaActualizacion
+		,ddelete as fechaEliminacion
+		,screater as creador
+		,supdater as actualizador
+		,sdeleter as eliminador
+		FROM TBL_PARAMETER
+
+		<include refid="where"></include>
+	</select>
+
+	<select id="update"
+		parameterType="com.pyt.service.dto.ParametroDTO">
+		UPDATE TBL_PARAMETER
+		SET
+		scode = #{codigo}
+		,sname = #{nombre}
+		,nstate = #{estado}
+		,sgroup = #{grupo}
+		,sdescription = #{descripcion}
+		,norder = #{orden}
+		,svalue = #{valor}
+		,svalue2 = #{valor2}
+		,dcreate = #{fechaCreacion}
+		,dupdate = #{fechaActualizacion}
+		,ddelete = #{fechaEliminacion}
+		,screater = #{creador}
+		,supdater = #{actualizador}
+		,sdeleter = #{eliminador}
+		<include refid="where"></include>
+	</select>
+
+	<select id="select_count"
+		parameterType="com.pyt.service.dto.ParametroDTO" resultType="Integer">
+		SELECT
+		count(scode)
+		FROM TBL_PARAMETER
+		<include refid="where"></include>
+	</select>
+	<sql id="where">
+		<where>
+			<if test="codigo != null">
+				and scode = #{codigo}
+			</if>
+			<if test="nombre != null">
+				and sname = #{nombre}
+			</if>
+			<if test="descripcion != null">
+				and sdescription = #{descripcion}
+			</if>
+			<if test="estado != null">
+				and nstate = #{estado}
+			</if>
+			<if test="grupo != null">
+				and sgroup = #{grupo}
+			</if>
+			<if test="valor != null">
+				and svalue = #{valor}
+			</if>
+			<if test="valor2 != null">
+				and svalue2 = #{valor2}
+			</if>
+		</where>
+	</sql>
+
+
+
+</mapper>

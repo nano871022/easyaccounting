@@ -12,10 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.ValidateValues;
+import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.validates.ValidateValues;
 
 /**
  * Se encarga de realizar acciones con relection sobre objetos
@@ -49,10 +50,8 @@ public final class ReflectionUtils {
 	 * Se encarga de copiar un onjeto en otro, esta copia se debe realizar el que el
 	 * objeto de destino debe ser ina insancia del origen
 	 * 
-	 * @param origen
-	 *            {@link Object} extends {@link ADto}
-	 * @param destino
-	 *            {@link Class} extends {@link ADto}
+	 * @param origen  {@link Object} extends {@link ADto}
+	 * @param destino {@link Class} extends {@link ADto}
 	 * @return {@link Object} extends {@link ADto}
 	 */
 	public final <T extends ADto, S extends ADto> S copy(T origen, Class<S> destino) {
@@ -64,6 +63,44 @@ public final class ReflectionUtils {
 					out.set(campo, origen.get(campo));
 				}
 			}
+			return out;
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | ReflectionException e) {
+			logger.logger(e);
+		}
+		return null;
+	}
+
+	public final <T extends Object, S extends ADto> S copy(T origen, Class<S> destino) {
+		try {
+			S out = destino.getConstructor().newInstance();
+			List<String> campos = out.getNameFields();
+			campos.forEach(campo -> {
+				try {
+					out.set(campo, getValueField(origen, campo));
+				} catch (ReflectionException e) {
+					logger.logger(e);
+				}
+			});
+			return out;
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | ReflectionException e) {
+			logger.logger(e);
+		}
+		return null;
+	}
+
+	public final <T extends Object, S extends ADto> T copyFromDto(S origen, Class<T> destino) {
+		try {
+			T out = destino.getConstructor().newInstance();
+			List<String> campos = origen.getNameFields();
+			campos.forEach(campo -> {
+				try {
+					setValueField(out, campo, getValueField(origen, campo));
+				} catch (ReflectionException e) {
+					logger.logger(e);
+				}
+			});
 			return out;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ReflectionException e) {
@@ -95,8 +132,7 @@ public final class ReflectionUtils {
 	 * Obliga a generar una copia del objeto suministrado por medio de bytes
 	 * serializable
 	 * 
-	 * @param obj
-	 *            {@link Object}
+	 * @param obj {@link Object}
 	 * @return {@link Object}
 	 */
 	@SuppressWarnings("unchecked")
@@ -121,18 +157,19 @@ public final class ReflectionUtils {
 	 * Se encarga de obtener el valor de un campo tipo get normal, segun el
 	 * fieldname suministrado
 	 * 
-	 * @param object
-	 *            {@link Object}
-	 * @param fieldName
-	 *            {@link String}
+	 * @param object    {@link Object}
+	 * @param fieldName {@link String}
 	 * @return {@link Object}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
 	public final static <T, S> S getValueField(T object, String fieldName) throws ReflectionException {
 		try {
 			Class<T> clase = (Class<T>) object.getClass();
+			if (ReflectionDto.class.isInstance(object)) {
+				var metodoGetGeneric = ReflectionDto.class.getDeclaredMethod("get", String.class);
+				return (S) metodoGetGeneric.invoke(object, fieldName);
+			}
 			Field field = clase.getDeclaredField(fieldName);
 			String nombre = field.getName();
 			nombre = nombre.substring(0, 1).toUpperCase() + nombre.substring(1);
@@ -140,6 +177,53 @@ public final class ReflectionUtils {
 			return (S) metodo.invoke(object);
 		} catch (NoSuchFieldException e) {
 			throw new ReflectionException("No se encuentro el campo " + e.getMessage(), e);
+		} catch (SecurityException e) {
+			throw new ReflectionException("Problema de seguridad en busca de campo " + e.getMessage(), e);
+		} catch (NoSuchMethodException e) {
+			try {
+				Class<T> clase = (Class<T>) object.getClass();
+				Field field = clase.getDeclaredField(fieldName);
+				if (field.canAccess(object)) {
+					return (S) field.get(object);
+				} else {
+					String nombre = field.getName();
+					nombre = nombre.substring(0, 1).toUpperCase() + nombre.substring(1);
+					Method metodo = clase.getDeclaredMethod("get" + nombre);
+					return (S) metodo.invoke(object);
+				}
+			} catch (Exception e1) {
+				throw new ReflectionException("No se encontro el metodo " + e.getMessage(), e);
+			}
+		} catch (IllegalAccessException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			throw new ReflectionException(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Se encarga de obtener el valor de un campo tipo get normal, segun el
+	 * fieldname suministrado
+	 * 
+	 * @param object    {@link Object}
+	 * @param fieldName {@link String}
+	 * @return {@link Object}
+	 * @throws {@link ReflectionException}
+	 */
+	@SuppressWarnings("unchecked")
+	public final static <T, S, V> S setValueField(T object, String fieldName, V value) throws ReflectionException {
+		try {
+			Class<T> clase = (Class<T>) object.getClass();
+			if (ReflectionDto.class.isInstance(object)) {
+				var metodoGetGeneric = ReflectionDto.class.getDeclaredMethod("set", String.class, Object.class);
+				return (S) metodoGetGeneric.invoke(object, fieldName, value);
+			}
+			return null;
+			// } catch (NoSuchFieldException e) {
+			// throw new ReflectionException("No se encuentro el campo " + e.getMessage(),
+			// e);
 		} catch (SecurityException e) {
 			throw new ReflectionException("Problema de seguridad en busca de campo " + e.getMessage(), e);
 		} catch (NoSuchMethodException e) {
@@ -156,12 +240,9 @@ public final class ReflectionUtils {
 	/**
 	 * Se encarga de invoicar un metodo suministrando los valores indicados
 	 * 
-	 * @param instance
-	 *            {@link Object} extends
-	 * @param methodName
-	 *            {@link String} nombre del metodo a invoicar
-	 * @param values
-	 *            {@link Object} extends
+	 * @param instance   {@link Object} extends
+	 * @param methodName {@link String} nombre del metodo a invoicar
+	 * @param values     {@link Object} extends
 	 * @return {@link Object} extends
 	 * @throws ReflectionException
 	 */
@@ -187,15 +268,11 @@ public final class ReflectionUtils {
 	 * Se realiza busqueda sobre la clase del metodo que concuerde con el nombre y
 	 * los parametros suministrados
 	 * 
-	 * @param clazz
-	 *            {@link Class}
-	 * @param methodName
-	 *            {@link String}
-	 * @param values
-	 *            {@link Object} extends
+	 * @param clazz      {@link Class}
+	 * @param methodName {@link String}
+	 * @param values     {@link Object} extends
 	 * @return {@link Method}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
 	public final <C extends Object, P extends Object> Method getMethod(Class<C> clazz, String methodName, P... values)
@@ -216,8 +293,7 @@ public final class ReflectionUtils {
 	 * Se encarga de obener las clases de cada uno de los valores suministrados y
 	 * los retorna en un array de clases
 	 * 
-	 * @param values
-	 *            {@link Object} extends {@link Arrays}
+	 * @param values {@link Object} extends {@link Arrays}
 	 * @return {@link Class} {@link Arrays}
 	 * @throws ReflectionException
 	 */
@@ -232,22 +308,30 @@ public final class ReflectionUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Se encarga de buscar un campo dentro del objeto y retornarlo
-	 * @param clazz {@link Class} clase de inicio de busqueda
+	 * 
+	 * @param clazz     {@link Class} clase de inicio de busqueda
 	 * @param nameField {@link String} nombre del campo
 	 * @return {@link Field}
 	 * @throws {@link ReflectionException}
 	 */
-	public final <C extends Object> Field getField(Class<C> clazz,String nameField)throws ReflectionException{
-		if(clazz == Object.class)return null;
+	public final <C extends Object> Field getField(Class<C> clazz, String nameField) throws ReflectionException {
+		if (clazz == Object.class)
+			return null;
 		Field field = null;
 		try {
 			field = clazz.getDeclaredField(nameField);
 		} catch (NoSuchFieldException | SecurityException e) {
-			field = getField(clazz.getSuperclass(),nameField);
+			field = getField(clazz.getSuperclass(), nameField);
 		}
 		return field;
 	}
+
+	public synchronized final String getNameMethod(String prefix, String name) {
+		return String.format(ReflectionConstants.CONST_NAME_METHOD, ReflectionConstants.SET,
+				name.substring(0, 1).toUpperCase(), name.substring(1));
+	}
+
 }

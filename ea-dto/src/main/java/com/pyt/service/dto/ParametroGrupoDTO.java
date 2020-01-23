@@ -1,6 +1,6 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 /**
  * Almacena el codigo de un grupo de parametro a un mapa de grupo para tratar de

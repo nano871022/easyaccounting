@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -13,6 +12,8 @@ import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.CentroCostoDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class CentroCostoSvc extends Services implements ICentroCostosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

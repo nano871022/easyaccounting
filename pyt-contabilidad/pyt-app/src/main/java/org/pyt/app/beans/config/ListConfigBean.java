@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
 import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
@@ -40,13 +41,19 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	@FXML
 	private Button btnDel;
 	@FXML
+	private Button btnCargue;
+	@FXML
+	private Button btnReporte;
+	@FXML
 	private HBox paginador;
-	private DataTableFXML<ConfiguracionDTO, ConfiguracionDTO> dt;
+	private DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> dt;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Lista de Configutaciones";
 		registro = new ConfiguracionDTO();
+		btnCargue.setVisible(false);
+		btnReporte.setVisible(false);
 		lazy();
 	}
 
@@ -54,7 +61,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ConfiguracionDTO, ConfiguracionDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO>(paginador, tabla) {
 			@Override
 			public List<ConfiguracionDTO> getList(ConfiguracionDTO filter, Integer page, Integer rows) {
 				List<ConfiguracionDTO> lista = new ArrayList<ConfiguracionDTO>();
@@ -81,10 +88,10 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 			public ConfiguracionDTO getFilter() {
 				ConfiguracionDTO filtro = new ConfiguracionDTO();
 				if (StringUtils.isNotBlank(configuracion.getText())) {
-					filtro.setConfiguracion("%"+configuracion.getText()+"%");
+					filtro.setConfiguracion("%" + configuracion.getText() + "%");
 				}
 				if (StringUtils.isNotBlank(descripcion.getText())) {
-					filtro.setDescripcion("%"+descripcion.getText()+"%");
+					filtro.setDescripcion("%" + descripcion.getText() + "%");
 				}
 				return filtro;
 			}
@@ -94,6 +101,16 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
 		btnDel.setVisible(isSelected());
+		if (isSelected()) {
+			if (dt.getSelectedRow().getReport()) {
+				btnReporte.setVisible(true);
+				btnCargue.setVisible(false);
+			} else {
+				btnCargue.setVisible(true);
+				btnReporte.setVisible(false);
+			}
+
+		}
 	}
 
 	public void add() {
@@ -113,7 +130,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 		try {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				configMarcadorServicioSvc.deleteConfiguracion(registro, userLogin);
+				configMarcadorServicioSvc.deleteConfiguracion(registro, getUsuario());
 				notificar("Se ha eliminado la configuración.");
 				dt.search();
 			} else {
@@ -137,7 +154,24 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ConfiguracionDTO, ConfiguracionDTO> getDt() {
+	public DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> getDt() {
 		return dt;
+	}
+
+	public void reporte() {
+		try {
+			controllerPopup(GenConfigBean.class).load(dt.getSelectedRow().getConfiguracion());
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
+
+	public void cargue() {
+		try {
+			controllerPopup(LoaderServiceBean.class).load(dt.getSelectedRow().getConfiguracion());
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+
 	}
 }

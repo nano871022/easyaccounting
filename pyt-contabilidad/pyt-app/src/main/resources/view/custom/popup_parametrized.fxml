@@ -3,18 +3,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import org.controlsfx.glyphfont.Glyph?>
 
 <fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml">  
     <TextField fx:id="value"  />
 	<Button fx:id="btnOpen"  mnemonicParsing="false" onAction="#openPopup"   >
 		<graphic>
-			<FontIcon iconLiteral="fa-search" iconColor="black"/>
+			<Glyph fontFamily="FontAwesome" icon="SEARCH" />
 		</graphic>
 	</Button>
 	<Button fx:id="btnClean" mnemonicParsing="false" onAction="#cleanValue">
 		<graphic>
-			<FontIcon iconLiteral="fa-remove" iconColor="black"/>
+			<Glyph fontFamily="FontAwesome" icon="REMOVE" />
 		</graphic>
 	</Button>
 </fx:root>

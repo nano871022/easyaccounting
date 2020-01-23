@@ -1,9 +1,9 @@
 package com.pyt.service.interfaces;
 
-import org.pyt.common.common.ADto;
-import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.CargueException;
 
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.loader.pojo.FilePOJO;
 
 /**

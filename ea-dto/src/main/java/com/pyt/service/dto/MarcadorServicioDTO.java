@@ -1,13 +1,13 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 public class MarcadorServicioDTO extends ADto {
 	private static final long serialVersionUID = 4348093849805335955L;
 	private String marcador;
 	private String servicio;
 	private String nombreCampo;
-	private String configuracion;
+	private ConfiguracionDTO configuracion;
 
 	public String getMarcador() {
 		return marcador;
@@ -33,11 +33,11 @@ public class MarcadorServicioDTO extends ADto {
 		this.nombreCampo = nombreCampo;
 	}
 
-	public String getConfiguracion() {
+	public ConfiguracionDTO getConfiguracion() {
 		return configuracion;
 	}
 
-	public void setConfiguracion(String configuracion) {
+	public void setConfiguracion(ConfiguracionDTO configuracion) {
 		this.configuracion = configuracion;
 	}
 }

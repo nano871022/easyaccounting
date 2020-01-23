@@ -24,7 +24,7 @@ public @interface DefaultFieldToGeneric {
 	 * Indica los usos que pede usar esta anotacion
 	 *
 	 */
-	enum Uses {FILTER,COLUMN}
+	enum Uses {FIELD,FILTER,COLUMN}
 	/**
 	 * Clase que indica que controller puede usar este campo como generico este debe
 	 * extender de {@link IBean}

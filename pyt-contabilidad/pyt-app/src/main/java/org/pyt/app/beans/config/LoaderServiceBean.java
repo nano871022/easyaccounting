@@ -8,13 +8,13 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 
 import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.interfaces.ICargue;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.loader.pojo.FilePOJO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -105,7 +105,7 @@ public class LoaderServiceBean extends ABean {
 			file.setSize(fileLoad.length());
 			file.setSeparate(";");
 			// llamando al servicio de cargue de datos.
-			FilePOJO out = loader.cargue(configuracion.getConfiguracion(), file, userLogin);
+			FilePOJO out = loader.cargue(configuracion.getConfiguracion(), file, getUsuario());
 			File fileo = new File(out.getNameFile());
 			FileUtils.writeByteArrayToFile(fileo, out.getByte());
 			this.notificar("Se genero el archivo de resultados en "+fileo.getAbsolutePath());

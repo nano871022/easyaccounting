@@ -3,19 +3,22 @@ package org.pyt.app.beans.centroCosto;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CentroCostoDTO;
+import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -48,20 +51,27 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
+	@FXML
+	private PopupParametrizedControl empresa;
 	private List<ParametroDTO> listEstados;
 	private final static String FIELD_NAME = "nombre";
 	private final static String FIELD_VALUE = "valor";
+
 	@FXML
 	public void initialize() {
 		NombreVentana = "Agregando Nuevo Centro de Costos";
 		titulo.setText(NombreVentana);
 		registro = new CentroCostoDTO();
+		empresa.setPopupOpenAction(() -> popupEmpresa());
+		empresa.setCleanValue(() -> registro.setEmpresa(null));
+
 		try {
-			listEstados = parametroSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_ESTADO_CENTRO_COSTO);
+			listEstados = parametroSvc.getAllParametros(new ParametroDTO(),
+					ParametroConstants.GRUPO_ESTADO_CENTRO_COSTO);
 		} catch (ParametroException e) {
 			error(e);
 		}
-		SelectList.put(estado, listEstados,FIELD_NAME);
+		SelectList.put(estado, listEstados, FIELD_NAME);
 		estado.getSelectionModel().selectFirst();
 	}
 
@@ -76,7 +86,7 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		registro.setNombre(nombre.getText());
 		registro.setDescripcion(descripcion.getText());
 		registro.setOrden(Integer.valueOf(orden.getText()));
-		registro.setEstado((String) SelectList.get(estado, listEstados,FIELD_NAME).getValor());
+		registro.setEstado((String) SelectList.get(estado, listEstados, FIELD_NAME).getCodigo());
 	}
 
 	private void loadFxml() {
@@ -86,8 +96,8 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		nombre.setText(registro.getNombre());
 		descripcion.setText(registro.getDescripcion());
 		orden.setText(String.valueOf(registro.getOrden()));
-		SelectList.put(estado, listEstados,FIELD_NAME);
-		SelectList.selectItem(estado, listEstados,FIELD_NAME, registro.getEstado(),FIELD_VALUE);
+		SelectList.put(estado, listEstados, FIELD_NAME);
+		SelectList.selectItem(estado, listEstados, FIELD_NAME, registro.getEstado(), FIELD_NAME);
 	}
 
 	public void load(CentroCostoDTO dto) {
@@ -120,11 +130,11 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					centroCostoSvc.update(registro, userLogin);
+					centroCostoSvc.update(registro, getUsuario());
 					notificar("Se guardo el centro de costo correctamente.");
 					cancel();
 				} else {
-					centroCostoSvc.insert(registro, userLogin);
+					centroCostoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el centro de costo correctamente.");
 					cancel();
@@ -132,6 +142,21 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 			}
 		} catch (CentroCostosException e) {
 			error(e);
+		}
+	}
+
+	public final void popupEmpresa() {
+		try {
+			controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).load("#{CentroCostoCRUBean.empresa}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setEmpresa(EmpresaDTO empresa) {
+		if (empresa != null) {
+			registro.setEmpresa(empresa);
+			this.empresa.setText(empresa.getNombre());
 		}
 	}
 

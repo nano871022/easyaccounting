@@ -7,7 +7,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import org.ea.app.custom.PopupParametrizedControl?>
 
 <BorderPane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
@@ -62,12 +61,12 @@
 				<Label alignment="CENTER" prefHeight="31.0" prefWidth="87.0" text="Telefono" GridPane.rowIndex="3" />
 				<TextField fx:id="telefono" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 				<Label alignment="CENTER" prefHeight="28.0" prefWidth="68.0" text="Pais" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-				<TextField fx:id="pais" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+				<PopupParametrizedControl fx:id="pais" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 				<Label alignment="CENTER" prefHeight="28.0" prefWidth="90.0" text="Moneda" GridPane.rowIndex="4" />
 				<PopupParametrizedControl fx:id="moneda"  GridPane.columnIndex="1" GridPane.rowIndex="4" />
 				
 				<Label alignment="CENTER" prefHeight="30.0" prefWidth="87.0" text="Contador" GridPane.rowIndex="5" />
-				<TextField fx:id="contador" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+				<PopupParametrizedControl fx:id="contador"  GridPane.columnIndex="1" GridPane.rowIndex="5" />
 				<Label alignment="CENTER" prefHeight="40.0" prefWidth="68.0" text="Tarjeta Contador" wrapText="true" GridPane.columnIndex="2"
 					GridPane.rowIndex="5">
 					<padding>
@@ -77,7 +76,7 @@
 				<TextField fx:id="nContador" alignment="CENTER" prefHeight="25.0" prefWidth="142.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
 				<Label alignment="CENTER" contentDisplay="CENTER" prefHeight="48.0" prefWidth="95.0" text="Representante Legal" textAlignment="CENTER"
 					wrapText="true" GridPane.rowIndex="6" />
-				<TextField fx:id="representante" alignment="CENTER" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+				<PopupParametrizedControl fx:id="representante"  GridPane.columnIndex="1" GridPane.rowIndex="6" />
 				<Label fx:id="codigo" alignment="CENTER" contentDisplay="CENTER" prefHeight="38.0" prefWidth="163.0" textAlignment="CENTER"
 					GridPane.columnIndex="1" />
 			</children>

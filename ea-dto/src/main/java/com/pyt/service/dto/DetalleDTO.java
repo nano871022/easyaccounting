@@ -1,13 +1,12 @@
 package com.pyt.service.dto;
 
 import java.math.BigDecimal;
-import java.util.List;
 
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Increment;
 import org.pyt.common.annotations.NoEdit;
 import org.pyt.common.annotations.Operacion;
 import org.pyt.common.annotations.Operar;
-import org.pyt.common.common.ADto;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -18,12 +17,11 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
  * @author alejandro parra
  * @since 06/05/2018
  */
-@DelClass(nombre="com.pyt.service.dto.dels.DetalleDelDTO")
-@UpdClass(nombre="com.pyt.service.dto.upds.DetalleUpdDTO")
+@DelClass(nombre = "com.pyt.service.dto.dels.DetalleDelDTO")
+@UpdClass(nombre = "com.pyt.service.dto.upds.DetalleUpdDTO")
 
 public class DetalleDTO extends ADto {
 	private static final long serialVersionUID = -3773810908869511818L;
-	private String codeDocumento;
 	@Increment
 	private Integer renglon;
 	private ServicioDTO concepto;
@@ -31,7 +29,7 @@ public class DetalleDTO extends ADto {
 	private ParametroDTO categoriaGasto;
 	private BigDecimal valorBruto;
 	@NoEdit
-	@Operacion(valor1 = "valorBruto",valor2="valorIva", operacion = Operar.SUMA)
+	@Operacion(valor1 = "valorBruto", valor2 = "valorIva", operacion = Operar.SUMA)
 	@Operacion(valor1 = "valorConsumo", operacion = Operar.SUMA)
 	private BigDecimal valorNeto;
 	private Long porcentajeIva;
@@ -40,7 +38,6 @@ public class DetalleDTO extends ADto {
 	private Long impuestoConsumo;
 	@Operacion(valor1 = "impuestoConsumo", valor2 = "valorBruto", operacion = Operar.MULTIPLICAR)
 	private BigDecimal valorConsumo;
-	private List<TrabajadorDTO> ejecutadores;
 	private ActividadIcaDTO actividadIca;
 	private String codigoDocumento;
 	private IngresoDTO ingreso;
@@ -51,7 +48,7 @@ public class DetalleDTO extends ADto {
 	private String observaciones;
 	private String descripcion;
 	private EmpresaDTO tercero;
-	
+
 	public Long getPorcentajeDescuento() {
 		return porcentajeDescuento;
 	}
@@ -106,14 +103,6 @@ public class DetalleDTO extends ADto {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
-	}
-
-	public String getCodeDocumento() {
-		return codeDocumento;
-	}
-
-	public void setCodeDocumento(String codeDocumento) {
-		this.codeDocumento = codeDocumento;
 	}
 
 	public IngresoDTO getIngreso() {
@@ -218,14 +207,6 @@ public class DetalleDTO extends ADto {
 
 	public void setActividadIca(ActividadIcaDTO actividadIca) {
 		this.actividadIca = actividadIca;
-	}
-
-	public List<TrabajadorDTO> getEjecutadores() {
-		return ejecutadores;
-	}
-
-	public void setEjecutadores(List<TrabajadorDTO> ejecutadores) {
-		this.ejecutadores = ejecutadores;
 	}
 
 }

@@ -8,4 +8,6 @@ public class StylesPrincipalConstant {
 	public final static String CONST_GRID_STANDARD = "grid-standard";
 	public final static String CONST_HBOX_PAGINATOR_CUSTOM = "hbox-paginator-custom";
 	public final static String CONST_TABLE_CUSTOM = "table-custom";
+	public final static String CONST_MESSAGE_ERROR = "message-error";
+	public final static String CONST_MESSAGE_WARN = "message-warn";
 }

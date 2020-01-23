@@ -6,12 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.ADto;
 import org.pyt.common.common.Compare;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
@@ -27,14 +26,15 @@ import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.ParametroGrupoDTO;
-import com.pyt.service.dto.RepuestoDTO;
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.dto.TrabajadorDTO;
+import com.pyt.service.dto.inventario.ProductoDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -50,7 +50,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private IDocumentosSvc documentoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
-	private DataTableFXML<DocumentosDTO, DocumentosDTO> dataTable;
+	private DataTableFXMLUtil<DocumentosDTO, DocumentosDTO> dataTable;
 	@FXML
 	private Button guardar;
 	@FXML
@@ -82,6 +82,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private TextField fieldLabel;
 	@FXML
+	private TextField fieldDefaultValue;
+	@FXML
 	private CheckBox editable;
 	@FXML
 	private CheckBox obligatorio;
@@ -92,7 +94,17 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private CheckBox manejaGrupo;
 	@FXML
+	private CheckBox fieldFilter;
+	@FXML
+	private CheckBox fieldColumn;
+	@FXML
+	private CheckBox fieldHasDefaultValue;
+	@FXML
+	private CheckBox fieldIsVisible;
+	@FXML
 	private HBox paginator;
+	@FXML
+	private Label labelDefaultValue;
 	@FXML
 	private Label etiqueta;
 	@FXML
@@ -115,6 +127,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Map<String, Object> mapa_claseBusqueda;
 	private Boolean instans;
 	private final static String FIELD_NAME = "nombre";
+	private ParametroDTO tipoDeDocumento;
 
 	@FXML
 	public void initialize() {
@@ -130,14 +143,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		grupo.setGrupo("*");
 		ParametroDTO tipoDoc = new ParametroDTO();
 		try {
-			ParametroGrupoDTO preGrupo = new ParametroGrupoDTO();
-			preGrupo.setGrupo(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
-			List<ParametroGrupoDTO> listPreG = parametroSvc.getParametroGrupo(preGrupo);
-			if (listPreG != null && listPreG.size() == 1) {
-				tipoDoc.setGrupo(listPreG.get(0).getParametro());
-			}
 			listGrupo = parametroSvc.getAllParametros(grupo);
-			listTipoDocumento = parametroSvc.getAllParametros(tipoDoc);
+			listTipoDocumento = parametroSvc.getAllParametros(tipoDoc, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 		} catch (ParametroException e) {
 			error(e);
 		}
@@ -163,9 +170,13 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		nombreCampo.setVisible(false);
 		etiqueta.setVisible(false);
 		lNombreCampo.setVisible(false);
+		fieldColumn.setVisible(false);
+		fieldFilter.setVisible(false);
 		fieldLabel.setVisible(false);
 		guardar.setVisible(false);
 		cancelar.setVisible(false);
+		fieldDefaultValue.setVisible(false);
+		fieldIsVisible.setVisible(false);
 		lazy();
 	}
 
@@ -182,7 +193,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		mapa_claseBusqueda.put("Centro de Costo", CentroCostoDTO.class);
 		mapa_claseBusqueda.put("Empresa", EmpresaDTO.class);
 		mapa_claseBusqueda.put("Trabajador", TrabajadorDTO.class);
-		mapa_claseBusqueda.put("Repuestos", RepuestoDTO.class);
+		mapa_claseBusqueda.put("Producto", ProductoDTO.class);
 		mapa_claseBusqueda.put("Servicios", ServicioDTO.class);
 	}
 
@@ -193,10 +204,16 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			fieldLabel.setText(docs.getFieldLabel());
 			editable.setSelected(docs.getEdit());
 			obligatorio.setSelected(docs.getNullable());
+			fieldFilter.setSelected(docs.getFieldFilter());
+			fieldColumn.setSelected(docs.getFieldColumn());
+			fieldDefaultValue.setText(docs.getFieldDefaultValue());
+			fieldHasDefaultValue.setSelected(Optional.ofNullable(docs.getFieldHasDefaultValue()).orElse(false));
+			fieldIsVisible.setSelected(Optional.ofNullable(docs.getFieldIsVisible()).orElse(true));
 			SelectList.selectItem(busqueda, mapa_claseBusqueda, docs.getObjectSearchDto());
 			SelectList.selectItem(grupo, listGrupo, FIELD_NAME, docs, "selectNameGroup");
 			SelectList.selectItem(campoMostrar, mapa_campoMostrar, docs.getPutNameShow());
 			SelectList.selectItem(campoAsignar, mapa_campoAsignar, docs.getPutNameAssign());
+			manejaDefault();
 		} else {
 			notificar("No se ha seleccionado ningun registro.");
 		}
@@ -210,6 +227,10 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		lCampoMostrar.setVisible(manejaLista.isSelected());
 		campoMostrar.setVisible(manejaLista.isSelected());
 		lBusqueda.setVisible(manejaLista.isSelected());
+	}
+
+	public final void manejaDefault() {
+		showFieldWhenValorDefecto();
 	}
 
 	public final void manejaGrupo() {
@@ -270,38 +291,78 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			}
 		}
 		if (obj != null) {
-			editable.setVisible(true);
-			obligatorio.setVisible(true);
+			showFieldEdited();
+			showFieldWhenValorDefecto();
 			if (!instans) {
-				manejaLista.setVisible(true);
-				lCampoMostrar.setVisible(false);
-				campoMostrar.setVisible(false);
-				grupo.setVisible(false);
-				lGrupo.setVisible(false);
+				showFieldWhenManejaLista();
 			} else {
-				manejaLista.setVisible(false);
-				lCampoMostrar.setVisible(true);
-				campoMostrar.setVisible(true);
-				mapa_campoMostrar.clear();
-				getFieldShow(campo);
-				SelectList.put(campoMostrar, mapa_campoMostrar);
-				campoMostrar.getSelectionModel().selectFirst();
-				grupo.setVisible(param);
-				lGrupo.setVisible(param);
+				showFieldWhenNotManejaLista(campo, param);
 			}
-			addItem.setVisible(true);
-			modifyItem.setVisible(true);
-			delItem.setVisible(true);
-			clearItem.setVisible(true);
 		} else {
-			editable.setVisible(false);
-			obligatorio.setVisible(false);
-			manejaLista.setVisible(false);
-			addItem.setVisible(false);
-			modifyItem.setVisible(false);
-			delItem.setVisible(false);
-			clearItem.setVisible(false);
+			hiddenFieldEdited();
 		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private final void showFieldWhenNotManejaLista(Class field, Boolean hasParams) {
+		manejaLista.setVisible(false);
+		lCampoMostrar.setVisible(true);
+		campoMostrar.setVisible(true);
+		mapa_campoMostrar.clear();
+		getFieldShow(field);
+		SelectList.put(campoMostrar, mapa_campoMostrar);
+		campoMostrar.getSelectionModel().selectFirst();
+		grupo.setVisible(hasParams);
+		lGrupo.setVisible(hasParams);
+	}
+
+	private final void showFieldWhenManejaLista() {
+		manejaLista.setVisible(true);
+		lCampoMostrar.setVisible(false);
+		campoMostrar.setVisible(false);
+		grupo.setVisible(false);
+		lGrupo.setVisible(false);
+	}
+
+	private final void showFieldEdited() {
+		editable.setVisible(true);
+		obligatorio.setVisible(true);
+		fieldFilter.setVisible(true);
+		fieldColumn.setVisible(true);
+		addItem.setVisible(true);
+		modifyItem.setVisible(true);
+		delItem.setVisible(true);
+		clearItem.setVisible(true);
+		fieldHasDefaultValue.setVisible(true);
+		labelDefaultValue.setVisible(true);
+	}
+
+	private final void showFieldWhenValorDefecto() {
+		if (fieldHasDefaultValue.isSelected()) {
+			fieldDefaultValue.setVisible(true);
+			fieldIsVisible.setVisible(true);
+			labelDefaultValue.setVisible(true);
+		} else {
+			fieldDefaultValue.setVisible(false);
+			fieldIsVisible.setVisible(false);
+			labelDefaultValue.setVisible(false);
+		}
+	}
+
+	private final void hiddenFieldEdited() {
+		editable.setVisible(false);
+		obligatorio.setVisible(false);
+		manejaLista.setVisible(false);
+		addItem.setVisible(false);
+		modifyItem.setVisible(false);
+		delItem.setVisible(false);
+		clearItem.setVisible(false);
+		fieldFilter.setVisible(false);
+		fieldColumn.setVisible(false);
+		fieldHasDefaultValue.setVisible(false);
+		fieldDefaultValue.setVisible(false);
+		fieldIsVisible.setVisible(false);
+		labelDefaultValue.setVisible(false);
 	}
 
 	public final void tipoDocumento() {
@@ -345,7 +406,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	}
 
 	public void lazy() {
-		dataTable = new DataTableFXML<DocumentosDTO, DocumentosDTO>(paginator, tabla) {
+		dataTable = new DataTableFXMLUtil<DocumentosDTO, DocumentosDTO>(paginator, tabla) {
 
 			@Override
 			public Integer getTotalRows(DocumentosDTO filter) {
@@ -402,7 +463,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private DocumentosDTO loadItem() {
-		DocumentosDTO dto = new DocumentosDTO();
+		var selectedDoc = dataTable.getSelectedRow();
+		var dto = selectedDoc == null ? new DocumentosDTO() : selectedDoc;
 		if ((dataTable.getSelectedRow() != null && StringUtils.isNotBlank(dataTable.getSelectedRow().getCodigo()))) {
 			dto.setCodigo(dataTable.getSelectedRow().getCodigo());
 		}
@@ -412,6 +474,11 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dto.setFieldLabel(fieldLabel.getText());
 		dto.setEdit(editable.isSelected());
 		dto.setNullable(obligatorio.isSelected());
+		dto.setFieldFilter(fieldFilter.isSelected());
+		dto.setFieldColumn(fieldColumn.isSelected());
+		dto.setFieldHasDefaultValue(fieldHasDefaultValue.isSelected());
+		dto.setFieldIsVisible(fieldIsVisible.isSelected());
+		dto.setFieldDefaultValue(fieldDefaultValue.getText());
 		if (grupo.isVisible()) {
 			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
 		}
@@ -446,7 +513,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			} else if (documentos.size() > 0) {
 				for (DocumentosDTO dto : documentos) {
 					dto.setDoctype(SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME));
-					dto = documentoSvc.insert(dto, userLogin);
+					dto = documentoSvc.insert(dto, getUsuario());
 				}
 				notificar("Se ha guardado todos los registros correctamente.");
 			}
@@ -487,6 +554,9 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		this.campoAsignar.getSelectionModel().selectFirst();
 		this.campoMostrar.getSelectionModel().selectFirst();
 		this.fieldLabel.setText("");
+		fieldFilter.setSelected(false);
+		fieldColumn.setSelected(false);
+		fieldHasDefaultValue.setSelected(false);
 	}
 
 	public void modificarItem() {
@@ -494,7 +564,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		try {
 			if (validItem(dto)) {
 				if (StringUtils.isNotBlank(dto.getCodigo())) {
-					documentoSvc.update(dto, userLogin);
+					documentoSvc.update(dto, getUsuario());
+
 				} else if (StringUtils.isBlank(dto.getCodigo())) {
 					for (int i = 0; i < documentos.size(); i++) {
 						DocumentosDTO dtos = documentos.get(i);
@@ -516,24 +587,26 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	public void eliminarItem() {
 		DocumentosDTO dto = dataTable.getSelectedRow();
 		try {
-			if (StringUtils.isNotBlank(dto.getCodigo())) {
-				documentoSvc.delete(dto, userLogin);
-			} else if (StringUtils.isBlank(dto.getCodigo())) {
-				for (int i = 0; i < documentos.size(); i++) {
-					DocumentosDTO dtos = documentos.get(i);
-					if (new Compare<DocumentosDTO>(dtos).to(dto)) {
-						documentos.remove(i);
-						break;
+			if (dto != null) {
+				if (StringUtils.isNotBlank(dto.getCodigo())) {
+					documentoSvc.delete(dto, getUsuario());
+				} else if (StringUtils.isBlank(dto.getCodigo())) {
+					for (int i = 0; i < documentos.size(); i++) {
+						DocumentosDTO dtos = documentos.get(i);
+						if (new Compare<DocumentosDTO>(dtos).to(dto)) {
+							documentos.remove(i);
+							break;
+						}
+					} // end for
+					if (documentos.size() == 0) {
+						guardar.setVisible(false);
+						cancelar.setVisible(false);
 					}
-				} // end for
-				if (documentos.size() == 0) {
-					guardar.setVisible(false);
-					cancelar.setVisible(false);
 				}
+				notificar("Se ha eliminado el documento.");
+				dataTable.search();
+				cleanItem();
 			}
-			notificar("Se ha eliminado el documento.");
-			dataTable.search();
-			cleanItem();
 		} catch (DocumentosException e) {
 			error(e);
 		}

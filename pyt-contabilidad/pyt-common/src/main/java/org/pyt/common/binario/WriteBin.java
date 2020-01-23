@@ -4,7 +4,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.AControlFile;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.FileBinException;
 
 /**

@@ -5,20 +5,20 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.ParametroInventarioConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.inventario.ParametroGrupoInventarioDTO;
 import com.pyt.service.dto.inventario.ParametroInventarioDTO;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -98,21 +98,22 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 		} catch (ValidateValueException e) {
 			error(e);
 		}
-		registro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
+		registro.setEstado(String.valueOf(ParametroConstants.mapa_estados_parametros.get(estado.getValue())));
 		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
 			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroInventarioConstants.mapa_grupo));
 		}
 		buttones_update();
 	}
+
 	/**
 	 * Verifica si un boton se muestra o no
 	 */
 	private final void buttones_update() {
-		if(StringUtils.isBlank(registro.getCodigo())) {
+		if (StringUtils.isBlank(registro.getCodigo())) {
 			insert.setVisible(true);
 			update.setVisible(false);
 			delete.setVisible(false);
-		}else {
+		} else {
 			insert.setVisible(false);
 			update.setVisible(true);
 			delete.setVisible(true);
@@ -122,8 +123,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	/**
 	 * Se encarga de cargar el parametro para poder realizar crud sobre el registro
 	 * 
-	 * @param dto
-	 *            {@link ParametroInventarioDTO}
+	 * @param dto {@link ParametroInventarioDTO}
 	 */
 	public void load(ParametroInventarioDTO dto) {
 		if (StringUtils.isBlank(dto.getGrupo()) && (dto == null || StringUtils.isBlank(dto.getCodigo()))) {
@@ -234,10 +234,10 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 		try {
 			if (valid()) {
 				validParametroGrupo();
-				registro = parametroSvc.insert(registro, userLogin);
+				registro = parametroSvc.insert(registro, getUsuario());
 				if (StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
-					parametroGrupo = parametroSvc.insert(parametroGrupo, userLogin);
+					parametroGrupo = parametroSvc.insert(parametroGrupo, getUsuario());
 				}
 				codigo.setText(registro.getCodigo());
 				notificar("Se ha creado el parametro correctamente.");
@@ -254,8 +254,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	/**
 	 * Se encarga de validar el parametro grupo
 	 * 
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final void validParametroGrupo() throws Exception {
 		if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
@@ -264,7 +263,8 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 			List<ParametroGrupoInventarioDTO> lista = parametroSvc.getParametroGrupo(pGrupo);
 			if (lista.size() > 0) {
 				for (ParametroGrupoInventarioDTO grupo : lista) {
-					if(StringUtils.isBlank(grupo.getParametro()))continue;
+					if (StringUtils.isBlank(grupo.getParametro()))
+						continue;
 					ParametroInventarioDTO parametro = new ParametroInventarioDTO();
 					parametro.setCodigo(grupo.getParametro());
 					if (grupo != null && registro != null && StringUtils.isNotBlank(registro.getCodigo())
@@ -276,7 +276,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 						throw new Exception("Ya se encuentra asignado este Grupo " + parametroGrupo.getGrupo() + " a "
 								+ parametros.get(0).getNombre());
 					} else {
-						parametroSvc.delete(grupo, userLogin);
+						parametroSvc.delete(grupo, getUsuario());
 					}
 				}
 			}
@@ -291,10 +291,10 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 		try {
 			if (valid()) {
 				validParametroGrupo();
-				parametroSvc.update(registro, userLogin);
+				parametroSvc.update(registro, getUsuario());
 				if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
-					parametroSvc.update(parametroGrupo, userLogin);
+					parametroSvc.update(parametroGrupo, getUsuario());
 				}
 				notificar("Se ha modificado el parametro correctamente.");
 			} else {
@@ -313,8 +313,7 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	@SuppressWarnings("unchecked")
 	public void deleteBtn() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}",
-					"¿Desea eliminar el registro?");
+			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}", "¿Desea eliminar el registro?");
 			;
 		} catch (LoadAppFxmlException e) {
 			error(e);
@@ -327,9 +326,9 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getCodigo())) {
-						parametroSvc.delete(parametroGrupo, userLogin);
+						parametroSvc.delete(parametroGrupo, getUsuario());
 					}
-					parametroSvc.delete(registro, userLogin);
+					parametroSvc.delete(registro, getUsuario());
 					notificar("El parametro fue eliminado correctamente.");
 					cancelBtn();
 				} else {

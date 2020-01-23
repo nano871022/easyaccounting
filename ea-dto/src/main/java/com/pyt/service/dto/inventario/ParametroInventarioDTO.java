@@ -1,10 +1,6 @@
 package com.pyt.service.dto.inventario;
 
-import org.pyt.common.common.ADto;
-
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.dels.ParametroDelDTO;
-import com.pyt.service.dto.upds.ParametroUpdDTO;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;

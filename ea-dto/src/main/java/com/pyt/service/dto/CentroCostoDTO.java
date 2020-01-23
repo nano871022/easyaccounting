@@ -1,6 +1,6 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -16,18 +16,11 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 public class CentroCostoDTO extends ADto{
 	private static final long serialVersionUID = -7537599944970961982L;
-	private String codigo;
 	private String nombre;
 	private String descripcion;
 	private String estado;
 	private Integer orden;
 	private EmpresaDTO empresa;
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 	public String getNombre() {
 		return nombre;
 	}

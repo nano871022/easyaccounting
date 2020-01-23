@@ -4,27 +4,27 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.inventario.MovimientoException;
 
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.inventario.MovimientoDto;
-import com.pyt.service.dto.inventario.RestarCantidadDto;
-import com.pyt.service.dto.inventario.saldoDto;
+import com.pyt.service.dto.inventario.MovimientoDTO;
+import com.pyt.service.dto.inventario.RestarCantidadDTO;
+import com.pyt.service.dto.inventario.SaldoDTO;
 import com.pyt.service.interfaces.inventarios.IMovimientoSvc;
 
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class MovimientoSvc extends Services implements IMovimientoSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
 
 	@Override
-	public MovimientoDto insert(MovimientoDto movimiento, UsuarioDTO usuario) throws MovimientoException {
+	public MovimientoDTO insert(MovimientoDTO movimiento, UsuarioDTO usuario) throws MovimientoException {
 		if(movimiento == null )throw new MovimientoException("No se encontro movimiento suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isNotBlank(movimiento.getCodigo()))throw new MovimientoException("El movimiento ya se encuentra creado.");
@@ -36,7 +36,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public saldoDto insert(saldoDto saldo, UsuarioDTO usuario) throws MovimientoException {
+	public SaldoDTO insert(SaldoDTO saldo, UsuarioDTO usuario) throws MovimientoException {
 		if(saldo == null )throw new MovimientoException("No se encontro saldo suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isNotBlank(saldo.getCodigo()))throw new MovimientoException("El saldo ya se encuentra creado.");
@@ -48,7 +48,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public void update(MovimientoDto movimiento, UsuarioDTO usuario) throws MovimientoException {
+	public void update(MovimientoDTO movimiento, UsuarioDTO usuario) throws MovimientoException {
 		if(movimiento == null )throw new MovimientoException("No se encontro el movimiento suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isBlank(movimiento.getCodigo()))throw new MovimientoException("El movimiento no se encuentra creado.");
@@ -60,7 +60,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public void update(saldoDto saldo, UsuarioDTO usuario) throws MovimientoException {
+	public void update(SaldoDTO saldo, UsuarioDTO usuario) throws MovimientoException {
 		if(saldo == null )throw new MovimientoException("No se encontro el saldo suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isBlank(saldo.getCodigo()))throw new MovimientoException("El saldo no se encuentra creado.");
@@ -72,7 +72,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public MovimientoDto movimiento(MovimientoDto movimiento) throws MovimientoException {
+	public MovimientoDTO movimiento(MovimientoDTO movimiento) throws MovimientoException {
 		if(movimiento == null )throw new MovimientoException("No se encontro el movimiento suministrado.");
 		try {
 			return querySvc.get(movimiento);
@@ -82,7 +82,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public saldoDto saldo(saldoDto saldo) throws MovimientoException {
+	public SaldoDTO saldo(SaldoDTO saldo) throws MovimientoException {
 		if(saldo == null )throw new MovimientoException("No se encontro el saldo suministrado.");
 		try {
 			return querySvc.get(saldo);
@@ -92,7 +92,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public List<MovimientoDto> movimientos(MovimientoDto movimiento) throws MovimientoException {
+	public List<MovimientoDTO> movimientos(MovimientoDTO movimiento) throws MovimientoException {
 		if(movimiento == null )throw new MovimientoException("No se encontro el movimiento suministrado.");
 		try {
 			return querySvc.gets(movimiento);
@@ -102,7 +102,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public List<saldoDto> saldos(saldoDto saldo) throws MovimientoException {
+	public List<SaldoDTO> saldos(SaldoDTO saldo) throws MovimientoException {
 		if(saldo == null )throw new MovimientoException("No se encontro el saldo suministrado.");
 		try {
 			return querySvc.gets(saldo);
@@ -112,7 +112,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public List<MovimientoDto> movimientos(MovimientoDto movimiento, Integer inicio, Integer cantidad)
+	public List<MovimientoDTO> movimientos(MovimientoDTO movimiento, Integer inicio, Integer cantidad)
 			throws MovimientoException {
 		if(movimiento == null )throw new MovimientoException("No se encontro el movimiento suministrado.");
 		if(inicio == null) throw new MovimientoException("No se encontro registro de inicio");
@@ -125,7 +125,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public List<saldoDto> saldos(saldoDto saldo, Integer inicio, Integer cantidad) throws MovimientoException {
+	public List<SaldoDTO> saldos(SaldoDTO saldo, Integer inicio, Integer cantidad) throws MovimientoException {
 		if(saldo == null )throw new MovimientoException("No se encontro el saldo suministrado.");
 		if(inicio == null) throw new MovimientoException("No se encontro registro de inicio");
 		if(cantidad == null)throw new MovimientoException("No se encontro cantidad a paginar");
@@ -137,7 +137,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public void del(MovimientoDto movimiento, UsuarioDTO usuario) throws MovimientoException {
+	public void del(MovimientoDTO movimiento, UsuarioDTO usuario) throws MovimientoException {
 		if(movimiento == null )throw new MovimientoException("No se encontro el movimiento suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isBlank(movimiento.getCodigo()))throw new MovimientoException("El movimiento no se encuentra creado.");
@@ -149,7 +149,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public void del(saldoDto saldo, UsuarioDTO usuario) throws MovimientoException {
+	public void del(SaldoDTO saldo, UsuarioDTO usuario) throws MovimientoException {
 		if(saldo == null )throw new MovimientoException("No se encontro el saldo suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isBlank(saldo.getCodigo()))throw new MovimientoException("El saldo no se encuentra creado.");
@@ -161,7 +161,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public RestarCantidadDto insert(RestarCantidadDto restar, UsuarioDTO usuario) throws MovimientoException {
+	public RestarCantidadDTO insert(RestarCantidadDTO restar, UsuarioDTO usuario) throws MovimientoException {
 		if(restar == null )throw new MovimientoException("No se encontro restar cantidad suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isNotBlank(restar.getCodigo()))throw new MovimientoException("El restar cantidad ya se encuentra creado.");
@@ -173,7 +173,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public void update(RestarCantidadDto restar, UsuarioDTO usuario) throws MovimientoException {
+	public void update(RestarCantidadDTO restar, UsuarioDTO usuario) throws MovimientoException {
 		if(restar == null )throw new MovimientoException("No se encontro el restar cantidad suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isBlank(restar.getCodigo()))throw new MovimientoException("El restar cantidad no se encuentra creado.");
@@ -185,7 +185,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public List<RestarCantidadDto> restarCantidad(RestarCantidadDto restar) throws MovimientoException {
+	public List<RestarCantidadDTO> restarCantidad(RestarCantidadDTO restar) throws MovimientoException {
 		if(restar == null )throw new MovimientoException("No se encontro el restar cantidad suministrado.");
 		try {
 			return querySvc.gets(restar);
@@ -195,7 +195,7 @@ public class MovimientoSvc extends Services implements IMovimientoSvc {
 	}
 
 	@Override
-	public void del(RestarCantidadDto restar, UsuarioDTO usuario) throws MovimientoException {
+	public void del(RestarCantidadDTO restar, UsuarioDTO usuario) throws MovimientoException {
 		if(restar == null )throw new MovimientoException("No se encontro el restar cantidad suministrado.");
 		if(usuario == null)throw new MovimientoException("No se encontro usuario suministrado.");
 		if(StringUtils.isBlank(restar.getCodigo()))throw new MovimientoException("El restar cantidad no se encuentra creado.");

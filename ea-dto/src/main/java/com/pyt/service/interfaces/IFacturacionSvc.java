@@ -7,11 +7,12 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.FacturacionException;
 
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.FacturaDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realizar un servicio de {@link FacturaDTO}

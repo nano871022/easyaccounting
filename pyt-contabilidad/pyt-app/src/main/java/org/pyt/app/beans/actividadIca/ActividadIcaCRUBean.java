@@ -2,13 +2,13 @@ package org.pyt.app.beans.actividadIca;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.ActividadIcaException;
 
 import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.interfaces.IActividadIcaSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -105,11 +105,11 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					actividadIcaSvc.update(registro, userLogin);
+					actividadIcaSvc.update(registro, getUsuario());
 					notificar("Se guardo la actividad ica correctamente.");
 					cancel();
 				} else {
-					actividadIcaSvc.insert(registro, userLogin);
+					actividadIcaSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego la actividad ica correctamente.");
 					cancel();

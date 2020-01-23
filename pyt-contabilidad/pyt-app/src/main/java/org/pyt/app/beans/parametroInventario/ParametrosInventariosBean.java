@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.beans.abstracts.AListBasicBean;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
@@ -17,6 +15,8 @@ import com.pyt.service.dto.inventario.ParametroInventarioDTO;
 import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.AListBasicBean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -31,7 +31,8 @@ import javafx.scene.layout.HBox;
  * @since 22-06-2018
  */
 @FXMLFile(path = "view/parametroInventarios", file = "ListParametrosInventarios.fxml", nombreVentana = "Parametros del Sistema de inventarios")
-public class ParametrosInventariosBean extends AListBasicBean<ParametroInventarioDTO, ParametroInventarioDTO> implements ListCRUDBean {
+public class ParametrosInventariosBean extends AListBasicBean<ParametroInventarioDTO, ParametroInventarioDTO>
+		implements ListCRUDBean {
 	@Inject(resource = "com.pyt.service.implement.inventario.ParametroInventariosSvc")
 	private IParametroInventariosSvc parametrosSvc;
 	@FXML
@@ -60,7 +61,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 	private Button addGroup;
 	@FXML
 	private Button modifyGroup;
-	private DataTableFXML<ParametroInventarioDTO, ParametroInventarioDTO> lazyFiltrar;
+	private DataTableFXMLUtil<ParametroInventarioDTO, ParametroInventarioDTO> lazyFiltrar;
 	private ParametroInventarioDTO filtrarGrupo;
 	private ParametroInventarioDTO seleccionFiltro;
 	@FXML
@@ -84,7 +85,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 	}
 
 	public void lazy2() {
-		lazyFiltrar = new DataTableFXML<ParametroInventarioDTO, ParametroInventarioDTO>(paginador2, filtrar) {
+		lazyFiltrar = new DataTableFXMLUtil<ParametroInventarioDTO, ParametroInventarioDTO>(paginador2, filtrar) {
 
 			@Override
 			public Integer getTotalRows(ParametroInventarioDTO filter) {
@@ -100,7 +101,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 			public List<ParametroInventarioDTO> getList(ParametroInventarioDTO filter, Integer page, Integer rows) {
 				List<ParametroInventarioDTO> lista = new ArrayList<ParametroInventarioDTO>();
 				try {
-					lista = parametrosSvc.getParametros(filter, page - 1, rows);
+					lista = parametrosSvc.getParametros(filter, page, rows);
 				} catch (ParametroException e) {
 					error(e);
 				}
@@ -121,13 +122,13 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 
 	@Override
 	public void lazy() {
-		dataTable = new DataTableFXML<ParametroInventarioDTO, ParametroInventarioDTO>(paginador, tabla) {
+		dataTable = new DataTableFXMLUtil<ParametroInventarioDTO, ParametroInventarioDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(ParametroInventarioDTO filter) {
 				Integer count = 0;
 				try {
-					count = parametrosSvc.totalCount(getFilter());
+					count = parametrosSvc.totalCount(filter);
 				} catch (ParametroException e) {
 					logger.logger(e);
 					error(e);
@@ -139,7 +140,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 			public List<ParametroInventarioDTO> getList(ParametroInventarioDTO filter, Integer page, Integer rows) {
 				List<ParametroInventarioDTO> lista = new ArrayList<ParametroInventarioDTO>();
 				try {
-					lista = parametrosSvc.getParametros(getFilter(), page - 1, rows);
+					lista = parametrosSvc.getParametros(filter, page, rows);
 				} catch (ParametroException e) {
 					logger.logger(e);
 					error(e);
@@ -150,8 +151,12 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 			@Override
 			public ParametroInventarioDTO getFilter() {
 				ParametroInventarioDTO filtro = new ParametroInventarioDTO();
-				filtro.setNombre(nombre.getText());
-				filtro.setDescripcion(descripcion.getText());
+				if (!nombre.getText().isEmpty()) {
+					filtro.setNombre(nombre.getText());
+				}
+				if (!descripcion.getText().isEmpty()) {
+					filtro.setDescripcion(descripcion.getText());
+				}
 				if (StringUtils.isNotBlank(estado.getValue())) {
 					filtro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
 				}
@@ -209,7 +214,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 
 	@Override
 	public void createBtn() {
-		ParametroInventarioDTO dto = new ParametroInventarioDTO(); 
+		ParametroInventarioDTO dto = new ParametroInventarioDTO();
 		dto.setGrupo(seleccionFiltro.getCodigo());
 		getController(ParametrosInventariosCRUBean.class).load(dto);
 	}
@@ -225,17 +230,20 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 	@Override
 	public void deleteBtn() {
 		try {
-			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}",
+					"¿Desea eliminar los registros seleccionados?");
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;
+			if (!valid)
+				return;
 			registro = dataTable.getSelectedRow();
 			if (registro != null) {
-				parametrosSvc.delete(registro, userLogin);
+				parametrosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminado el parametro.");
 				dataTable.search();
 			} else {

@@ -1,26 +1,37 @@
 package org.pyt.app.beans.dinamico;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
+import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.GenericServiceException;
 
+import com.pyt.service.dto.ConceptoDTO;
+import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.DetalleContableDTO;
+import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import javafx.beans.property.SimpleObjectProperty;
+import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -31,9 +42,14 @@ import javafx.scene.layout.VBox;
  * @since 10-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "listDetalleContable.fxml", nombreVentana = "Lista de Detalles")
-public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
+public class ListaDetalleContableBean
+		extends AListGenericDinamicBean<DetalleContableDTO, DocumentosDTO, DetalleContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentosSvc;
+	@Inject
+	private IGenericServiceSvc<ConceptoDTO> conceptoSvc;
+	@Inject
+	private IGenericServiceSvc<CuentaContableDTO> cuentaContableSvc;
 	@FXML
 	private HBox paginador;
 	@FXML
@@ -43,17 +59,16 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	@FXML
 	private Button eliminar;
 	@FXML
-	private TableColumn<DetalleContableDTO, String> cuentaContable;
-	@FXML
-	private TableColumn<DetalleContableDTO, String> concepto;
-	@FXML
 	private Label sumatoria;
+	@FXML
+	private GridPane filterTable;
 	private VBox panelCentral;
 	private DetalleContableDTO filtro;
 	private DetalleContableDTO registro;
-	private DataTableFXML<DetalleContableDTO, DetalleContableDTO> table;
+	private DataTableFXMLUtil<DetalleContableDTO, DetalleContableDTO> table;
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
+	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@FXML
@@ -62,26 +77,77 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 		filtro = new DetalleContableDTO();
 		eliminar.setVisible(false);
 		editar.setVisible(false);
-		cuentaContable.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			if (e.getValue() != null && e.getValue().getCuentaContable() != null)
-				o.setValue(e.getValue().getCuentaContable().getNombre());
-			return o;
-		});
-		concepto.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> o = new SimpleObjectProperty();
-			if (e.getValue() != null && e.getValue().getConcepto() != null)
-				o.setValue(e.getValue().getConcepto().getNombre());
-			return o;
-		});
 		lazy();
+	}
+
+	private <D extends ADto> void loadInMapList(String name, List<D> rows) {
+		rows.stream().forEach(row -> mapListSelects.put(name, row));
+	}
+
+	@SuppressWarnings("unchecked")
+	private void genericsLoads() {
+		getListGenericsFields(TypeGeneric.FILTER).stream()
+				.filter(row -> Optional.ofNullable(row.getSelectNameGroup()).isPresent()).forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof ConceptoDTO) {
+								loadInMapList(row.getFieldName(), conceptoSvc.getAll(new ConceptoDTO()));
+							} else if (instanceClass instanceof CuentaContableDTO) {
+								loadInMapList(row.getFieldName(), cuentaContableSvc.getAll(new CuentaContableDTO()));
+							}
+						}
+
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (GenericServiceException e) {
+						logger().logger(e);
+					}
+				});
+	}
+
+	private void searchFilters() {
+		try {
+			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+			}
+			var documentos = new DocumentosDTO();
+			documentos.setClaseControlar(DetalleContableDTO.class);
+			documentos.setDoctype(tipoDocumento);
+			documentos.setFieldFilter(true);
+			genericFields = documentosSvc.getDocumentos(documentos);
+			genericsLoads();
+			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
+		} catch (Exception e) {
+			logger.logger(e);
+		}
+	}
+
+	private void searchColumns() {
+		try {
+			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+			}
+			var documentos = new DocumentosDTO();
+			documentos.setClaseControlar(DetalleContableDTO.class);
+			documentos.setDoctype(tipoDocumento);
+			documentos.setFieldColumn(true);
+			genericColumns = documentosSvc.getDocumentos(documentos);
+			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
+		} catch (Exception e) {
+			logger.logger(e);
+		}
 	}
 
 	/**
 	 * Se encarga de cargar la pagina del listado de detalles agregados
 	 */
 	private final void lazy() {
-		table = new DataTableFXML<DetalleContableDTO, DetalleContableDTO>(paginador, tabla) {
+		table = new DataTableFXMLUtil<DetalleContableDTO, DetalleContableDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(DetalleContableDTO filter) {
@@ -99,7 +165,7 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 				List<DetalleContableDTO> lista = new ArrayList<DetalleContableDTO>();
 				try {
 					lista = documentosSvc.getDetalles(filter, page - 1, rows);
-					sumatoria.setText(sumatoria(lista,"valor").toString());
+					sumatoria.setText(sumatoria(lista, "valor").toString());
 				} catch (DocumentosException e) {
 					error(e);
 				}
@@ -127,8 +193,7 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	/**
 	 * Se encarga de cargar la interfaz con los registros
 	 * 
-	 * @param tipoDocumento
-	 *            {@link ParametroDTO}
+	 * @param tipoDocumento {@link ParametroDTO}
 	 */
 	public final void load(VBox panel, ParametroDTO tipoDocumento, String codigoDocumento) throws Exception {
 		if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo()))
@@ -138,6 +203,8 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 		this.tipoDocumento = tipoDocumento;
 		this.codigoDocumento = codigoDocumento;
 		panelCentral = panel;
+		searchFilters();
+		searchColumns();
 		table.search();
 	}
 
@@ -187,19 +254,22 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 	 */
 	public final void eliminar() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ListaDetalleContableBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			controllerPopup(ConfirmPopupBean.class).load("#{ListaDetalleContableBean.delete}",
+					"¿Desea eliminar los registros seleccionados?");
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
-			if(!valid)return;
+		if (!valid)
+			return;
 		if (table.isSelected()) {
 			List<DetalleContableDTO> lista = table.getSelectedRows();
 			Integer i = 0;
 			for (DetalleContableDTO detalle : lista) {
 				try {
-					documentosSvc.delete(detalle, userLogin);
+					documentosSvc.delete(detalle, getUsuario());
 					i++;
 				} catch (DocumentosException e) {
 					error(e);
@@ -219,5 +289,48 @@ public class ListaDetalleContableBean extends ABean<DetalleContableDTO> {
 			eliminar.setVisible(true);
 			editar.setVisible(true);
 		}
+	}
+
+	@Override
+	public void loadParameters(String... tipoDocumento) {
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return filterTable;
+	}
+
+	@Override
+	public DetalleContableDTO getInstanceDto(TypeGeneric typeGeneric) {
+		return filtro;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return mapListSelects;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 2;
+	}
+
+	@Override
+	public Class<DetalleContableDTO> getClazz() {
+		return DetalleContableDTO.class;
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+	}
+
+	@Override
+	public TableView<DetalleContableDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public DataTableFXMLUtil<DetalleContableDTO, DetalleContableDTO> getTable() {
+		return table;
 	}
 }

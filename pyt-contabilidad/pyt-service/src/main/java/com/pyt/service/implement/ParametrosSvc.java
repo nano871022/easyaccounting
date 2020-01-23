@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -15,6 +15,11 @@ import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.system.UsuarioDTO;
+
 public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	protected IQuerySvc querySvc;
@@ -23,16 +28,14 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 		List<ParametroDTO> lista2 = new ArrayList<ParametroDTO>();
 		if (dto == null)
-			throw new ParametroException("El objeto empresa se encuentra vacio.");
+			throw new ParametroException("El objeto parametro se encuentra vacio.");
 		try {
 			lista = querySvc.gets(dto, init, end);
-			if(dto.getGrupo().equalsIgnoreCase("*")) {
-				for(ParametroDTO dt : lista) {
-					if(dt.getGrupo() != null && dt.getGrupo().equalsIgnoreCase("*")) {
-						lista2.add(dt);
-					}
-				}
-				if(lista2.size() > 0)return lista2;
+			if ("*".equalsIgnoreCase(dto.getGrupo())) {
+				lista.stream().filter(filter -> filter.getGrupo() != null && "*".equalsIgnoreCase(filter.getGrupo()))
+						.forEach(row -> lista2.add(row));
+				if (lista2.size() > 0)
+					return lista2;
 			}
 		} catch (QueryException e) {
 			throw new ParametroException(e.getMensage(), e);
@@ -43,7 +46,7 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 	public List<ParametroDTO> getAllParametros(ParametroDTO dto) throws ParametroException {
 		List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 		if (dto == null)
-			throw new ParametroException("El objeto empresa se encuentra vacio.");
+			throw new ParametroException("El objeto parametro se encuentra vacio.");
 		try {
 			lista = querySvc.gets(dto);
 		} catch (QueryException e) {
@@ -113,19 +116,22 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Override
 	public List<ParametroGrupoDTO> getParametroGrupo(ParametroGrupoDTO dto) throws ParametroException {
 		List<ParametroGrupoDTO> lista = new ArrayList<ParametroGrupoDTO>();
-		if(dto == null)throw new ParametroException("No se suministro el parametro grupo para realizar el filtro.");
+		if (dto == null)
+			throw new ParametroException("No se suministro el parametro grupo para realizar el filtro.");
 		try {
 			lista = querySvc.gets(dto);
 		} catch (QueryException e) {
-			throw new ParametroException("No se logro obtner los grupos asociados a parametros.",e);
+			throw new ParametroException("No se logro obtener los grupos asociados a parametros.", e);
 		}
 		return lista;
 	}
 
 	@Override
 	public ParametroGrupoDTO insert(ParametroGrupoDTO dto, UsuarioDTO user) throws ParametroException {
-		if(dto == null)throw new ParametroException("Se encontro el parameto grupo vacio.");
-		if(user == null)throw new ParametroException("Se encontro el usuario vacio.");
+		if (dto == null)
+			throw new ParametroException("Se encontro el parameto grupo vacio.");
+		if (user == null)
+			throw new ParametroException("Se encontro el usuario vacio.");
 		try {
 			dto = querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -134,10 +140,36 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 		return dto;
 	}
 
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso Parametros", descripcion = "Ingreso de servicios de parametros", tipo = kind.PUBLIC, type = Type.CREATE)
+	@Override
+	public ParametroDTO insertService(ParametroDTO dto, UsuarioDTO user) throws ParametroException {
+		if (dto == null)
+			throw new ParametroException("No se suministro el objeto de parametros para insertar.");
+		if (user == null)
+			throw new ParametroException("Se encontro el usuario vacio.");
+		try {
+			if (StringUtils.isNotBlank(dto.getGrupo()) && !dto.getGrupo().contains("*")) {
+				var parametro = new ParametroDTO();
+				parametro.setNombre(dto.getGrupo());
+				parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				parametro = querySvc.get(parametro);
+				dto.setGrupo(parametro.getCodigo());
+			}
+			if (!querySvc.insert(dto, user)) {
+				throw new ParametroException("No se realizo el ingreso del registro.");
+			}
+		} catch (QueryException e) {
+			throw new ParametroException("Se presento un problema en el ingreso del registro.", e);
+		}
+		return dto;
+	}
+
 	@Override
 	public void update(ParametroGrupoDTO dto, UsuarioDTO user) throws ParametroException {
-		if(dto == null)throw new ParametroException("Se encontro el parameto grupo vacio.");
-		if(user == null)throw new ParametroException("Se encontro el usuario vacio.");
+		if (dto == null)
+			throw new ParametroException("Se encontro el parameto grupo vacio.");
+		if (user == null)
+			throw new ParametroException("Se encontro el usuario vacio.");
 		try {
 			querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -147,8 +179,10 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 
 	@Override
 	public void delete(ParametroGrupoDTO dto, UsuarioDTO user) throws ParametroException {
-		if(dto == null)throw new ParametroException("Se encontro el parameto grupo vacio.");
-		if(user == null)throw new ParametroException("Se encontro el usuario vacio.");
+		if (dto == null)
+			throw new ParametroException("Se encontro el parameto grupo vacio.");
+		if (user == null)
+			throw new ParametroException("Se encontro el usuario vacio.");
 		try {
 			querySvc.del(dto, user);
 		} catch (QueryException e) {
@@ -158,13 +192,13 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 
 	@Override
 	public List<ParametroDTO> getAllParametros(ParametroDTO dto, String grupo) throws ParametroException {
-		if(dto == null) {
+		if (dto == null) {
 			throw new ParametroException("No se suministro el parametro para aplicar el filtro de busqueda.");
 		}
 		String grupoP = getIdByParametroGroup(grupo);
-		if(StringUtils.isNotBlank(grupoP)) {
+		if (StringUtils.isNotBlank(grupoP)) {
 			dto.setGrupo(grupoP);
-		}else {
+		} else {
 			dto.setGrupo(grupo);
 		}
 		return getAllParametros(dto);
@@ -173,14 +207,14 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Override
 	public String getIdByParametroGroup(String grupo) throws ParametroException {
 		ParametroGrupoDTO pgrupo = new ParametroGrupoDTO();
-		if(StringUtils.isNotBlank(grupo)) {
+		if (StringUtils.isNotBlank(grupo)) {
 			pgrupo.setGrupo(grupo);
 			List<ParametroGrupoDTO> list = getParametroGrupo(pgrupo);
-			if(list != null && list.size() == 1) {
+			if (list != null && list.size() == 1) {
 				pgrupo = list.get(0);
 			}
 		}
-		if(pgrupo != null && StringUtils.isNotBlank(pgrupo.getCodigo())) {
+		if (pgrupo != null && StringUtils.isNotBlank(pgrupo.getCodigo())) {
 			return pgrupo.getParametro();
 		}
 		return null;

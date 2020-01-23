@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.BancoException;
 
@@ -14,6 +13,7 @@ import com.pyt.service.interfaces.IBancosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -182,11 +182,11 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					bancoSvc.update(registro, userLogin);
+					bancoSvc.update(registro, getUsuario());
 					notificar("Se guardo el banco correctamente.");
 					cancel();
 				} else {
-					bancoSvc.insert(registro, userLogin);
+					bancoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el banco correctamente.");
 					cancel();

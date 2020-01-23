@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.constants.CuentaContableConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
@@ -17,6 +16,7 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -129,11 +129,11 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					documentoSvc.update(registro, userLogin);
+					documentoSvc.update(registro, getUsuario());
 					notificar("Se guardo el concepto correctamente.");
 					cancel();
 				} else {
-					documentoSvc.insert(registro, userLogin);
+					documentoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el concepto correctamente.");
 					cancel();

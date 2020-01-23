@@ -1,6 +1,6 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -10,6 +10,14 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 public class PaisDTO extends ADto {
 	private static final long serialVersionUID = -7715514480948023886L;
 	private String nombre;
+	private ParametroDTO estado;
+	
+	public ParametroDTO getEstado() {
+		return estado;
+	}
+	public void setEstado(ParametroDTO estado) {
+		this.estado = estado;
+	}
 	public String getNombre() {
 		return nombre;
 	}

@@ -2,11 +2,12 @@ package com.pyt.service.interfaces.inventarios;
 
 import java.util.List;
 
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.inventario.ParametroGrupoInventarioDTO;
 import com.pyt.service.dto.inventario.ParametroInventarioDTO;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se encarga de realizar crud sobre los registros de parametros

@@ -5,10 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.DataTableFXML;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CentroCostosException;
@@ -20,6 +17,9 @@ import com.pyt.service.interfaces.ICentroCostosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -59,7 +59,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	private HBox paginador;
 	@FXML
 	private TableColumn<CentroCostoDTO, String> estados;
-	private DataTableFXML<CentroCostoDTO, CentroCostoDTO> dt;
+	private DataTableFXMLUtil<CentroCostoDTO, CentroCostoDTO> dt;
 	private List<ParametroDTO> listEstados;
 	private final static String FIELD_NAME = "nombre";
 
@@ -100,7 +100,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<CentroCostoDTO, CentroCostoDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<CentroCostoDTO, CentroCostoDTO>(paginador, tabla) {
 			@Override
 			public List<CentroCostoDTO> getList(CentroCostoDTO filter, Integer page, Integer rows) {
 				List<CentroCostoDTO> lista = new ArrayList<CentroCostoDTO>();
@@ -172,7 +172,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 			if(!valid)return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				centroCostoSvc.delete(registro, userLogin);
+				centroCostoSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminaro la empresa.");
 				dt.search();
 			} else {
@@ -196,7 +196,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<CentroCostoDTO, CentroCostoDTO> getDt() {
+	public DataTableFXMLUtil<CentroCostoDTO, CentroCostoDTO> getDt() {
 		return dt;
 	}
 }

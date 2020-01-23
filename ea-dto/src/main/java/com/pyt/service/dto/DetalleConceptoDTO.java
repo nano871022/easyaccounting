@@ -2,7 +2,7 @@ package com.pyt.service.dto;
 
 import java.math.BigDecimal;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 /**
  * Indica el concepto del detalle del concepto de un documento
  * @author alejandro parra

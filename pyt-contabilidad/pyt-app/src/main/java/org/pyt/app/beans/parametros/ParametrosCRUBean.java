@@ -1,23 +1,26 @@
 package org.pyt.app.beans.parametros;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidFields;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -97,21 +100,22 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		} catch (ValidateValueException e) {
 			error(e);
 		}
-		registro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
+		registro.setEstado(String.valueOf(ParametroConstants.mapa_estados_parametros.get(estado.getValue())));
 		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
 			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroConstants.MAPA_GRUPOS));
 		}
 		buttones_update();
 	}
+
 	/**
 	 * Verifica si un boton se muestra o no
 	 */
 	private final void buttones_update() {
-		if(StringUtils.isBlank(registro.getCodigo())) {
+		if (StringUtils.isBlank(registro.getCodigo())) {
 			insert.setVisible(true);
 			update.setVisible(false);
 			delete.setVisible(false);
-		}else {
+		} else {
 			insert.setVisible(false);
 			update.setVisible(true);
 			delete.setVisible(true);
@@ -121,8 +125,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	/**
 	 * Se encarga de cargar el parametro para poder realizar crud sobre el registro
 	 * 
-	 * @param dto
-	 *            {@link ParametroDTO}
+	 * @param dto {@link ParametroDTO}
 	 */
 	public void load(ParametroDTO dto) {
 		if (StringUtils.isBlank(dto.getGrupo()) && (dto == null || StringUtils.isBlank(dto.getCodigo()))) {
@@ -198,7 +201,10 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		if (registro.getOrden() != null) {
 			orden.setText(registro.getOrden().toString());
 		}
-		SelectList.selectItem(estado, ParametroConstants.mapa_estados_parametros, registro.getEstado());
+		if (registro.getEstado() != null) {
+			SelectList.selectItem(estado, ParametroConstants.mapa_estados_parametros,
+					Integer.valueOf(registro.getEstado()));
+		}
 		if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getCodigo())) {
 			if (cGrupo.isVisible() && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 				SelectList.selectItem(cGrupo, ParametroConstants.MAPA_GRUPOS, parametroGrupo.getGrupo());
@@ -214,13 +220,17 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getDescripcion());
-		valid &= StringUtils.isNotBlank(registro.getGrupo());
-		valid &= StringUtils.isNotBlank(registro.getEstado());
+		valid &= ValidFields.valid(nombre, true, 2, 100, i18n().valueBundle("valid.parameter.name.is.empty"));
+		valid &= ValidFields.valid(descripcion, true, 2, 100,
+				i18n().valueBundle("valid.parameter.description.is.empty"));
+		if(!(Optional.ofNullable(grupo.getText()).isPresent() && Optional.ofNullable(grupo.getText()).get().contains("*"))) {
+			valid &= ValidFields.valid(grupo, true, 2, 100, i18n().valueBundle("valid.parameter.group.is.empty"));
+		}
+		valid &= ValidFields.valid(estado, true, i18n().valueBundle("valid.parameter.state.is.empty"));
 		if (!registro.getGrupo().contentEquals("*")) {
-			valid &= StringUtils.isNotBlank(registro.getValor());
-			valid &= registro.getOrden() != null;
+			valid &= ValidFields.numeric(valor, true, new BigDecimal("1"), new BigDecimal("10000000000"),
+					i18n().valueBundle("valid.parameter.value.is.empty"));
+			valid &= ValidFields.numeric(valor, true, 1, 1000, i18n().valueBundle("valid.parameter.order.is.empty"));
 		}
 		return valid;
 	}
@@ -233,10 +243,10 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		try {
 			if (valid()) {
 				validParametroGrupo();
-				registro = parametroSvc.insert(registro, userLogin);
+				registro = parametroSvc.insert(registro, getUsuario());
 				if (StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
-					parametroGrupo = parametroSvc.insert(parametroGrupo, userLogin);
+					parametroGrupo = parametroSvc.insert(parametroGrupo, getUsuario());
 				}
 				codigo.setText(registro.getCodigo());
 				notificar("Se ha creado el parametro correctamente.");
@@ -253,8 +263,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	/**
 	 * Se encarga de validar el parametro grupo
 	 * 
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final void validParametroGrupo() throws Exception {
 		if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
@@ -263,7 +272,8 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			List<ParametroGrupoDTO> lista = parametroSvc.getParametroGrupo(pGrupo);
 			if (lista.size() > 0) {
 				for (ParametroGrupoDTO grupo : lista) {
-					if(StringUtils.isBlank(grupo.getParametro()))continue;
+					if (StringUtils.isBlank(grupo.getParametro()))
+						continue;
 					ParametroDTO parametro = new ParametroDTO();
 					parametro.setCodigo(grupo.getParametro());
 					if (grupo != null && registro != null && StringUtils.isNotBlank(registro.getCodigo())
@@ -271,16 +281,11 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 						continue;
 					}
 					List<ParametroDTO> parametros = parametroSvc.getAllParametros(parametro);
-					for(ParametroDTO paramet : parametros) {
-						System.out.println(paramet.getCodigo()+" "+paramet.getNombre());
-					}
-					System.out.println(parametro.toStringAll());//Parametroekuv40
-					System.out.println(parametros.toString());
 					if (parametros.size() > 0) {
 						throw new Exception("Ya se encuentra asignado este Grupo " + parametroGrupo.getGrupo() + " a "
 								+ parametros.get(0).getNombre());
 					} else {
-						parametroSvc.delete(grupo, userLogin);
+						parametroSvc.delete(grupo, getUsuario());
 					}
 				}
 			}
@@ -295,10 +300,10 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		try {
 			if (valid()) {
 				validParametroGrupo();
-				parametroSvc.update(registro, userLogin);
+				parametroSvc.update(registro, getUsuario());
 				if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getGrupo())) {
 					parametroGrupo.setParametro(registro.getCodigo());
-					parametroSvc.update(parametroGrupo, userLogin);
+					parametroSvc.update(parametroGrupo, getUsuario());
 				}
 				notificar("Se ha modificado el parametro correctamente.");
 			} else {
@@ -317,8 +322,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	@SuppressWarnings("unchecked")
 	public void deleteBtn() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}",
-					"¿Desea eliminar el registro?");
+			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}", "¿Desea eliminar el registro?");
 			;
 		} catch (LoadAppFxmlException e) {
 			error(e);
@@ -331,9 +335,9 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					if (parametroGrupo != null && StringUtils.isNotBlank(parametroGrupo.getCodigo())) {
-						parametroSvc.delete(parametroGrupo, userLogin);
+						parametroSvc.delete(parametroGrupo, getUsuario());
 					}
-					parametroSvc.delete(registro, userLogin);
+					parametroSvc.delete(registro, getUsuario());
 					notificar("El parametro fue eliminado correctamente.");
 					cancelBtn();
 				} else {

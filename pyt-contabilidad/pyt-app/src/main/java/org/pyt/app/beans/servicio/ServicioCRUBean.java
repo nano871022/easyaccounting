@@ -2,15 +2,15 @@ package org.pyt.app.beans.servicio;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.ServiciosException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.interfaces.IServiciosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -71,7 +71,9 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 		codigo.setText(registro.getCodigo());
 		nombre.setText(registro.getNombre());
 		descripcion.setText(registro.getDescripcion());
-		valorManoObra.setText(String.valueOf(registro.getValorManoObra()));
+		if (registro.getValorManoObra() != null) {
+			valorManoObra.setText(String.valueOf(registro.getValorManoObra()));
+		}
 	}
 
 	public void load(ServicioDTO dto) {
@@ -103,11 +105,11 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					servicioSvc.update(registro, userLogin);
+					servicioSvc.update(registro, getUsuario());
 					notificar("Se guardo el servicio correctamente.");
 					cancel();
 				} else {
-					servicioSvc.insert(registro, userLogin);
+					servicioSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el servicio correctamente.");
 					cancel();

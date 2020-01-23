@@ -2,9 +2,10 @@ package com.pyt.service.interfaces;
 
 import java.util.List;
 
-import org.pyt.common.common.ADto;
-import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.QuerysPopupException;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 /**
  * Se usa para realizar consultas sobre la base de datos por medio del popup

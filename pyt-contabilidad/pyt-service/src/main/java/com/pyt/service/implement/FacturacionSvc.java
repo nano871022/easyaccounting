@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.FacturacionException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -13,6 +12,8 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.FacturaDTO;
 import com.pyt.service.interfaces.IFacturacionSvc;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class FacturacionSvc extends Services implements IFacturacionSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")

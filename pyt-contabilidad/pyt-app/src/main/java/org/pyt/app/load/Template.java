@@ -5,7 +5,6 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
-import org.pyt.common.common.LoadAppFxml;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
@@ -14,6 +13,7 @@ import org.pyt.common.interfaces.IComunicacion;
 import org.pyt.common.reflection.Reflection;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;

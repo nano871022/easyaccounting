@@ -2,7 +2,7 @@ package com.pyt.service.dto;
 
 import java.util.List;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 public class AsociacionArchivoDTO extends ADto {
 	private static final long serialVersionUID = 4379123174272367940L;

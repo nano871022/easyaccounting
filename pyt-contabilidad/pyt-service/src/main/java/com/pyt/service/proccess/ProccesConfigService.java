@@ -5,12 +5,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
-import org.pyt.common.common.ADto;
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
+import org.pyt.common.constants.DataPropertiesConstants;
+import org.pyt.common.constants.PropertiesConstants;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.ProccesConfigServiceException;
 import org.pyt.common.exceptions.ReflectionException;
+import org.pyt.common.properties.PropertiesUtils;
 import org.pyt.common.reflection.ReflectionUtils;
 
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
@@ -23,7 +28,19 @@ import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProc
  * @since 19/11/2018
  */
 public final class ProccesConfigService {
-
+	private Log logger = Log.Log(this.getClass());
+	private String servicePackageList;
+	
+	public ProccesConfigService() {
+		try {
+		servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load().getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
+		if(StringUtils.isBlank(servicePackageList)) {
+			servicePackageList = servicePackageList;
+		}
+		}catch(Exception e) {
+			logger.logger(e);
+		}
+	}
 	/**
 	 * Se encarga de obtener el objeto dentro de los parametros en el cual se encuentra el campo
 	 * @param servicio {@link String}
@@ -77,7 +94,7 @@ public final class ProccesConfigService {
 	public final Method getMetodo(String servicio) throws ProccesConfigServiceException {
 		AbstractListFromProccess<ServicePOJO> listServices;
 		try {
-			listServices = (AbstractListFromProccess) this.getClass().forName(AppConstants.PATH_LIST_SERVICE)
+			listServices = (AbstractListFromProccess) this.getClass().forName(servicePackageList)
 					.getConstructor().newInstance();
 			for (ServicePOJO service : listServices.getList()) {
 				if ((service.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + service.getAlias()).contains(servicio)) {
@@ -104,7 +121,7 @@ public final class ProccesConfigService {
 	public final <T extends Object> T getService(String servicio) throws ProccesConfigServiceException {
 		try {
 			AbstractListFromProccess<ServicePOJO> listServices = (AbstractListFromProccess) this.getClass()
-					.forName(AppConstants.PATH_LIST_SERVICE).getConstructor().newInstance();
+					.forName(servicePackageList).getConstructor().newInstance();
 			for (ServicePOJO service : listServices.getList()) {
 				if ((service.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + service.getAlias()).contains(servicio)) {
 					return (T) service.getClasss().getConstructor().newInstance();

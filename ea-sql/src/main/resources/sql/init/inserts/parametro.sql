@@ -1,0 +1,14 @@
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription) VALUES ('parametro2019060700001','2019-06-07','Tipo de monedas','Monedas mmundiales');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019060700002','2019-06-07','COP','Moneda Colombiana','parametro2019060700001');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019060700003','2019-06-07','DOLAR','Moneda Estado Unidense','parametro2019060700001');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription) VALUES ('parametro2019060700004','2019-06-07','Estado Pais','Estado Activacion Pais');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019060700005','2019-06-07','Activo','Estado Activado','parametro2019060700004');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019060700006','2019-06-07','Inactivo','Estado Inactivo','parametro2019060700004');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400007','2019-07-24','Tipo de Documento','tipos de documento dinamicos.','*');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400008','2019-07-24','Documento X Pagar','Documento dinámico por pagar.','parametro2019072400007');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400009','2019-07-24','Documento X Cobrar','Documento dinámico por cobrar.','parametro2019072400007');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400010','2019-07-24','Factura','Documento dinámico tipo factura','parametro2019072400007');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400011','2019-07-24','Tipo Documento Personas','Tipos de documentos personas y empresas.','*');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400012','2019-07-24','CC','Cedula de ciudadania','parametro2019072400011');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400013','2019-07-24','NIT','Tipo de identificación para empresas}','parametro2019072400011');
+INSERT INTO TBL_PARAMETER (scode,dcreate,sname,sdescription,sgroup) VALUES ('parametro2019072400014','2019-07-24','Pasaporte','Tipo de identificación para extrangeros','parametro2019072400011');

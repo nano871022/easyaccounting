@@ -16,12 +16,17 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.compile.version>10</project.build.compile.version>
 		<project.version>1.2.1-BETA</project.version>
-<!-- 		<project.version>0.0.1-SNAPSHOT</project.version> -->
-<!-- 		<project.scope>runtime</project.scope> -->
-<!-- USED FOR COMPILATION, TO BUILD VERSION  -->
+		<!-- <project.version>0.0.1-SNAPSHOT</project.version> -->
+		<!-- <project.scope>runtime</project.scope> -->
+		<!-- USED FOR COMPILATION, TO BUILD VERSION -->
 		<project.scope>provided</project.scope>
-<!-- 		<project.scope>compile</project.scope> -->
-<!-- 		<project.scope>system</project.scope> -->
+		<!-- <project.scope>compile</project.scope> -->
+		<!-- <project.scope>system</project.scope> -->
+<!-- 		<project.connect.model>ea-file-bin</project.connect.model> -->
+<!-- 		<project.connect.model>ea-hibernate</project.connect.model> -->
+<!-- 		<project.connect.model>ea-mybatis</project.connect.model> -->
+		<project.connect.model>ea-gdb</project.connect.model>
+		<project.connect.version>${project.version}</project.connect.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -45,8 +50,15 @@
 		<module>../ea-poi</module>
 		<module>pyt-common</module>
 		<module>pyt-query</module>
+		<module>ea-hibernate</module>
+		<module>../ea-file-bin</module>
+		<module>../ea-loader</module>
+		<module>../ea-write-logger</module>
+		<module>ea-mybatis</module>
+		<module>ea-gdb</module>
 		<module>pyt-service</module>
 		<module>pyt-app</module>
+		<module>../ea-sql</module>
 	</modules>
 	<build>
 		<plugins>

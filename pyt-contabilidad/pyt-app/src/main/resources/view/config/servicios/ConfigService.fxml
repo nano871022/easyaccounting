@@ -57,12 +57,22 @@
                     </TableView>
                     <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="479.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                       <children>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addMarcador" onMouseClicked="#addMarcador" text="Agregar">
+                        <Button fx:id="btnAddMark" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addMarcador" onMouseClicked="#addMarcador" text="Agregar">
+                          <HBox.margin>
+                            <Insets right="5.0" />
+                          </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnUpdateMark" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updMarcador" text="%fxml.btn.update">
                           <HBox.margin>
                             <Insets right="5.0" />
                           </HBox.margin>
                         </Button>
                         <Button fx:id="btnEliminar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#delMarcador" text="Eliminar">
+                          <HBox.margin>
+                            <Insets left="5.0" />
+                          </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnLimpiar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#cleanMarcador" text="%fxml.btn.clean">
                           <HBox.margin>
                             <Insets left="5.0" />
                           </HBox.margin>
@@ -74,8 +84,14 @@
                         <Insets right="25.0" />
                       </GridPane.margin>
                     </Label>
-                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <TextField fx:id="nameMarcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.order" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField fx:id="orderMarcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                      <GridPane.margin>
+                        <Insets right="15.0" />
+                      </GridPane.margin>
+                    </TextField>
+                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Marcador" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                    <TextField fx:id="nameMarcador" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="1">
                       <GridPane.margin>
                         <Insets right="15.0" />
                       </GridPane.margin>

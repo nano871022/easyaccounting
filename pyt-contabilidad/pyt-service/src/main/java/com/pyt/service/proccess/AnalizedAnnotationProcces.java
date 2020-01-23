@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.proccess.DateTime;
 import org.pyt.common.annotation.proccess.IsNotBlank;
 import org.pyt.common.annotation.proccess.Size;
@@ -13,11 +14,10 @@ import org.pyt.common.annotation.proccess.Unique;
 import org.pyt.common.annotation.proccess.Valid;
 import org.pyt.common.annotation.proccess.ValueInObject;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ADto;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.reflection.Reflection;
 import org.pyt.common.reflection.ReflectionUtils;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.query.interfaces.IQuerySvc;
 
@@ -54,16 +54,12 @@ public class AnalizedAnnotationProcces implements Reflection {
 	 * anotacion en el campo, lo que se dene es ingresar el valor dentro del campo
 	 * indicado.
 	 * 
-	 * @param dto
-	 *            {@link ADto} extends
-	 * @param field
-	 *            {@link String} nombre de campo original
-	 * @param value
-	 *            {@link Object} valor a ingresar
+	 * @param dto   {@link ADto} extends
+	 * @param field {@link String} nombre de campo original
+	 * @param value {@link Object} valor a ingresar
 	 * @return {@link ADto} el mismo que el ingresado en los parametros pero con los
 	 *         valores ingresados
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings("unchecked")
 	public final <T extends ADto, V extends Object, I extends ADto> T valueInObject(T dto, String field, V value)
@@ -87,11 +83,9 @@ public class AnalizedAnnotationProcces implements Reflection {
 	 * verificando si los campos con anotacion {@link IsNotBlank} el campo con la
 	 * anotacion no debe encontrarse vacio o nulo
 	 * 
-	 * @param dto
-	 *            {@link ADto} extends
+	 * @param dto {@link ADto} extends
 	 * @return {@link ADto} extends
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings("unchecked")
 	public final <T extends ADto, V extends Object> Boolean isNotBlank(T dto) throws Exception {
@@ -120,15 +114,11 @@ public class AnalizedAnnotationProcces implements Reflection {
 	/**
 	 * Se encarga de validar en el dto el campo fecha anotado con {@link DateTime}
 	 * 
-	 * @param dto
-	 *            {@link ADto} extends
-	 * @param fieldName
-	 *            {@link String}
-	 * @param value
-	 *            {@link Object} extends
+	 * @param dto       {@link ADto} extends
+	 * @param fieldName {@link String}
+	 * @param value     {@link Object} extends
 	 * @return {@link Object}
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public final <T extends ADto, V extends Object> T DateTime(T dto, String fieldName, V value) throws Exception {
@@ -152,17 +142,14 @@ public class AnalizedAnnotationProcces implements Reflection {
 	 * Se encarga de validar si el campos de texto y numericos con anotacion
 	 * {@link Size}, para verificar que cumpla las reglas indicadas
 	 * 
-	 * @param dto
-	 *            {@link ADto}
-	 * @param fieldName
-	 *            {@link String}
-	 * @throws {@link
-	 *             Exception}
+	 * @param dto       {@link ADto}
+	 * @param fieldName {@link String}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings({ "unchecked", "unused" })
 	public final <T extends ADto> void size(T dto, String fieldName) throws Exception {
 		Class<T> clazz = (Class<T>) dto.getClass();
-		Field field = clazz.getDeclaredField(fieldName);
+		Field field = ReflectionUtils.instanciar().getField(clazz, fieldName);
 		if (field.isAnnotationPresent(Size.class)) {
 			Size size = field.getDeclaredAnnotation(Size.class);
 			ValidateValues vv = new ValidateValues();
@@ -186,11 +173,9 @@ public class AnalizedAnnotationProcces implements Reflection {
 	 * Se encarga de valida el dto todass las anotaciones que tengan la anotacion
 	 * Valid, con la cual se verifica el valor
 	 * 
-	 * @param dto
-	 *            {@link ADto} extends
+	 * @param dto {@link ADto} extends
 	 * @return {@link ADto} extends
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public final <T extends ADto, I extends ADto> T valid(T dto) throws Exception {
@@ -248,7 +233,7 @@ public class AnalizedAnnotationProcces implements Reflection {
 						T result = (T) list.get(0);
 						if (!(instancewait != null && instancewait instanceof ADto)) {
 							dto.set(fieldName, result.get(fieldOut));
-						}else {
+						} else {
 							dto.set(fieldName, result);
 						}
 					} else {
@@ -263,7 +248,7 @@ public class AnalizedAnnotationProcces implements Reflection {
 	public final List<String> getMarkBlank() {
 		return markBlank;
 	}
-	
+
 	public final Log logger() {
 		return log;
 	}

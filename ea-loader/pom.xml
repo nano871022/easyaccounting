@@ -10,14 +10,6 @@
 	<artifactId>ea-loader</artifactId>
 	<version>${project.version}</version>
 	<name>loader </name>
-	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.8.1</version>
-		</dependency>
-	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

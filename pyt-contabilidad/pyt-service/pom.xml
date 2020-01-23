@@ -18,6 +18,7 @@
 			<version>${project.version}</version>
 			<scope>${project.scope}</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-loader</artifactId>
@@ -41,12 +42,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-exceptions</artifactId>
 			<version>${project.version}</version>
@@ -68,6 +63,11 @@
 			<artifactId>arquitetura-anotaciones</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>${project.connect.model}</artifactId>
+			<version>${project.connect.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -26,7 +26,6 @@ public class GenConfigServices {
 	private IConfigMarcadorServicio configMarcadorServicio;
 	private String nombreConfiguracion;
 	private String nameFiler;
-	
 
 	public GenConfigServices(IConfigMarcadorServicio config) {
 		if (configMarcadorServicio == null) {
@@ -38,12 +37,13 @@ public class GenConfigServices {
 	 * Obtiene la lista de campos de busqueda apartir del nombre de configuración
 	 * 
 	 * @return {@link List} < {@link ServicioCampoBusquedaDTO} >
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	private final List<ServicioCampoBusquedaDTO> getServicioCampo() throws Exception {
 		try {
-			return configMarcadorServicio.getServiciosCampoBusqueda(nombreConfiguracion);
+			var configuracion = new ConfiguracionDTO();
+			configuracion.setConfiguracion(nombreConfiguracion);
+			return configMarcadorServicio.getServiciosCampoBusqueda(configuracion);
 		} catch (MarcadorServicioException e) {
 			throw new Exception(e);
 		}
@@ -54,8 +54,7 @@ public class GenConfigServices {
 	 * busqueda
 	 * 
 	 * @return {@link Map} < {@link String} , {@link List} < {@link String} > >
-	 * @throws {@link
-	 *             Exception}
+	 * @throws {@link Exception}
 	 */
 	public final String[] getConfigAsociar() throws Exception {
 		Set<String> campos = new HashSet<String>();
@@ -77,8 +76,10 @@ public class GenConfigServices {
 		Map<String, Map<String, Object>> campoValorServ = new HashMap<String, Map<String, Object>>();
 		List<Object> list = new ArrayList<Object>();
 		Set<String> sets = busqueda.keySet();
+		var configuracion = new ConfiguracionDTO();
+		configuracion.setConfiguracion(nombreConfig);
 		List<ServicioCampoBusquedaDTO> lstServFieldSearch = configMarcadorServicio
-				.getServiciosCampoBusqueda(nombreConfig);
+				.getServiciosCampoBusqueda(configuracion);
 		for (ServicioCampoBusquedaDTO servFieldSearch : lstServFieldSearch) {
 			Map<String, Object> campoValor = campoValorServ.get(servFieldSearch.getServicio());
 			if (campoValor == null) {
@@ -106,8 +107,7 @@ public class GenConfigServices {
 	/**
 	 * Se encarga de configurar el nombre de la configuración
 	 * 
-	 * @param nombreConfiguracion
-	 *            {@link String}
+	 * @param nombreConfiguracion {@link String}
 	 */
 	public final void setNombreConfiguracion(String nombreConfiguracion) {
 		this.nombreConfiguracion = nombreConfiguracion;
@@ -119,7 +119,7 @@ public class GenConfigServices {
 			dto.setConfiguracion(nombreConfiguracion);
 			List<ConfiguracionDTO> lista = configMarcadorServicio.getConfiguraciones(dto);
 			if (lista != null && lista.size() > 0) {
-				nameFiler =  lista.get(0).getArchivo();
+				nameFiler = lista.get(0).getArchivo();
 			}
 		}
 		return nameFiler;

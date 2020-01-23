@@ -1,32 +1,36 @@
 package org.pyt.app.beans.dinamico;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ADto;
 import org.pyt.common.common.SelectList;
-import org.pyt.common.common.ValidateValues;
+import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.StylesPrincipalConstant;
+import org.pyt.common.constants.languages.Documento;
 import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.ParametroException;
-import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 
-import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
+import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.interfaces.IDocumentosSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
+import com.pyt.service.interfaces.IEmpresasSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -35,36 +39,52 @@ import javafx.scene.layout.VBox;
  * @author Alejandro Parra
  * @since 07-07-2018
  */
-@FXMLFile(path = "view/dinamico", file = "formulario.fxml",name="DocumentoDinamico")
-public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
-	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
-	private IParametrosSvc parametrosSvc;
-	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
-	private IDocumentosSvc documentoSvc;
+@FXMLFile(path = "view/dinamico", file = "formulario.fxml", name = "DocumentoDinamico")
+public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
+	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
+	private IEmpresasSvc empresasSvc;
 	@FXML
 	private VBox central;
 	@FXML
 	private Label titulo;
 	@FXML
-	private ChoiceBox<String> tipoDocumentos;
+	private ChoiceBox<ParametroDTO> tipoDocumentos;
 	private ParametroDTO tipoDocumento;
 	private List<ParametroDTO> listTipoDocumento;
 	private ValidateValues valid;
 
+	private GridPane gridPane;
+
 	@FXML
 	public void initialize() {
 		super.initialize();
+		gridPane = new GridPane();
+		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		valid = new ValidateValues();
 		registro = new DocumentoDTO();
 		tipoDocumento = new ParametroDTO();
 		try {
-			listTipoDocumento = parametrosSvc.getAllParametros(tipoDocumento, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+			listTipoDocumento = parametroSvc.getAllParametros(tipoDocumento, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 		} catch (ParametroException e) {
-			error(e);
+			this.error(e);
 		}
 		tipoDocumento = new ParametroDTO();
 		tipoDocumentos.onActionProperty().set(e -> loadField());
-		SelectList.put(tipoDocumentos, listTipoDocumento, FIELD_NAME);
+		tipoDocumentos.setConverter(new javafx.util.StringConverter<ParametroDTO>() {
+
+			@Override
+			public String toString(ParametroDTO object) {
+				return object.getNombre();
+			}
+
+			@Override
+			public ParametroDTO fromString(String string) {
+				return listTipoDocumento.stream().filter(parametro -> parametro.getNombre().contains(string))
+						.findFirst().get();
+			}
+
+		});
+		SelectList.put(tipoDocumentos, listTipoDocumento);
 		titulo.setText("");
 	}
 
@@ -72,9 +92,10 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	 * Se encarga de realizar la busqueda de los campos configurados para el tipo de
 	 * docuumento seleccionado
 	 */
+	@SuppressWarnings("unchecked")
 	public final void loadField() {
 		DocumentosDTO docs = new DocumentosDTO();
-		ParametroDTO tipoDoc = SelectList.get(tipoDocumentos, listTipoDocumento, FIELD_NAME);
+		ParametroDTO tipoDoc = SelectList.get(tipoDocumentos);
 		if (tipoDoc != null) {
 			docs.setDoctype(tipoDoc);
 			docs.setClaseControlar(DocumentoDTO.class);
@@ -85,24 +106,86 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(loadGrid());
+		central.getStyleClass().add("borderView");
+		central.getChildren().add(gridPane);
+		getListGenericsFields(TypeGeneric.FIELD).stream()
+				.filter(row -> Optional.ofNullable(row.getSelectNameGroup()).isPresent()).forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof ParametroDTO) {
+								var param = new ParametroDTO();
+								param.setGrupo(row.getSelectNameGroup());
+								param.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+								getParametersSvc().getAllParametros(param)
+										.forEach(reg -> mapListSelects.put(row.getFieldName(), reg));
+							}
+						}
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (ParametroException e) {
+						logger().logger(e);
+					}
+
+				});
+		getListGenericsFields(TypeGeneric.FIELD).stream().filter(
+				row -> StringUtils.isBlank(row.getSelectNameGroup()) && StringUtils.isNotBlank(row.getPutNameShow()))
+				.forEach(row -> {
+					try {
+						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto) {
+							var clazz = ((ADto) instance).getType(row.getFieldName());
+							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							if (instanceClass instanceof EmpresaDTO) {
+								var empresa = new EmpresaDTO();
+								var list = empresasSvc.getAllEmpresas(empresa);
+								list.forEach(reg -> mapListSelects.put(row.getFieldName(), reg));
+							}
+						}
+					} catch (ClassCastException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						logger().logger(e);
+					} catch (EmpresasException e) {
+						logger().logger(e);
+					}
+				});
+
+		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
 	/**
 	 * Se encarga de cargar un nuevo registro
 	 */
-	public final void load() {
+	public final void load(ParametroDTO tipoDocumento) {
 		registro = new DocumentoDTO();
+		registro.setTipoDocumento(tipoDocumento);
+		this.tipoDocumentos.setDisable(true);
+		SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
+		try {
+			DocumentosDTO docs = new DocumentosDTO();
+			docs.setDoctype(tipoDocumento);
+			docs.setClaseControlar(DocumentoDTO.class);
+			campos = documentosSvc.getDocumentos(docs);
+		} catch (DocumentosException e) {
+			error(e);
+		}
 	}
 
 	public final void load(DocumentoDTO registro) {
 		try {
 			this.registro = registro;
+			tipoDocumento = registro.getTipoDocumento();
 			BigDecimal valores = sumaDetalles();
-			this.registro.setValor(valores);
-			SelectList.selectItem(tipoDocumentos, listTipoDocumento, FIELD_NAME, registro.getTipoDocumento().getValor(),
-					"valor");
-			documentosSvc.update(registro, userLogin);
+			SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
+			if (valores.compareTo(registro.getValor()) != 0) {
+				this.registro.setValor(valores);
+				documentosSvc.update(registro, getUsuario());
+			}
 		} catch (DocumentosException e) {
 			error(e);
 		}
@@ -113,30 +196,9 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 		try {
 			DetalleDTO detalle = new DetalleDTO();
 			detalle.setCodigoDocumento(registro.getCodigo());
-			DetalleContableDTO detalleContable = new DetalleContableDTO();
-			detalleContable.setCodigoDocumento(registro.getCodigo());
-			List<DetalleDTO> listDetalles = documentosSvc.getAllDetalles(detalle);
-			suma = suma.add(suma(listDetalles, "valorNeto"));
-			List<DetalleContableDTO> listDetContable = documentosSvc.getAllDetalles(detalleContable);
+			suma = documentosSvc.getAllDetalles(detalle).stream().map(detail -> detail.getValorNeto()).reduce(
+					new BigDecimal(0), (v1, v2) -> ((BigDecimal) v1).add((BigDecimal) v2), (v1, v2) -> v1.add(v2));
 		} catch (DocumentosException e) {
-			error(e);
-		}
-		return suma;
-	}
-
-	private final <T extends ADto> BigDecimal suma(List<T> list, String nombre) {
-		BigDecimal suma = new BigDecimal(0);
-		BigDecimal valor = null;
-		try {
-			for (T dto : list) {
-				valor = valid.cast(dto.get(nombre), BigDecimal.class);
-				if (valor != null) {
-					suma = suma.add(valor);
-				}
-			}
-		} catch (ReflectionException e) {
-			error(e);
-		} catch (ValidateValueException e) {
 			error(e);
 		}
 		return suma;
@@ -147,16 +209,15 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	 */
 	@SuppressWarnings("unchecked")
 	public final void guardar() {
-		loadData();
 		if (valid()) {
 			try {
-				registro.setTipoDocumento(SelectList.get(tipoDocumentos, listTipoDocumento, FIELD_NAME));
+				registro.setTipoDocumento(SelectList.get(tipoDocumentos));
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					documentosSvc.update(registro, userLogin);
-					notificar("Se agrego el nuevo documento.");
+					documentosSvc.update(registro, getUsuario());
+					notificar(i18n().valueBundle(Documento.CONST_DOCUMENT_CREATED));
 				} else {
-					registro = documentosSvc.insert(registro, userLogin);
-					notificar("Se agrego el nuevo documento.");
+					registro = documentosSvc.insert(registro, getUsuario());
+					notificar(i18n().valueBundle(Documento.CONST_DOCUMENT_UPDATED));
 				}
 				comunicacion.setComando(AppConstants.COMMAND_PANEL_TIPO_DOC, registro);
 			} catch (DocumentosException e) {
@@ -169,6 +230,21 @@ public class DocumentoBean extends DinamicoBean<DocumentoDTO> {
 	 * Se encarga de cancelar el almacenamiento de los datos
 	 */
 	public final void cancelar() {
-       getController(ListaDocumentosBean.class);
+		getController(ListaDocumentosBean.class).loadParameters(tipoDocumento.getValor2());
+	}
+
+	@Override
+	public javafx.scene.layout.GridPane getGridPane(TypeGeneric typeGeneric) {
+		return gridPane;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 2;
+	}
+
+	@Override
+	public Class<DocumentoDTO> getClazz() {
+		return DocumentoDTO.class;
 	}
 }

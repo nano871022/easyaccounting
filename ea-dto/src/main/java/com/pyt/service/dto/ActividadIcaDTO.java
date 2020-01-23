@@ -1,6 +1,6 @@
 package com.pyt.service.dto;
 
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -15,7 +15,6 @@ import co.com.arquitectura.annotation.proccessor.UpdClass;
 
 public class ActividadIcaDTO extends ADto{
 	private static final long serialVersionUID = 5006959473201225898L;
-	private String codigo;
 	private String codigoIca;
 	private String nombre;
 	private String descripcion;
@@ -27,12 +26,6 @@ public class ActividadIcaDTO extends ADto{
 	}
 	public void setCodigoIca(String codigoIca) {
 		this.codigoIca = codigoIca;
-	}
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 	public String getNombre() {
 		return nombre;

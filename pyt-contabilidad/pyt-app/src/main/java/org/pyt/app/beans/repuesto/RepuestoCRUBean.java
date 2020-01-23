@@ -5,22 +5,22 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
-import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.exceptions.inventario.ProductosException;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.inventario.ProductoDto;
-import com.pyt.service.dto.inventario.ResumenProductoDto;
+import com.pyt.service.dto.inventario.ProductoDTO;
+import com.pyt.service.dto.inventario.ResumenProductoDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -36,7 +36,7 @@ import javafx.util.StringConverter;
  * @since 2018-05-22
  */
 @FXMLFile(path = "view/repuesto", file = "repuesto.fxml")
-public class RepuestoCRUBean extends ABean<ResumenProductoDto> {
+public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
 	private IProductosSvc productosSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -72,7 +72,7 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDto> {
 	public void initialize() {
 		NombreVentana = "Agregando Nuevo Repuesto";
 		titulo.setText(NombreVentana);
-		registro = new ResumenProductoDto();
+		registro = new ResumenProductoDTO();
 		try {
 			listIva = parametrosSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_IVA);
 		} catch (ParametroException e) {
@@ -125,8 +125,8 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDto> {
 	 */
 	private void fxmlLoad() {
 		if (registro == null) {
-			registro = new ResumenProductoDto();
-			registro.setProducto(new ProductoDto());
+			registro = new ResumenProductoDTO();
+			registro.setProducto(new ProductoDTO());
 		}
 		registro.setCodigo(codigo.getText());
 		registro.getProducto().setNombre(nombre.getText());
@@ -166,22 +166,27 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDto> {
 	}
 
 	public final void load() {
-		registro = new ResumenProductoDto();
-		registro.setProducto(new ProductoDto());
+		registro = new ResumenProductoDTO();
+		registro.setProducto(new ProductoDTO());
 	}
 
-	public void load(ProductoDto dto) {
+	private void getResumenProducto(ProductoDTO dto) {
 		try {
-			if (dto != null && dto.getCodigo() != null) {
-				registro = productosSvc.resumenProducto(dto);
-				loadFxml();
-				titulo.setText("Modificando Repuesto");
-			} else {
-				error("EL repuesto es invalido para editar.");
-				cancel();
-			}
+			registro = productosSvc.resumenProducto(dto);
 		} catch (ResumenProductoException e) {
-			error(e);
+			registro = new ResumenProductoDTO();
+			registro.setProducto(dto);
+		}
+	}
+
+	public void load(ProductoDTO dto) {
+		if (dto != null && dto.getCodigo() != null) {
+			getResumenProducto(dto);
+			loadFxml();
+			titulo.setText("Modificando Repuesto");
+		} else {
+			error("EL repuesto es invalido para editar.");
+			cancel();
 		}
 	}
 
@@ -201,14 +206,14 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDto> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					productosSvc.update(registro.getProducto(), userLogin);
-					productosSvc.update(registro, userLogin);
+					productosSvc.update(registro.getProducto(), getUsuario());
+					productosSvc.update(registro, getUsuario());
 					notificar("Se guardo el repuesto correctamente.");
 					cancel();
 				} else {
-					ProductoDto prod = productosSvc.insert(registro.getProducto(), userLogin);
+					ProductoDTO prod = productosSvc.insert(registro.getProducto(), getUsuario());
 					registro.setProducto(prod);
-					productosSvc.insert(registro, userLogin);
+					productosSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificar("Se agrego el repuesto correctamente.");
 					cancel();

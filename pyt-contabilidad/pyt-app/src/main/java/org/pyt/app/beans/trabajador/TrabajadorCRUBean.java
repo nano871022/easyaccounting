@@ -9,10 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpleadoException;
+import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CentroCostoDTO;
@@ -21,9 +21,11 @@ import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
 import com.pyt.service.interfaces.IEmpleadosSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -42,6 +44,8 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	private ICentroCostosSvc centroCostoSvc;
 	@Inject(resource = "com.pyt.service.implement.EmpleadosSvc")
 	private IEmpleadosSvc empleadosSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<PersonaDTO> personaSvc;
 	@FXML
 	private javafx.scene.control.TextField nombre;
 	@FXML
@@ -95,10 +99,16 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 					ParametroConstants.GRUPO_TIPOS_DOCUMENTO_PERSONA);
 			SelectList.put(tipoDocumentos, lTipoDocumentos, FIELD_NAME);
 			SelectList.put(estados, lEstados, FIELD_NAME);
-			tipoPagos.setPopupOpenAction(()->popupOpenTipoPago());
-			tipoPagos.setCleanValue(()->{registro.setTipoPago(null);tipoPagos.setText(null);});
-			centroCostos.setPopupOpenAction(()->popupOpenCentroCostos());
-			centroCostos.setCleanValue(()->{registro.setCentroCosto(null);centroCostos.setText(null);});
+			tipoPagos.setPopupOpenAction(() -> popupOpenTipoPago());
+			tipoPagos.setCleanValue(() -> {
+				registro.setTipoPago(null);
+				tipoPagos.setText(null);
+			});
+			centroCostos.setPopupOpenAction(() -> popupOpenCentroCostos());
+			centroCostos.setCleanValue(() -> {
+				registro.setCentroCosto(null);
+				centroCostos.setText(null);
+			});
 		} catch (ParametroException e) {
 			error(e);
 		}
@@ -126,42 +136,43 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 					Date.from(fechaIngreso.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		if (fechaRetiro.getValue() != null)
 			registro.setFechaRetiro(Date.from(fechaRetiro.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.getPersona().setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME).getValor());
-		registro.setEstado(SelectList.get(estados, lEstados, FIELD_NAME).getValor());
+		registro.getPersona().setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME));
+		var estado = SelectList.get(estados, lEstados, FIELD_NAME);
+		registro.setEstado(estado);
 	}
-	
+
 	public final void popupOpenTipoPago() {
 		try {
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
-			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_PAGO)))
-			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE, ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
-			).load("#{TrabajadorCRUBean.tipoPago}");
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_PAGO)))
+									.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE,
+											ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO))
+													.load("#{TrabajadorCRUBean.tipoPago}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setTipoPago(ParametroDTO parametro) {
 		registro.setTipoPago(parametro);
 		tipoPagos.setText(parametro.getDescripcion());
 	}
-	
+
 	public final void popupOpenCentroCostos() {
 		try {
-			((PopupGenBean<CentroCostoDTO>) controllerPopup(new PopupGenBean<CentroCostoDTO>(CentroCostoDTO.class))
-			.addDefaultValuesToGenericParametrized("estado", "A")
-			).load("#{TrabajadorCRUBean.centroCosto}");
+			controllerPopup(new PopupGenBean<CentroCostoDTO>(CentroCostoDTO.class))
+					.load("#{TrabajadorCRUBean.centroCosto}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setCentroCosto(CentroCostoDTO centroCosto) {
 		registro.setCentroCosto(centroCosto);
 		centroCostos.setText(centroCosto.getDescripcion());
 	}
-	
-	
+
 	private void loadFxml() {
 		if (registro == null)
 			return;
@@ -171,7 +182,7 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		direccion.setText(registro.getPersona().getDireccion());
 		email.setText(registro.getCorreo());
 		telefono.setText(registro.getPersona().getTelefono());
-		if (registro.getPersona() != null &&  registro.getPersona().getFechaNacimiento() != null)
+		if (registro.getPersona() != null && registro.getPersona().getFechaNacimiento() != null)
 			fechaNacimiento.setValue(LocalDate.ofInstant(registro.getPersona().getFechaNacimiento().toInstant(),
 					ZoneId.systemDefault()));
 		if (registro.getFechaIngreso() != null)
@@ -179,8 +190,8 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		if (registro.getFechaRetiro() != null)
 			fechaRetiro.setValue(LocalDate.ofInstant(registro.getFechaRetiro().toInstant(), ZoneId.systemDefault()));
 		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getPersona().getTipoDocumento(),
-				FIELD_VALOR);
-		SelectList.selectItem(estados, lEstados, FIELD_NAME, registro.getEstado(), FIELD_VALOR);
+				FIELD_NAME);
+		SelectList.selectItem(estados, lEstados, FIELD_NAME, registro.getEstado(), FIELD_NAME);
 		tipoPagos.setText(registro.getTipoPago().getDescripcion());
 		centroCostos.setText(registro.getCentroCosto().getDescripcion());
 	}
@@ -200,15 +211,18 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		load();
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				empleadosSvc.update(registro, userLogin);
+				personaSvc.update(registro.getPersona(), getUsuario());
+				empleadosSvc.update(registro, getUsuario());
 				notificar("Se guardo la empresa correctamente.");
 				cancel();
 			} else {
-				empleadosSvc.insert(registro, userLogin);
-				notificar("Se agrego la emrpesa correctamente.");
+				registro.getPersona().setEmail(registro.getCorreo());
+				personaSvc.insert(registro.getPersona(), getUsuario());
+				empleadosSvc.insert(registro, getUsuario());
+				notificar("Se agrego la empresa correctamente.");
 				cancel();
 			}
-		} catch (EmpleadoException e) {
+		} catch (EmpleadoException | GenericServiceException e) {
 			error(e);
 		}
 	}

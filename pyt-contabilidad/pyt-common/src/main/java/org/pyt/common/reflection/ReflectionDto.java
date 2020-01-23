@@ -1,5 +1,12 @@
 package org.pyt.common.reflection;
 
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_ACCESS_ILEGAL;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_ARGUMENT_ILEGAL;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_CAST_FIELD_INPUT_VALUE;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_METHOD_NOT_FOUND;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_OBJECT_INVOKE;
+import static org.pyt.common.constants.languages.Reflection.CONST_ERR_SECURITY;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.ADto;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.constants.ReflectionConstants;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidateValues;
 
 /**
  * Se encarga de realizar reflecciones para el dto
@@ -21,18 +28,30 @@ import org.pyt.common.exceptions.validates.ValidateValueException;
  * @since 2018-05-18
  */
 public abstract class ReflectionDto {
+	private final static String CONST_SERIAL_VERSION_UID = "serialVersionUID";
+
 	private Log logger = Log.Log(this.getClass());
+
+	@SuppressWarnings("unchecked")
+	private <S extends ADto> Field searchField(Class<S> clazz, String name) {
+		try {
+			return clazz.getDeclaredField(name);
+		} catch (NoSuchFieldException e) {
+			try {
+				return searchField((Class<S>) clazz.getSuperclass(), name);
+			} catch (ClassCastException e2) {
+				return null;
+			}
+		}
+	}
 
 	/**
 	 * Se encarga de poder realiar set sobre los valores de los campos del dto por
 	 * medio de refleccion
 	 * 
-	 * @param nombreCampo
-	 *            {@link String}
-	 * @param value
-	 *            {@link Object}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @param nombreCampo {@link String}
+	 * @param value       {@link Object}
+	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings({ "unchecked", "unused" })
 	public final <S extends ADto, T extends Object> void set(String nombreCampo, T value) throws ReflectionException {
@@ -40,8 +59,14 @@ public abstract class ReflectionDto {
 		String nameMethod;
 		Field field = null;
 		try {
-			if (value == null)
-				return;
+			if(value == null) {
+				var campo = searchField(clase, nombreCampo);
+				if (campo != null && campo.trySetAccessible()) {
+					campo.set(this, null);
+				}else {
+					return;
+				}
+			}
 			field = searchField(nombreCampo, this.getClass());
 			nameMethod = ReflectionConstants.SET + field.getName().substring(0, 1).toUpperCase()
 					+ field.getName().substring(1);
@@ -49,28 +74,28 @@ public abstract class ReflectionDto {
 			ValidateValues vv = new ValidateValues();
 			method.invoke(this, vv.cast(value, field.getType()));
 		} catch (SecurityException e) {
-			throw new ReflectionException("Problema de seguridad.", e);
+			throw new ReflectionException(CONST_ERR_SECURITY, e);
 		} catch (NoSuchMethodException e) {
 			if (field != null) {
 				field.setAccessible(true);
 				try {
 					field.set(this, value);
 				} catch (IllegalArgumentException e1) {
-					throw new ReflectionException("Problema argumento ilegal.", e);
+					throw new ReflectionException(CONST_ERR_ARGUMENT_ILEGAL, e);
 				} catch (IllegalAccessException e1) {
-					throw new ReflectionException("Problema de acceso ilegal.", e);
+					throw new ReflectionException(CONST_ERR_ACCESS_ILEGAL, e);
 				}
 			} else {
-				throw new ReflectionException("El metodo no fue encontrado.", e);
+				throw new ReflectionException(CONST_ERR_METHOD_NOT_FOUND, e);
 			}
 		} catch (IllegalAccessException e) {
-			throw new ReflectionException("Problema de acceso ilegal.", e);
+			throw new ReflectionException(CONST_ERR_ACCESS_ILEGAL, e);
 		} catch (IllegalArgumentException e) {
-			throw new ReflectionException("Problema argumento ilegal.", e);
+			throw new ReflectionException(CONST_ERR_ARGUMENT_ILEGAL, e);
 		} catch (InvocationTargetException e) {
-			throw new ReflectionException("Problema objeto invocacion.", e);
+			throw new ReflectionException(CONST_ERR_OBJECT_INVOKE, e);
 		} catch (ValidateValueException e) {
-			throw new ReflectionException("Problema en casting al campo ingreso de informacion.", e);
+			throw new ReflectionException(CONST_ERR_CAST_FIELD_INPUT_VALUE, e);
 		}
 	}
 
@@ -78,13 +103,10 @@ public abstract class ReflectionDto {
 	 * Se encarga de obtener de obtner un valor apartir de un nombre del campo del
 	 * medio de refleccion
 	 * 
-	 * @param nombreCampo
-	 *            {@link String}
-	 * @param value
-	 *            {@link Object}
+	 * @param nombreCampo {@link String}
+	 * @param value       {@link Object}
 	 * @return {@link Object}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings({ "unchecked", "unused" })
 	public final <T, S extends Object> T get(String nombreCampo, S value) throws ReflectionException {
@@ -93,54 +115,49 @@ public abstract class ReflectionDto {
 		Field field = null;
 		try {
 			field = searchField(nombreCampo, this.getClass());
-			if(field.getName().length() > 1)
-			nameMethod = ReflectionConstants.GET + field.getName().substring(0, 1).toUpperCase()
-					+ field.getName().substring(1);
-			else 
-				nameMethod = ReflectionConstants.GET + field.getName().toUpperCase();
+			if (field != null) {
+				if (field.getName().length() > 1)
+					nameMethod = ReflectionConstants.GET + field.getName().substring(0, 1).toUpperCase()
+							+ field.getName().substring(1);
+				else
+					nameMethod = ReflectionConstants.GET + field.getName().toUpperCase();
 
-			Method method = clase.getMethod(nameMethod, value != null ? value.getClass() : null);
-			return (T) method.invoke(this, value);
+				Method method = clase.getMethod(nameMethod, value != null ? value.getClass() : null);
+				return (T) method.invoke(this, value);
+			}
+			return null;
 		} catch (SecurityException e) {
-			throw new ReflectionException("Problema de seguridad.", e);
+			throw new ReflectionException(CONST_ERR_SECURITY, e);
 		} catch (NoSuchMethodException e) {
 			if (field != null) {
 				field.setAccessible(true);
 				try {
 					return (T) field.get(this);
-				} catch (IllegalArgumentException e1) {
-					throw new ReflectionException("Problema argumento ilegal.", e);
-				} catch (IllegalAccessException e1) {
-					throw new ReflectionException("Problema de acceso ilegal.", e);
+				} catch (IllegalArgumentException | IllegalAccessException e1) {
+					throw new ReflectionException(CONST_ERR_ACCESS_ILEGAL, e1);
 				}
 			} else {
-				throw new ReflectionException("El metodo no fue encontrado.", e);
+				throw new ReflectionException(CONST_ERR_METHOD_NOT_FOUND, e);
 			}
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException("Problema de acceso ilegal.", e);
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException("Problema argumento ilegal.", e);
-		} catch (InvocationTargetException e) {
-			throw new ReflectionException("Problema objeto invocacion.", e);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new ReflectionException(CONST_ERR_OBJECT_INVOKE, e);
 		}
 	}
 
 	/**
 	 * Se encarga de retornar el tipo de campo apartir de nombre suministrado
 	 * 
-	 * @param nombreCampo
-	 *            {@link String}
+	 * @param nombreCampo {@link String}
 	 * @return {@link Class}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
 	public final <T extends Object> Class<T> getType(String nombreCampo) throws ReflectionException {
 		try {
-			Field field = super.getClass().getDeclaredField(nombreCampo);
+			Field field = searchField(nombreCampo, this.getClass());
 			Class<T> clas = (Class<T>) field.getType();
 			return clas;
-		} catch (NoSuchFieldException | SecurityException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -148,17 +165,16 @@ public abstract class ReflectionDto {
 	/**
 	 * Se encargad e buscar un campo dentro de todas las clases y parents
 	 * 
-	 * @param nombreCampo
-	 *            {@link String}
-	 * @param clase
-	 *            {@link Class}
+	 * @param nombreCampo {@link String}
+	 * @param clase       {@link Class}
 	 * @return {@link Field}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	private final <T extends Object> Field searchField(String nombreCampo, Class<T> clase) throws ReflectionException {
-		if(StringUtils.isBlank(nombreCampo)) return null;
-		if(clase == Object.class)return null;
+		if (StringUtils.isBlank(nombreCampo))
+			return null;
+		if (clase == Object.class)
+			return null;
 		Field campo = null;
 		try {
 			campo = clase.getDeclaredField(nombreCampo);
@@ -176,11 +192,9 @@ public abstract class ReflectionDto {
 	 * Se encarga de obtener de obtner un valor apartir de un nombre del campo del
 	 * medio de refleccion
 	 * 
-	 * @param nombreCampo
-	 *            {@link String}
+	 * @param nombreCampo {@link String}
 	 * @return {@link Object}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	public final <T extends Object> T get(String nombreCampo) throws ReflectionException {
 		return get(nombreCampo, null);
@@ -205,10 +219,11 @@ public abstract class ReflectionDto {
 		Field[] fields = clase.getDeclaredFields();
 		try {
 			for (Field field : fields) {
-				campos += (campos.length() > 3 ? "," : "") + (field.getName() + "=" + this.get(field.getName()));
+				campos += String.format("%s%s=%s", campos.length() > 3 ? "," : "", field.getName(),
+						get(field.getName()));
 			}
 		} catch (ReflectionException e) {
-			logger.error(e.getMensage());
+			logger.DEBUG(e.getMessage());
 		}
 		if (clase.getSuperclass() != ReflectionDto.class) {
 			campos += stringAll((Class<T>) clase.getSuperclass());
@@ -229,11 +244,9 @@ public abstract class ReflectionDto {
 	 * Se encarga de retornar el nombre de todos los campos usados sobre el objeto
 	 * suministrado
 	 * 
-	 * @param clase
-	 *            Class
+	 * @param clase Class
 	 * @return {@link List} of {@link String}
-	 * @throws {@link
-	 *             ReflectionException}
+	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
 	private final <T extends ADto> List<String> nameFields(Class<T> clase) throws ReflectionException {
@@ -241,7 +254,7 @@ public abstract class ReflectionDto {
 		Field[] fields = clase.getDeclaredFields();
 		for (Field field : fields) {
 			try {
-				if (field.getName().contains("serialVersionUID"))
+				if (field.getName().contains(CONST_SERIAL_VERSION_UID))
 					continue;
 				get(field.getName());
 				list.add(field.getName());
@@ -257,17 +270,19 @@ public abstract class ReflectionDto {
 		}
 		return list;
 	}
+
 	/**
 	 * Se encarga de retornar la clase que identifica el tipo del campo
+	 * 
 	 * @param name {@link String}
 	 * @return {@link Class}
 	 * @throws {@link ReflectionException}
 	 */
-	public Class typeField(String name)throws ReflectionException {
+	public Class typeField(String name) throws ReflectionException {
 		Field field = searchField(name, this.getClass());
 		return field.getType();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		try {
@@ -279,7 +294,7 @@ public abstract class ReflectionDto {
 				return ((ADto) obj).getCodigo().equals(((ADto) this).getCodigo());
 			}
 		} catch (Exception e) {
-			logger.logger(e);
+			logger.DEBUG(e);
 		}
 		return false;
 	}
