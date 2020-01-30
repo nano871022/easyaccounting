@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.pyt.app.beans.languages.LanguageBean;
+import org.pyt.app.components.PopupFromBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
@@ -232,6 +234,14 @@ public class MenuItems implements Reflection {
 			}
 			Platform.exit();
 			System.exit(0);
+		}));
+		items.add(addItem("TestPopup", event -> {
+			var popup = new PopupFromBean(LanguageBean.class);
+			try {
+				LoadAppFxml.loadBeanFX(popup);
+			} catch (LoadAppFxmlException e) {
+				logger.logger(e);
+			}
 		}));
 	}
 

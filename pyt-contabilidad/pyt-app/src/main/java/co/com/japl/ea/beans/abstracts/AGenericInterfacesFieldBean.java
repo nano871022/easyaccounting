@@ -19,7 +19,7 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
-	@Inject(resource = "com.pyt.service.implement.ParametroSvc")
+	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	protected List<ConfigGenericFieldDTO> fields;
 	private Class<F> classTypeDto;

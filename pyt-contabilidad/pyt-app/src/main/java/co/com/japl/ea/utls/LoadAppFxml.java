@@ -6,7 +6,9 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.pyt.app.components.PopupFromBean;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.CSSConstant;
@@ -38,6 +40,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	private P lastLayout;
 	private C lastContro;
 	private static Log logger = Log.Log(LoadAppFxml.class);
+	private static I18n i18n = I18n.instance();
 
 	/**
 	 * Se encarga de contruir el objeto loadappfxml como singleton
@@ -121,6 +124,30 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
 		} catch (Exception e) {
 			throw new LoadAppFxmlException("Problema al obtener el stage.", e);
+		}
+		return genericBean;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public final static <P extends PopupFromBean> P loadBeanFX(P genericBean) throws LoadAppFxmlException {
+		try {
+			Stage stg = new Stage();
+			genericBean.start(stg);
+			genericBean.initialize();
+		} catch (InstantiationException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.instance.problem"), e);
+		} catch (IllegalAccessException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.access"), e);
+		} catch (IllegalArgumentException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.argument"), e);
+		} catch (InvocationTargetException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.invoke.object.problem"), e);
+		} catch (NoSuchMethodException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.method.not.found"), e);
+		} catch (SecurityException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.security.problem"), e);
+		} catch (Exception e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.dont.can.get.stage"), e);
 		}
 		return genericBean;
 	}
