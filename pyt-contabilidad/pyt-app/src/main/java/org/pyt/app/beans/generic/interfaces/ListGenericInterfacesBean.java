@@ -51,7 +51,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		gridPane.setVgap(10);
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
-		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES));
+		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES).get());
 		try {
 			listFieldsToFilters = configGenericFieldsSvc.getFieldToFilters(this.getClass(),
 					ConfigGenericFieldDTO.class);
@@ -82,9 +82,8 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 			dataTable.getSelectedRows().forEach(row -> {
 				try {
 					getServiceSvc().delete(row, getUsuario());
-					notificar(
-							String.format(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE),
-									row.getCodigo()));
+					notificar(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE,
+							row.getCodigo()));
 				} catch (Exception e) {
 					error(e);
 				}

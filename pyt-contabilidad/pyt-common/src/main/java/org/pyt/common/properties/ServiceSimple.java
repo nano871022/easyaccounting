@@ -1,7 +1,9 @@
 package org.pyt.common.properties;
 
+import static org.pyt.common.constants.LanguageConstant.CONST_EXC_SERVICE;
+
 import java.util.Properties;
-import static org.pyt.common.constants.LanguageConstant.*;
+
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.PropertiesConstants;
@@ -52,7 +54,7 @@ public final class ServiceSimple {
 				}
 			}
 		} catch (Exception e) {
-			log.logger(i18n.valueBundle(CONST_EXC_SERVICE,service.getSimpleName(),className), e);
+			log.logger(i18n.valueBundle(CONST_EXC_SERVICE, service.getSimpleName(), className).get(), e);
 		}
 		return null;
 	}

@@ -35,15 +35,15 @@ public class QueryGDBPLSQLSvc implements IAdvanceQuerySvc {
 		try {
 			if (ta.length == 0) {
 				throw new QueryException(
-						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_ACTION));
+						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_ACTION).get());
 			}
 			if (to == null) {
 				throw new QueryException(
-						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_OPTION));
+						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_OPTION).get());
 			}
 			if (obj == null) {
 				throw new QueryException(
-						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_TABLE));
+						i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER_WITHOUT_TABLE).get());
 			}
 			var actions = Arrays.toString(ta).replace(QueryConstants.CONST_KEY_OPEN, QueryConstants.CONST_EMPTY)
 					.replace(QueryConstants.CONST_KEY_CLOSE, QueryConstants.CONST_EMPTY);
@@ -53,7 +53,7 @@ public class QueryGDBPLSQLSvc implements IAdvanceQuerySvc {
 			db.getStatement().executeUpdate(query);
 		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TRIGGER).get(), e);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class QueryGDBPLSQLSvc implements IAdvanceQuerySvc {
 			query = String.format(query, squ.getTableName(obj), fields);
 			db.getStatement().executeUpdate(query);
 		} catch (ReflectionException | SQLException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TABLE), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_CREATE_TABLE).get(), e);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class QueryGDBPLSQLSvc implements IAdvanceQuerySvc {
 			var query = QueryConstants.SQL_DROP_TABLE + squ.getTableName(obj);
 			db.getStatement().executeUpdate(query);
 		} catch (SQLException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DROP_TABLE), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DROP_TABLE).get(), e);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class QueryGDBPLSQLSvc implements IAdvanceQuerySvc {
 		try {
 			return db.getStatement().executeQuery(query);
 		} catch (SQLException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_LAUNCHER), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_LAUNCHER).get(), e);
 		}
 	}
 }

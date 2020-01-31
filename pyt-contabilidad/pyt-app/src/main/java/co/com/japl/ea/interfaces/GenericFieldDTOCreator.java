@@ -34,7 +34,7 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 		}
 		var classPath = field.getClassPath().contains("Class") ? field.getClassPath().substring(5)
 				: field.getClassPath();
-		return notificationMethods.i18n().valueBundle(classPath + "." + field.getName());
+		return notificationMethods.i18n().valueBundle(classPath + "." + field.getName()).get();
 	}
 
 	@Override
@@ -82,7 +82,6 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 
 	@Override
 	public Boolean hasValueDefault() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

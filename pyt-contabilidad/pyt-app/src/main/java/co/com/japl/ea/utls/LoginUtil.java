@@ -132,10 +132,10 @@ public class LoginUtil {
 				if (usuario.getState() == 1) {
 					usuarioSystem = usuario;
 				} else {
-					throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_CODE_EMPTY));
+					throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_CODE_EMPTY).get());
 				}
 			} else {
-				throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_STATE_INVALID));
+				throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_STATE_INVALID).get());
 			}
 		}
 	}

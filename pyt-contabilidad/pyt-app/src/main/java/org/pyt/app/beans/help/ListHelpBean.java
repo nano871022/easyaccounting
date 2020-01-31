@@ -51,7 +51,7 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 	public void initialize() {
 		try {
 			filtro = new HelpDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.helps"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.helps").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

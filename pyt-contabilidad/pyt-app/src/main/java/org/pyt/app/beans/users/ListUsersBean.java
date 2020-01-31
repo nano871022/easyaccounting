@@ -52,7 +52,7 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 	public void initialize() {
 		try {
 			filtro = new UsuarioDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.users"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.users").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

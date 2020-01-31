@@ -12,6 +12,7 @@ import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.Table;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.GenericServiceException;
@@ -460,8 +461,8 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			if (listServicios != null && listServicios.size() > 0 && servicioSelect != null) {
 				if (StringUtils.isNotBlank(servicioSelect.getCodigo())) {
-					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteServicio}", String
-							.format("¿Desea eliminar el servicio %s ?", servicioSelect.getServicio().getNombre()));
+					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteServicio}", OptI18n.process(
+							val -> "¿Desea eliminar el servicio %s ?", null, servicioSelect.getServicio().getNombre()));
 				} else {
 					listServicios.remove(servicioSelect);
 					servicio.setText(null);
@@ -491,7 +492,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			if (listRepuestos != null && listRepuestos.size() > 0 && repuestoSelect != null) {
 				if (StringUtils.isNotBlank(repuestoSelect.getCodigo())) {
 					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteRepuesto}",
-							String.format("¿Desea eliminar el repuesto %s ?",
+							OptI18n.process(val -> "¿Desea eliminar el repuesto %s ?", null,
 									repuestoSelect.getRepuesto().getProducto().getNombre()));
 				} else {
 					listRepuestos.remove(repuestoSelect);

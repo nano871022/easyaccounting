@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.constants.AppConstants;
 
 public interface INotificationMethods {
@@ -19,11 +20,21 @@ public interface INotificationMethods {
 	}
 
 	@SuppressWarnings("unchecked")
+	default void alerta(OptI18n mensaje) {
+		comunicacion().setComando(AppConstants.COMMAND_POPUP_WARN, mensaje);
+	}
+
+	@SuppressWarnings("unchecked")
 	default void notificar(String msn) {
 		comunicacion().setComando(AppConstants.COMMAND_POPUP_INFO, msn);
 	}
 
-	@SuppressWarnings({ "hiding", "unchecked" })
+	@SuppressWarnings("unchecked")
+	default void notificar(OptI18n msn) {
+		comunicacion().setComando(AppConstants.COMMAND_POPUP_INFO, msn);
+	}
+
+	@SuppressWarnings({ "unchecked" })
 	default <T extends Exception> void error(T error) {
 		String mensaje = error.getMessage();
 		logger().logger(error);
@@ -34,6 +45,12 @@ public interface INotificationMethods {
 
 	@SuppressWarnings("unchecked")
 	default void error(String msn) {
+		logger().logger(msn);
+		comunicacion().setComando(AppConstants.COMMAND_POPUP_ERROR, msn);
+	}
+
+	@SuppressWarnings("unchecked")
+	default void error(OptI18n msn) {
 		logger().logger(msn);
 		comunicacion().setComando(AppConstants.COMMAND_POPUP_ERROR, msn);
 	}

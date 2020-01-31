@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.exceptions.inventario.ProductosException;
 
 import com.pyt.service.dto.inventario.ProductoDTO;
@@ -14,12 +15,10 @@ import com.pyt.service.interfaces.inventarios.IProductosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
-import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 /**
  * Bean encargado de crear las empresas
@@ -57,7 +56,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 			public List<ProductoDTO> getList(ProductoDTO filter, Integer page, Integer rows) {
 				List<ProductoDTO> lista = new ArrayList<ProductoDTO>();
 				try {
-					lista = productosSvc.productos(filter, page-1, rows);
+					lista = productosSvc.productos(filter, page - 1, rows);
 				} catch (ProductosException e) {
 					error(e);
 				}
@@ -79,7 +78,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 			public ProductoDTO getFilter() {
 				ProductoDTO filtro = new ProductoDTO();
 				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre("%"+nombre.getText()+"%");
+					filtro.setNombre("%" + nombre.getText() + "%");
 				}
 				return filtro;
 			}
@@ -101,14 +100,17 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 	@SuppressWarnings("unchecked")
 	public void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{RepuestoBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			controllerPopup(ConfirmPopupBean.class).load("#{RepuestoBean.delete}",
+					OptI18n.process(val -> "¿Desea eliminar los registros seleccionados?", null));
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				productosSvc.del(registro, getUsuario());

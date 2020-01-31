@@ -46,6 +46,9 @@ public final class Log {
 		return timer;
 	}
 
+	public final synchronized void msnBuild(OptI18n msn, LEVEL type) {
+		msnBuild(msn.get(), type);
+	}
 	public final synchronized void msnBuild(String msn, LEVEL type) {
 		if (Optional.ofNullable(lastMessage).orElse(CONST_EMPTY)
 				.contentEquals(Optional.ofNullable(msn).orElse(CONST_EMPTY)))
@@ -72,6 +75,10 @@ public final class Log {
 	 * @param mensaje {@link String}
 	 */
 	public final synchronized void logger(String mensaje) {
+		msnBuild(mensaje, LEVEL.INFO);
+	}
+
+	public final synchronized void logger(OptI18n mensaje) {
 		msnBuild(mensaje, LEVEL.INFO);
 	}
 
@@ -144,6 +151,10 @@ public final class Log {
 		printStackTrace(LEVEL.DEBUG, mensaje.getStackTrace());
 	}
 
+	public final synchronized <T extends Throwable> void DEBUG(OptI18n message, T error) {
+		DEBUG(message.get(), error);
+	}
+
 	public final synchronized <T extends Throwable> void DEBUG(String message, T error) {
 		msnBuild(message, LEVEL.DEBUG);
 		printThrowable(error, LEVEL.DEBUG);
@@ -162,6 +173,10 @@ public final class Log {
 		printThrowable(error, LEVEL.ERROR);
 		printSuppressed(LEVEL.ERROR, error.getSuppressed());
 		printStackTrace(LEVEL.ERROR, error.getStackTrace());
+	}
+
+	public final synchronized <T extends Exception> void logger(OptI18n mensaje, T error) {
+		logger(mensaje.get(), error);
 	}
 
 	private final synchronized void printSuppressed(LEVEL nivel, Throwable... throwable) {

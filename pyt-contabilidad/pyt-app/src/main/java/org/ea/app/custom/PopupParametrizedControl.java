@@ -66,7 +66,8 @@ public class PopupParametrizedControl extends HBox {
 	@FXML
 	public void openPopup() throws Exception {
 		if (popupOpen == null) {
-			throw new Exception(I18n.instance().valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_OPEN_POPUP));
+			throw new Exception(
+					I18n.instance().valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_OPEN_POPUP).get());
 		}
 		popupOpen.caller();
 	}
@@ -74,7 +75,8 @@ public class PopupParametrizedControl extends HBox {
 	@FXML
 	public void cleanValue() throws Exception {
 		if (cleanValue == null) {
-			throw new Exception(I18n.instance().valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE));
+			throw new Exception(
+					I18n.instance().valueBundle(LanguageConstant.POPUP_PARAMETRIZED_ERROR_CLEAN_VALUE).get());
 		}
 		cleanValue.caller();
 		setText(null);

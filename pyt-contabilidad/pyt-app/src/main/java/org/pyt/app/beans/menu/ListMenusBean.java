@@ -58,7 +58,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 	public void initialize() {
 		try {
 			filtro = new MenuDTO();
-			lblTitle.setText(i18n().valueBundle(CONST_FXML_LABEL_TITLE_LIST_MENUS));
+			lblTitle.setText(i18n().valueBundle(CONST_FXML_LABEL_TITLE_LIST_MENUS).get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

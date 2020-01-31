@@ -119,7 +119,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		if (height != null) {
 			primaryStage.setHeight(height);
 		}
-		primaryStage.setTitle(i18n().valueBundle(tittleWindowI18n));
+		primaryStage.setTitle(i18n().valueBundle(tittleWindowI18n).get());
 		Scene scene = new Scene(panel);
 		scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
 		primaryStage.setScene(scene);

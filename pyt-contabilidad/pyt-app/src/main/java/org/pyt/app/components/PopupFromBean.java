@@ -41,7 +41,7 @@ public class PopupFromBean<D extends ADto, B extends ABean<D>> implements IBean<
 		if (height != null) {
 			primaryStage.setHeight(height);
 		}
-		primaryStage.setTitle(i18n().valueBundle(tittleWindowI18n));
+		primaryStage.setTitle(i18n().valueBundle(tittleWindowI18n).get());
 		Scene scene = new Scene(panel);
 		scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
 		primaryStage.setScene(scene);

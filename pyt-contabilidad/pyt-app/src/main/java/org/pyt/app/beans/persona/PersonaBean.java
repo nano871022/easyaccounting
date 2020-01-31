@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.exceptions.EmpleadoException;
 
 import com.pyt.service.dto.PersonaDTO;
@@ -150,7 +151,7 @@ public class PersonaBean extends ABean<PersonaDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{PersonaBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					OptI18n.process(val -> "¿Desea eliminar los registros seleccionados?", null));
 		} catch (Exception e) {
 			error(e);
 		}

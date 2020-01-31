@@ -27,6 +27,7 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
@@ -126,8 +127,6 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					getInstanceDto(typeGeneric).set(factory.getNameField(), eval);
 				}
 				if (validateValuesUtils.isDate(typeField)) {
-					var date = "\\d{4}/\\d{2}/\\d{2}";
-					var dateTime = "\\d{4}/\\d{2}/\\d{2}T\\d{2}:\\d{2}\\d{2}";
 					if ("now".equalsIgnoreCase(eval)) {
 						if (typeField == LocalDate.class) {
 							getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDate.now());
@@ -136,7 +135,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 						} else if (typeField == Date.class) {
 							getInstanceDto(typeGeneric).set(factory.getNameField(), new Date());
 						}
-					} else if (eval.matches(date)) {
+					} else if (eval.matches(AppConstants.CONST_FORMAT_DATE)) {
 						var loadDate = LocalDate.parse(eval);
 						if (typeField == LocalDate.class) {
 							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
@@ -144,7 +143,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 							getInstanceDto(typeGeneric).set(factory.getNameField(),
 									Date.from(loadDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 						}
-					} else if (eval.matches(dateTime)) {
+					} else if (eval.matches(AppConstants.CONST_FORMAT_DATE_TIME)) {
 						var loadDate = LocalDateTime.parse(eval);
 						if (typeField == LocalDate.class) {
 							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
@@ -170,7 +169,8 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			var typeField = getUsesByUsedTypeGeneric(typeGeneric);
 			var generics = LoadFieldsFactory.getAnnotatedField(ConfigGenericFieldDTO.class, getClazz(), typeField);
 			if (generics == null) {
-				throw new RuntimeException(i18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE));
+				throw new RuntimeException(
+						i18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE).get());
 			} else {
 				list = (List<L>) generics;
 			}
@@ -231,7 +231,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	default void loadValueIntoForm(TypeGeneric typeGeneric, String fieldName) {
 		try {
 			if (!getMapFields(typeGeneric).containsKey(fieldName)) {
-				throw new RuntimeException(i18n().valueBundle(CONST_ERR_CONFIG_FIELD_NOT_FOUND_));
+				throw new RuntimeException(i18n().valueBundle(CONST_ERR_CONFIG_FIELD_NOT_FOUND_).get());
 			}
 			var field = getInstanceDto(typeGeneric);
 			var factory = LoadFieldsFactory.getInstance(field);

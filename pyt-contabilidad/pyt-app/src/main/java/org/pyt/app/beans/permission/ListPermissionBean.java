@@ -52,7 +52,7 @@ public class ListPermissionBean extends AGenericInterfacesBean<PermissionDTO> {
 	public void initialize() {
 		try {
 			filtro = new PermissionDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.permission"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.permission").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

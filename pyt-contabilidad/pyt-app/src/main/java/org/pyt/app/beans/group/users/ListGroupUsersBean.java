@@ -51,7 +51,7 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	public void initialize() {
 		try {
 			filtro = new GroupUsersDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.group.users"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.group.users").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

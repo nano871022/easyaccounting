@@ -53,7 +53,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	public void initialize() {
 		try {
 			filtro = new LanguagesDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.languages"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.languages").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

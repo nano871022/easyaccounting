@@ -178,6 +178,15 @@ public final class UtilControlFieldFX {
 		return button;
 	}
 
+	public Button buttonGenericWithEventClicked(ICaller caller, OptI18n showName, FontAwesome.Glyph fontIcon) {
+		var button = new Button(showName.get());
+		button.onMouseClickedProperty().set((event) -> caller.caller());
+
+		Glyph fi = new Glyph("FontAwesome", fontIcon);
+		button.setGraphic(fi);
+		return button;
+	}
+
 	/**
 	 * Se encarga de limpiar el {@link Node campo} suministrado, dejar el valor por
 	 * default

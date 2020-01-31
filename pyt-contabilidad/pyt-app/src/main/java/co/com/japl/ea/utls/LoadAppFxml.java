@@ -135,19 +135,19 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			genericBean.start(stg);
 			genericBean.initialize();
 		} catch (InstantiationException e) {
-			throw new LoadAppFxmlException(i18n.valueBundle("err.instance.problem"), e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.instance.problem").get(), e);
 		} catch (IllegalAccessException e) {
-			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.access"), e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.access").get(), e);
 		} catch (IllegalArgumentException e) {
-			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.argument"), e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.argument").get(), e);
 		} catch (InvocationTargetException e) {
-			throw new LoadAppFxmlException(i18n.valueBundle("err.invoke.object.problem"), e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.invoke.object.problem").get(), e);
 		} catch (NoSuchMethodException e) {
-			throw new LoadAppFxmlException(i18n.valueBundle("err.method.not.found"), e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.method.not.found").get(), e);
 		} catch (SecurityException e) {
-			throw new LoadAppFxmlException(i18n.valueBundle("err.security.problem"), e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.security.problem").get(), e);
 		} catch (Exception e) {
-			throw new LoadAppFxmlException(i18n.valueBundle("err.dont.can.get.stage"), e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.dont.can.get.stage").get(), e);
 		}
 		return genericBean;
 	}

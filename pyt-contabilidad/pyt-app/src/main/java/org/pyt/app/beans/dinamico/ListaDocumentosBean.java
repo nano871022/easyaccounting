@@ -131,7 +131,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	private void searchFilters() {
 		try {
 			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
-				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found.").get());
 			}
 			var documentos = new DocumentosDTO();
 			documentos.setClaseControlar(DocumentoDTO.class);
@@ -148,7 +148,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	private void searchColumns() {
 		try {
 			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
-				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found.").get());
 			}
 			var documentos = new DocumentosDTO();
 			documentos.setClaseControlar(DocumentoDTO.class);

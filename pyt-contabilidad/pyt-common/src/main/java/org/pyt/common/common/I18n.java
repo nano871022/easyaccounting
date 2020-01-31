@@ -1,6 +1,5 @@
 package org.pyt.common.common;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -71,12 +70,13 @@ public final class I18n {
 	 * @param key {@link String}
 	 * @return {@link String}
 	 */
-	public final String valueBundle(String key) {
+	public final OptI18n valueBundle(String key) {
+		return OptI18n.process(value -> {
 		try {
 			if (languagesDB != null && languagesDB.containsKey(key)) {
-				return ((ADto) languagesDB.get(key)).get(LanguageConstant.CONST_TEXT_BUNDLE_LANGUAGES);
+					return ((ADto) languagesDB.get(value)).get(LanguageConstant.CONST_TEXT_BUNDLE_LANGUAGES);
 			} else {
-				return getLanguages().getString(key);
+					return getLanguages().getString(value);
 			}
 		} catch (Exception exception) {
 			try {
@@ -85,13 +85,14 @@ public final class I18n {
 				logger.logger(exception);
 				logger.logger(e);
 			}
-			return key;
+				return value;
 		}
+		}, key);
 	}
 	
-	public final String valueBundle(String key,Object... formats) {
+	public final OptI18n valueBundle(String key, Object... formats) {
 		var pattern = valueBundle(key);
-		return new MessageFormat(pattern).format(formats);
+		return OptI18n.ifNullable(pattern.get(), key, formats);
 	}
 
 	public final void setBunde(String bundle) {

@@ -6,15 +6,14 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.SelectList;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.GridPane;
 
 /**
  * Se encarga de validar los campos,
@@ -37,7 +36,7 @@ public final class ValidFields {
 	 * @return {@link Boolean}
 	 */
 	@SuppressWarnings("null")
-	public static final Boolean valid(TextField field, Boolean notEmpty, Integer min, Integer max, String msnError) {
+	public static final Boolean valid(TextField field, Boolean notEmpty, Integer min, Integer max, OptI18n msnError) {
 		Boolean valid = true;
 		if (field == null)
 			return false;
@@ -48,7 +47,7 @@ public final class ValidFields {
 		if (max != null && max >= 0)
 			valid &= value.length() <= max;
 		if (!valid)
-			error(field, msnError);
+			error(field, msnError.get());
 		if (valid)
 			success(field);
 		return valid;
@@ -88,7 +87,7 @@ public final class ValidFields {
 	 * @param notEmpty {@link Boolean}
 	 * @return {@link Boolean}
 	 */
-	public static final <T extends Object> Boolean valid(ChoiceBox<T> selects, Boolean notEmpty, String msnError) {
+	public static final <T extends Object> Boolean valid(ChoiceBox<T> selects, Boolean notEmpty, OptI18n msnError) {
 		Boolean valid = true;
 		if (selects == null)
 			return false;
@@ -96,7 +95,7 @@ public final class ValidFields {
 		if (notEmpty && select == null)
 			return false;
 		if (!valid)
-			error(selects, msnError);
+			error(selects, msnError.get());
 		if (valid)
 			success(selects);
 		return valid;
@@ -111,7 +110,7 @@ public final class ValidFields {
 	 * @return {@link Boolean}
 	 */
 	public static final <T extends Object, S extends Object> Boolean valid(ChoiceBox<S> selects, Map<S, T> map,
-			Boolean notEmpty, String msnError) {
+			Boolean notEmpty, OptI18n msnError) {
 		Boolean valid = true;
 		if (selects == null)
 			return false;
@@ -119,7 +118,7 @@ public final class ValidFields {
 		if (notEmpty && select == null)
 			return false;
 		if (!valid)
-			error(selects, msnError);
+			error(selects, msnError.get());
 		if (valid)
 			success(selects);
 		return valid;
@@ -183,6 +182,10 @@ public final class ValidFields {
 		return valid;
 	}
 
+	public static final Boolean numeric(TextField field, Boolean notEmpty, Integer min, Integer max, OptI18n msnError) {
+		return numeric(field, notEmpty, min, max, msnError.get());
+	}
+
 	/**
 	 * Se encarga de validar si el valor del campo es numerico y que el valor se
 	 * encuentra en el rango configurado
@@ -217,6 +220,11 @@ public final class ValidFields {
 		if (valid)
 			success(field);
 		return valid;
+	}
+
+	public static final Boolean numeric(TextField field, Boolean notEmpty, BigDecimal min, BigDecimal max,
+			OptI18n msnError) {
+		return numeric(field, notEmpty, min, max, msnError.get());
 	}
 
 	/**

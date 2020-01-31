@@ -58,7 +58,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 	@FXML
 	public void initialize() {
 		registro = new UsuarioDTO();
-		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN));
+		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN).get());
 		verifyLoginRemember();
 	}
 
@@ -132,7 +132,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		} catch (NullPointerException e) {
 			registro.setPassword(null);
 			password.setText(null);
-			message.setText(i18n().valueBundle(LanguageConstant.CONST_ERR_NULL_POINTER_EXCEPTION_LOGIN));
+			message.setText(i18n().valueBundle(LanguageConstant.CONST_ERR_NULL_POINTER_EXCEPTION_LOGIN).get());
 			message.getStyleClass().add(StylesPrincipalConstant.CONST_MESSAGE_ERROR);
 		} catch (RuntimeException e) {
 			registro.setPassword(null);

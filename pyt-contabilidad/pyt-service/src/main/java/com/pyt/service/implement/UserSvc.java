@@ -45,10 +45,10 @@ public class UserSvc extends Services implements IUsersSvc {
 	@Override
 	public void create(UsuarioDTO newUser, UsuarioDTO user) throws Exception {
 		if (newUser == null) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_CREATE_USER_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_CREATE_USER_EMPTY).get());
 		}
 		if (StringUtils.isNotBlank(newUser.getCodigo())) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_CREATE_USER_CODE_NOT_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_CREATE_USER_CODE_NOT_EMPTY).get());
 		}
 		querySvc.insert(newUser, user);
 	}
@@ -56,10 +56,10 @@ public class UserSvc extends Services implements IUsersSvc {
 	@Override
 	public void delete(UsuarioDTO delUser, UsuarioDTO user) throws Exception {
 		if (delUser == null) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_DEL_USER_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_DEL_USER_EMPTY).get());
 		}
 		if (StringUtils.isBlank(delUser.getCodigo())) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_DEL_USER_CODE_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_DEL_USER_CODE_EMPTY).get());
 		}
 		delUser.setPassword(null);
 		querySvc.del(delUser, user);
@@ -68,10 +68,10 @@ public class UserSvc extends Services implements IUsersSvc {
 	@Override
 	public List<UsuarioDTO> getAll(UsuarioDTO user, Integer init, Integer size) throws Exception {
 		if (user == null) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_GET_ALL_USER_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_GET_ALL_USER_EMPTY).get());
 		}
 		if (init < 0 || size < 0) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_GET_ALL_USER_PAGE));
+			throw new Exception(i18n().valueBundle(CONST_ERR_GET_ALL_USER_PAGE).get());
 		}
 		user.setPassword(null);
 		var found = querySvc.gets(user, init, size);
@@ -82,7 +82,7 @@ public class UserSvc extends Services implements IUsersSvc {
 	@Override
 	public UsuarioDTO get(UsuarioDTO user) throws Exception {
 		if (user == null) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_GET_USER_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_GET_USER_EMPTY).get());
 		}
 		user.setPassword(null);
 		var found = querySvc.get(user);
@@ -93,10 +93,10 @@ public class UserSvc extends Services implements IUsersSvc {
 	@Override
 	public void update(UsuarioDTO updUser, UsuarioDTO user) throws Exception {
 		if (updUser == null) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_UPD_USER_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_UPD_USER_EMPTY).get());
 		}
 		if (StringUtils.isBlank(updUser.getCodigo())) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_UPD_USER_CODE_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_UPD_USER_CODE_EMPTY).get());
 		}
 		querySvc.update(updUser, user);
 	}
@@ -104,7 +104,7 @@ public class UserSvc extends Services implements IUsersSvc {
 	@Override
 	public Integer countRow(UsuarioDTO updUser) throws Exception {
 		if (updUser == null) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_COUNT_USER_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_COUNT_USER_EMPTY).get());
 		}
 		updUser.setPassword(null);
 		return querySvc.countRow(updUser);
@@ -214,14 +214,14 @@ public class UserSvc extends Services implements IUsersSvc {
 	private void createLogin(UsuarioDTO usuario, String ipMachine, String ipPublic, Boolean remember) throws Exception {
 		var login = new LoginDTO();
 		if (StringUtils.isBlank(ipMachine)) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_IP_MACHINE_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_IP_MACHINE_EMPTY).get());
 		}
 		if (StringUtils.isBlank(ipPublic)) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_IP_PUBLIC_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_IP_PUBLIC_EMPTY).get());
 		}
 
 		if (usuario == null || StringUtils.isBlank(usuario.getCodigo())) {
-			throw new Exception(i18n().valueBundle(CONST_ERR_USER_EMPTY));
+			throw new Exception(i18n().valueBundle(CONST_ERR_USER_EMPTY).get());
 		}
 		login.setUsuario(usuario);
 		login.setIpMaquina(ipMachine);

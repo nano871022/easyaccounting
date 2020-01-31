@@ -173,8 +173,8 @@ public class MenuItems implements Reflection {
 	private final String nameLabel(String key) {
 		var search = LBL_MENU + key;
 		var result = I18n.instance().valueBundle(search);
-		if (!search.contains(result)) {
-			key = result;
+		if (!search.contains(result.get())) {
+			key = result.get();
 		}
 		return key;
 	}

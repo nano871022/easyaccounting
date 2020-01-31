@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.exceptions.IngresoException;
 
 import com.pyt.service.dto.IngresoDTO;
@@ -118,7 +119,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{ListIngresosBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					OptI18n.process(val -> "¿Desea eliminar los registros seleccionados?", null));
 		} catch (Exception e) {
 			error(e);
 		}

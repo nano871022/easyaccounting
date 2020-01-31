@@ -4,8 +4,8 @@ import org.pyt.app.components.PopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
-import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
@@ -29,7 +29,7 @@ import javafx.stage.Stage;
  * @since 2018-05-24
  */
 @FXMLFile(path = "view", file = "Template.fxml", nombreVentana = "Contabilidad PyT")
-public class Template implements IComunicacion,Reflection {
+public class Template implements IComunicacion, Reflection {
 	@FXML
 	private MenuBar menu;
 	@FXML
@@ -60,6 +60,7 @@ public class Template implements IComunicacion,Reflection {
 	@SubcribirToComunicacion(comando = AppConstants.COMMAND_LANGUAGES)
 	private Comunicacion comunicacion;
 	private Log logger = Log.Log(this.getClass());
+
 	@FXML
 	public void initialize() {
 		try {
@@ -98,18 +99,21 @@ public class Template implements IComunicacion,Reflection {
 				}
 				break;
 			case AppConstants.COMMAND_POPUP_ERROR:
-				if (valor instanceof String) {
-					LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.ERROR);
+				if (valor instanceof OptI18n) {
+					LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load(((OptI18n) valor),
+							PopupBean.TIPOS.ERROR);
 				}
 				break;
 			case AppConstants.COMMAND_POPUP_INFO:
-				if (valor instanceof String) {
-					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.INFO);
+				if (valor instanceof OptI18n) {
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load(((OptI18n) valor),
+							PopupBean.TIPOS.INFO);
 				}
 				break;
 			case AppConstants.COMMAND_POPUP_WARN:
 				if (valor instanceof String) {
-					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((String) valor, PopupBean.TIPOS.WARNING);
+					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((OptI18n) valor,
+							PopupBean.TIPOS.WARNING);
 				}
 				break;
 			}

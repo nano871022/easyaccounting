@@ -51,7 +51,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 
 	@FXML
 	private void initialize() {
-		titulo.setText(i18n().valueBundle(LanguageConstant.FXML_LBL_TITLE_GENERIC_INTERFACES));
+		titulo.setText(i18n().valueBundle(LanguageConstant.FXML_LBL_TITLE_GENERIC_INTERFACES).get());
 		registro = new ConfigGenericFieldDTO();
 		SelectList.put(chbState, ParametroConstants.mapa_estados_parametros);
 		validateValues = new ValidateValues();

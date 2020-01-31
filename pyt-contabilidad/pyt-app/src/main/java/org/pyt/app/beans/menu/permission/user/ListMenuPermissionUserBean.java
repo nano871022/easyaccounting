@@ -51,7 +51,7 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 	public void initialize() {
 		try {
 			filtro = new MenuPermUsersDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.menu.permission.user"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.menu.permission.user").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

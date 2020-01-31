@@ -77,8 +77,10 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 			this.closeWindow();
 		} else if (cantidad == 0) {
 			this.closeWindow();
-			throw new Exception(String.format(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText),
-					i18n().valueBundle(LanguageConstant.GENERIC_DOT.concat(getClazz().getSimpleName()))));
+			throw new Exception(i18n()
+					.valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText,
+							i18n().valueBundle(LanguageConstant.GENERIC_DOT.concat(getClazz().getSimpleName())).get())
+					.get());
 		} else {
 			showWindow();
 		}
