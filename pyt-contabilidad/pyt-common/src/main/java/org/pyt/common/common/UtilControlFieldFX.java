@@ -20,6 +20,7 @@ import org.pyt.common.validates.ValidateValues;
 
 import co.com.japl.ea.common.fxml.ControlValueUtils;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -33,6 +34,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
@@ -63,9 +65,12 @@ public final class UtilControlFieldFX {
 	 *              </li>
 	 * @return {@link Label}
 	 */
-	public final Label createLabel(String name, String... value) {
+	public final Label createLabel(OptI18n name, EventHandler<? super MouseEvent> event, String... value) {
 		var label = new Label();
-		label.setText(name);
+		if (!name.isFound()) {
+			label.setOnMouseClicked(event);
+		}
+		label.setText(name.get());
 		if (value.length > 0) {
 			Tooltip toolTip = new Tooltip();
 			toolTip.setText(value[0]);

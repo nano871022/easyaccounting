@@ -73,7 +73,7 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 		}).forEach(field -> {
 			var factory = LoadFieldsFactory.getInstance(field);
 			var fieldName = factory.getNameField();
-			var column = new TableColumn<F, String>(factory.getLabelText());
+			var column = new TableColumn<F, String>(factory.getLabelText().get());
 			column.setCellValueFactory(cellValue -> {
 				try {
 					var sop = new SimpleObjectProperty<String>();

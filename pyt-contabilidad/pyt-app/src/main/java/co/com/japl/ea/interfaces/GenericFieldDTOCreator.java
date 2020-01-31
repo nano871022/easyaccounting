@@ -3,6 +3,7 @@ package co.com.japl.ea.interfaces;
 import java.lang.reflect.Field;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.UtilControlFieldFX;
 
 import com.pyt.service.dto.ParametroDTO;
@@ -28,13 +29,13 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	}
 
 	@Override
-	public String getLabelText() {
+	public OptI18n getLabelText() {
 		if (field.getAlias() != null && field.getAlias().trim().isEmpty()) {
-			return field.getAlias();
+			return OptI18n.noChange(field.getAlias());
 		}
 		var classPath = field.getClassPath().contains("Class") ? field.getClassPath().substring(5)
 				: field.getClassPath();
-		return notificationMethods.i18n().valueBundle(classPath + "." + field.getName()).get();
+		return notificationMethods.i18n().valueBundle(classPath + "." + field.getName());
 	}
 
 	@Override

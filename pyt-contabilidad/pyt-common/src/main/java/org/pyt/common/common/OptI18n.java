@@ -25,7 +25,7 @@ public final class OptI18n {
 		OptI18n opt = new OptI18n();
 		var result = function.apply(key);
 		opt.search = key;
-		if (result == null) {
+		if (result == null || result.contentEquals(key)) {
 			opt.message = key;
 			opt.found = false;
 		} else {
@@ -103,6 +103,23 @@ public final class OptI18n {
 			opt.search = search;
 			opt.message = new MessageFormat(found).format(formats);
 		}
+		return opt;
+	}
+
+	public final static OptI18n noChange(String key) {
+		OptI18n opt = new OptI18n();
+		opt.found = true;
+		opt.search = key;
+		opt.message = key;
+		return opt;
+	}
+
+	public final static OptI18n noChange(String key, Object... formats) {
+		OptI18n opt = new OptI18n();
+		opt.found = true;
+		opt.search = key;
+		opt.message = new MessageFormat(key).format(formats);
+		opt.formats = formats;
 		return opt;
 	}
 

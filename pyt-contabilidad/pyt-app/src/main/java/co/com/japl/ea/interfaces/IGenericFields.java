@@ -29,6 +29,7 @@ import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
@@ -38,6 +39,7 @@ import com.pyt.service.implement.GenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
@@ -183,7 +185,15 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				var factory = LoadFieldsFactory.getInstance(field);
 				assignDefaultValue(typeGeneric, factory);
 				if (factory.isVisible()) {
-					var label = genericFormsUtils.createLabel(factory.getLabelText(), factory.getToolTip());
+					var label = genericFormsUtils.createLabel(factory.getLabelText(), event -> {
+						var popup = new org.pyt.app.components.PopupFromBean(
+								org.pyt.app.beans.languages.LanguageBean.class);
+						try {
+							LoadAppFxml.loadBeanFX(popup);
+						} catch (LoadAppFxmlException e) {
+							logger().logger(e);
+						}
+					}, factory.getToolTip());
 					var fieldControl = factory.create();
 					var nameField = factory.getNameField();
 					var typeField = getInstanceDto(typeGeneric).getType(nameField);

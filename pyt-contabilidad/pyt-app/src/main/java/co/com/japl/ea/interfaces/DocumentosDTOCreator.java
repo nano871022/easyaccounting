@@ -3,6 +3,7 @@ package co.com.japl.ea.interfaces;
 import java.lang.reflect.Field;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.ParametroConstants;
 
@@ -29,8 +30,8 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 	}
 
 	@Override
-	public String getLabelText() {
-		return field.getFieldLabel();
+	public OptI18n getLabelText() {
+		return OptI18n.noChange(field.getFieldLabel());
 	}
 
 	@Override
