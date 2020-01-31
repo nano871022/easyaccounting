@@ -1,5 +1,8 @@
 package org.pyt.app.beans.languages;
 
+import java.util.Locale;
+import java.util.Optional;
+
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
@@ -15,9 +18,12 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 @FXMLFile(file = "languages.fxml", path = "view/languages")
 public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
@@ -33,11 +39,21 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	public static final String CONST_FIELD_NAME_LANGUAGES_TEXT = "text";
 	public static final String CONST_FIELD_NAME_LANGUAGES_STATE = "state";
 	public static final String CONST_FIELD_NAME_LANGUAGES_IDIOM = "idiom";
+	private boolean openedPopup;
+	@FXML
+	private BorderPane panel;
+	@FXML
+	private Button btnNew;
+	@FXML
+	private Button btnSave;
 
 	@FXML
 	public void initialize() {
 		try {
+			openedPopup = false;
 			registro = new LanguagesDTO();
+			registro.setIdiom(Locale.getDefault().toString());
+			registro.setState("1");
 			setClazz(LanguagesDTO.class);
 			fields = configSvc.getFieldToFields(this.getClass(), LanguagesDTO.class);
 			loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
@@ -48,12 +64,28 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	public final void load() {
 		registro = new LanguagesDTO();
+		registro.setIdiom(Locale.getDefault().toString());
+		registro.setState("1");
+		btnSave.setText(i18n().valueBundle("fxml.btn.add").get());
 	}
 
 	public final void load(LanguagesDTO dto) {
 		registro = dto;
 		var util = new UtilControlFieldFX();
 		util.loadValuesInFxml(dto, gridPaneLanguages);
+		btnSave.setText(i18n().valueBundle("fxml.btn.edit").get());
+	}
+
+	public final void addCode(String code) {
+		if (Optional.ofNullable(registro).isPresent()) {
+			registro.setCode(code);
+			new UtilControlFieldFX().loadValuesInFxml(registro, gridPaneLanguages);
+		}
+	}
+
+	public final void openPopup() {
+		openedPopup = true;
+		btnNew.setVisible(false);
 	}
 
 	@Override
@@ -84,6 +116,9 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 					languagesSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.language.updated"));
 				}
+				if (openedPopup) {
+					cancel();
+				}
 			}
 		} catch (Exception e) {
 			error(e);
@@ -96,7 +131,12 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	}
 
 	public final void cancel() {
-		getController(ListLanguagesBean.class);
+		if (openedPopup) {
+			((Stage) panel.getScene().getWindow()).close();
+			destroy();
+		} else {
+			getController(ListLanguagesBean.class);
+		}
 	}
 
 	@Override
@@ -108,5 +148,4 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return null;
 	}
-
 }

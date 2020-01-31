@@ -27,6 +27,7 @@ public class PopupFromBean<D extends ADto, B extends ABean<D>> implements IBean<
 	private Comunicacion comunicacion;
 	private BorderPane panel;
 	private Log logger = Log.Log(this.getClass());
+	private Object bean;
 
 	public PopupFromBean(Class<D> clazz) {
 		this.clazz = clazz;
@@ -49,7 +50,7 @@ public class PopupFromBean<D extends ADto, B extends ABean<D>> implements IBean<
 	}
 
 	public void initialize() throws LoadAppFxmlException {
-		LoadAppFxml.loadBeanFxml2(primaryStage, (Class) clazz);
+		bean = LoadAppFxml.loadBeanFxml2(primaryStage, (Class) clazz);
 		showWindow();
 	}
 
@@ -105,6 +106,10 @@ public class PopupFromBean<D extends ADto, B extends ABean<D>> implements IBean<
 	@Override
 	public <T> T meThis() {
 		return (T) this;
+	}
+
+	public Object getBean() {
+		return bean;
 	}
 
 }

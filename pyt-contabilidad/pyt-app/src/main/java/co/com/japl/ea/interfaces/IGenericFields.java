@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
+import org.pyt.app.beans.languages.LanguageBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
@@ -190,6 +191,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 								org.pyt.app.beans.languages.LanguageBean.class);
 						try {
 							LoadAppFxml.loadBeanFX(popup);
+							LanguageBean bean = (LanguageBean) popup.getBean();
+							bean.openPopup();
+							bean.addCode(factory.getLabelText().get());
 						} catch (LoadAppFxmlException e) {
 							logger().logger(e);
 						}
