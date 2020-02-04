@@ -9,19 +9,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="232.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="366.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.cache.CacheBean">
   <bottom>
-    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="33.0" prefWidth="300.0">
+    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="33.0" prefWidth="-1.0">
       <children>
-        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+        <GridPane fx:id="gpRowSelected" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
           <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="\%fxml.lbl.name" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Label fx:id="lblSelectedOption" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="\%fxml.lbl.name" GridPane.columnIndex="0" GridPane.rowIndex="0">
               <GridPane.margin>
                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
               </GridPane.margin>
             </Label>
-            <ToggleButton maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="\%fxml.lbl.ok" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="0" />
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="\%fxml.lbl.save" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="0" />
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancel" text="%fxml.lbl.cancel" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="0" />
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updateCacheSeleted" text="%fxml.lbl.clean" GridPane.columnIndex="1" GridPane.rowIndex="0">
+              <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+              </GridPane.margin>
+            </Button>
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="166.0" minWidth="10.0" prefWidth="146.0" />
@@ -36,33 +40,54 @@
     </HBox>
   </bottom>
   <center>
-    <VBox prefHeight="200.0" prefWidth="100.0">
+    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
       <children>
-        <TableView prefHeight="200.0" prefWidth="200.0">
+        <TableView fx:id="tabla" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#clickTable" prefHeight="-1.0" prefWidth="-1.0">
           <columns>
-            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="119.0" text="\%fxml.lbl.name" />
-            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="97.0" text="\%fxml.lbl.lastUpdate" />
-            <TableColumn prefWidth="75.0" text="\%fxml.lbl.state" />
+            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="180.0" text="%fxml.lbl.name" fx:id="tcName" />
+            <TableColumn maxWidth="5000.0" minWidth="30.0" prefWidth="119.0" text="%fxml.lbl.state" fx:id="tcState" />
           </columns>
+          <rotationAxis>
+            <Point3D />
+          </rotationAxis>
         </TableView>
-        <HBox fx:id="paginator" prefHeight="100.0" prefWidth="200.0" />
+        <HBox fx:id="paginator" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="-1.0" visible="true">
+          <rotationAxis>
+            <Point3D z="10.0" />
+          </rotationAxis>
+        </HBox>
       </children>
     </VBox>
   </center>
+  <padding>
+    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+  </padding>
   <top>
-    <GridPane>
+    <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
       <children>
-        <Label fx:id="lblTitle" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Title" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="0">
+        <Label id="lblTitle" fx:id="lblTittle" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Title" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="0">
           <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
           </GridPane.margin>
         </Label>
-        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="\%fxml.lbl.name" GridPane.columnIndex="0" GridPane.margin="$x1" GridPane.rowIndex="1" />
-        <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="1" />
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="\%fxml.btn.search" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="1" />
+        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.name" GridPane.columnIndex="0" GridPane.rowIndex="1">
+          <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+          </GridPane.margin>
+        </Label>
+        <TextField fx:id="tfSearch" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+          </GridPane.margin>
+        </TextField>
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#search" text="%fxml.btn.search" GridPane.columnIndex="2" GridPane.rowIndex="1">
+          <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+          </GridPane.margin>
+        </Button>
       </children>
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="67.0" />
+        <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="67.0" />
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="148.0" />
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="85.0" />
       </columnConstraints>

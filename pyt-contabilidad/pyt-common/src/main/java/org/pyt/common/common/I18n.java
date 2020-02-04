@@ -32,8 +32,9 @@ public final class I18n {
 	}
 
 	public final static synchronized I18n instance() {
-		if (instances == null) {
+		if (CacheUtil.INSTANCE().isRefresh("International(I18n)")) {
 			instances = new I18n();
+			CacheUtil.INSTANCE().load("International(I18n)");
 		}
 		return instances;
 	}
