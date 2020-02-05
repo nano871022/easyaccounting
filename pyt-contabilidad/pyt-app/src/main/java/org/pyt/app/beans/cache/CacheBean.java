@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.CacheUtil;
+
+import com.sun.javaws.CacheUtil;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
@@ -70,18 +71,17 @@ public class CacheBean extends ABean<CacheDTO> {
 	 */
 	public void lazy() {
 		dt = new DataTableFXMLUtil<CacheDTO, CacheDTO>(paginator, tabla) {
+
 			@Override
 			public List<CacheDTO> getList(CacheDTO filter, Integer page, Integer rows) {
 				List<CacheDTO> lista = new ArrayList<>();
 				Optional.ofNullable(CacheUtil.INSTANCE().getAll()).orElse(new HashMap<String, Boolean>())
 						.forEach((key, value) -> {
-							if (lista.size() != rows) {
-								if (key.contains(Optional.ofNullable(filter.getName()).orElse(""))) {
-									lista.add(new CacheDTO(key, value));
-								}
+							if (key.contains(Optional.ofNullable(filter.getName()).orElse(""))) {
+								lista.add(new CacheDTO(key, value));
 							}
 						});
-				return lista;
+				return lista.subList(page, rows);
 			}
 
 			@Override
