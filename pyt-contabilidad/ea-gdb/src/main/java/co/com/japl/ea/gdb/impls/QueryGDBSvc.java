@@ -13,9 +13,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.CacheUtil;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.RefreshCodeValidation;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.RefreshCodeConstant;
 import org.pyt.common.exceptions.QueryException;
@@ -152,8 +152,9 @@ public class QueryGDBSvc implements IQuerySvc {
 	}
 
 	private <T extends ADto> void findJoins(List<T> list) {
-		if (RefreshCodeValidation.getInstance().validate(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN)) {
+		if (CacheUtil.INSTANCE().isRefresh(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN)) {
 			mapJoin.clear();
+			CacheUtil.INSTANCE().load(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN);
 		}
 		list.forEach(dto -> searchFieldTypeADTO(dto));
 	}

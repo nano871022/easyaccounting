@@ -14,12 +14,12 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.dto.system.CacheDTO;
 import co.com.japl.ea.dto.system.ToggleDTO;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -56,8 +56,10 @@ public class ToggleBean extends ABean<ToggleDTO> {
 	private TableColumn<ToggleDTO, String> tcName;
 	@FXML
 	private GridPane gpRowSelected;
+	@FXML
+	private RadioButton rfSelected;
 	private DataTableFXMLUtil<ToggleDTO, ToggleDTO> dt;
-	public static final String CONST_TITTLE_NAME = "page.tittle.cached";
+	public static final String CONST_TITTLE_NAME = "page.tittle.toggl";
 
 	@FXML
 	public void initialize() {
@@ -65,10 +67,10 @@ public class ToggleBean extends ABean<ToggleDTO> {
 		lblTittle.setText(NombreVentana);
 		registro = new ToggleDTO();
 		gpRowSelected.setVisible(false);
-		tcName.setCellValueFactory(row -> new SimpleObjectProperty<>(Optional.ofNullable(row.getValue().getNombre())
-				.orElse(i18n().valueBundle("err.not.found.value").get())));
+		tcName.setCellValueFactory(row -> new SimpleObjectProperty<>(
+				Optional.ofNullable(row.getValue().getName()).orElse(i18n().valueBundle("err.not.found.value").get())));
 		tcActived.setCellValueFactory(
-				row -> new SimpleObjectProperty<String>(Optional.ofNullable(row.getValue().getActivado()).orElse(false)
+				row -> new SimpleObjectProperty<String>(Optional.ofNullable(row.getValue().isActivado()).orElse(false)
 						? i18n().valueBundle("message.value.active").get()
 						: i18n().valueBundle("message.value.inactive").get()));
 		tcLastUpdated.setCellValueFactory(row -> {
@@ -87,7 +89,7 @@ public class ToggleBean extends ABean<ToggleDTO> {
 
 			@Override
 			public List<ToggleDTO> getList(ToggleDTO filter, Integer page, Integer rows) {
-				List<CacheDTO> lista = new ArrayList<>();
+				List<ToggleDTO> lista = new ArrayList<>();
 				try {
 					lista = toggleSvc.gets(filter, page, rows);
 				} catch (GenericServiceException e) {
@@ -118,7 +120,7 @@ public class ToggleBean extends ABean<ToggleDTO> {
 	}
 
 	public void updateCacheSeleted() {
-		var activado = false;
+		var activado = this.rfSelected.isSelected();
 		var dto = dt.getSelectedRow();
 		dto.setActivado(activado);
 		try {
@@ -131,7 +133,7 @@ public class ToggleBean extends ABean<ToggleDTO> {
 
 	public void clickTable() {
 		if (dt.isSelected()) {
-			lblSelectedOption.setText(dt.getSelectedRow().getNombre());
+			lblSelectedOption.setText(dt.getSelectedRow().getName());
 			gpRowSelected.setVisible(true);
 		} else {
 			lblSelectedOption.setText(null);
