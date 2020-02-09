@@ -32,7 +32,7 @@ public final class AppConstants {
 
 	public final static String GET_NAME_FIELDS = "getNameFields";
 	public final static String RESOURCE_BUNDLE = "languages/language";
-	public final static String VERSION_DATABASE = "v006";
+	public final static String VERSION_DATABASE = "v007";
 
 	public final static String CONST_FIELD_ORDER = "order";
 	public final static String CONST_FORMAT_DATE = "\\d{4}/\\d{2}/\\d{2}";

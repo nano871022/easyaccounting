@@ -2,6 +2,7 @@ package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.UtilControlFieldFX;
@@ -63,7 +64,7 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 
 	@Override
 	public String getNameFieldToShowInComboBox() {
-		throw new RuntimeException("No se tiene implementado para mostrar un campo en concreto.");
+		return field.getFieldShow();
 	}
 
 	@Override
@@ -73,16 +74,16 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 
 	@Override
 	public String getValueDefault() {
-		return null;
+		return field.getValueDefault();
 	}
 
 	@Override
 	public Boolean isVisible() {
-		return true;
+		return field.getIsVisible();
 	}
 
 	@Override
 	public Boolean hasValueDefault() {
-		return false;
+		return StringUtils.isNotBlank(field.getValueDefault());
 	}
 }
