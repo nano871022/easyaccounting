@@ -80,7 +80,11 @@ public class CacheBean extends ABean<CacheDTO> {
 								lista.add(new CacheDTO(key, value));
 							}
 						});
-				return lista.subList(page, rows);
+				return lista.subList(page, getRow(page, lista.size(), rows));
+			}
+
+			private Integer getRow(Integer init, Integer size, Integer max) {
+				return size <= max || init + max > size ? size : init + max;
 			}
 
 			@Override

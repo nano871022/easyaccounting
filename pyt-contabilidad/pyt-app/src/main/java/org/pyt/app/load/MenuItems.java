@@ -12,6 +12,7 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.PropertiesConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.properties.PropertiesUtils;
@@ -26,6 +27,7 @@ import co.com.japl.ea.dto.system.MenuDTO;
 import co.com.japl.ea.interfaces.IUrlLoadBean;
 import co.com.japl.ea.utls.LoadAppFxml;
 import co.com.japl.ea.utls.LoginUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -91,14 +93,16 @@ public class MenuItems implements Reflection {
 	private final void loadMenus() {
 		var list = getMenusFromDB();
 		if (list != null && list.size() > 0) {
-			list.forEach(menuDto -> {
-				var menus = menuDto.getUrl().split("/");
-				var menu = getMenu(menus[0]);
-				processMenu(menu, menuDto.getClassPath(), 0, menus);
-			});
+			list.stream().filter(
+					menuDto -> PermissionUtil.INSTANCE().haveMenu(menuDto.getUrl(), LoginUtil.getUsuarioLogin()))
+					.forEach(menuDto -> {
+						var menus = menuDto.getUrl().split(AppConstants.SLASH);
+						var menu = getMenu(menus[0]);
+						processMenu(menu, menuDto.getClassPath(), 0, menus);
+					});
 		}
 		propertiesMenu.keySet().forEach(key -> {
-			var menus = ((String) key).split("/");
+			var menus = ((String) key).split(AppConstants.SLASH);
 			var menu = getMenu(menus[0]);
 			processMenu(menu, (String) propertiesMenu.get(key), 0, menus);
 		});

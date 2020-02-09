@@ -62,12 +62,13 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE),
-				true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_ACTION),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		var name = getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME).stream().findFirst().get();
+		var state = getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE).stream().findFirst().get();
+		var action = getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_ACTION).stream().findFirst()
+				.get();
+		valid &= ValidFields.valid((TextField) name, true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) state, true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) action, true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
