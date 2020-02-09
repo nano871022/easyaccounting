@@ -68,25 +68,25 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 
 	private final void loadFxml() {
 		try {
-			if (!txtName.getText().isEmpty()) {
+			if (StringUtils.isNotBlank(txtName.getText())) {
 				registro.setName(txtName.getText());
 			}
-			if (!txtAlias.getText().isEmpty()) {
+			if (StringUtils.isNotBlank(txtAlias.getText())) {
 				registro.setAlias(txtAlias.getText());
 			}
-			if (!txtDescription.getText().isEmpty()) {
+			if (StringUtils.isNotBlank(txtDescription.getText())) {
 				registro.setDescription(txtDescription.getText());
 			}
-			if (!txtClassDto.getText().isEmpty()) {
+			if (StringUtils.isNotBlank(txtClassDto.getText())) {
 				registro.setClassPath(txtClassDto.getText());
 			}
-			if (!txtClassBean.getText().isEmpty()) {
+			if (StringUtils.isNotBlank(txtClassBean.getText())) {
 				registro.setClassPathBean(txtClassBean.getText());
 			}
-			if (!txtWidth.getText().isEmpty()) {
+			if (StringUtils.isNotBlank(txtWidth.getText())) {
 				registro.setWidth(validateValues.cast(txtWidth.getText(), Double.class));
 			}
-			if (!txtOrder.getText().isEmpty()) {
+			if (StringUtils.isNotBlank(txtOrder.getText())) {
 				registro.setOrden(validateValues.cast(txtOrder.getText(), Integer.class));
 			}
 

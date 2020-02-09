@@ -186,6 +186,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				var factory = LoadFieldsFactory.getInstance(field);
 				assignDefaultValue(typeGeneric, factory);
 				if (factory.isVisible()) {
+
 					var label = genericFormsUtils.createLabel(factory.getLabelText(), event -> {
 						var popup = new org.pyt.app.components.PopupFromBean(
 								org.pyt.app.beans.languages.LanguageBean.class);
