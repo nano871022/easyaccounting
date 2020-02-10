@@ -31,6 +31,8 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@FXML
 	private TextField txtName;
 	@FXML
+	private ChoiceBox<String> cbName;
+	@FXML
 	private TextField txtDescription;
 	@FXML
 	private TextField txtAlias;
@@ -91,6 +93,18 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		txtClassDto.textProperty().addListener((obs, s1, s2) -> {
 			verifyChange();
 		});
+		txtName.textProperty().addListener((obs, s1, s2) -> {
+			txtDescription.setText(txtName.getText());
+			txtAlias.setText(txtName.getText().substring(0, 1).toUpperCase() + txtName.getText().substring(1));
+			verifyChange();
+		});
+		cbName.selectionModelProperty().addListener(change -> {
+			txtName.setText(SelectList.get(cbName));
+			txtDescription.setText(txtName.getText());
+			txtAlias.setText(txtName.getText().substring(0, 1).toUpperCase() + txtName.getText().substring(1));
+			verifyChange();
+		});
+		cbName.setVisible(false);
 	}
 
 	public final void load() {
@@ -106,6 +120,10 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		try {
 			if (StringUtils.isNotBlank(txtName.getText())) {
 				registro.setName(txtName.getText());
+			}
+			if (StringUtils.isNotBlank(SelectList.get(cbName))) {
+				txtName.setText(SelectList.get(cbName));
+				registro.setName(SelectList.get(cbName));
 			}
 			if (StringUtils.isNotBlank(txtAlias.getText())) {
 				registro.setAlias(txtAlias.getText());
@@ -179,6 +197,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 
 	private final boolean validRecord() {
 		var valid = true;
+
 		valid &= ValidFields.valid(txtName, true, 3, 100, i18n().valueBundle("msn.form.field.error.empty.name"));
 		valid &= ValidFields.valid(txtClassDto, true, 10, 100,
 				i18n().valueBundle("msn.form.field.error.empty.classdto"));
@@ -186,7 +205,6 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				i18n().valueBundle("msn.form.field.error.empty.classbean"));
 		valid &= ValidFields.valid(chbState, ParametroConstants.mapa_estados_parametros, true,
 				i18n().valueBundle("msn.form.field.error.empty.state"));
-		valid &= ValidFields.valid(cbField, true, i18n().valueBundle("msn.form.field.error.empty.field"));
 
 		return valid;
 	}
@@ -231,11 +249,19 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 					lbField.setVisible(true);
 					return;
 				}
+			} else if (StringUtils.isNotBlank(txtClassDto.getText()) && StringUtils.isBlank(txtName.getText())) {
+				Class<?> clazz = Class.forName(txtClassDto.getText());
+				SelectList.put(cbName, ((ADto) clazz.getConstructor().newInstance()).getNameFields());
+				cbName.setVisible(true);
+				txtName.setVisible(false);
+				return;
 			}
 			cbField.setVisible(false);
 			lbField.setVisible(false);
 			cbGroup.setVisible(false);
 			lbGroup.setVisible(false);
+			cbName.setVisible(false);
+			txtName.setVisible(true);
 		} catch (ClassCastException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException
 				| ClassNotFoundException e) {
@@ -251,5 +277,6 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	public void copy() {
 		registro.setCodigo(null);
 		load(registro);
+		notificar(i18n().valueBundle("message.copy.generic.interface.success"));
 	}
 }

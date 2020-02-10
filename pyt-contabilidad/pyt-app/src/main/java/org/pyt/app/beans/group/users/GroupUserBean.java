@@ -60,10 +60,12 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME).stream().map(
+				node -> ValidFields.valid((TextField) node, true, 1, 100, i18n().valueBundle("msn.error.field.empty")))
+				.findFirst().get();
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE).stream().map(
+				node -> ValidFields.valid((TextField) node, true, 1, 100, i18n().valueBundle("msn.error.field.empty")))
+				.findFirst().get();
 		return valid;
 	}
 
