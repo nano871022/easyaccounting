@@ -84,7 +84,10 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		tbDefault.setVisible(false);
 		chkDefault.setSelected(false);
 		chkVisible.setSelected(true);
-		chkDefault.selectedProperty().addListener(event -> tbDefault.setVisible(chkDefault.isSelected()));
+		chkDefault.selectedProperty().addListener(event -> {
+			tbDefault.setVisible(chkDefault.isSelected());
+			lbDefault.setVisible(chkDefault.isSelected());
+		});
 		txtClassDto.textProperty().addListener((obs, s1, s2) -> {
 			verifyChange();
 		});
@@ -128,7 +131,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			if (chkVisible.isSelected()) {
 				registro.setIsVisible(chkVisible.isSelected());
 			}
-			registro.setGroup(
+			registro.setNameGroup(
 					validateValues.cast(SelectList.get(cbGroup, ParametroConstants.MAPA_GRUPOS), String.class));
 			registro.setFieldShow(validateValues.cast(SelectList.get(cbField), String.class));
 			registro.setState(validateValues.cast(SelectList.get(chbState, ParametroConstants.mapa_estados_parametros),
@@ -170,7 +173,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			chkDefault.setSelected(true);
 		}
 		SelectList.selectItem(chbState, ParametroConstants.mapa_estados_parametros, registro.getState());
-		SelectList.selectItem(cbGroup, ParametroConstants.MAPA_GRUPOS, registro.getGroup());
+		SelectList.selectItem(cbGroup, ParametroConstants.MAPA_GRUPOS, registro.getNameGroup());
 		SelectList.selectItem(cbField, registro.getFieldShow());
 	}
 
@@ -183,10 +186,8 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				i18n().valueBundle("msn.form.field.error.empty.classbean"));
 		valid &= ValidFields.valid(chbState, ParametroConstants.mapa_estados_parametros, true,
 				i18n().valueBundle("msn.form.field.error.empty.state"));
-		valid &= ValidFields.valid(cbGroup, ParametroConstants.mapa_grupo, true,
-				i18n().valueBundle("msn.form.field.error.empty.group"));
 		valid &= ValidFields.valid(cbField, true, i18n().valueBundle("msn.form.field.error.empty.field"));
-		valid &= ValidFields.valid(tbDefault, false, 3, 100, i18n().valueBundle("msn.form.field.error.empty.default"));
+
 		return valid;
 	}
 
@@ -225,7 +226,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 						cbGroup.setVisible(true);
 						lbGroup.setVisible(true);
 					}
-					SelectList.add(cbField, ((ADto) instance).getNameFields());
+					((ADto) instance).getNameFields().forEach(fieldName -> SelectList.add(cbField, fieldName));
 					cbField.setVisible(true);
 					lbField.setVisible(true);
 					return;

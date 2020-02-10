@@ -16,7 +16,7 @@ public class UsuarioDTO extends ADto{
 	private String password;
 	private GroupUsersDTO grupoUser;
 	private PersonaDTO person;
-	private Date fechaIncio;
+	private Date fechaInicio;
 	private Date fechaFin;
 	private Integer state;
 
@@ -56,10 +56,10 @@ public class UsuarioDTO extends ADto{
 		this.password = password;
 	}
 	public Date getFechaIncio() {
-		return fechaIncio;
+		return fechaInicio;
 	}
 	public void setFechaIncio(Date fechaIncio) {
-		this.fechaIncio = fechaIncio;
+		this.fechaInicio = fechaIncio;
 	}
 	public Date getFechaFin() {
 		return fechaFin;

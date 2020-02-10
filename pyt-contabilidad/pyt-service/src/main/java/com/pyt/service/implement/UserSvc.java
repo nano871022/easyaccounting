@@ -98,6 +98,9 @@ public class UserSvc extends Services implements IUsersSvc {
 		if (StringUtils.isBlank(updUser.getCodigo())) {
 			throw new Exception(i18n().valueBundle(CONST_ERR_UPD_USER_CODE_EMPTY).get());
 		}
+		if (StringUtils.isBlank(updUser.getPassword())) {
+			updUser.setPassword(querySvc.get(user).getPassword());
+		}
 		querySvc.update(updUser, user);
 	}
 

@@ -28,7 +28,7 @@ public class ConfigGenericFieldDTO extends ADto {
 	private Double width;
 	private Integer orden;
 	private String fieldShow;
-	private String group;
+	private String nameGroup;
 	private String valueDefault;
 	private Boolean isVisible;
 	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
@@ -130,12 +130,12 @@ public class ConfigGenericFieldDTO extends ADto {
 		this.fieldShow = fieldShow;
 	}
 
-	public String getGroup() {
-		return group;
+	public String getNameGroup() {
+		return nameGroup;
 	}
 
-	public void setGroup(String group) {
-		this.group = group;
+	public void setNameGroup(String group) {
+		this.nameGroup = group;
 	}
 
 	public String getValueDefault() {

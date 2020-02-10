@@ -154,7 +154,16 @@ public final class SelectList {
 	 * @return {@link String}
 	 */
 	public final static <T extends Object> T get(ChoiceBox<T> choiceBox) {
-		return choiceBox.getValue();
+		var select = choiceBox.selectionModelProperty().get().getSelectedItem();
+		if (select != null) {
+			if (select instanceof String) {
+				if (AppConstants.SELECCIONE.contentEquals((String) select)) {
+					return null;
+				}
+			}
+			return select;
+		}
+		return null;
 	}
 
 	/**

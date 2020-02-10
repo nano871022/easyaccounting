@@ -11,6 +11,7 @@ import org.pyt.common.common.SelectList;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -25,6 +26,23 @@ public final class ValidFields {
 	public static final String CONST_STYLE_FIELD_ERROR = "field-error";
 	public static final String CONST_STYLE_TOOLTIP_ERROR = "tooltip-error";
 	public static final String CONST_STYLE_FIELD_OK = "field-ok";
+
+	public static final Boolean valid(DatePicker date, Boolean notEmpty, OptI18n msnError) {
+		Boolean valid = true;
+		if (date == null) {
+			return false;
+		}
+		var dValue = date.getValue();
+		if (notEmpty) {
+			valid &= dValue != null;
+		}
+		if (!valid) {
+			error(date, msnError.get());
+		} else {
+			success(date);
+		}
+		return valid;
+	}
 
 	/**
 	 * Se encarga de validar un campo de tipo de texto {@link TextField}
