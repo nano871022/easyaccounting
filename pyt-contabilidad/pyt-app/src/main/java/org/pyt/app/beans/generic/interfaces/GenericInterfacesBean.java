@@ -2,6 +2,7 @@ package org.pyt.app.beans.generic.interfaces;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -9,11 +10,13 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.validates.ValidFields;
 import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
@@ -28,6 +31,8 @@ import javafx.scene.control.TextField;
 public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
+	@Inject
+	private IParametrosSvc parametroSvc;
 	@FXML
 	private TextField txtName;
 	@FXML
@@ -45,6 +50,8 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@FXML
 	private CheckBox chkIsFilter;
 	@FXML
+	private CheckBox chkGroup;
+	@FXML
 	private CheckBox chkIsColumn;
 	@FXML
 	private CheckBox chkIsRequired;
@@ -59,7 +66,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@FXML
 	private Label lbGroup;
 	@FXML
-	private ChoiceBox<String> cbGroup;
+	private ChoiceBox<ParametroDTO> cbGroup;
 	@FXML
 	private Label lbDefault;
 	@FXML
@@ -71,6 +78,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	private ValidateValues validateValues;
 	@FXML
 	private TextField txtOrder;
+	private List<ParametroDTO> listParam;
 
 	@FXML
 	private void initialize() {
@@ -86,6 +94,9 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		tbDefault.setVisible(false);
 		chkDefault.setSelected(false);
 		chkVisible.setSelected(true);
+		chkGroup.setSelected(false);
+		chkGroup.setVisible(false);
+		chkGroup.selectedProperty().addListener(change -> manejaGrupo());
 		chkDefault.selectedProperty().addListener(event -> {
 			tbDefault.setVisible(chkDefault.isSelected());
 			lbDefault.setVisible(chkDefault.isSelected());
@@ -149,14 +160,14 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			if (chkVisible.isSelected()) {
 				registro.setIsVisible(chkVisible.isSelected());
 			}
-			registro.setNameGroup(
-					validateValues.cast(SelectList.get(cbGroup, ParametroConstants.MAPA_GRUPOS), String.class));
 			registro.setFieldShow(validateValues.cast(SelectList.get(cbField), String.class));
 			registro.setState(validateValues.cast(SelectList.get(chbState, ParametroConstants.mapa_estados_parametros),
 					Integer.class));
 			registro.setIsColumn(chkIsColumn.isSelected());
 			registro.setIsFilter(chkIsFilter.isSelected());
 			registro.setIsRequired(chkIsRequired.isSelected());
+			var selGroup = SelectList.get(cbGroup);
+			registro.setNameGroup(selGroup.getNombre());
 		} catch (Exception e) {
 			error(e);
 		}
@@ -191,7 +202,12 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			chkDefault.setSelected(true);
 		}
 		SelectList.selectItem(chbState, ParametroConstants.mapa_estados_parametros, registro.getState());
-		SelectList.selectItem(cbGroup, ParametroConstants.MAPA_GRUPOS, registro.getNameGroup());
+		loadGroupParam();
+		if (StringUtils.isBlank(registro.getFieldShow()) && StringUtils.isNotBlank(registro.getNameGroup())) {
+			SelectList.selectItem(cbGroup, listParam, ParametroConstants.FIELD_NAME_PARAM, registro.getNameGroup());
+			chkGroup.setVisible(true);
+			chkGroup.setSelected(true);
+		}
 		SelectList.selectItem(cbField, registro.getFieldShow());
 	}
 
@@ -240,13 +256,14 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				if (field.getType().asSubclass(ADto.class) != null) {
 					var instance = field.getType().getDeclaredConstructor().newInstance();
 					if (instance instanceof ParametroDTO) {
-						SelectList.put(cbGroup, ParametroConstants.MAPA_GRUPOS);
+						loadGroupParam();
 						cbGroup.setVisible(true);
 						lbGroup.setVisible(true);
 					}
 					((ADto) instance).getNameFields().forEach(fieldName -> SelectList.add(cbField, fieldName));
 					cbField.setVisible(true);
 					lbField.setVisible(true);
+					chkGroup.setVisible(false);
 					return;
 				}
 			} else if (StringUtils.isNotBlank(txtClassDto.getText()) && StringUtils.isBlank(txtName.getText())) {
@@ -254,6 +271,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				SelectList.put(cbName, ((ADto) clazz.getConstructor().newInstance()).getNameFields());
 				cbName.setVisible(true);
 				txtName.setVisible(false);
+				chkGroup.setVisible(false);
 				return;
 			}
 			cbField.setVisible(false);
@@ -262,10 +280,35 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			lbGroup.setVisible(false);
 			cbName.setVisible(false);
 			txtName.setVisible(true);
+			chkGroup.setVisible(true);
 		} catch (ClassCastException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException
 				| ClassNotFoundException e) {
 			logger.logger(e);
+		}
+	}
+
+	private void loadGroupParam() {
+		try {
+			if (listParam == null || listParam.size() == 0) {
+				var parametro = new ParametroDTO();
+				parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				parametro.setGrupo(ParametroConstants.GRUPO_PRINCIPAL);
+				listParam = parametroSvc.getAllParametros(parametro);
+			}
+			if (listParam != null && listParam.size() > 0
+					&& (cbGroup.getItems() == null || cbGroup.getItems().size() == 0)) {
+				SelectList.addItems(cbGroup, listParam, ParametroConstants.FIELD_NAME_PARAM);
+			}
+		} catch (ParametroException e) {
+			logger().DEBUG(e);
+		}
+	}
+
+	private void manejaGrupo() {
+		cbGroup.setVisible(chkGroup.isVisible());
+		if (chkGroup.isVisible()) {
+			loadGroupParam();
 		}
 	}
 

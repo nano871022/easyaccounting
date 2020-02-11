@@ -136,7 +136,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		cGrupo.setVisible(false);
 
 		if (dto != null && (StringUtils.isBlank(dto.getCodigo()) && StringUtils.isNotBlank(dto.getGrupo())
-				&& dto.getGrupo().contains("*"))) {
+				&& dto.getGrupo().contains(ParametroConstants.GRUPO_PRINCIPAL))) {
 			registro = dto;
 			lGrupo.setVisible(true);
 			cGrupo.setVisible(true);
@@ -170,7 +170,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 			grupo.setEditable(false);
 			lGrupo.setVisible(true);
 			cGrupo.setVisible(true);
-			if (registro.getGrupo().equalsIgnoreCase("*")) {
+			if (registro.getGrupo().equalsIgnoreCase(ParametroConstants.GRUPO_PRINCIPAL)) {
 				orden.setVisible(false);
 				lOrden.setVisible(false);
 			} else {
@@ -223,14 +223,15 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		valid &= ValidFields.valid(nombre, true, 2, 100, i18n().valueBundle("valid.parameter.name.is.empty"));
 		valid &= ValidFields.valid(descripcion, true, 2, 100,
 				i18n().valueBundle("valid.parameter.description.is.empty"));
-		if(!(Optional.ofNullable(grupo.getText()).isPresent() && Optional.ofNullable(grupo.getText()).get().contains("*"))) {
+		if (!(Optional.ofNullable(grupo.getText()).isPresent()
+				&& Optional.ofNullable(grupo.getText()).get().contains("*"))) {
 			valid &= ValidFields.valid(grupo, true, 2, 100, i18n().valueBundle("valid.parameter.group.is.empty"));
 		}
 		valid &= ValidFields.valid(estado, true, i18n().valueBundle("valid.parameter.state.is.empty"));
 		if (!registro.getGrupo().contentEquals("*")) {
-			valid &= ValidFields.numeric(valor, true, new BigDecimal("1"), new BigDecimal("10000000000"),
+			valid &= ValidFields.numeric(valor, true, new BigDecimal("-1000000"), new BigDecimal("10000000000"),
 					i18n().valueBundle("valid.parameter.value.is.empty"));
-			valid &= ValidFields.numeric(valor, true, 1, 1000, i18n().valueBundle("valid.parameter.order.is.empty"));
+			valid &= ValidFields.numeric(orden, true, 1, 1000, i18n().valueBundle("valid.parameter.order.is.empty"));
 		}
 		return valid;
 	}

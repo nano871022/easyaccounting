@@ -60,8 +60,6 @@
         <ChoiceBox fx:id="chbState" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="4" />
         <TextField fx:id="txtOrder" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="6" />
         <Label alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.order" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-        <Label fx:id="lbField" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.field" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-        <ChoiceBox fx:id="cbField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="7" />
         <Label fx:id="lbGroup" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.group" GridPane.columnIndex="2" GridPane.rowIndex="7" />
         <ChoiceBox fx:id="cbGroup" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="7">
           <GridPane.margin>
@@ -81,6 +79,9 @@
         </TextField>
         <CheckBox fx:id="chkDefault" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.default" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5" />
         <ChoiceBox fx:id="cbName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <ChoiceBox fx:id="cbField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="8" />
+        <Label fx:id="lbField" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.field" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <CheckBox fx:id="chkGroup" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.group" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="110.0" />
@@ -99,6 +100,7 @@
         <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
       </rowConstraints>
       <BorderPane.margin>
