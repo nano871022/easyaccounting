@@ -167,7 +167,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			registro.setIsFilter(chkIsFilter.isSelected());
 			registro.setIsRequired(chkIsRequired.isSelected());
 			var selGroup = SelectList.get(cbGroup);
-			registro.setNameGroup(selGroup.getNombre());
+			registro.setNameGroup(selGroup != null ? selGroup.getNombre() : null);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -253,7 +253,13 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			if (StringUtils.isNotBlank(txtClassDto.getText()) && StringUtils.isNotBlank(txtName.getText())) {
 				Class<?> clazz = Class.forName(txtClassDto.getText());
 				Field field = clazz.getDeclaredField(txtName.getText());
-				if (field.getType().asSubclass(ADto.class) != null) {
+				boolean asSubClassDTO = false;
+				try {
+					asSubClassDTO = field.getType().asSubclass(ADto.class) != null;
+				} catch (ClassCastException e) {
+					logger.DEBUG(e);
+				}
+				if (asSubClassDTO) {
 					var instance = field.getType().getDeclaredConstructor().newInstance();
 					if (instance instanceof ParametroDTO) {
 						loadGroupParam();

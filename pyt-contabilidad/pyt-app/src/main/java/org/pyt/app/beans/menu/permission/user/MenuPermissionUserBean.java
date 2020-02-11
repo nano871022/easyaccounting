@@ -2,10 +2,8 @@ package org.pyt.app.beans.menu.permission.user;
 
 import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -51,8 +49,7 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 
 	public final void load(MenuPermUsersDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPane);
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	@Override
@@ -94,11 +91,6 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
-	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
 	}
 
 }

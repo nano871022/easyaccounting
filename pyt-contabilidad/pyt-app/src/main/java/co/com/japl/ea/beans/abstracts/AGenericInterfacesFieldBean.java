@@ -24,6 +24,7 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 	protected List<ConfigGenericFieldDTO> fields;
 	private Class<F> classTypeDto;
 	private MultiValuedMap<String, Node> mapFieldUseds;
+	protected MultiValuedMap<String, Object> toChoiceBox;
 
 	@Override
 	public MultiValuedMap<String, Node> getMapFields(TypeGeneric typeGeneric) {
@@ -63,6 +64,14 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 	@Override
 	public IParametrosSvc getParametersSvc() {
 		return parametrosSvc;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		if (toChoiceBox == null) {
+			toChoiceBox = new ArrayListValuedHashMap<>();
+		}
+		return toChoiceBox;
 	}
 
 }

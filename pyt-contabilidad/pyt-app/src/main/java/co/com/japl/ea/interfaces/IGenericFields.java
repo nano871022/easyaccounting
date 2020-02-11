@@ -30,6 +30,7 @@ import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
@@ -236,8 +237,24 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			IFieldsCreator factory, N node) throws ReflectionException, ParametroException {
 		if (genericFormsUtils.isChoiceBox(node)) {
 			var list = getSelectedListToChoiceBox(typeGeneric, fieldName, typeField, factory);
-			genericFormsUtils.loadValuesInFxmlToChoice(factory.getNameFieldToShowInComboBox(), node,
-					getInstanceDto(typeGeneric).get(fieldName), null, list);
+			if (StringUtils.isBlank(factory.getNameFieldToShowInComboBox()) && list != null && list.size() > 0
+					&& list.get(0) instanceof ParametroDTO) {
+				var valueToParametro = getInstanceDto(typeGeneric).get(fieldName);
+				if (valueToParametro != null) {
+					var paramFound = ((ParametroDTO) list.stream()
+							.filter(row -> ((ParametroDTO) row).getValor()
+									.equalsIgnoreCase(validateValuesUtils.cast(valueToParametro, String.class)))
+							.findAny().get());
+					if (paramFound != null) {
+						String nameFound = paramFound.getNombre();
+						genericFormsUtils.loadValuesInFxmlToChoice(ParametroConstants.FIELD_NAME_PARAM, node,
+								paramFound, null, list);
+					}
+				}
+			} else {
+				genericFormsUtils.loadValuesInFxmlToChoice(factory.getNameFieldToShowInComboBox(), node,
+						getInstanceDto(typeGeneric).get(fieldName), null, list);
+			}
 		} else {
 			genericFormsUtils.loadValuesInFxml(node, getInstanceDto(typeGeneric).get(fieldName));
 		}
@@ -288,12 +305,18 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			var list = getSelectedListToChoiceBox(typeGeneric, nameField, typeField, factory);
 			((ChoiceBox) fieldControl).valueProperty()
 					.bind(Bindings.createObjectBinding(() -> getInstanceDto(typeGeneric).get(nameField)));
-			SelectList.put((ChoiceBox) fieldControl, list, factory.getNameFieldToShowInComboBox());
+			var nameShow = StringUtils.isNotBlank(factory.getNameFieldToShowInComboBox())
+					? factory.getNameFieldToShowInComboBox()
+					: ParametroConstants.FIELD_NAME_PARAM;
+			SelectList.put((ChoiceBox) fieldControl, list, nameShow);
 			((ChoiceBox) fieldControl).getSelectionModel().selectedItemProperty()
 					.addListener((observable, oldValue, newValue) -> {
-						var value = SelectList.get(((ChoiceBox) fieldControl), list,
-								factory.getNameFieldToShowInComboBox());
-						getInstanceDto(typeGeneric).set(nameField, value);
+						var value = SelectList.get(((ChoiceBox) fieldControl), list, nameShow);
+						if (StringUtils.isNotBlank(factory.getNameFieldToShowInComboBox())) {
+							getInstanceDto(typeGeneric).set(nameField, value);
+						} else if (value instanceof ParametroDTO) {
+							getInstanceDto(typeGeneric).set(nameField, ((ParametroDTO) value).getValor());
+						}
 					});
 		}
 	}
@@ -334,17 +357,43 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	private <D extends ADto> List<D> getSelectedListToChoiceBox(TypeGeneric typeGeneric, String nameField,
 			Class typeField, IFieldsCreator factory) throws ParametroException {
 		var list = getMapListToChoiceBox().get(nameField);
-		if (isParametroDTO(typeField) && list == null) {
+		if ((StringUtils.isBlank(factory.getNameFieldToShowInComboBox()) || isParametroDTO(typeField))
+				&& (list == null || list.size() == 0)) {
 			var parametroDto = factory.getParametroDto();
 			if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
-				parametroDto.setGrupo(getParametersSvc().getIdByParametroGroup(parametroDto.getGrupo()));
+				var grupoSave = parametroDto.getGrupo();
+				if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
+					parametroDto.setGrupo(getParametersSvc().getIdByParametroGroup(parametroDto.getGrupo()));
+				}
+				if (StringUtils.isBlank(parametroDto.getGrupo())) {
+					ParametroDTO parametroDTO = new ParametroDTO();
+					parametroDTO.setNombre(grupoSave);
+					parametroDTO.setGrupo(ParametroConstants.GRUPO_PRINCIPAL);
+					parametroDTO.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+					var listParams = getParametersSvc().getAllParametros(parametroDTO);
+					if (listParams.size() > 1) {
+						throw new RuntimeException(
+								i18n().valueBundle("err.msn.param.not.unique", parametroDto.getGrupo()).get());
+					}
+					if (listParams.size() == 0) {
+						throw new RuntimeException(
+								i18n().valueBundle("err.msn.param.not.exist", parametroDto.getGrupo()).get());
+					}
+					parametroDto.setGrupo(listParams.get(0).getCodigo());
+				}
+				var parametros = getParametersSvc().getAllParametros(parametroDto);
+				getMapListToChoiceBox().put(nameField, parametros);
+				return (List<D>) parametros;
 			}
-			var parametros = getParametersSvc().getAllParametros(parametroDto);
-			getMapListToChoiceBox().put(nameField, parametros);
-			return (List<D>) parametros;
 		}
 		var listOut = new ArrayList<D>();
-		list.forEach(row -> listOut.add((D) row));
+		list.forEach(row -> {
+			if (row instanceof List) {
+				((List) row).forEach(reg -> listOut.add((D) reg));
+			} else {
+				listOut.add((D) row);
+			}
+		});
 		return listOut;
 	}
 

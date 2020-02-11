@@ -13,7 +13,6 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -59,8 +58,7 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 
 	public final void load(MenuDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPane);
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	@Override

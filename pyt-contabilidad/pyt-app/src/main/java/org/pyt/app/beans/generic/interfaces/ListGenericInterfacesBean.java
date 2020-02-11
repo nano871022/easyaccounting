@@ -3,6 +3,7 @@ package org.pyt.app.beans.generic.interfaces;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
@@ -43,6 +44,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	private List<ConfigGenericFieldDTO> listFieldsToColumns;
 	@Inject(resource = "com.pyt.service.implement.ConfigGenericFieldSvc")
 	private IConfigGenericFieldSvc configGenericFieldsSvc;
+	private MultiValuedMap<String, Object> toChoiceBox;
 
 	@FXML
 	private void initialize() {
@@ -52,6 +54,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
 		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES).get());
+		toChoiceBox = new ArrayListValuedHashMap<>();
 		try {
 			listFieldsToFilters = configGenericFieldsSvc.getFieldToFilters(this.getClass(),
 					ConfigGenericFieldDTO.class);
@@ -180,7 +183,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return toChoiceBox;
 	}
 
 	@Override

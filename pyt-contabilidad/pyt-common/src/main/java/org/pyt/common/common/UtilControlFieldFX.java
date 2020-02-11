@@ -100,17 +100,22 @@ public final class UtilControlFieldFX {
 			return (N) new DatePicker();
 		} else {
 			try {
-				if (field.getType().asSubclass(ADto.class) != null) {
-					var node = new ChoiceBox<T>();
-					node.setId(field.getName());
-					return (N) node;
-				}
-			} catch (ClassCastException e) {
-				logger.DEBUG(e);
+			if (field.getType().asSubclass(ADto.class) != null ) {
+				return getChoiceBox(field);
 			}
+		} catch (ClassCastException e) {
+			logger.DEBUG(e);
+		}
 		}
 		return null;
 	}
+	
+	public <N extends Node,T> N getChoiceBox(Field field) {
+				var node = new ChoiceBox<T>();
+				node.setId(field.getName());
+				return (N) node;
+	}
+	
 
 	public <N extends Node> boolean isChoiceBox(N field) {
 		return field instanceof ChoiceBox || field instanceof ComboBox;
@@ -259,9 +264,13 @@ public final class UtilControlFieldFX {
 			if (node instanceof ChoiceBox && map != null && list == null) {
 				SelectList.selectItem((ChoiceBox) node, map, value);
 			}
-			if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
+			if(node instanceof ChoiceBox && map == null && list != null && nameShow != null && value instanceof String) {
+				SelectList.selectItem((ChoiceBox)node, list, nameShow,(String)value);
+			}else if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
 				SelectList.selectItem((ChoiceBox) node, list, nameShow, (M) value);
 			}
+			
+			
 		}
 	}
 

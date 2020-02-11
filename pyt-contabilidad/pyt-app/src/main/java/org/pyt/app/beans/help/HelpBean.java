@@ -2,10 +2,8 @@ package org.pyt.app.beans.help;
 
 import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -51,8 +49,7 @@ public class HelpBean extends AGenericInterfacesFieldBean<HelpDTO> {
 
 	public final void load(HelpDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPane);
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	@Override
@@ -95,10 +92,4 @@ public class HelpBean extends AGenericInterfacesFieldBean<HelpDTO> {
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
 	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
-	}
-
 }

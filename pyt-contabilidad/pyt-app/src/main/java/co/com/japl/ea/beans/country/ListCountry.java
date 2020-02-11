@@ -2,8 +2,6 @@ package co.com.japl.ea.beans.country;
 
 import java.util.List;
 
-import org.apache.commons.collections4.MultiValuedMap;
-
 import com.pyt.service.dto.PaisDTO;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -54,12 +52,6 @@ public class ListCountry extends AGenericInterfacesBean<PaisDTO> {
 
 	@Override
 	public GridPane getGridPane(TypeGeneric typeGeneric) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		// TODO Auto-generated method stub
 		return null;
 	}

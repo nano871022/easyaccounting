@@ -11,7 +11,6 @@ import static org.pyt.common.constants.languages.Menu.CONST_FXML_LABEL_TITLE_LIS
 
 import java.util.List;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
@@ -160,11 +159,6 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 		case COLUMN:
 			return listColumns;
 		}
-		return null;
-	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return null;
 	}
 

@@ -4,9 +4,9 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.InsertResourceConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.validates.ValidFields;
@@ -40,6 +40,7 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	public static final String CONST_FIELD_NAME_LANGUAGES_STATE = "state";
 	public static final String CONST_FIELD_NAME_LANGUAGES_IDIOM = "idiom";
 	private boolean openedPopup;
+	private MultiValuedMap<String, Object> toChoiceBox;
 	@FXML
 	private BorderPane panel;
 	@FXML
@@ -50,6 +51,7 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	@FXML
 	public void initialize() {
 		try {
+			toChoiceBox = new ArrayListValuedHashMap<>();
 			openedPopup = false;
 			registro = new LanguagesDTO();
 			registro.setIdiom(Locale.getDefault().toString());
@@ -67,19 +69,21 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 		registro.setIdiom(Locale.getDefault().toString());
 		registro.setState("1");
 		btnSave.setText(i18n().valueBundle("fxml.btn.add").get());
+		loadValueIntoForm(TypeGeneric.FIELD, "state");
 	}
 
 	public final void load(LanguagesDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPaneLanguages);
+		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 		btnSave.setText(i18n().valueBundle("fxml.btn.edit").get());
 	}
 
 	public final void addCode(String code) {
 		if (Optional.ofNullable(registro).isPresent()) {
 			registro.setCode(code);
-			new UtilControlFieldFX().loadValuesInFxml(registro, gridPaneLanguages);
+			var split = code.split("\\.");
+			registro.setText(split.length > 1 ? split[split.length - 1] : null);
+			loadFields(TypeGeneric.FIELD);
 		}
 	}
 
@@ -146,6 +150,6 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return toChoiceBox;
 	}
 }

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.ParametroConstants;
 
 import com.pyt.service.dto.ParametroDTO;
 
@@ -31,7 +32,7 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 
 	@Override
 	public OptI18n getLabelText() {
-		if (field.getAlias() != null && field.getAlias().trim().isEmpty()) {
+		if (field.getAlias() != null && !field.getAlias().trim().isEmpty()) {
 			return OptI18n.noChange(field.getAlias());
 		}
 		var classPath = field.getClassPath().contains("Class") ? field.getClassPath().substring(5)
@@ -54,6 +55,9 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 		try {
 			var clazz = Class.forName(field.getClassPath());
 			Field propertie = clazz.getDeclaredField(field.getName());
+			if (StringUtils.isBlank(field.getFieldShow()) && StringUtils.isNotBlank(field.getNameGroup())) {
+				return controlFieldUtil.getChoiceBox(propertie);
+			}
 			var node = controlFieldUtil.getFieldByField(propertie);
 			return node;
 		} catch (NoSuchFieldException | SecurityException | ClassNotFoundException e) {
@@ -69,7 +73,10 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 
 	@Override
 	public ParametroDTO getParametroDto() {
-		return new ParametroDTO();
+		var parametro = new ParametroDTO();
+		parametro.setGrupo(field.getNameGroup());
+		parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+		return parametro;
 	}
 
 	@Override

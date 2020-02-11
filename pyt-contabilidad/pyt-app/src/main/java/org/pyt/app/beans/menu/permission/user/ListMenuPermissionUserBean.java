@@ -4,7 +4,6 @@ import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IM
 
 import java.util.List;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
@@ -155,12 +154,6 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 		case COLUMN:
 			return listColumns;
 		}
-		return null;
-	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

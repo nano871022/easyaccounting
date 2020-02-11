@@ -6,7 +6,6 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.validates.ValidFields;
 
@@ -81,8 +80,7 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 
 	public final void load(UsuarioDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPane);
+		loadFields(TypeGeneric.FIELD);
 		btnAdd.setText("fxml.btn.update");
 	}
 
@@ -103,9 +101,12 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_PERSON).stream()
 				.map(row -> ValidFields.valid((ChoiceBox) row, true, i18n().valueBundle("msn.error.field.empty")))
 				.findFirst().orElse(false);
-		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_STATE).stream().map(
-				row -> ValidFields.valid((TextField) row, true, 1, 100, i18n().valueBundle("msn.error.field.empty")))
-				.findFirst().orElse(false);
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_STATE).stream().map(row -> {
+			if (row instanceof ChoiceBox) {
+				return ValidFields.valid((ChoiceBox) row, true, i18n().valueBundle("msn.error.field.empty"));
+			}
+			return ValidFields.valid((TextField) row, true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		}).findFirst().orElse(false);
 		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_GROUP_USER).stream()
 				.map(row -> ValidFields.valid((ChoiceBox) row, true, i18n().valueBundle("msn.error.field.empty")))
 				.findFirst().orElse(false);
