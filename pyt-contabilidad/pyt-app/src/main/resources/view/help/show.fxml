@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="365.0" prefWidth="543.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.help.HelpViewBean">
+  <bottom>
+    <ScrollPane minHeight="29.0" prefHeight="38.0" prefWidth="543.0">
+      <content>
+        <WebView fx:id="wvBottom" prefHeight="29.0" prefWidth="519.0" />
+      </content>
+    </ScrollPane>
+  </bottom>
+  <center>
+    <ScrollPane prefHeight="292.0" prefWidth="321.0">
+      <content>
+        <WebView id="bodyPanel" fx:id="wvCenter" prefHeight="291.0" prefWidth="457.0" />
+      </content>
+    </ScrollPane>
+  </center>
+  <right>
+    <ScrollPane prefHeight="292.0" prefWidth="75.0">
+      <content>
+        <WebView fx:id="wvRight" prefHeight="292.0" prefWidth="71.0" />
+      </content>
+    </ScrollPane>
+  </right>
+  <top>
+    <WebView id="titlePanel" fx:id="wvTittle" prefHeight="29.0" prefWidth="543.0" />
+  </top>
+</BorderPane>

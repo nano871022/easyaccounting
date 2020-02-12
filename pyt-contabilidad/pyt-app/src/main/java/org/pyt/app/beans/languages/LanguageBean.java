@@ -20,7 +20,6 @@ import co.com.japl.ea.dto.system.LanguagesDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -69,7 +68,7 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 		registro.setIdiom(Locale.getDefault().toString());
 		registro.setState("1");
 		btnSave.setText(i18n().valueBundle("fxml.btn.add").get());
-		loadValueIntoForm(TypeGeneric.FIELD, "state");
+		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
 	public final void load(LanguagesDTO dto) {
@@ -99,14 +98,18 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_CODE)
-				.stream().findFirst().get(), true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_TEXT)
-				.stream().findFirst().get(), true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_STATE)
-				.stream().findFirst().get(), true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_IDIOM)
-				.stream().findFirst().get(), true, 2, 10, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid(registro.getCode(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_CODE).stream().findFirst().get(), true,
+				1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid(registro.getText(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_TEXT).stream().findFirst().get(), true,
+				1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid(registro.getState(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_STATE).stream().findFirst().get(), true,
+				1, 2, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid(registro.getIdiom(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_LANGUAGES_IDIOM).stream().findFirst().get(), true,
+				2, 10, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -130,8 +133,8 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	}
 
 	public final void newRow() {
-		load();
 		this.clearFields(TypeGeneric.FIELD);
+		load();
 	}
 
 	public final void cancel() {

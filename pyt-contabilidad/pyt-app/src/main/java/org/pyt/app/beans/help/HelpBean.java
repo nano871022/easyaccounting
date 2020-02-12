@@ -14,7 +14,6 @@ import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
 import co.com.japl.ea.dto.system.HelpDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(file = "help.fxml", path = "view/help")
@@ -25,8 +24,6 @@ public class HelpBean extends AGenericInterfacesFieldBean<HelpDTO> {
 	private GridPane gridPane;
 	@FXML
 	private Label lblTitle;
-	public static final String CONST_FIELD_NAME_MENUS_URL = "url";
-	public static final String CONST_FIELD_NAME_MENUS_CLASS_PATH = "classPath";
 	public static final String CONST_FIELD_NAME_MENUS_STATE = "state";
 	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
 	private IConfigGenericFieldSvc configGenericSvc;
@@ -59,13 +56,28 @@ public class HelpBean extends AGenericInterfacesFieldBean<HelpDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_URL), true, 1,
-				100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_CLASS_PATH),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_STATE), true,
-				1, 2, i18n().valueBundle("msn.error.field.empty"));
+
+		valid &= ValidFields.valid(registro.getClassPathBean(),
+				getMapFields(TypeGeneric.FIELD).get("classPathBean").stream().findFirst().get(), true, 1, 300,
+				i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid(registro.getState(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_STATE).stream().findFirst().get(), true, 1,
+				2, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid(validClass(registro.getClassPathBean()),
+				getMapFields(TypeGeneric.FIELD).get("classPathBean").stream().findFirst().get(), true, null, null,
+				i18n().valueBundle("msn.error.field.empty"));
 		return valid;
+	}
+
+	private final boolean validClass(String clazz) {
+		try {
+			if (StringUtils.isNotBlank(clazz)) {
+				Class.forName(clazz);
+			}
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 	public final void add() {

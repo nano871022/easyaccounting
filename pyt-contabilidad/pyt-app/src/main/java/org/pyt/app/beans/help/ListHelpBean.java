@@ -58,7 +58,7 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), HelpDTO.class);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), HelpDTO.class);
 			loadDataModel(paginator, tableGeneric);
-			loadFields(TypeGeneric.FIELD);
+			loadFields(TypeGeneric.FILTER);
 			loadColumns();
 		} catch (Exception e) {
 			error(e);

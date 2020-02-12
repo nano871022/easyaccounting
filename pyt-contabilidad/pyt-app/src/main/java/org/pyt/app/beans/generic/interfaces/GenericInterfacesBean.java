@@ -101,8 +101,17 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			tbDefault.setVisible(chkDefault.isSelected());
 			lbDefault.setVisible(chkDefault.isSelected());
 		});
-		txtClassDto.textProperty().addListener((obs, s1, s2) -> {
-			verifyChange();
+		txtClassDto.textProperty().addListener((obs, oldValue, newValue) -> {
+			if (!validClass(newValue)) {
+				error(i18n().valueBundle("err.dto.no.exists", newValue));
+			} else {
+				verifyChange();
+			}
+		});
+		txtClassBean.textProperty().addListener((obs, oldValue, newValue) -> {
+			if (!validClass(newValue)) {
+				error(i18n().valueBundle("err.class.no.exists", newValue));
+			}
 		});
 		txtName.textProperty().addListener((obs, s1, s2) -> {
 			txtDescription.setText(txtName.getText());
@@ -116,6 +125,17 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			verifyChange();
 		});
 		cbName.setVisible(false);
+	}
+
+	private final boolean validClass(String clazz) {
+		try {
+			if (StringUtils.isNotBlank(clazz)) {
+				Class.forName(clazz);
+			}
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 	public final void load() {
@@ -221,7 +241,10 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				i18n().valueBundle("msn.form.field.error.empty.classbean"));
 		valid &= ValidFields.valid(chbState, ParametroConstants.mapa_estados_parametros, true,
 				i18n().valueBundle("msn.form.field.error.empty.state"));
-
+		valid &= ValidFields.valid(validClass(registro.getClassPath()), txtClassDto, true, null, null,
+				i18n().valueBundle("msn.form.field.error.class.dto.not.exists"));
+		valid &= ValidFields.valid(validClass(registro.getClassPathBean()), txtClassDto, true, null, null,
+				i18n().valueBundle("msn.form.field.error.class.bean.not.exists"));
 		return valid;
 	}
 

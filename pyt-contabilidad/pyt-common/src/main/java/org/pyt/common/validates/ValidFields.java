@@ -37,6 +37,9 @@ public final class ValidFields {
 				var size = ((String) value).length();
 				valid &= min <= size && max >= size;
 			}
+			if (validateValues.isCast(value,Boolean.class)) {
+				valid &= valid;
+			}
 			if (validateValues.isNumber(value.getClass())) {
 				if (value != null && min != null && max != null) {
 					valid &= validateValues.numericBetween(value, min, max);
