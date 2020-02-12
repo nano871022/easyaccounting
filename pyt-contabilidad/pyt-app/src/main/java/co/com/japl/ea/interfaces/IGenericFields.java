@@ -119,6 +119,35 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			return Uses.FIELD;
 	}
 
+	private void loadDefaultValueDate(TypeGeneric typeGeneric, String valueDefault, Class typeField,
+			IFieldsCreator factory) {
+		if ("now".equalsIgnoreCase(valueDefault)) {
+			if (typeField == LocalDate.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDate.now());
+			} else if (typeField == LocalDateTime.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDateTime.now());
+			} else if (typeField == Date.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), new Date());
+			}
+		} else if (valueDefault.matches(AppConstants.CONST_FORMAT_DATE)) {
+			var loadDate = LocalDate.parse(valueDefault);
+			if (typeField == LocalDate.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
+			} else if (typeField == Date.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(),
+						Date.from(loadDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			}
+		} else if (valueDefault.matches(AppConstants.CONST_FORMAT_DATE_TIME)) {
+			var loadDate = LocalDateTime.parse(valueDefault);
+			if (typeField == LocalDate.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
+			} else if (typeField == Date.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(),
+						Date.from(loadDate.atZone(ZoneId.systemDefault()).toInstant()));
+			}
+		}
+	}
+
 	private void assignDefaultValue(TypeGeneric typeGeneric, IFieldsCreator factory) {
 		if (factory.hasValueDefault()) {
 			var eval = factory.getValueDefault();
@@ -131,44 +160,14 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					getInstanceDto(typeGeneric).set(factory.getNameField(), eval);
 				}
 				if (validateValuesUtils.isDate(typeField)) {
-					if ("now".equalsIgnoreCase(eval)) {
-						if (typeField == LocalDate.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDate.now());
-						} else if (typeField == LocalDateTime.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDateTime.now());
-						} else if (typeField == Date.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), new Date());
-						}
-					} else if (eval.matches(AppConstants.CONST_FORMAT_DATE)) {
-						var loadDate = LocalDate.parse(eval);
-						if (typeField == LocalDate.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
-						} else if (typeField == Date.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(),
-									Date.from(loadDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-						}
-					} else if (eval.matches(AppConstants.CONST_FORMAT_DATE_TIME)) {
-						var loadDate = LocalDateTime.parse(eval);
-						if (typeField == LocalDate.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
-						} else if (typeField == Date.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(),
-									Date.from(loadDate.atZone(ZoneId.systemDefault()).toInstant()));
-						}
-					}
+					loadDefaultValueDate(typeGeneric, eval, typeField, factory);
 				}
 			}
 		}
 	}
 
-	/**
-	 * Se encarga de configurar los campos que se mostraran en los filtros y fueron
-	 * configurados como campos genericos, esto se pone el {@link GridPane}
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked", "static-access" })
-	default void loadFields(TypeGeneric typeGeneric, String... stylesGrid) {
-		var list = getListGenericsFields(typeGeneric);
+	@SuppressWarnings("unchecked")
+	private List<L> getListFieldsAnnotates(TypeGeneric typeGeneric, List<L> list) {
 		if (list == null) {
 			var typeField = getUsesByUsedTypeGeneric(typeGeneric);
 			var generics = LoadFieldsFactory.getAnnotatedField(ConfigGenericFieldDTO.class, getClazz(), typeField);
@@ -179,6 +178,30 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				list = (List<L>) generics;
 			}
 		}
+		return list;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void loadPopupLanguages(IFieldsCreator factory) {
+		var popup = new org.pyt.app.components.PopupFromBean(org.pyt.app.beans.languages.LanguageBean.class);
+		try {
+			LoadAppFxml.loadBeanFX(popup);
+			LanguageBean bean = (LanguageBean) popup.getBean();
+			bean.openPopup();
+			bean.addCode(factory.getLabelText().get());
+		} catch (LoadAppFxmlException e) {
+			logger().logger(e);
+		}
+	}
+
+	/**
+	 * Se encarga de configurar los campos que se mostraran en los filtros y fueron
+	 * configurados como campos genericos, esto se pone el {@link GridPane}
+	 * 
+	 */
+	default void loadFields(TypeGeneric typeGeneric, String... stylesGrid) {
+		var list = getListGenericsFields(typeGeneric);
+		list = getListFieldsAnnotates(typeGeneric, list);
 		var index = new Index();
 		assingValueAnnotations(typeGeneric);
 		genericFormsUtils.configGridPane(getGridPane(typeGeneric));
@@ -187,19 +210,8 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				var factory = LoadFieldsFactory.getInstance(field);
 				assignDefaultValue(typeGeneric, factory);
 				if (factory.isVisible()) {
-
-					var label = genericFormsUtils.createLabel(factory.getLabelText(), event -> {
-						var popup = new org.pyt.app.components.PopupFromBean(
-								org.pyt.app.beans.languages.LanguageBean.class);
-						try {
-							LoadAppFxml.loadBeanFX(popup);
-							LanguageBean bean = (LanguageBean) popup.getBean();
-							bean.openPopup();
-							bean.addCode(factory.getLabelText().get());
-						} catch (LoadAppFxmlException e) {
-							logger().logger(e);
-						}
-					}, factory.getToolTip());
+					var label = genericFormsUtils.createLabel(factory.getLabelText(),
+							event -> loadPopupLanguages(factory), factory.getToolTip());
 					var fieldControl = factory.create();
 					var nameField = factory.getNameField();
 					var typeField = getInstanceDto(typeGeneric).getType(nameField);
@@ -219,6 +231,11 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				logger().DEBUG(i18n().valueBundle(CONST_ERR_GET_LIST_VALUES), e);
 			}
 		});
+		configFieldFilter(typeGeneric, index);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void configFieldFilter(TypeGeneric typeGeneric, Index index) {
 		if (TypeGeneric.FILTER == typeGeneric) {
 			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> {
 				try {
@@ -353,6 +370,27 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		});
 	}
 
+	private ParametroDTO getParametroFromFindGroup(ParametroDTO parametroDto, String nameGroup)
+			throws ParametroException {
+		if (StringUtils.isBlank(parametroDto.getGrupo())) {
+			ParametroDTO parametroDTO = new ParametroDTO();
+			parametroDTO.setNombre(nameGroup);
+			parametroDTO.setGrupo(ParametroConstants.GRUPO_PRINCIPAL);
+			parametroDTO.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+			var listParams = getParametersSvc().getAllParametros(parametroDTO);
+			if (listParams.size() > 1) {
+				throw new RuntimeException(
+						i18n().valueBundle("err.msn.param.not.unique", parametroDto.getGrupo()).get());
+			}
+			if (listParams.size() == 0) {
+				throw new RuntimeException(
+						i18n().valueBundle("err.msn.param.not.exist", parametroDto.getGrupo()).get());
+			}
+			parametroDto.setGrupo(listParams.get(0).getCodigo());
+		}
+		return parametroDto;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private <D extends ADto> List<D> getSelectedListToChoiceBox(TypeGeneric typeGeneric, String nameField,
 			Class typeField, IFieldsCreator factory) throws ParametroException {
@@ -365,22 +403,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
 					parametroDto.setGrupo(getParametersSvc().getIdByParametroGroup(parametroDto.getGrupo()));
 				}
-				if (StringUtils.isBlank(parametroDto.getGrupo())) {
-					ParametroDTO parametroDTO = new ParametroDTO();
-					parametroDTO.setNombre(grupoSave);
-					parametroDTO.setGrupo(ParametroConstants.GRUPO_PRINCIPAL);
-					parametroDTO.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
-					var listParams = getParametersSvc().getAllParametros(parametroDTO);
-					if (listParams.size() > 1) {
-						throw new RuntimeException(
-								i18n().valueBundle("err.msn.param.not.unique", parametroDto.getGrupo()).get());
-					}
-					if (listParams.size() == 0) {
-						throw new RuntimeException(
-								i18n().valueBundle("err.msn.param.not.exist", parametroDto.getGrupo()).get());
-					}
-					parametroDto.setGrupo(listParams.get(0).getCodigo());
-				}
+				parametroDto = getParametroFromFindGroup(parametroDto, grupoSave);
 				var parametros = getParametersSvc().getAllParametros(parametroDto);
 				getMapListToChoiceBox().put(nameField, parametros);
 				return (List<D>) parametros;

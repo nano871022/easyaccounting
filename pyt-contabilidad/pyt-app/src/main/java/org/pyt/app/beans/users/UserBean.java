@@ -20,10 +20,7 @@ import co.com.japl.ea.dto.system.GroupUsersDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(file = "user.fxml", path = "view/users")
@@ -91,24 +88,22 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_INIT_DATE).stream()
-				.map(row -> ValidFields.valid((DatePicker) row, true, i18n().valueBundle("msn.error.field.empty")))
+
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_INIT_DATE).stream().map(row -> ValidFields
+				.valid(registro.getFechaIncio(), row, true, null, null, i18n().valueBundle("msn.error.field.empty")))
 				.findFirst().orElse(false);
 
-		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_NAME).stream().map(
-				row -> ValidFields.valid((TextField) row, true, 1, 100, i18n().valueBundle("msn.error.field.empty")))
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_NAME).stream().map(row -> ValidFields
+				.valid(registro.getNombre(), row, true, 1, 100, i18n().valueBundle("msn.error.field.empty")))
 				.findFirst().orElse(false);
-		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_PERSON).stream()
-				.map(row -> ValidFields.valid((ChoiceBox) row, true, i18n().valueBundle("msn.error.field.empty")))
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_PERSON).stream().map(row -> ValidFields
+				.valid(registro.getPerson(), row, true, null, null, i18n().valueBundle("msn.error.field.empty")))
 				.findFirst().orElse(false);
-		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_STATE).stream().map(row -> {
-			if (row instanceof ChoiceBox) {
-				return ValidFields.valid((ChoiceBox) row, true, i18n().valueBundle("msn.error.field.empty"));
-			}
-			return ValidFields.valid((TextField) row, true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		}).findFirst().orElse(false);
-		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_GROUP_USER).stream()
-				.map(row -> ValidFields.valid((ChoiceBox) row, true, i18n().valueBundle("msn.error.field.empty")))
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_STATE).stream().map(row -> ValidFields
+				.valid(registro.getState(), row, true, null, null, i18n().valueBundle("msn.error.field.empty")))
+				.findFirst().orElse(false);
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_USERS_GROUP_USER).stream().map(row -> ValidFields
+				.valid(registro.getGrupoUser(), row, true, null, null, i18n().valueBundle("msn.error.field.empty")))
 				.findFirst().orElse(false);
 		return valid;
 	}

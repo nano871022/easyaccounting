@@ -9,6 +9,7 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.SelectList;
 
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
@@ -26,6 +27,37 @@ public final class ValidFields {
 	public static final String CONST_STYLE_FIELD_ERROR = "field-error";
 	public static final String CONST_STYLE_TOOLTIP_ERROR = "tooltip-error";
 	public static final String CONST_STYLE_FIELD_OK = "field-ok";
+	public static final ValidateValues validateValues = new ValidateValues();
+
+	public static final <V, N extends Node> Boolean valid(V value, N node, Boolean notEmpty, Integer min, Integer max,
+			OptI18n msnError) {
+		boolean valid = true;
+		if (notEmpty && value != null) {
+			if (validateValues.isString(value.getClass())) {
+				var size = ((String) value).length();
+				valid &= min <= size && max >= size;
+			}
+			if (validateValues.isNumber(value.getClass())) {
+				if (value != null && min != null && max != null) {
+					valid &= validateValues.numericBetween(value, min, max);
+				} else {
+					valid &= true;
+				}
+			}
+			if (validateValues.isDate(value.getClass())) {
+				valid &= true;
+			}
+			if (value instanceof ADto) {
+				valid &= StringUtils.isNotBlank(((ADto) value).getCodigo());
+			}
+		}
+		if (valid) {
+			success((Control) node);
+		} else {
+			error((Control) node, msnError.get());
+		}
+		return valid;
+	}
 
 	public static final Boolean valid(DatePicker date, Boolean notEmpty, OptI18n msnError) {
 		Boolean valid = true;
@@ -53,7 +85,6 @@ public final class ValidFields {
 	 * @param max      {@link Integer}
 	 * @return {@link Boolean}
 	 */
-	@SuppressWarnings("null")
 	public static final Boolean valid(TextField field, Boolean notEmpty, Integer min, Integer max, OptI18n msnError) {
 		Boolean valid = true;
 		if (field == null)
@@ -80,7 +111,6 @@ public final class ValidFields {
 	 * @param max      {@link Integer}
 	 * @return {@link Boolean}
 	 */
-	@SuppressWarnings("null")
 	public static final Boolean valid(TextArea field, Boolean notEmpty, Integer min, Integer max, String msnError) {
 		Boolean valid = true;
 		if (field == null)

@@ -463,6 +463,15 @@ public final class ValidateValues {
 		
 	}
 	
+	public final <M, N, V> Boolean numericBetween(M value, N value2, V value3) {
+		Boolean valid = true;
+		var r1 = compareNumbers(value, value2);
+		var r2 = compareNumbers(value, value3);
+		valid &= r1 == 1 || r1 == 0;
+		valid &= r2 == -1 || r2 == 0;
+		return valid;
+	}
+
 	public final Boolean isDate(Class clazz) {
 		return clazz == Date.class || clazz == LocalDate.class || clazz == LocalDateTime.class; 
 	}
