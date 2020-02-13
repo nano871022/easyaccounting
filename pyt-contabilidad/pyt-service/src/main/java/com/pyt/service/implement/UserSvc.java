@@ -79,6 +79,16 @@ public class UserSvc extends Services implements IUsersSvc {
 		return found;
 	}
 
+	public List<UsuarioDTO> getAll(UsuarioDTO user) throws Exception {
+		if (user == null) {
+			throw new Exception(i18n().valueBundle(CONST_ERR_GET_ALL_USER_EMPTY).get());
+		}
+		user.setPassword(null);
+		var found = querySvc.gets(user);
+		found.forEach(puser -> puser.setPassword(null));
+		return found;
+	}
+
 	@Override
 	public UsuarioDTO get(UsuarioDTO user) throws Exception {
 		if (user == null) {

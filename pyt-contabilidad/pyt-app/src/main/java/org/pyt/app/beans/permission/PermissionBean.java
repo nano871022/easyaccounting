@@ -20,7 +20,7 @@ import javafx.scene.layout.GridPane;
 @FXMLFile(file = "permission.fxml", path = "view/permission")
 public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<PermissionDTO> groupUsersSvc;
+	private IGenericServiceSvc<PermissionDTO> permissionSvc;
 	@FXML
 	private GridPane gridPane;
 	@FXML
@@ -45,6 +45,7 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 
 	public final void load() {
 		registro = new PermissionDTO();
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	public final void load(PermissionDTO dto) {
@@ -73,10 +74,10 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					groupUsersSvc.insert(registro, getUsuario());
+					permissionSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.group.user.inserted"));
 				} else {
-					groupUsersSvc.update(registro, getUsuario());
+					permissionSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.group.user.updated"));
 				}
 			}

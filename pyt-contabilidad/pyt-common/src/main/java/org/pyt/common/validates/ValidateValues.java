@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.common.Compare;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
@@ -203,10 +202,11 @@ public final class ValidateValues {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	public final <T extends ADto> Boolean validateDto(Object obj, Object obj2) throws ValidateValueException {
 		T dto = (T) obj;
-		if (new Compare<T>((T) obj).to((T) obj2)) {
+		T dto2 = (T) obj2;
+		if (dto.getCodigo().contentEquals(dto2.getCodigo())) {
 			return true;
 		}
 		return false;

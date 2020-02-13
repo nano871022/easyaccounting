@@ -4,12 +4,14 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.CacheUtil;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.reflection.Reflection;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
+import co.com.japl.ea.dto.system.GroupUsersDTO;
 import co.com.japl.ea.dto.system.MenuDTO;
 import co.com.japl.ea.dto.system.MenuPermUsersDTO;
 import co.com.japl.ea.dto.system.PermissionDTO;
@@ -22,6 +24,8 @@ public class PermissionUtil implements Reflection {
 	private MultiValuedMap<String, MenuDTO> cacheMenu;
 	@Inject
 	private IGenericServiceSvc<MenuPermUsersDTO> groupsSvc;
+	@Inject
+	private IGenericServiceSvc<MenuDTO> menusSvc;
 	private final static String CONST_CACHE_PERM_UTIL = "PermissionUtil";
 
 	private PermissionUtil() {
@@ -53,6 +57,31 @@ public class PermissionUtil implements Reflection {
 		} catch (GenericServiceException e) {
 			logger.DEBUG(e);
 		}
+	}
+
+	public Boolean havePerm(String permission, Class clazz, GroupUsersDTO group) {
+		try {
+			var menu = new MenuDTO();
+			menu.setState(1);
+			menu.setClassPath(clazz.getSimpleName());
+			var menus = menusSvc.getAll(menu);
+			if (menus != null && menus.size() > 1) {
+				throw new RuntimeException(I18n.instance().valueBundle("err.msn.menu.found.some").get());
+			} else if (menus == null || menus.size() == 0) {
+				throw new RuntimeException(I18n.instance().valueBundle("err.msn.menu.no.found").get());
+			} else {
+				var menuPerm = new MenuPermUsersDTO();
+				menuPerm.setGroupUsers(group);
+				menuPerm.setMenu(menus.get(0));
+				menuPerm.setState(1);
+				var menuPerms = groupsSvc.getAll(menuPerm);
+				return groupsSvc.getAll(menuPerm).stream().filter(row -> row.getPerm().getAction().contains(permission))
+						.findAny().isPresent();
+			}
+		} catch (GenericServiceException e) {
+			logger.logger(e);
+		}
+		return false;
 	}
 
 	public Boolean havePerm(String nombre, UsuarioDTO usuario) {

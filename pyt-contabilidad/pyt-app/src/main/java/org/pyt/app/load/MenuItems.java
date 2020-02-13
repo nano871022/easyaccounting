@@ -14,6 +14,7 @@ import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.PropertiesConstants;
+import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.properties.PropertiesUtils;
 import org.pyt.common.reflection.Reflection;
@@ -24,10 +25,10 @@ import com.pyt.service.interfaces.IUsersSvc;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.MenuDTO;
+import co.com.japl.ea.dto.system.MenuPermUsersDTO;
 import co.com.japl.ea.interfaces.IUrlLoadBean;
 import co.com.japl.ea.utls.LoadAppFxml;
 import co.com.japl.ea.utls.LoginUtil;
-import co.com.japl.ea.utls.PermissionUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -46,7 +47,7 @@ import javafx.scene.control.ScrollPane;
  */
 public class MenuItems implements Reflection {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<MenuDTO> menusSvc;
+	private IGenericServiceSvc<MenuPermUsersDTO> menuPermUsersSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
 	@Inject(resource = "com.pyt.service.implement.UserSvc")
@@ -82,9 +83,12 @@ public class MenuItems implements Reflection {
 	private final List<MenuDTO> getMenusFromDB() {
 		List<MenuDTO> list = new ArrayList<MenuDTO>();
 		try {
-			var dto = new MenuDTO();
-			list = menusSvc.getAll(dto);
-		} catch (Exception e) {
+			var dto = new MenuPermUsersDTO();
+			dto.setGroupUsers(LoginUtil.getUsuarioLogin().getGrupoUser());
+			dto.setState(1);
+			menuPermUsersSvc.getAll(dto).stream().filter(row -> row.getMenu() != null && row.getPerm() != null)
+					.forEach(row -> list.add(row.getMenu()));
+		} catch (GenericServiceException e) {
 			logger.logger(e);
 		}
 		return list;
@@ -93,19 +97,18 @@ public class MenuItems implements Reflection {
 	private final void loadMenus() {
 		var list = getMenusFromDB();
 		if (list != null && list.size() > 0) {
-			list.stream().filter(
-					menuDto -> PermissionUtil.INSTANCE().haveMenu(menuDto.getUrl(), LoginUtil.getUsuarioLogin()))
-					.forEach(menuDto -> {
-						var menus = menuDto.getUrl().split(AppConstants.SLASH);
-						var menu = getMenu(menus[0]);
-						processMenu(menu, menuDto.getClassPath(), 0, menus);
-					});
+			list.stream().forEach(menuDto -> {
+				var menus = menuDto.getUrl().split(AppConstants.SLASH);
+				var menu = getMenu(menus[0]);
+				processMenu(menu, menuDto.getClassPath(), 0, menus);
+			});
+		} else {
+			propertiesMenu.keySet().forEach(key -> {
+				var menus = ((String) key).split(AppConstants.SLASH);
+				var menu = getMenu(menus[0]);
+				processMenu(menu, (String) propertiesMenu.get(key), 0, menus);
+			});
 		}
-		propertiesMenu.keySet().forEach(key -> {
-			var menus = ((String) key).split(AppConstants.SLASH);
-			var menu = getMenu(menus[0]);
-			processMenu(menu, (String) propertiesMenu.get(key), 0, menus);
-		});
 	}
 
 	private final <T extends ADto, B extends ABean<T>> void processMenu(Menu menu, String classString, Integer position,

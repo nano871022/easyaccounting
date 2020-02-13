@@ -144,6 +144,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
+		clickTable();
 	}
 
 	@Override

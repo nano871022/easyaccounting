@@ -143,7 +143,7 @@ public class ListPermissionBean extends AGenericInterfacesBean<PermissionDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-
+		clickTable();
 	}
 
 	@Override

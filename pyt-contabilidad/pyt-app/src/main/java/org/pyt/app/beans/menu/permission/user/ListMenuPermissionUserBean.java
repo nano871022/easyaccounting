@@ -7,14 +7,20 @@ import java.util.List;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.exceptions.GenericServiceException;
 
+import com.pyt.service.implement.UserSvc;
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.dto.system.GroupUsersDTO;
+import co.com.japl.ea.dto.system.MenuDTO;
 import co.com.japl.ea.dto.system.MenuPermUsersDTO;
+import co.com.japl.ea.dto.system.PermissionDTO;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,7 +33,15 @@ import javafx.scene.layout.HBox;
 public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermUsersDTO> {
 
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<MenuPermUsersDTO> groupUsersSvc;
+	private IGenericServiceSvc<MenuPermUsersDTO> menuPermUsersSvc;
+	@Inject
+	private UserSvc usersSvc;
+	@Inject
+	private IGenericServiceSvc<MenuDTO> menusSvc;
+	@Inject
+	private IGenericServiceSvc<GroupUsersDTO> groupUsersSvc;
+	@Inject
+	private IGenericServiceSvc<PermissionDTO> permissionsSvc;
 	@FXML
 	private Button btnMod;
 	@FXML
@@ -57,9 +71,24 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 			filterGeneric.getChildren().addAll(gridPane);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), MenuPermUsersDTO.class);
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), MenuPermUsersDTO.class);
+			findChoiceBox();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	private void findChoiceBox() {
+		try {
+			getMapListToChoiceBox();
+			usersSvc.getAll(new UsuarioDTO()).forEach(row -> toChoiceBox.put("user", row));
+			menusSvc.getAll(new MenuDTO()).forEach(row -> toChoiceBox.put("menu", row));
+			groupUsersSvc.getAll(new GroupUsersDTO()).forEach(row -> toChoiceBox.put("groupUsers", row));
+			permissionsSvc.getAll(new PermissionDTO()).forEach(row -> toChoiceBox.put("perm", row));
+		} catch (GenericServiceException e) {
+			error(e);
 		} catch (Exception e) {
 			error(e);
 		}
@@ -89,7 +118,7 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 				if (list != null && list.size() > 0) {
 					list.forEach(dto -> {
 						try {
-							groupUsersSvc.delete(dto, getUsuario());
+							menuPermUsersSvc.delete(dto, getUsuario());
 							alerta(String.format(
 									LanguageConstant.LANGUAGE_SUCCESS_DELETE_MENU_PERMISSION_USERS_ROW_CODE,
 									dto.getCodigo()));
