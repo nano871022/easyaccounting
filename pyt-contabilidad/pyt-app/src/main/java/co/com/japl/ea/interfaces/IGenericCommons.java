@@ -2,9 +2,16 @@ package co.com.japl.ea.interfaces;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.validates.ValidateValues;
+
+import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.implement.GenericServiceSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 
 /**
  * Este es la interface generica la cual se usara por los diferentes
@@ -44,4 +51,34 @@ public interface IGenericCommons<L extends ADto, F extends ADto> extends INotifi
 	 * @return {@link Class} < {@link ADto} >
 	 */
 	public Class<F> getClazz();
+
+	/**
+	 * Servicio de parametros, este debe ser el generico, con esto permite realizar
+	 * consultas dinamicamente.
+	 * 
+	 * @return {@link GenericServiceSvc} < {@link ParametroDTO} >
+	 */
+	public IParametrosSvc getParametersSvc();
+
+	default ParametroDTO getParametroFromFindGroup(ParametroDTO parametroDto, String nameGroup)
+			throws ParametroException {
+		if (StringUtils.isBlank(parametroDto.getGrupo())) {
+			ParametroDTO parametroDTO = new ParametroDTO();
+			parametroDTO.setNombre(nameGroup);
+			parametroDTO.setGrupo(ParametroConstants.GRUPO_PRINCIPAL);
+			parametroDTO.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+			var listParams = getParametersSvc().getAllParametros(parametroDTO);
+			if (listParams.size() > 1) {
+				throw new RuntimeException(
+						i18n().valueBundle("err.msn.param.not.unique", parametroDto.getGrupo()).get());
+			}
+			if (listParams.size() == 0) {
+				throw new RuntimeException(
+						i18n().valueBundle("err.msn.param.not.exist", parametroDto.getGrupo()).get());
+			}
+			parametroDto.setGrupo(listParams.get(0).getCodigo());
+		}
+		return parametroDto;
+	}
+
 }

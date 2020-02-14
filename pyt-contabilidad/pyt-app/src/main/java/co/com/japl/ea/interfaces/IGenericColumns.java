@@ -7,10 +7,15 @@ import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_O
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
+import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+
+import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
@@ -38,6 +43,8 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 		else
 			return Uses.FIELD;
 	}
+
+	public IParametrosSvc getParametersSvc();
 
 	/**
 	 * Se encarga de cargar las columnas dentro de la {@link TableView}
@@ -82,7 +89,12 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 						var value = ((ADto) valueField).get(factory.getNameFieldToShowInComboBox());
 						sop.setValue(validateValuesUtils.cast(value, String.class));
 					} else {
-						sop.setValue(validateValuesUtils.cast(valueField, String.class));
+						var result = findParametroGroup(valueField, factory);
+						if (result != null) {
+							sop.setValue(validateValuesUtils.cast(((ParametroDTO) result).getNombre(), String.class));
+						} else {
+							sop.setValue(validateValuesUtils.cast(valueField, String.class));
+						}
 					}
 					return sop;
 				} catch (ReflectionException | ValidateValueException e) {
@@ -94,6 +106,32 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 		});
 		getTableView().setOnMouseClicked(eventHandler -> selectedRow(eventHandler));
 		Arrays.asList(stylesTable).forEach(styleTable -> getTableView().getStyleClass().add(styleTable));
+	}
+
+	@SuppressWarnings("unchecked")
+	private <D, O extends ADto> O findParametroGroup(D valueField, IFieldsCreator factory) {
+		try {
+			if (!(valueField instanceof ParametroDTO)) {
+				var parametro = factory.getParametroDto();
+				if (StringUtils.isNotBlank(parametro.getGrupo())) {
+					var grupoSave = parametro.getGrupo();
+					if (StringUtils.isNotBlank(parametro.getGrupo())) {
+						parametro.setGrupo(getParametersSvc().getIdByParametroGroup(parametro.getGrupo()));
+					}
+					parametro = getParametroFromFindGroup(parametro, grupoSave);
+					var parametros = getParametersSvc().getAllParametros(parametro);
+					if (parametros.size() > 0) {
+						return (O) parametros.stream()
+								.filter(row -> validateValuesUtils.validate(valueField,
+										validateValuesUtils.cast(row.getValor(), valueField.getClass())))
+								.findAny().orElse(null);
+					}
+				}
+			}
+		} catch (ParametroException e) {
+			logger().logger(e);
+		}
+		return null;
 	}
 
 	void selectedRow(MouseEvent eventHandler);

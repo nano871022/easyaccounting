@@ -37,8 +37,6 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.implement.GenericServiceSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.utls.LoadAppFxml;
@@ -72,14 +70,6 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	 * @return {@link ADto}
 	 */
 	public F getInstanceDto(TypeGeneric typeGeneric);
-
-	/**
-	 * Servicio de parametros, este debe ser el generico, con esto permite realizar
-	 * consultas dinamicamente.
-	 * 
-	 * @return {@link GenericServiceSvc} < {@link ParametroDTO} >
-	 */
-	public IParametrosSvc getParametersSvc();
 
 	/**
 	 * se encarga de retornar la lista de campos que se poenen en campos de tipo
@@ -368,27 +358,6 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				logger().DEBUG(i18n().valueBundle(CONST_ERR_CLEAN_FIELDS) + e.getMessage());
 			}
 		});
-	}
-
-	private ParametroDTO getParametroFromFindGroup(ParametroDTO parametroDto, String nameGroup)
-			throws ParametroException {
-		if (StringUtils.isBlank(parametroDto.getGrupo())) {
-			ParametroDTO parametroDTO = new ParametroDTO();
-			parametroDTO.setNombre(nameGroup);
-			parametroDTO.setGrupo(ParametroConstants.GRUPO_PRINCIPAL);
-			parametroDTO.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
-			var listParams = getParametersSvc().getAllParametros(parametroDTO);
-			if (listParams.size() > 1) {
-				throw new RuntimeException(
-						i18n().valueBundle("err.msn.param.not.unique", parametroDto.getGrupo()).get());
-			}
-			if (listParams.size() == 0) {
-				throw new RuntimeException(
-						i18n().valueBundle("err.msn.param.not.exist", parametroDto.getGrupo()).get());
-			}
-			parametroDto.setGrupo(listParams.get(0).getCodigo());
-		}
-		return parametroDto;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

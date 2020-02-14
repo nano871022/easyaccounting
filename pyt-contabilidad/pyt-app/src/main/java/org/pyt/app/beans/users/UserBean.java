@@ -75,6 +75,7 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 
 	public final void load() {
 		registro = new UsuarioDTO();
+		loadFields(TypeGeneric.FIELD);
 		btnAdd.setText("fxml.btn.create");
 	}
 

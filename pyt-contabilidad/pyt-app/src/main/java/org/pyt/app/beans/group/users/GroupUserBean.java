@@ -16,7 +16,6 @@ import co.com.japl.ea.dto.system.GroupUsersDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(file = "group_user.fxml", path = "view/group_users")
@@ -48,6 +47,7 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 
 	public final void load() {
 		registro = new GroupUsersDTO();
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	public final void load(GroupUsersDTO dto) {
@@ -62,14 +62,15 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME).stream().map(
-				node -> ValidFields.valid((TextField) node, true, 1, 100, i18n().valueBundle("msn.error.field.empty")))
-				.findFirst().get();
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME).stream().map(node -> ValidFields
+				.valid(registro.getName(), node, true, 1, 100, i18n().valueBundle("msn.error.field.empty"))).findFirst()
+				.get();
 		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE).stream().map(node -> {
 			if (node instanceof ChoiceBox) {
-				return (Boolean) ValidFields.valid((ChoiceBox) node, true, i18n().valueBundle("msn.error.field.empty"));
+				return (Boolean) ValidFields.valid(registro.getState(), node, true, null, null,
+						i18n().valueBundle("msn.error.field.empty"));
 			}
-			return (Boolean) ValidFields.valid((TextField) node, true, 1, 100,
+			return (Boolean) ValidFields.valid(registro.getState(), node, true, 1, 100,
 					i18n().valueBundle("msn.error.field.empty"));
 		}).findFirst().get();
 		return valid;
