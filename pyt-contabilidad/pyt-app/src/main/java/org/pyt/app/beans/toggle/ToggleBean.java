@@ -75,8 +75,11 @@ public class ToggleBean extends ABean<ToggleDTO> {
 						: i18n().valueBundle("message.value.inactive").get()));
 		tcLastUpdated.setCellValueFactory(row -> {
 			var update = row.getValue().getFechaActualizacion();
-			return new SimpleObjectProperty<String>(
-					new SimpleDateFormat(AppConstants.CONST_FORMAT_DATE_SHOW).format(update));
+			if (update != null) {
+				return new SimpleObjectProperty<String>(
+						new SimpleDateFormat(AppConstants.CONST_FORMAT_DATE_SHOW).format(update));
+			}
+			return null;
 		});
 		lazy();
 	}
