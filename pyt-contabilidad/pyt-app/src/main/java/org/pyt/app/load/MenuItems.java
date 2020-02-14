@@ -100,7 +100,7 @@ public class MenuItems implements Reflection {
 			list.stream().forEach(menuDto -> {
 				var menus = menuDto.getUrl().split(AppConstants.SLASH);
 				var menu = getMenu(menus[0]);
-				processMenu(menu, menuDto.getClassPath(), 0, menus);
+				processMenu(menu, menuDto.getClassPath(), 0, menus);//
 			});
 		} else {
 			propertiesMenu.keySet().forEach(key -> {

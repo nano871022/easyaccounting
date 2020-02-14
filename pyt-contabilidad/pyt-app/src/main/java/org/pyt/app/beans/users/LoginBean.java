@@ -120,7 +120,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		try {
 			if (valid()) {
 				registro.setNombre(user.getText());
-				registro.setPassword(password.getText());
+				registro.setPassword(LoginUtil.encodePassword(user.getText(), password.getText()));
 				var user = usersSvc.login(registro, remoteAddr(), remember.isSelected());
 				user.setPassword(null);
 				this.setUsuario(user);

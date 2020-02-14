@@ -1,5 +1,6 @@
 package org.pyt.common.validates;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,8 @@ public final class ValidFields {
 			if (value instanceof ADto) {
 				valid &= StringUtils.isNotBlank(((ADto) value).getCodigo());
 			}
+		} else if (notEmpty && value == null) {
+			valid &= false;
 		}
 		if (valid) {
 			success((Control) node);
@@ -346,6 +349,24 @@ public final class ValidFields {
 		return valid;
 	}
 
+	private static boolean toggleDeploy(String toggle) {
+		try {
+			String toggleUtilS = "co.com.japl.ea.utls.ToggleUtil";
+			Class clazz = Class.forName(toggleUtilS);
+			Method instance = clazz.getDeclaredMethod("INSTANCE");
+			Method isActive = clazz.getDeclaredMethod("isActive", String.class);
+			var instanced = instance.invoke(null);
+			if (instanced != null) {
+				var result = isActive.invoke(instanced, toggle);
+				if (result instanceof Boolean) {
+					return (Boolean) result;
+				}
+			}
+		} catch (Exception e) {
+
+		}
+		return true;
+	}
 	/**
 	 * Se encarga de poner color el campo de color rojo alerta de problema y un
 	 * tooltip sobre el campo indicando el problema.
@@ -358,11 +379,20 @@ public final class ValidFields {
 		if (StringUtils.isNotBlank(errorMsn)) {
 			var tooltip = new Tooltip();
 			tooltip.getStyleClass().add(CONST_STYLE_TOOLTIP_ERROR);
-			tooltip.setText(errorMsn);
-			
+			if (toggleDeploy("MSN_TOOLTIP_ERR")) {
+				tooltip.setText(errorMsn);
+			}
 			Tooltip.install(control, tooltip);
-			tooltip.show(control,control.getScene().getWindow().getX()+control.getLayoutX(),control.getScene().getWindow().getY()+control.getLayoutY()+control.getScaleY()+control.getHeight());
-			control.setOnMouseEntered(event->{tooltip.hide();Tooltip.uninstall(control, tooltip);control.getStyleClass().remove("field-error");});
+			if (toggleDeploy("MSN_TOOLTIP_ERR")) {
+				tooltip.show(control, control.getScene().getWindow().getX() + control.getLayoutX(),
+						control.getScene().getWindow().getY() + control.getLayoutY() + control.getScaleY()
+								+ control.getHeight());
+				control.setOnMouseEntered(event -> {
+					tooltip.hide();
+					Tooltip.uninstall(control, tooltip);
+					control.getStyleClass().remove("field-error");
+				});
+			}
 		}
 	}
 

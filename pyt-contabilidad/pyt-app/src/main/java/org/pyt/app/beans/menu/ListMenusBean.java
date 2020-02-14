@@ -82,7 +82,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 
 	public final void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ListMenuBean.delete}",
+			controllerPopup(ConfirmPopupBean.class).load("#{ListMenusBean.delete}",
 					i18n().valueBundle(LanguageConstant.LANGUAGE_WARNING_DELETE_ROW));
 		} catch (Exception e) {
 			error(e);
@@ -97,7 +97,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 					list.forEach(dto -> {
 						try {
 							menusSvc.delete(dto, getUsuario());
-							alerta(String.format(LanguageConstant.LANGUAGE_SUCCESS_DELETE_MENUS_ROW_CODE,
+							alerta(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_MENUS_ROW_CODE,
 									dto.getCodigo()));
 						} catch (Exception e) {
 							error(e);

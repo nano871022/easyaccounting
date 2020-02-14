@@ -31,6 +31,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -116,6 +117,11 @@ public final class UtilControlFieldFX {
 				return (N) node;
 	}
 	
+	public <N extends Node, T> N getPasswordField(Field field) {
+		var node = new PasswordField();
+		node.setId(field.getName());
+		return (N) node;
+	}
 
 	public <N extends Node> boolean isChoiceBox(N field) {
 		return field instanceof ChoiceBox || field instanceof ComboBox;

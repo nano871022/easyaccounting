@@ -109,6 +109,12 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 		}
 	}
 
+	public final void newReg() {
+		registro = new MenuDTO();
+		loadFields(TypeGeneric.FIELD);
+		notificar(i18n().valueBundle("msn.new.menu"));
+	}
+
 	public final void cancel() {
 		getController(ListMenusBean.class);
 	}

@@ -9,7 +9,6 @@ import static org.pyt.common.constants.LanguageConstant.CONST_ERR_GET_ALL_USER_E
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_GET_ALL_USER_PAGE;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_GET_USER_EMPTY;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_IP_MACHINE_NOT_SUBMIT;
-import static org.pyt.common.constants.LanguageConstant.CONST_ERR_NEW_PASS_USER_DIFERENT;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_OLD_PASS_USER_DIFERENT;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_UPD_USER_CODE_EMPTY;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_UPD_USER_EMPTY;
@@ -19,13 +18,16 @@ import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_PUBLIC_EMPTY
 import static org.pyt.common.constants.languages.Login.CONST_ERR_USER_EMPTY;
 
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.QueryException;
@@ -50,7 +52,19 @@ public class UserSvc extends Services implements IUsersSvc {
 		if (StringUtils.isNotBlank(newUser.getCodigo())) {
 			throw new Exception(i18n().valueBundle(CONST_ERR_CREATE_USER_CODE_NOT_EMPTY).get());
 		}
-		querySvc.insert(newUser, user);
+		String passwordTemp = null;
+		if (StringUtils.isNotBlank(newUser.getPassword())) {
+			var decode = decodePassword(newUser.getPassword());
+			if (decode.split("\\|")[0].contains(newUser.getNombre())) {
+				passwordTemp = newUser.getPassword();
+				newUser.setPassword(null);
+			}
+		}
+
+		if (querySvc.insert(newUser, user) && StringUtils.isNotBlank(passwordTemp)) {
+			passwordChange(passwordTemp, passwordTemp, null, newUser);
+		}
+		newUser.setPassword(null);
 	}
 
 	@Override
@@ -109,9 +123,13 @@ public class UserSvc extends Services implements IUsersSvc {
 			throw new Exception(i18n().valueBundle(CONST_ERR_UPD_USER_CODE_EMPTY).get());
 		}
 		if (StringUtils.isBlank(updUser.getPassword())) {
-			updUser.setPassword(querySvc.get(user).getPassword());
+			updUser.setPassword(querySvc.get(updUser).getPassword());
 		}
 		querySvc.update(updUser, user);
+		if (StringUtils.isNotBlank(updUser.getPassword())) {
+			updUser.setPassword(null);
+		}
+
 	}
 
 	@Override
@@ -148,17 +166,48 @@ public class UserSvc extends Services implements IUsersSvc {
 		return false;
 	}
 
+	private byte[] encodePassword(String password) {
+		try {
+			var md = MessageDigest.getInstance(MessageDigestAlgorithms.MD5);
+			md.update(password.getBytes());
+			return md.digest();
+		} catch (NoSuchAlgorithmException e) {
+		}
+		return password.getBytes();
+	}
+
+	private String decodePassword(String password) {
+		var decode = Base64.getDecoder().decode(password.getBytes());
+		return new String(decode);
+	}
+
+	private StringBuffer passwordSegements(UsuarioDTO usuario, String passwordEntered) {
+		return new StringBuffer().append(usuario.getNombre()).append(passwordEntered)
+				.append(usuario.getFechaCreacion().toInstant());
+	}
+
+	private boolean validPassword(String passwordEntered, UsuarioDTO usuario) {
+		var decode = decodePassword(passwordEntered);
+		var split = decode.split("\\|");
+		var cleaning = split[0].replace(usuario.getNombre(), "");
+		var pass = passwordSegements(usuario, cleaning);
+		var encode = encodePassword(pass.toString());
+		var encode64 = Base64.getEncoder().encodeToString(encode);
+		return encode64.contentEquals(usuario.getPassword());
+	}
+
 	@Override
 	public UsuarioDTO login(UsuarioDTO user, String ipMachine, Boolean remember) throws Exception {
 		UsuarioDTO found = null;
 		var pass = Optional.ofNullable(user.getPassword());
+
 		user.setPassword(null);
 		var count = countRow(user);
 		var loginRemember = false;
 		if (count > 0) {
 			var foundUser = querySvc.get(user);
 			loginRemember = validRemember(user, foundUser, ipMachine, remember);
-			if ((!loginRemember && foundUser.getPassword().contentEquals(pass.orElse("")))
+			if ((!loginRemember && validPassword(pass.orElse(""), foundUser))
 					||(loginRemember && Optional.ofNullable(foundUser).isPresent())) {
 				foundUser.setPassword(null);
 				found = foundUser;
@@ -195,15 +244,23 @@ public class UserSvc extends Services implements IUsersSvc {
 	public void passwordChange(String newPassword, String newPassword2, String oldPassword, UsuarioDTO user)
 			throws Exception {
 		user.setPassword(null);
-		var foundUser = get(user);
-		if (!newPassword.contentEquals(oldPassword)) {
-			throw new Exception(CONST_ERR_NEW_PASS_USER_DIFERENT);
+		if (!newPassword.contentEquals(newPassword2)) {
+			throw new Exception("err.msn.svc.change.password.new.new2.not.equals");
 		}
-		if (foundUser.getPassword().contentEquals(oldPassword)) {
-			var pass = DigestUtils.sha1Hex(newPassword);
-			logger().logger("Test encript "+newPassword+" "+pass);
-			foundUser.setPassword(newPassword);
-			update(foundUser, user);
+		if (newPassword.contentEquals(oldPassword)) {
+			throw new Exception("err.msn.svc.change.password.new.old.equals");
+		}
+		var foundUser = querySvc.get(user);
+		if ((StringUtils.isBlank(oldPassword) && StringUtils.isBlank(foundUser.getPassword()))
+				|| validPassword(oldPassword, foundUser)
+				|| (StringUtils.isNotBlank(oldPassword) && StringUtils.isBlank(foundUser.getPassword()))) {
+			var decode = decodePassword(newPassword).split("\\|")[0].replace(foundUser.getNombre(), "");
+			var seg = passwordSegements(foundUser, decode);
+			var encode = encodePassword(seg.toString());
+			var pass = Base64.getEncoder().encodeToString(encode);
+			foundUser.setPassword(pass);
+			querySvc.update(foundUser, user);
+			foundUser.setPassword(null);
 		} else {
 			throw new Exception(CONST_ERR_OLD_PASS_USER_DIFERENT);
 		}

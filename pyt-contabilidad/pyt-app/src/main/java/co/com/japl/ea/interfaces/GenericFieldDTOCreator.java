@@ -57,6 +57,8 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 			Field propertie = clazz.getDeclaredField(field.getName());
 			if (StringUtils.isBlank(field.getFieldShow()) && StringUtils.isNotBlank(field.getNameGroup())) {
 				return controlFieldUtil.getChoiceBox(propertie);
+			} else if ("password".contentEquals(field.getName())) {
+				return controlFieldUtil.getPasswordField(propertie);
 			}
 			var node = controlFieldUtil.getFieldByField(propertie);
 			return node;
