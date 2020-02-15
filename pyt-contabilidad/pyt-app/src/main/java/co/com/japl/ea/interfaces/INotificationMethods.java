@@ -29,6 +29,10 @@ public interface INotificationMethods {
 		comunicacion().setComando(AppConstants.COMMAND_POPUP_INFO, msn);
 	}
 
+	default void notificarI18n(String msn) {
+		notificar(i18n().valueBundle(msn));
+	}
+
 	@SuppressWarnings("unchecked")
 	default void notificar(OptI18n msn) {
 		comunicacion().setComando(AppConstants.COMMAND_POPUP_INFO, msn);

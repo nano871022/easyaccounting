@@ -61,14 +61,14 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		NombreVentana = "Agregando Nuevo Concepto";
 		titulo.setText(NombreVentana);
 		registro = new ConceptoDTO();
-		empresa.setPopupOpenAction(()->popupEmpresa());
-		empresa.setCleanValue(()->registro.setEmpresa(null));
-		estado.setPopupOpenAction(()->popupEstado());
-		estado.setCleanValue(()->registro.setEstado(null));
-		cuentasGastos.setPopupOpenAction(()->popupCuentaGasto());
-		cuentasGastos.setCleanValue(()->registro.setCuentaGasto(null));
-		cuentasXPagar.setPopupOpenAction(()->popupCuentaXPagar());
-		cuentasXPagar.setCleanValue(()->registro.setCuentaXPagar(null));
+		empresa.setPopupOpenAction(() -> popupEmpresa());
+		empresa.setCleanValue(() -> registro.setEmpresa(null));
+		estado.setPopupOpenAction(() -> popupEstado());
+		estado.setCleanValue(() -> registro.setEstado(null));
+		cuentasGastos.setPopupOpenAction(() -> popupCuentaGasto());
+		cuentasGastos.setCleanValue(() -> registro.setCuentaGasto(null));
+		cuentasXPagar.setPopupOpenAction(() -> popupCuentaXPagar());
+		cuentasXPagar.setCleanValue(() -> registro.setCuentaXPagar(null));
 	}
 
 	/**
@@ -143,70 +143,68 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 			error(e);
 		}
 	}
-	
+
 	public final void popupEmpresa() {
 		try {
-			((PopupGenBean<EmpresaDTO>) controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class))
-					.setWidth(350)
-			).load("#{ConceptoCRUBean.empresa}");
+			controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).setWidth(350)
+					.load("#{ConceptoCRUBean.empresa}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setEmpresa(EmpresaDTO empresa) {
 		registro.setEmpresa(empresa);
 		this.empresa.setText(empresa.getNombre());
 	}
-	
+
 	public final void popupCuentaGasto() {
 		try {
-			((PopupGenBean<CuentaContableDTO>) controllerPopup(new PopupGenBean<CuentaContableDTO>(CuentaContableDTO.class))
-					.setWidth(350)
-					.addDefaultValuesToGenericParametrized(CuentaContableConstants.FIELD_ASOCIADO, CuentaContableConstants.CUENTA_GASTO)
-					).load("#{ConceptoCRUBean.cuentaGasto}");
+			controllerPopup(new PopupGenBean<CuentaContableDTO>(CuentaContableDTO.class)).setWidth(350)
+					.addDefaultValuesToGenericParametrized(CuentaContableConstants.FIELD_ASOCIADO,
+							CuentaContableConstants.CUENTA_GASTO)
+					.load("#{ConceptoCRUBean.cuentaGasto}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setCuentaGasto(CuentaContableDTO cuentaContable) {
 		registro.setCuentaGasto(cuentaContable);
 		cuentasGastos.setText(cuentaContable.getNombre());
 	}
-	
+
 	public final void popupCuentaXPagar() {
 		try {
-			((PopupGenBean<CuentaContableDTO>) controllerPopup(new PopupGenBean<CuentaContableDTO>(CuentaContableDTO.class))
-					.setWidth(350)
-					.addDefaultValuesToGenericParametrized(CuentaContableConstants.FIELD_ASOCIADO, CuentaContableConstants.CUENTA_X_PAGAR)
-					).load("#{ConceptoCRUBean.cuentaXPagar}");
+			controllerPopup(new PopupGenBean<CuentaContableDTO>(CuentaContableDTO.class)).setWidth(350)
+					.addDefaultValuesToGenericParametrized(CuentaContableConstants.FIELD_ASOCIADO,
+							CuentaContableConstants.CUENTA_X_PAGAR)
+					.load("#{ConceptoCRUBean.cuentaXPagar}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setCuentaXPagar(CuentaContableDTO cuentaContable) {
 		registro.setCuentaXPagar(cuentaContable);
 		cuentasXPagar.setText(cuentaContable.getNombre());
 	}
-	
+
 	public final void popupEstado() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_ESTADO_CONCEPTO)))
-					.setWidth(350)
-			).load("#{ConceptoCRUBean.estado}");
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_ESTADO_CONCEPTO))
+					.setWidth(350).load("#{ConceptoCRUBean.estado}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setEstado(ParametroDTO parametro) {
 		registro.setEstado(parametro);
 		estado.setText(parametro.getDescripcion());
 	}
-	
 
 	public void cancel() {
 		getController(ConceptoBean.class);

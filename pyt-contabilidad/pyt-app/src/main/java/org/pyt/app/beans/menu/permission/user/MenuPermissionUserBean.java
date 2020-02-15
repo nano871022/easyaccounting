@@ -19,6 +19,7 @@ import co.com.japl.ea.dto.system.MenuPermUsersDTO;
 import co.com.japl.ea.dto.system.PermissionDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -38,6 +39,10 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 	private GridPane gridPane;
 	@FXML
 	private Label lblTitle;
+	@FXML
+	private Button btnAdd;
+	@FXML
+	private Button btnCopy;
 	public static final String CONST_FIELD_NAME_MPU_MENU = "menu";
 	public static final String CONST_FIELD_NAME_MPU_PERMSSION = "perm";
 	public static final String CONST_FIELD_NAME_MPU_STATE = "state";
@@ -74,10 +79,13 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 
 	public final void load() {
 		registro = new MenuPermUsersDTO();
+		btnAdd.setText(i18n().valueBundle("fxml.form.button.add").get());
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	public final void load(MenuPermUsersDTO dto) {
 		registro = dto;
+		btnAdd.setText(i18n().valueBundle("fxml.form.button.update").get());
 		loadFields(TypeGeneric.FIELD);
 	}
 
@@ -112,6 +120,14 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 
 	public final void cancel() {
 		getController(ListMenuPermissionUserBean.class);
+	}
+
+	public final void copy() {
+		registro.setCodigo(null);
+		registro.setActualizador(null);
+		registro.setFechaActualizacion(null);
+		registro.setFechaCreacion(null);
+		notificar(i18n().valueBundle("mensaje.perm.menu.user.copy"));
 	}
 
 	@Override

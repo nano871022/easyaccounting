@@ -140,7 +140,8 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 					alerta(i18n().valueBundle("err.msn.password.not.equals"));
 					throw new Exception(i18n().valueBundle("err.msn.password.not.equals").get());
 				} else {
-					registro.setPassword(LoginUtil.encodePassword(registro.getNombre(), registro.getPassword()));
+					var pass = LoginUtil.encodePassword(registro.getNombre(), registro.getPassword());
+					registro.setPassword(pass);
 				}
 			}
 			if (StringUtils.isBlank(registro.getCodigo())) {

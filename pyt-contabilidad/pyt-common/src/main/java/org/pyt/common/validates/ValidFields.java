@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.SelectList;
 
@@ -29,6 +30,11 @@ public final class ValidFields {
 	public static final String CONST_STYLE_TOOLTIP_ERROR = "tooltip-error";
 	public static final String CONST_STYLE_FIELD_OK = "field-ok";
 	public static final ValidateValues validateValues = new ValidateValues();
+
+	public static final <V, N extends Node> Boolean validI18n(V value, N node, Boolean notEmpty, Integer min,
+			Integer max, String codeError) {
+		return valid(value, node, notEmpty, min, max, I18n.instance().valueBundle(codeError));
+	}
 
 	public static final <V, N extends Node> Boolean valid(V value, N node, Boolean notEmpty, Integer min, Integer max,
 			OptI18n msnError) {
@@ -57,9 +63,9 @@ public final class ValidFields {
 		} else if (notEmpty && value == null) {
 			valid &= false;
 		}
-		if (valid) {
+		if (valid && node instanceof Control) {
 			success((Control) node);
-		} else {
+		} else if (node instanceof Control) {
 			error((Control) node, msnError.get());
 		}
 		return valid;

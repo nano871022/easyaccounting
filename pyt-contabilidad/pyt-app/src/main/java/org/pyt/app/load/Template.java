@@ -5,7 +5,6 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.OptI18n;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ReflectionException;
@@ -99,22 +98,13 @@ public class Template implements IComunicacion, Reflection {
 				}
 				break;
 			case AppConstants.COMMAND_POPUP_ERROR:
-				if (valor instanceof OptI18n) {
-					LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load(((OptI18n) valor),
-							PopupBean.TIPOS.ERROR);
-				}
+				LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.ERROR);
 				break;
 			case AppConstants.COMMAND_POPUP_INFO:
-				if (valor instanceof OptI18n) {
-					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load(((OptI18n) valor),
-							PopupBean.TIPOS.INFO);
-				}
+				LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.INFO);
 				break;
 			case AppConstants.COMMAND_POPUP_WARN:
-				if (valor instanceof String) {
-					LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load((OptI18n) valor,
-							PopupBean.TIPOS.WARNING);
-				}
+				LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.WARNING);
 				break;
 			}
 		} catch (LoadAppFxmlException e) {

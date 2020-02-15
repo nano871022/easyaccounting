@@ -63,11 +63,10 @@ public class BancoBean extends ABean<BancoDTO> {
 	@FXML
 	private TableColumn<BancoDTO, String> estados;
 	private DataTableFXMLUtil<BancoDTO, BancoDTO> dt;
-	private final static String FIELD_NOMBRE = "nombre";
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Bancos";
+		NombreVentana = i18n().valueBundle("fxml.tittle.list.bank").get();
 		registro = new BancoDTO();
 		tipoBanco.setPopupOpenAction(() -> popupOpenTipoBanco());
 		tipoBanco.setCleanValue(() -> {
@@ -158,19 +157,18 @@ public class BancoBean extends ABean<BancoDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{BancoBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n().valueBundle("mensaje.wish.delete.selected.rows").get());
 		} catch (Exception e) {
 			error(e);
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public final void popupOpenTipoBanco() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_BANCO))).setWidth(350))
-									.load("#{BancoBean.tipoBanco}");
+							ParametroConstants.GRUPO_TIPO_BANCO)
+					.setWidth(350).load("#{BancoBean.tipoBanco}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -181,13 +179,12 @@ public class BancoBean extends ABean<BancoDTO> {
 		tipoBanco.setText(parametro.getDescripcion());
 	}
 
-	@SuppressWarnings("unused")
 	public final void popupOpenTipoCuentas() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_CUENTA))).setWidth(350))
-									.load("#{BancoBean.tipoCuentas}");
+							ParametroConstants.GRUPO_TIPO_CUENTA)
+					.setWidth(150).load("#{BancoBean.tipoCuentas}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -200,10 +197,10 @@ public class BancoBean extends ABean<BancoDTO> {
 
 	public final void popupOpenEstado() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_ESTADO_BANCO))).setWidth(350))
-									.load("#{BancoBean.estado}");
+							ParametroConstants.GRUPO_ESTADO_BANCO)
+					.setWidth(150).load("#{BancoBean.estado}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -221,10 +218,10 @@ public class BancoBean extends ABean<BancoDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				bancoSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminaro el banco.");
+				notificarI18n("mensaje.bank.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un banco.");
+				notificarI18n("mensaje.bank.havent.been.deleted");
 			}
 		} catch (BancoException e) {
 			error(e);
@@ -236,7 +233,7 @@ public class BancoBean extends ABean<BancoDTO> {
 		if (registro != null) {
 			getController(BancoCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un banco.");
+			notificarI18n("mensaje.bank.havent.selected");
 		}
 	}
 

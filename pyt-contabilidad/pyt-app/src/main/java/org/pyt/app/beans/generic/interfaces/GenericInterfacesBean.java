@@ -259,6 +259,9 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			loadFxml();
 			if (validRecord()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
+					if (registro.getOrden() == null) {
+						registro.setOrden(getCount());
+					}
 					configGenericSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("message.insert.generic.interface"));
 				} else {
@@ -332,6 +335,18 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		} catch (ParametroException e) {
 			logger().DEBUG(e);
 		}
+	}
+
+	private Integer getCount() {
+		try {
+			var dto = new ConfigGenericFieldDTO();
+			dto.setClassPath(registro.getClassPath());
+			dto.setClassPathBean(registro.getClassPathBean());
+			return configGenericSvc.getTotalRows(dto);
+		} catch (Exception e) {
+			logger.DEBUG(e);
+		}
+		return 1;
 	}
 
 	private void manejaGrupo() {

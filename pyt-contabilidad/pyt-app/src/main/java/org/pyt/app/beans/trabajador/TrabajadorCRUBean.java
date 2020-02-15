@@ -143,12 +143,12 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 
 	public final void popupOpenTipoPago() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_PAGO)))
-									.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE,
-											ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO))
-													.load("#{TrabajadorCRUBean.tipoPago}");
+							ParametroConstants.GRUPO_TIPO_PAGO)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE,
+							ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO)
+					.load("#{TrabajadorCRUBean.tipoPago}");
 		} catch (Exception e) {
 			error(e);
 		}

@@ -114,7 +114,7 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 				comandoValor.put(comando, lvalores.toArray());
 			}
 		} catch (Exception e) {
-			logger.logger(e);
+			logger.DEBUG(e);
 		}
 	}
 

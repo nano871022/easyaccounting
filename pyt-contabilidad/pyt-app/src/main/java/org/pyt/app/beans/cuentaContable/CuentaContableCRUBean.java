@@ -175,12 +175,10 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupTipoPlanContable() {
 		try {
-			var parametroGrupo = new ParametroGrupoDTO();
-			parametroGrupo.setGrupo(ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
-					.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.get(parametroGrupo).getParametro()))
-									.load("#{CuentaContableCRUBean.tipoPlanContable}");
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)).setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE)
+					.load("#{CuentaContableCRUBean.tipoPlanContable}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -193,11 +191,9 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupNaturaleza() {
 		try {
-			var parametroGrupo = new ParametroGrupoDTO();
-			parametroGrupo.setGrupo(ParametroConstants.GRUPO_NATURALEZA);
-			var codigoGrupo = parametroSvc.get(parametroGrupo).getParametro();
 			var bean = controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class));
-			bean.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, codigoGrupo);
+			bean.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+					ParametroConstants.GRUPO_NATURALEZA);
 			bean.load("#{CuentaContableCRUBean.naturaleza}");
 		} catch (Exception e) {
 			error(e);
@@ -211,12 +207,9 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupTipoCuentaContable() {
 		try {
-			var parametroGrupo = new ParametroGrupoDTO();
-			parametroGrupo.setGrupo(ParametroConstants.GRUPO_TIPO);
 			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.get(parametroGrupo).getParametro()))
-									.load("#{CuentaContableCRUBean.tipoCuentaContable}");
+							ParametroConstants.GRUPO_TIPO)).load("#{CuentaContableCRUBean.tipoCuentaContable}");
 		} catch (Exception e) {
 			error(e);
 		}

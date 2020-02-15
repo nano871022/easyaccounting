@@ -36,8 +36,14 @@ public class PopupBean extends ABean {
 	 * 
 	 * @param mensaje {@link String}
 	 */
-	public void load(OptI18n mensaje, TIPOS tipo) {
-		this.mensaje.setText(mensaje.get());
+	public <T> void load(T mensaje, TIPOS tipo) {
+		var message = "";
+		if (mensaje instanceof OptI18n) {
+			message = ((OptI18n) mensaje).get();
+		} else {
+			message = (String) mensaje;
+		}
+		this.mensaje.setText(message);
 		loadImage(tipo);
 	}
 

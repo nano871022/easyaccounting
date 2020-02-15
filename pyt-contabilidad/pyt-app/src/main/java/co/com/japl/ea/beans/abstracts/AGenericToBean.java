@@ -193,7 +193,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		return (M) this;
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String grupoParametro,
 			ParametroDTO parametroEstado) {
 		return (M) this;

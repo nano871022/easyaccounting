@@ -57,11 +57,12 @@ public class UserSvc extends Services implements IUsersSvc {
 			var decode = decodePassword(newUser.getPassword());
 			if (decode.split("\\|")[0].contains(newUser.getNombre())) {
 				passwordTemp = newUser.getPassword();
-				newUser.setPassword(null);
+				newUser.setPassword(".");
 			}
 		}
 
 		if (querySvc.insert(newUser, user) && StringUtils.isNotBlank(passwordTemp)) {
+			newUser.setPassword(null);
 			passwordChange(passwordTemp, passwordTemp, null, newUser);
 		}
 		newUser.setPassword(null);

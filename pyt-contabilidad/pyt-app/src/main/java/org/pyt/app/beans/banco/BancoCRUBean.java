@@ -6,6 +6,7 @@ import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.BancoException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.BancoDTO;
 import com.pyt.service.dto.ParametroDTO;
@@ -29,7 +30,7 @@ import javafx.scene.layout.BorderPane;
  */
 @FXMLFile(path = "view/banco", file = "banco.fxml")
 public class BancoCRUBean extends ABean<BancoDTO> {
-	
+
 	@Inject(resource = "com.pyt.service.implement.BancoSvc")
 	private IBancosSvc bancoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -59,15 +60,24 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Banco";
+		NombreVentana = i18n().valueBundle("fxml.title.add.bank").get();
 		titulo.setText(NombreVentana);
 		registro = new BancoDTO();
-		tipoBanco.setPopupOpenAction(()->popupOpenTipoBanco());
-		tipoBanco.setCleanValue(()->{registro.setTipoBanco(null);tipoBanco.setText(null);});
-		tipoCuenta.setPopupOpenAction(()->popupOpenTipoCuentas());
-		tipoCuenta.setCleanValue(()->{registro.setTipoCuenta(null);tipoCuenta.setText(null);});
-		estado.setPopupOpenAction(()->popupOpenEstado());
-		estado.setCleanValue(()->{registro.setEstado(null);estado.setText(null);});
+		tipoBanco.setPopupOpenAction(() -> popupOpenTipoBanco());
+		tipoBanco.setCleanValue(() -> {
+			registro.setTipoBanco(null);
+			tipoBanco.setText(null);
+		});
+		tipoCuenta.setPopupOpenAction(() -> popupOpenTipoCuentas());
+		tipoCuenta.setCleanValue(() -> {
+			registro.setTipoCuenta(null);
+			tipoCuenta.setText(null);
+		});
+		estado.setPopupOpenAction(() -> popupOpenEstado());
+		estado.setCleanValue(() -> {
+			registro.setEstado(null);
+			estado.setText(null);
+		});
 	}
 
 	/**
@@ -99,7 +109,7 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		fechaApertura.setValue(registro.getFechaApertura());
 		fechaCierre.setValue(registro.getFechaCierre());
 		tipoBanco.setText(registro.getTipoBanco().getDescripcion());
-		tipoCuenta.setText( registro.getTipoCuenta().getDescripcion());
+		tipoCuenta.setText(registro.getTipoCuenta().getDescripcion());
 		estado.setText(registro.getEstado().getDescripcion());
 	}
 
@@ -121,61 +131,70 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getDescripcion());
-		valid &= StringUtils.isNotBlank(registro.getNumeroCuenta());
-		valid &= registro.getFechaApertura() != null;
-		valid &= StringUtils.isNotBlank(registro.getTipoBanco().getCodigo());
-		valid &= StringUtils.isNotBlank(registro.getTipoCuenta().getCodigo());
-		valid &= StringUtils.isNotBlank(registro.getEstado().getCodigo());
+		valid &= ValidFields.valid(registro.getNombre(), nombre, true, 1, 100,
+				i18n().valueBundle("err.valid.banco.field.nombre.empty"));
+		valid &= ValidFields.valid(registro.getDescripcion(), descripcion, true, 1, 100,
+				i18n().valueBundle("err.valid.banco.field.description.empty"));
+		valid &= ValidFields.valid(registro.getNumeroCuenta(), numeroCuenta, true, 6, 20,
+				i18n().valueBundle("err.valid.banco.field.numerocuota.empty"));
+		valid &= ValidFields.valid(registro.getFechaApertura(), fechaApertura, true, null, null,
+				i18n().valueBundle("err.valid.banco.field.fechaapertura.empty"));
+		valid &= ValidFields.valid(registro.getTipoBanco(), tipoBanco, true, null, null,
+				i18n().valueBundle("err.valid.banco.field.tipobanco.empty"));
+		valid &= ValidFields.valid(registro.getTipoCuenta(), tipoCuenta, true, null, null,
+				i18n().valueBundle("err.valid.banco.field.tipocuenta.empty"));
+		valid &= ValidFields.valid(registro.getEstado(), estado, true, null, null,
+				i18n().valueBundle("err.valid.banco.field.estado.empty"));
 		return valid;
 	}
-	
+
 	public final void popupOpenTipoBanco() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
-			.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametrosSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_BANCO)))
-			).load("#{BancoCRUBean.tipoBanco}");
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_TIPO_BANCO)
+					.load("#{BancoCRUBean.tipoBanco}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setTipoBanco(ParametroDTO parametro) {
 		registro.setTipoBanco(parametro);
-		tipoBanco.setText(parametro.getDescripcion());
+		tipoBanco.setText(parametro.getNombre());
 	}
 
 	public final void popupOpenTipoCuentas() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametrosSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_CUENTA)))
-					).load("#{BancoCRUBean.tipoCuentas}");
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_TIPO_CUENTA)
+					.load("#{BancoCRUBean.tipoCuentas}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setTipoCuentas(ParametroDTO parametro) {
 		registro.setTipoCuenta(parametro);
 		tipoCuenta.setText(parametro.getDescripcion());
 	}
-	
+
 	public final void popupOpenEstado() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,parametrosSvc.getIdByParametroGroup(ParametroConstants.GRUPO_ESTADO_BANCO)))
-					).load("#{BancoCRUBean.estado}");
+			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_ESTADO_BANCO)
+					.load("#{BancoCRUBean.estado}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setEstado(ParametroDTO parametro) {
 		registro.setEstado(parametro);
 		estado.setText(parametro.getDescripcion());
 	}
-	
 
 	public void add() {
 		load();
@@ -183,12 +202,12 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					bancoSvc.update(registro, getUsuario());
-					notificar("Se guardo el banco correctamente.");
+					notificarI18n("mensaje.banco.insert.success");
 					cancel();
 				} else {
 					bancoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
-					notificar("Se agrego el banco correctamente.");
+					notificarI18n("mensaje.banco.update.success");
 					cancel();
 				}
 			}

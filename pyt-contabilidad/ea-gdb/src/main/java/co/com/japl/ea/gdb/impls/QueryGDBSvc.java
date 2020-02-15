@@ -253,6 +253,7 @@ public class QueryGDBSvc implements IQuerySvc {
 
 			return db.executeIUD(query);
 		} catch (Exception e) {
+			obj.setCodigo(null);
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT).get(), e);
 		}
 	}
