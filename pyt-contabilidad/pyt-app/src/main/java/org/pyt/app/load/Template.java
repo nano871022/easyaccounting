@@ -69,7 +69,7 @@ public class Template implements IComunicacion, Reflection {
 			centerMessage.setText("");
 			progressBar.setProgress(0.0);
 			new MenuItems(menu, scroller).load();
-			logger.logger("Cargando ventana principal");
+			logger.DEBUG("Cargando ventana principal");
 		} catch (ReflectionException e1) {
 			logger.logger(e1);
 		}

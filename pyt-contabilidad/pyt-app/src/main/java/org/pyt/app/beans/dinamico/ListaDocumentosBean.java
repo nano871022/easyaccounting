@@ -206,7 +206,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 		if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 			getController(PanelBean.class).load(registro);
 		} else {
-			error("No se ha seleccionado ningun documento.");
+			errorI18n("err.document.havent.been.selected");
 		}
 	}
 

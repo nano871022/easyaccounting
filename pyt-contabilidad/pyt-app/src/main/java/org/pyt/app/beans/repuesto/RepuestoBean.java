@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.OptI18n;
 import org.pyt.common.exceptions.inventario.ProductosException;
 
 import com.pyt.service.dto.inventario.ProductoDTO;
@@ -42,7 +41,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Repuestos";
+		NombreVentana = i18n().get("fxml.title.list.spare.pars");
 		registro = new ProductoDTO();
 		lazy();
 	}
@@ -97,11 +96,10 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 		dt.search();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{RepuestoBean.delete}",
-					OptI18n.process(val -> "¿Desea eliminar los registros seleccionados?", null));
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -114,10 +112,10 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				productosSvc.del(registro, getUsuario());
-				notificar("Se ha eliminado el repuesto.");
+				notificarI18n("mensaje.spartpart.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un repuesto.");
+				alertaI18n("err.spartpart.havent.been.selected");
 			}
 		} catch (ProductosException e) {
 			error(e);
@@ -129,7 +127,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 		if (registro != null) {
 			getController(RepuestoCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un repuesto.");
+			alertaI18n("err.spartpart.havent.been.selected");
 		}
 	}
 

@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.common.ListUtils;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.ParametroInventarioConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.inventario.InventarioException;
@@ -54,15 +57,15 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 			}
 			if (dto.getTipo() == null) {
 				ParametroInventarioDTO parametro = new ParametroInventarioDTO();
-				parametro.setEstado("A");
-				parametro.setNombre(ParametroInventarioConstants.DESC_TIPO_MOV_ENTRADA);
+				parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				parametro.setOrden(1L);
 				List<ParametroInventarioDTO> tipoMovs = parametroSvc.getAllParametros(parametro,
 						ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
-				if (tipoMovs != null && tipoMovs.size() > 1) {
+				if (ListUtils.haveMoreOneItem(tipoMovs)) {
 					throw new InventarioException(
 							"Se encontraron varios registros para el parametro de tipo novedad de entrada.");
 				}
-				if (tipoMovs == null || tipoMovs.size() == 0) {
+				if (ListUtils.isBlank(tipoMovs)) {
 					throw new InventarioException(
 							"No se encontro ningun registro para el parametro de tipo de novedad de entrada.");
 				}
@@ -72,11 +75,11 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 			ResumenProductoDTO resumen = new ResumenProductoDTO();
 			resumen.setProducto(dto.getProducto());
 			List<ResumenProductoDTO> list = productosSvc.resumenProductos(resumen);
-			if (list == null || list.size() == 0) {
+			if (ListUtils.isBlank(list)) {
 				resumen.setCantidad(dto.getCantidad());
 				resumen.setValorCompra(dto.getPrecioCompra());
 				resumen = productosSvc.insert(resumen, usuario);
-			} else if (list.size() > 1) {
+			} else if (ListUtils.haveMoreOneItem(list)) {
 				movimientoSvc.del(dto, usuario);
 				throw new InventarioException("Se encontraron varios resumenes, contacte con el administrador.");
 			}
@@ -84,13 +87,16 @@ public class InventarioSvc extends Services implements IInventarioSvc {
 			if (list != null && list.size() > 0) {
 				resumen = list.get(0);
 			}
-			if (resumen == null || StringUtils.isBlank(resumen.getCodigo())) {
+			if (DtoUtils.isBlank(resumen)) {
 				throw new InventarioException("No fue encontrado ningun resumen de movimientos.");
 			}
 			if (resumen.getCantidad() == null) {
 				resumen.setCantidad(0);
 			}
 			resumen.setCantidad(resumen.getCantidad() + dto.getCantidad());
+			if (resumen.getValorCompra() == null || resumen.getValorCompra().compareTo(new BigDecimal(0)) == 0) {
+				resumen.setValorCompra(saldoOld.getMovimiento().getPrecioCompra());
+			}
 			productosSvc.update(resumen, usuario);
 			BigDecimal totalMovimiento = dto.getPrecioCompra().multiply(new BigDecimal(dto.getCantidad()));
 			SaldoDTO saldo = new SaldoDTO();

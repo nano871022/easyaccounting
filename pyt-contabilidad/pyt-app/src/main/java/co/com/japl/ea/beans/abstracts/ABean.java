@@ -1,5 +1,6 @@
 package co.com.japl.ea.beans.abstracts;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.pyt.common.abstracts.ADto;
@@ -8,6 +9,7 @@ import org.pyt.common.common.CacheUtil;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.constants.RefreshCodeConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
@@ -90,6 +92,14 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 		}
 	}
 
+	public String i18n(String code) {
+		return i18n().get(code);
+	}
+
+	public OptI18n i18nOpt(String code) {
+		return i18n().valueBundle(code);
+	}
+
 	public I18n i18n() {
 		var i18n = I18n.instance();
 		if (CacheUtil.INSTANCE().isRefresh(RefreshCodeConstant.CONST_ADD_CACHE_LANGUAGE)) {
@@ -105,5 +115,9 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 
 	protected final void setUsuario(UsuarioDTO usuario) {
 		LoginUtil.setUsuarioLogin(Optional.ofNullable(usuario).orElse(new UsuarioDTO()));
+	}
+
+	protected final String concat(String... text) {
+		return Arrays.asList(text).stream().reduce("", (before, now) -> before + now);
 	}
 }

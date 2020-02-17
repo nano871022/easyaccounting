@@ -363,6 +363,10 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 
 	public void copy() {
 		registro.setCodigo(null);
+		registro.setAlias(null);
+		registro.setName(null);
+		registro.setDescription(null);
+		registro.setOrden(null);
 		load(registro);
 		notificar(i18n().valueBundle("message.copy.generic.interface.success"));
 	}

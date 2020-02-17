@@ -24,6 +24,10 @@ public interface INotificationMethods {
 		comunicacion().setComando(AppConstants.COMMAND_POPUP_WARN, mensaje);
 	}
 
+	default void alertaI18n(String mensaje) {
+		alerta(i18n().valueBundle(mensaje));
+	}
+
 	@SuppressWarnings("unchecked")
 	default void notificar(String msn) {
 		comunicacion().setComando(AppConstants.COMMAND_POPUP_INFO, msn);
@@ -45,6 +49,10 @@ public interface INotificationMethods {
 		if (StringUtils.isNotBlank(mensaje)) {
 			comunicacion().setComando(AppConstants.COMMAND_POPUP_ERROR, mensaje);
 		}
+	}
+
+	default void errorI18n(String msn) {
+		error(i18n().valueBundle(msn));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,6 +1,7 @@
 package co.com.japl.ea.interfaces;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
@@ -84,6 +85,11 @@ public interface IBean<T extends ADto> extends Reflection, INotificationMethods 
 			error(e);
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	default <S extends ADto, P extends PopupGenBean<S>> P controllerGenPopup(Class<S> clazz) throws Exception {
+		return (P) controllerPopup(new PopupGenBean<S>(clazz));
 	}
 
 	/**

@@ -65,6 +65,16 @@ public final class I18n {
 	}
 
 	/**
+	 * Permite obtener valores de i18n de forma rápida
+	 * 
+	 * @param key {@link String}
+	 * @return {@link String}
+	 */
+	public final String get(String key) {
+		return valueBundle(key).get();
+	}
+
+	/**
 	 * Retorna el valor que se encuentra en la llave suministrada de la
 	 * internacionalizacion
 	 * 

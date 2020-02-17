@@ -69,11 +69,11 @@ public interface IGenericCommons<L extends ADto, F extends ADto> extends INotifi
 			parametroDTO.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
 			var listParams = getParametersSvc().getAllParametros(parametroDTO);
 			if (listParams.size() > 1) {
-				throw new RuntimeException(
+				throw new ParametroException(
 						i18n().valueBundle("err.msn.param.not.unique", parametroDto.getGrupo()).get());
 			}
 			if (listParams.size() == 0) {
-				throw new RuntimeException(
+				throw new ParametroException(
 						i18n().valueBundle("err.msn.param.not.exist", parametroDto.getGrupo()).get());
 			}
 			parametroDto.setGrupo(listParams.get(0).getCodigo());

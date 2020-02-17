@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.SelectList;
@@ -27,6 +28,7 @@ import javafx.scene.control.Tooltip;
  */
 public final class ValidFields {
 	public static final String CONST_STYLE_FIELD_ERROR = "field-error";
+	public static final String CONST_STYLE_FIELD_WARN = "field-warn";
 	public static final String CONST_STYLE_TOOLTIP_ERROR = "tooltip-error";
 	public static final String CONST_STYLE_FIELD_OK = "field-ok";
 	public static final ValidateValues validateValues = new ValidateValues();
@@ -36,20 +38,23 @@ public final class ValidFields {
 		return valid(value, node, notEmpty, min, max, I18n.instance().valueBundle(codeError));
 	}
 
-	public static final <V, N extends Node> Boolean valid(V value, N node, Boolean notEmpty, Integer min, Integer max,
-			OptI18n msnError) {
-		boolean valid = true;
-		if (notEmpty && value != null) {
+	private static final <V> Boolean validValueByType(V value, Number min, Number max) {
+		var valid = true;
+		if (value != null) {
 			if (validateValues.isString(value.getClass())) {
 				var size = ((String) value).length();
-				valid &= min <= size && max >= size;
+				if (min != null && max != null) {
+					valid &= min.intValue() <= size && max.intValue() >= size;
+				} else {
+					valid &= StringUtils.isNotBlank((String) value);
+				}
 			}
-			if (validateValues.isCast(value,Boolean.class)) {
+			if (validateValues.isCast(value, Boolean.class)) {
 				valid &= valid;
 			}
 			if (validateValues.isNumber(value.getClass())) {
 				if (value != null && min != null && max != null) {
-					valid &= validateValues.numericBetween(value, min, max);
+					valid &= validateValues.numericBetween(value, min.intValue(), max.intValue());
 				} else {
 					valid &= true;
 				}
@@ -58,15 +63,34 @@ public final class ValidFields {
 				valid &= true;
 			}
 			if (value instanceof ADto) {
-				valid &= StringUtils.isNotBlank(((ADto) value).getCodigo());
+				valid &= DtoUtils.haveCode((ADto) value);
 			}
+		}
+		return valid;
+	}
+
+	public static final <V, N extends Node> Boolean valid(V value, N node, Boolean notEmpty, Integer min, Integer max,
+			OptI18n msnError) {
+		boolean valid = true;
+		if (notEmpty && value != null) {
+			valid &= validValueByType(value, min, max);
 		} else if (notEmpty && value == null) {
 			valid &= false;
 		}
-		if (valid && node instanceof Control) {
+		var empty = false;
+		if (!notEmpty) {
+			if (value == null) {
+				empty = true;
+			} else if (value != null) {
+				empty &= !validValueByType(value, min, max);
+			}
+		}
+		if (!empty && valid && node instanceof Control) {
 			success((Control) node);
-		} else if (node instanceof Control) {
+		} else if (!empty && node instanceof Control) {
 			error((Control) node, msnError.get());
+		} else if (empty) {
+			warn((Control) node, msnError.get());
 		}
 		return valid;
 	}
@@ -382,24 +406,33 @@ public final class ValidFields {
 	 */
 	private static final <T extends Control> void error(T control, String errorMsn) {
 		control.getStyleClass().add(CONST_STYLE_FIELD_ERROR);
-		if (StringUtils.isNotBlank(errorMsn)) {
+		loadToolTip(control, errorMsn, CONST_STYLE_FIELD_ERROR);
+	}
+
+	private static final <T extends Control> void loadToolTip(T control, String errorMsn, String styleControl) {
+		if (StringUtils.isNotBlank(errorMsn) && toggleDeploy("MSN_TOOLTIP_ERR")) {
 			var tooltip = new Tooltip();
 			tooltip.getStyleClass().add(CONST_STYLE_TOOLTIP_ERROR);
-			if (toggleDeploy("MSN_TOOLTIP_ERR")) {
 				tooltip.setText(errorMsn);
-			}
 			Tooltip.install(control, tooltip);
-			if (toggleDeploy("MSN_TOOLTIP_ERR")) {
 				tooltip.show(control, control.getScene().getWindow().getX() + control.getLayoutX(),
 						control.getScene().getWindow().getY() + control.getLayoutY() + control.getScaleY()
 								+ control.getHeight());
 				control.setOnMouseEntered(event -> {
 					tooltip.hide();
 					Tooltip.uninstall(control, tooltip);
-					control.getStyleClass().remove("field-error");
+				control.getStyleClass().remove(styleControl);
 				});
-			}
+		} else {
+			control.setOnMouseEntered(event -> {
+				control.getStyleClass().remove(styleControl);
+			});
 		}
+	}
+
+	private static final <T extends Control> void warn(T control, String errorMsn) {
+		control.getStyleClass().add(CONST_STYLE_FIELD_WARN);
+		loadToolTip(control, errorMsn, CONST_STYLE_FIELD_WARN);
 	}
 
 	/**
@@ -410,5 +443,8 @@ public final class ValidFields {
 	private static final <T extends Control> void success(T control) {
 		control.getStyleClass().add(CONST_STYLE_FIELD_OK);
 		control.setTooltip(null);
+		control.setOnMouseEntered(event -> {
+			control.getStyleClass().remove(CONST_STYLE_FIELD_OK);
+		});
 	}
 }

@@ -46,7 +46,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Empresas";
+		NombreVentana = i18n().get("fxml.title.list.enterprise");
 		registro = new EmpresaDTO();
 		lazy();
 	}
@@ -111,7 +111,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{EmpresaBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -124,10 +124,10 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				empresaSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminaro la empresa.");
+				notificarI18n("mensaje.enterprise.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una empresa.");
+				alertaI18n("err.enterprise.have.been.selected");
 			}
 		} catch (EmpresasException e) {
 			error(e);
@@ -139,7 +139,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		if (registro != null) {
 			getController(EmpresaCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado una empresa.");
+			alertaI18n("err.enterprise.havent.been.selected");
 		}
 	}
 

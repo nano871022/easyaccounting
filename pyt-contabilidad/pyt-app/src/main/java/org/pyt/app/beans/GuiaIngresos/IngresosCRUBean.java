@@ -9,10 +9,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.Table;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.GenericServiceException;
@@ -142,7 +140,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Ingreso";
+		NombreVentana = i18n().get("fxml.title.add.new.entry");
 		titulo.setText(NombreVentana);
 		registro = new IngresoDTO();
 		valid = new ValidateValues();
@@ -248,9 +246,9 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			registro = dto;
 			getListas();
 			loadFxml();
-			titulo.setText("Modificando Ingreso");
+			titulo.setText(i18n().get("mensaje.modifing.entry"));
 		} else {
-			error("El ingreso es invalido para editar.");
+			error(i18n().get("err.entry.cant.edit"));
 			cancel();
 		}
 	}
@@ -315,7 +313,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupTrabajador() {
 		try {
-			var bean = controllerPopup(new PopupGenBean<TrabajadorDTO>(TrabajadorDTO.class));
+			var bean = controllerGenPopup((TrabajadorDTO.class));
 			bean.addDefaultValuesToGenericParametrized("estado", parametroEstado);
 			bean.load("#{IngresosCRUBean.trabajador}");
 		} catch (Exception e) {
@@ -337,7 +335,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupPropietario() {
 		try {
-			controllerPopup(new PopupGenBean<PersonaDTO>(PersonaDTO.class)).load("#{IngresosCRUBean.propietario}");
+			controllerGenPopup((PersonaDTO.class)).load("#{IngresosCRUBean.propietario}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -357,7 +355,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupEmpresa() {
 		try {
-			controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).load("#{IngresosCRUBean.empresa}");
+			controllerGenPopup((EmpresaDTO.class)).load("#{IngresosCRUBean.empresa}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -377,7 +375,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupRepuesto() {
 		try {
-			controllerPopup(new PopupGenBean<ProductoDTO>(ProductoDTO.class)).load("#{IngresosCRUBean.repuesto}");
+			controllerGenPopup((ProductoDTO.class)).load("#{IngresosCRUBean.repuesto}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -391,7 +389,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupServicio() {
 		try {
-			controllerPopup(new PopupGenBean<ServicioDTO>(ServicioDTO.class)).load("#{IngresosCRUBean.servicio}");
+			controllerGenPopup((ServicioDTO.class)).load("#{IngresosCRUBean.servicio}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -413,8 +411,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupConductorEntrada() {
 		try {
-			var bean = new PopupGenBean<PersonaDTO>(PersonaDTO.class);
-			controllerPopup(bean).load("#{IngresosCRUBean.conductorEntrada}");
+			controllerGenPopup(PersonaDTO.class).load("#{IngresosCRUBean.conductorEntrada}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -436,8 +433,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 
 	public void popupConductorSalida() {
 		try {
-			var bean = new PopupGenBean<PersonaDTO>(PersonaDTO.class);
-			controllerPopup(bean).load("#{IngresosCRUBean.conductorSalida}");
+			controllerGenPopup(PersonaDTO.class).load("#{IngresosCRUBean.conductorSalida}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -461,8 +457,8 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			if (listServicios != null && listServicios.size() > 0 && servicioSelect != null) {
 				if (StringUtils.isNotBlank(servicioSelect.getCodigo())) {
-					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteServicio}", OptI18n.process(
-							val -> "¿Desea eliminar el servicio %s ?", null, servicioSelect.getServicio().getNombre()));
+					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteServicio}",
+							i18n().get("mensaje.wish.do.delete.selected.rows"));
 				} else {
 					listServicios.remove(servicioSelect);
 					servicio.setText(null);
@@ -492,8 +488,7 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			if (listRepuestos != null && listRepuestos.size() > 0 && repuestoSelect != null) {
 				if (StringUtils.isNotBlank(repuestoSelect.getCodigo())) {
 					controllerPopup(ConfirmPopupBean.class).load("#{IngresosCRUBean.deleteRepuesto}",
-							OptI18n.process(val -> "¿Desea eliminar el repuesto %s ?", null,
-									repuestoSelect.getRepuesto().getProducto().getNombre()));
+							i18n().get("wish.do.delete.selected.rows"));
 				} else {
 					listRepuestos.remove(repuestoSelect);
 					repuesto.setText(null);
@@ -573,13 +568,13 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
 				ingresosSvc.update(registro, getUsuario());
 				ingresoServiciosYRepuestos();
-				notificar("Se guardo el ingreso correctamente.");
+				notificarI18n("mensaje.entry.have.been.updated.succesfull");
 				cancel();
 			} else {
 				registro = ingresosSvc.insert(registro, getUsuario());
 				ingresoServiciosYRepuestos();
 				codigo.setText(registro.getCodigo());
-				notificar("Se agrego el ingreso correctamente.");
+				notificarI18n("mensaje.entry.have.been.inserted.succesfull");
 				cancel();
 			}
 		} catch (IngresoException e) {
@@ -592,14 +587,14 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 			try {
 				ingresoServicioSvc.insert(row, getUsuario());
 			} catch (GenericServiceException e) {
-				logger.logger("Error al ingresar un Servicio a ingresos.", e);
+				logger.DEBUG(i18n().get("err.input.service"), e);
 			}
 		});
 		listRepuestos.stream().filter(row -> StringUtils.isBlank(row.getCodigo())).forEach(row -> {
 			try {
 				ingresoRepuestoSvc.insert(row, getUsuario());
 			} catch (GenericServiceException e) {
-				logger.logger("Error al ingresar un Servicio a ingresos.", e);
+				logger.DEBUG("err.input.spareparts", e);
 			}
 		});
 

@@ -184,7 +184,7 @@ public class BancoBean extends ABean<BancoDTO> {
 			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
 							ParametroConstants.GRUPO_TIPO_CUENTA)
-					.setWidth(150).load("#{BancoBean.tipoCuentas}");
+					.setWidth(250).load("#{BancoBean.tipoCuentas}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -200,7 +200,7 @@ public class BancoBean extends ABean<BancoDTO> {
 			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
 							ParametroConstants.GRUPO_ESTADO_BANCO)
-					.setWidth(150).load("#{BancoBean.estado}");
+					.setWidth(250).load("#{BancoBean.estado}");
 		} catch (Exception e) {
 			error(e);
 		}

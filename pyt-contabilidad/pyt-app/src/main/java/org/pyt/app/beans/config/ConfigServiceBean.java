@@ -221,6 +221,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		logger.info("Nuevo config service.");
 		config = new ConfiguracionDTO();
 		dataTable();
+		orderMarcador.setText("1");
 	}
 
 	/**
@@ -606,10 +607,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			RadioButton toggle = (RadioButton) group.getSelectedToggle();
 			marca.setTipoInOut(toggle.getText());
 			marcadores.add(marca);
-			orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
 			nameMarcador.clear();
 			tbMarcador.search();
 			btnLimpiar.setVisible(false);
+			orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
 		}
 	}
 

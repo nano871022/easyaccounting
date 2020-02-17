@@ -7,13 +7,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.ParametroException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.CentroCostoDTO;
 import com.pyt.service.dto.ParametroDTO;
@@ -83,7 +85,7 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Trabajador";
+		NombreVentana = i18n().get("fxml.title.add.new.employe");
 		titulo.setText(NombreVentana);
 		registro = new TrabajadorDTO();
 		registro.setPersona(new PersonaDTO());
@@ -104,6 +106,7 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 				registro.setTipoPago(null);
 				tipoPagos.setText(null);
 			});
+			documento.textProperty().addListener(change -> validDocument());
 			centroCostos.setPopupOpenAction(() -> popupOpenCentroCostos());
 			centroCostos.setCleanValue(() -> {
 				registro.setCentroCosto(null);
@@ -111,6 +114,29 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 			});
 		} catch (ParametroException e) {
 			error(e);
+		}
+	}
+
+	private void validDocument() {
+		try {
+			var persona = new PersonaDTO();
+			persona.setDocumento(documento.getText());
+			var list = empleadosSvc.getAllPersonas(persona);
+			if (ListUtils.haveOneItem(list)) {
+				registro.setPersona(list.get(0));
+				var trabajador = new TrabajadorDTO();
+				trabajador.setPersona(registro.getPersona());
+				var listWorkers = empleadosSvc.getAllTrabajadores(trabajador);
+				if (ListUtils.isNotBlank(listWorkers)) {
+					registro = listWorkers.get(0);
+					titulo.setText(i18n().get("mensaje.modifing.employe"));
+				}
+				loadFxml();
+			} else if (ListUtils.haveMoreOneItem(list)) {
+				alerta(i18n().valueBundle("err.worker.field.taxid.duplicate", documento.getText()));
+			}
+		} catch (EmpleadoException e) {
+			logger().logger(e);
 		}
 	}
 
@@ -141,9 +167,34 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		registro.setEstado(estado);
 	}
 
+	private boolean valid() {
+		var valid = true;
+		valid &= ValidFields.valid(registro.getPersona().getNombre(), nombre, true, 1, 30,
+				i18n().valueBundle("err.valid.worker.field.name.empty"));
+		valid &= ValidFields.valid(registro.getPersona().getApellido(), apellido, true, 1, 30,
+				i18n().valueBundle("err.valid.worker.field.lastname.empty"));
+		valid &= ValidFields.valid(registro.getPersona().getDocumento(), documento, true, 1, 12,
+				i18n().valueBundle("err.valid.worker.field.id.empty"));
+		valid &= ValidFields.valid(registro.getCorreo(), email, true, 1, 100,
+				i18n().valueBundle("err.valid.worker.field.email.empty"));
+		valid &= ValidFields.valid(registro.getPersona().getTelefono(), telefono, true, 1, 15,
+				i18n().valueBundle("err.valid.worker.field.telephone.empty"));
+		valid &= ValidFields.valid(registro.getPersona().getDireccion(), direccion, true, 1, 30,
+				i18n().valueBundle("err.valid.worker.field.address.empty"));
+		valid &= ValidFields.valid(registro.getPersona().getFechaNacimiento(), fechaNacimiento, true, null, null,
+				i18n().valueBundle("err.valid.worker.field.birthday.empty"));
+		valid &= ValidFields.valid(registro.getFechaIngreso(), fechaIngreso, true, null, null,
+				i18n().valueBundle("err.valid.worker.field.entrydate.empty"));
+		valid &= ValidFields.valid(registro.getPersona().getTipoDocumento(), tipoDocumentos, true, null, null,
+				i18n().valueBundle("err.valid.worker.field.idtype.empty"));
+		valid &= ValidFields.valid(registro.getEstado(), estados, true, null, null,
+				i18n().valueBundle("err.valid.worker.field.state.empty"));
+		return valid;
+	}
+
 	public final void popupOpenTipoPago() {
 		try {
-			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
+			controllerGenPopup(ParametroDTO.class).setWidth(300)
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
 							ParametroConstants.GRUPO_TIPO_PAGO)
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_STATE,
@@ -161,8 +212,7 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 
 	public final void popupOpenCentroCostos() {
 		try {
-			controllerPopup(new PopupGenBean<CentroCostoDTO>(CentroCostoDTO.class))
-					.load("#{TrabajadorCRUBean.centroCosto}");
+			controllerGenPopup(CentroCostoDTO.class).load("#{TrabajadorCRUBean.centroCosto}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -197,12 +247,12 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	}
 
 	public void load(TrabajadorDTO dto) {
-		if (dto != null && dto.getCodigo() != null) {
+		if (DtoUtils.haveCode(dto)) {
 			registro = dto;
 			loadFxml();
-			titulo.setText("Modificando Trabajador");
+			titulo.setText(i18n().get("mensaje.modifing.employe"));
 		} else {
-			error("El trabajador es invalido para editar.");
+			error(i18n().get("err.employe.cant.edit"));
 			cancel();
 		}
 	}
@@ -210,17 +260,21 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	public void add() {
 		load();
 		try {
-			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				personaSvc.update(registro.getPersona(), getUsuario());
-				empleadosSvc.update(registro, getUsuario());
-				notificar("Se guardo la empresa correctamente.");
-				cancel();
-			} else {
-				registro.getPersona().setEmail(registro.getCorreo());
-				personaSvc.insert(registro.getPersona(), getUsuario());
-				empleadosSvc.insert(registro, getUsuario());
-				notificar("Se agrego la empresa correctamente.");
-				cancel();
+			if (valid()) {
+				if (StringUtils.isNotBlank(registro.getCodigo())) {
+					personaSvc.update(registro.getPersona(), getUsuario());
+					empleadosSvc.update(registro, getUsuario());
+					notificarI18n("mensaje.employe.have.been.updated.succesfull");
+					cancel();
+				} else {
+					if (!DtoUtils.haveCode(registro.getPersona())) {
+						registro.getPersona().setEmail(registro.getCorreo());
+						personaSvc.insert(registro.getPersona(), getUsuario());
+					}
+					empleadosSvc.insert(registro, getUsuario());
+					notificarI18n("mensaje.employe.have.been.inserted.succesfull");
+					cancel();
+				}
 			}
 		} catch (EmpleadoException | GenericServiceException e) {
 			error(e);

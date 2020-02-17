@@ -80,6 +80,7 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 	public final void load() {
 		registro = new MenuPermUsersDTO();
 		btnAdd.setText(i18n().valueBundle("fxml.form.button.add").get());
+		btnCopy.setVisible(false);
 		loadFields(TypeGeneric.FIELD);
 	}
 
@@ -108,6 +109,7 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 				if (StringUtils.isBlank(registro.getCodigo())) {
 					menuGroupUsersSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.user.inserted"));
+					btnCopy.setVisible(true);
 				} else {
 					menuGroupUsersSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.user.updated"));
@@ -127,6 +129,7 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 		registro.setActualizador(null);
 		registro.setFechaActualizacion(null);
 		registro.setFechaCreacion(null);
+		btnCopy.setVisible(false);
 		notificar(i18n().valueBundle("mensaje.perm.menu.user.copy"));
 	}
 

@@ -67,4 +67,8 @@ public interface IFieldsCreator {
 	Boolean isVisible();
 
 	Boolean hasValueDefault();
+
+	Boolean isRequired();
+
+	Integer getOrder();
 }

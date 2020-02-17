@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.parametroInventario.ParametrosInventariosCRUBean">
+<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.beans.parametroInventario.ParametrosInventariosCRUBean">
   <bottom>
-    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+    <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
       <children>
         <Button fx:id="insert" mnemonicParsing="false" onAction="#createBtn" text="Agregar">
           <HBox.margin>
@@ -20,10 +20,16 @@
         <Button fx:id="delete" mnemonicParsing="false" onAction="#deleteBtn" text="Eliminar" HBox.margin="$x1" />
         <Button mnemonicParsing="false" onAction="#cancelBtn" text="Cancelar" />
       </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
     </HBox>
   </bottom>
   <center>
-    <GridPane hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
+    <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0" BorderPane.alignment="CENTER">
       <children>
         <Label text="Codigo" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <Label text="Nombre" GridPane.columnIndex="2" GridPane.rowIndex="0" />
@@ -32,17 +38,17 @@
         <Label fx:id="codigo" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <Label text="Valor" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <Label text="Valor2" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-        <TextField fx:id="nombre" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-        <TextField fx:id="descripcion" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <TextField fx:id="grupo" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-        <TextField fx:id="valor" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <TextField fx:id="valor2" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+        <TextField fx:id="nombre" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+        <TextField fx:id="descripcion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="grupo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+        <TextField fx:id="valor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="valor2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
         <Label text="Estado" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <ChoiceBox fx:id="estado" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="4" />
         <Label fx:id="lGrupo" maxWidth="1.7976931348623157E308" text="Grupo" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-        <ChoiceBox fx:id="cGrupo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+        <ChoiceBox fx:id="cGrupo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="4" />
         <Label fx:id="lOrden" text="Orden" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <TextField fx:id="orden" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <TextField fx:id="orden" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="79.0" />
@@ -62,4 +68,7 @@
       </BorderPane.margin>
     </GridPane>
   </center>
+   <top>
+      <Label fx:id="lblTitle" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="435.0" text="Label" BorderPane.alignment="CENTER" />
+   </top>
 </BorderPane>

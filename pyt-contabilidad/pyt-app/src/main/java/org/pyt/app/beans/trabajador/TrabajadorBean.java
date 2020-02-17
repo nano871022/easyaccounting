@@ -60,12 +60,12 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Empleados";
+		NombreVentana = i18n().get("fxml.title.list.employed");
 		registro = new TrabajadorDTO();
 		fechaNacimiento.setCellValueFactory(e -> {
 			var date = new SimpleDateFormat().format(e.getValue().getPersona().getFechaNacimiento());
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			if(date != null) {
+			if (date != null) {
 				sp.setValue(date);
 			}
 			return sp;
@@ -158,7 +158,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{TrabajadorBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -171,10 +171,10 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				empleadosSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminaro la empresa.");
+				notificarI18n("mensaje.employe.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una empresa.");
+				alertaI18n("mensaje.employe.havent.been.selected");
 			}
 		} catch (EmpleadoException e) {
 			error(e);
@@ -186,7 +186,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 		if (registro != null) {
 			getController(TrabajadorCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado una empresa.");
+			alertaI18n("warn.employe.havent.been.selected");
 		}
 	}
 

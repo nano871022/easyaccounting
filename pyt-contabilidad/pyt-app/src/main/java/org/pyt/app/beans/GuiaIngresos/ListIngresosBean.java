@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.OptI18n;
 import org.pyt.common.exceptions.IngresoException;
 
 import com.pyt.service.dto.IngresoDTO;
@@ -50,7 +49,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Ingresos";
+		NombreVentana = i18n().get("fxml.title.list.entry");
 		registro = new IngresoDTO();
 		empresa.cellValueFactoryProperty().setValue(e -> {
 			if (e.getValue().getEmpresa() != null)
@@ -119,7 +118,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{ListIngresosBean.delete}",
-					OptI18n.process(val -> "¿Desea eliminar los registros seleccionados?", null));
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -132,10 +131,10 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				ingresosSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminado el ingreso.");
+				notificarI18n("mensaje.entry.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un ingreso.");
+				alertaI18n("mensaje.entry.havent.been.selected");
 			}
 		} catch (IngresoException e) {
 			error(e);
@@ -147,7 +146,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 		if (registro != null) {
 			getController(IngresosCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un ingreso.");
+			alertaI18n("mensaje.entry.have.been.selected");
 		}
 	}
 

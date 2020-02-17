@@ -59,7 +59,7 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Centro de Costos";
+		NombreVentana = i18n().get("fxml.title.add.new.centercost");
 		titulo.setText(NombreVentana);
 		registro = new CentroCostoDTO();
 		empresa.setPopupOpenAction(() -> popupEmpresa());
@@ -104,9 +104,9 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
 			loadFxml();
-			titulo.setText("Modificando Centro de Costo");
+			titulo.setText(i18n().get("mensaje.editing.costcenter"));
 		} else {
-			error("EL centro de costo es invalido para editar.");
+			error(i18n().get("err.costcenter.edit.invalid"));
 			cancel();
 		}
 	}
@@ -131,12 +131,12 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					centroCostoSvc.update(registro, getUsuario());
-					notificar("Se guardo el centro de costo correctamente.");
+					notificarI18n("mensaje.costcenter.have.been.update.succefull");
 					cancel();
 				} else {
 					centroCostoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
-					notificar("Se agrego el centro de costo correctamente.");
+					notificarI18n("mensaje.costcenter.have.been.insert.succesfull");
 					cancel();
 				}
 			}

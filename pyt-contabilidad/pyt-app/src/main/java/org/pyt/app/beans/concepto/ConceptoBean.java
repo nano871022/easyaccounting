@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
@@ -67,15 +66,15 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Conceptos";
+		NombreVentana = i18n().get("fxml.title.concept.list");
 		registro = new ConceptoDTO();
 		filter = new ConceptoDTO();
-		estado.setPopupOpenAction(()->popupEstado());
-		estado.setCleanValue(()->filter.setEstado(null));
-		empresa.setPopupOpenAction(()->popupEmpresa());
-		empresa.setCleanValue(()->filter.setEmpresa(null));
-		columnEstado.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getEstado().getNombre()));
-		columnEmpresa.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getEmpresa().getNombre()));
+		estado.setPopupOpenAction(() -> popupEstado());
+		estado.setCleanValue(() -> filter.setEstado(null));
+		empresa.setPopupOpenAction(() -> popupEmpresa());
+		empresa.setCleanValue(() -> filter.setEmpresa(null));
+		columnEstado.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getEstado().getNombre()));
+		columnEmpresa.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getEmpresa().getNombre()));
 		lazy();
 	}
 
@@ -88,7 +87,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 			public List<ConceptoDTO> getList(ConceptoDTO filter, Integer page, Integer rows) {
 				List<ConceptoDTO> lista = new ArrayList<ConceptoDTO>();
 				try {
-					lista = documentoSvc.getConceptos(filter, page-1, rows);
+					lista = documentoSvc.getConceptos(filter, page - 1, rows);
 				} catch (DocumentosException e) {
 					error(e);
 				}
@@ -130,38 +129,36 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		btnMod.setVisible(isSelected());
 		btnDel.setVisible(isSelected());
 	}
-	
+
 	public final void popupEstado() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
-					.setWidth(350)
-					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, ParametroConstants.GRUPO_ESTADO_CONCEPTO)
-					).load("#{ConceptoBean.estado}");
+			controllerGenPopup(ParametroDTO.class).setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_ESTADO_CONCEPTO)
+					.load("#{ConceptoBean.estado}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setEstado(ParametroDTO parametro) {
 		registro.setEstado(parametro);
 		estado.setText(parametro.getDescripcion());
 	}
-	
+
 	public final void popupEmpresa() {
 		try {
-			((PopupGenBean<EmpresaDTO>) controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class))
-					.setWidth(350)
-					).load("#{ConceptoBean.empresa}");
+			controllerGenPopup(EmpresaDTO.class).setWidth(350).load("#{ConceptoBean.empresa}");
 		} catch (Exception e) {
 			error(e);
 		}
 	}
-	
+
 	public final void setEmpresa(EmpresaDTO empresa) {
 		registro.setEmpresa(empresa);
 		this.empresa.setText(empresa.getNombre());
 	}
-	
+
 	public void add() {
 		getController(ConceptoCRUBean.class);
 	}
@@ -172,21 +169,24 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 
 	public void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ConceptoBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			controllerPopup(ConfirmPopupBean.class).load("#{ConceptoBean.delete}",
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				documentoSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminado el concepto.");
+				notificarI18n("mensaje.concept.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un concepto.");
+				notificarI18n("mensaje.concept.havent.been.selected");
 			}
 		} catch (DocumentosException e) {
 			error(e);
@@ -198,7 +198,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		if (registro != null) {
 			getController(ConceptoCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un concepto.");
+			notificarI18n("err.concept.wasnt.selected");
 		}
 	}
 

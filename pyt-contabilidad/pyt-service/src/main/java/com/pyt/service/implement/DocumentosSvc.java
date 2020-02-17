@@ -404,13 +404,13 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 	@Override
 	public DetalleContableDTO insert(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException {
 		if (dto == null)
-			throw new DocumentosException("No se suministro el detalle contable.");
+			throw new DocumentosException(i18n().get("err.accountingdetail.is.empty"));
 		if (StringUtils.isNotBlank(dto.getCodigo()))
-			throw new DocumentosException("El detalle contable no se suministro.");
+			throw new DocumentosException(i18n().get("err.accountingdetail.wasnt.entered"));
 		try {
 			return querySvc.set(dto, user);
 		} catch (QueryException e) {
-			throw new DocumentosException("Se presento error en la eliminacion del detalle contable.", e);
+			throw new DocumentosException(i18n().get("err.accountingdetail.have.a.error"), e);
 		}
 	}
 

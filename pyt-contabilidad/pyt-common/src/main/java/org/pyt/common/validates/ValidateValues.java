@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
@@ -276,7 +277,7 @@ public final class ValidateValues {
 		} else if (clazz == BigDecimal.class) {
 			if (value.getClass() == Integer.class) {
 				return (T) new BigDecimal((int) value);
-			} else if (value.getClass() == String.class) {
+			} else if (value.getClass() == String.class && StringUtils.isNotBlank((String) value)) {
 				return (T) new BigDecimal((String) value);
 			}
 		} else if (clazz == Integer.class) {
@@ -384,11 +385,8 @@ public final class ValidateValues {
 	private final <T, S> T convertValueToClassMethodStatic(S value, Class clazz, Class originClass)
 			throws ValidateValueException {
 		try {
-//		for (var method : list) {
-//			if (method.isClassInOut(value.getClass(), originClass)) {
-//				return (T) method.getValueInvoke(value);
-//			}
-//		}
+			if (value instanceof String && StringUtils.isBlank((String) value))
+				return null;
 			var metodos = clazz.getDeclaredMethods();
 			for (Method metodo : metodos) {
 				if (Modifier.isStatic(metodo.getModifiers())
@@ -640,5 +638,21 @@ public final class ValidateValues {
 			}
 		}
 		return -1;
+	}
+
+	public final <O> Boolean isNotBlank(O value) {
+		if (value == null) {
+			return false;
+		}
+		if (isString(value.getClass())) {
+			return StringUtils.isNotBlank((String) value);
+		} else if (isDate(value.getClass())) {
+			return true;
+		} else if (isNumber(value.getClass())) {
+			return true;
+		} else if (value instanceof ADto) {
+			return DtoUtils.isNotBlank((ADto) value);
+		}
+		return false;
 	}
 }

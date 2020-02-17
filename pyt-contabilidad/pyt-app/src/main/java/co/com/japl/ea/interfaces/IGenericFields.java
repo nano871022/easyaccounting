@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ import org.pyt.app.beans.languages.LanguageBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.LanguageConstant;
@@ -35,6 +37,7 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.ParametroDTO;
 
@@ -367,7 +370,11 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		if ((StringUtils.isBlank(factory.getNameFieldToShowInComboBox()) || isParametroDTO(typeField))
 				&& (list == null || list.size() == 0)) {
 			var parametroDto = factory.getParametroDto();
-			if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
+			var parametrosSearch = getParametersSvc().getAllParametros(parametroDto);
+			if (ListUtils.isNotBlank(parametrosSearch)) {
+				getMapListToChoiceBox().put(nameField, parametrosSearch);
+				return (List<D>) parametrosSearch;
+			} else if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
 				var grupoSave = parametroDto.getGrupo();
 				if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
 					parametroDto.setGrupo(getParametersSvc().getIdByParametroGroup(parametroDto.getGrupo()));
@@ -411,4 +418,19 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				});
 		return dto;
 	}
+
+	default Boolean validFields() {
+		var dto = getInstanceDto(TypeGeneric.FIELD);
+		var list = getListGenericsFields(TypeGeneric.FIELD);
+		Function<ADto, Boolean> maping = field -> {
+			var factory = LoadFieldsFactory.getInstance(field);
+			var node = getMapFields(TypeGeneric.FIELD).get(factory.getNameField()).stream().findFirst().get();
+			var value = dto.get(factory.getNameField());
+			return ValidFields.valid(value, node, true, null, null,
+					i18n().valueBundle("err.valid.document.field.field.empty"));
+		};
+		return list.stream().filter(field -> LoadFieldsFactory.getInstance(field).isRequired()).map(maping).reduce(true,
+				(val, result) -> val &= result);
+	}
+
 }

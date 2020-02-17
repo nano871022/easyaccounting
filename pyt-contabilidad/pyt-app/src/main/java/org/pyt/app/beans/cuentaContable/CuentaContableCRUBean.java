@@ -2,10 +2,10 @@ package org.pyt.app.beans.cuentaContable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.EmpresaDTO;
@@ -56,7 +56,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nueva Cuenta Contable";
+		NombreVentana = i18n().get("fxml.title.add.new.accountingaccount");
 		titulo.setText(NombreVentana);
 		registro = new CuentaContableDTO();
 		naturaleza.setPopupOpenAction(() -> popupNaturaleza());
@@ -124,12 +124,18 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getCodigoCuenta());
-		valid &= StringUtils.isNotBlank(registro.getNaturaleza().getCodigo());
-		valid &= StringUtils.isNotBlank(registro.getTipoPlanContable().getCodigo());
-		valid &= StringUtils.isNotBlank(registro.getTipo().getCodigo());
-		valid &= StringUtils.isNotBlank(registro.getEmpresa().getCodigo());
+		valid &= ValidFields.valid(registro.getNombre(), nombre, true, 1, 100,
+				i18n().valueBundle("err.accountingaccount.field.name.empty"));
+		valid &= ValidFields.valid(registro.getCodigoCuenta(), codigoCuenta, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.accountcode.empty"));
+		valid &= ValidFields.valid(registro.getNaturaleza(), naturaleza, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.nature.empty"));
+		valid &= ValidFields.valid(registro.getTipoPlanContable(), tipoPlanContable, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.accountingplantype.empty"));
+		valid &= ValidFields.valid(registro.getTipo(), tipo, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.type.empty"));
+		valid &= ValidFields.valid(registro.getEmpresa(), empresa, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.enterprise.empty"));
 		return valid;
 	}
 
@@ -139,12 +145,12 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					cuentaContableSvc.update(registro, getUsuario());
-					notificar("Se guardo la cuenta contable correctamente.");
+					notificarI18n("mensaje.accountingaccount.was.updated.succesfull");
 					cancel();
 				} else {
 					cuentaContableSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
-					notificar("Se agrego la cuenta contable correctamente.");
+					notificarI18n("mensaje.accountingaccount.was.inserted.succesfull");
 					cancel();
 				}
 			}
@@ -159,8 +165,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupAsociado() {
 		try {
-			controllerPopup(new PopupGenBean<CuentaContableDTO>(CuentaContableDTO.class))
-					.load("#{CuentaContableCRUBean.asociado}");
+			controllerGenPopup(CuentaContableDTO.class).load("#{CuentaContableCRUBean.asociado}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -175,7 +180,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupTipoPlanContable() {
 		try {
-			controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class)).setWidth(350)
+			controllerGenPopup(ParametroDTO.class).setWidth(350)
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
 							ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE)
 					.load("#{CuentaContableCRUBean.tipoPlanContable}");
@@ -191,7 +196,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupNaturaleza() {
 		try {
-			var bean = controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class));
+			var bean = controllerGenPopup(ParametroDTO.class);
 			bean.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
 					ParametroConstants.GRUPO_NATURALEZA);
 			bean.load("#{CuentaContableCRUBean.naturaleza}");
@@ -207,9 +212,10 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupTipoCuentaContable() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
-					.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							ParametroConstants.GRUPO_TIPO)).load("#{CuentaContableCRUBean.tipoCuentaContable}");
+			controllerGenPopup(ParametroDTO.class).setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_TIPO)
+					.load("#{CuentaContableCRUBean.tipoCuentaContable}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -222,8 +228,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public final void popupEmpresa() {
 		try {
-			((PopupGenBean<EmpresaDTO>) controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).setWidth(350))
-					.load("#{CuentaContableCRUBean.empresa}");
+			controllerGenPopup(EmpresaDTO.class).setWidth(350).load("#{CuentaContableCRUBean.empresa}");
 		} catch (Exception e) {
 			error(e);
 		}

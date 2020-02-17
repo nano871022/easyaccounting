@@ -1,6 +1,7 @@
 package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -94,5 +95,15 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	@Override
 	public Boolean hasValueDefault() {
 		return StringUtils.isNotBlank(field.getValueDefault());
+	}
+
+	@Override
+	public Boolean isRequired() {
+		return Optional.ofNullable(field.getIsRequired()).orElse(false);
+	}
+
+	@Override
+	public Integer getOrder() {
+		return Optional.ofNullable(field.getOrden()).orElse(0);
 	}
 }

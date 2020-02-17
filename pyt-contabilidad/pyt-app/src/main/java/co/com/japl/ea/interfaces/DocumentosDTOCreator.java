@@ -1,6 +1,7 @@
 package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.OptI18n;
@@ -84,5 +85,15 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 	public Boolean hasValueDefault() {
 		var value = field.getFieldHasDefaultValue();
 		return value != null && value;
+	}
+
+	@Override
+	public Boolean isRequired() {
+		return Optional.ofNullable(!field.getNullable()).orElse(false);
+	}
+
+	@Override
+	public Integer getOrder() {
+		return 0;
 	}
 }
