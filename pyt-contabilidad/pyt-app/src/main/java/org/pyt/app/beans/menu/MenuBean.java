@@ -13,7 +13,6 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -24,7 +23,6 @@ import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
 import co.com.japl.ea.dto.system.MenuDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(file = CONST_MENU_FXML, path = CONST_PATH_MENU)
@@ -53,14 +51,24 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 		}
 	}
 
+	private final boolean validClass(String clazz) {
+		try {
+			if (StringUtils.isNotBlank(clazz)) {
+				Class.forName(clazz);
+			}
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+
 	public final void load() {
 		registro = new MenuDTO();
 	}
 
 	public final void load(MenuDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPane);
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	@Override
@@ -70,12 +78,18 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_URL), true, 1,
-				100, i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_CLASS_PATH),
-				true, 1, 100, i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_STATE), true,
-				1, 2, i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
+		valid &= ValidFields.valid(registro.getUrl(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_URL).stream().findAny().get(), true, 1, 100,
+				i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
+		valid &= ValidFields.valid(registro.getClassPath(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_CLASS_PATH).stream().findAny().get(), true,
+				1, 100, i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
+		valid &= ValidFields.valid(registro.getState(),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_STATE).stream().findAny().get(), true, 1, 2,
+				i18n().valueBundle(CONST_MSN_ERR_FIELD_EMPTY));
+		valid &= ValidFields.valid(validClass(registro.getClassPath()),
+				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_CLASS_PATH).stream().findAny().get(), true,
+				null, null, i18n().valueBundle("err.msn.field.class.path.invalid"));
 		return valid;
 	}
 
@@ -93,6 +107,12 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	public final void newReg() {
+		registro = new MenuDTO();
+		loadFields(TypeGeneric.FIELD);
+		notificar(i18n().valueBundle("msn.new.menu"));
 	}
 
 	public final void cancel() {

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ParametroConstants {
+	public final static String GRUPO_PRINCIPAL = "*";
 	public final static String GRUPO_IVA = "Iva";
 	public final static String GRUPO_MONEDA = "Moneda";
 	public final static String GRUPO_TIPO_PAGO = "TipoPago";
@@ -13,6 +14,7 @@ public class ParametroConstants {
 	public final static String GRUPO_ESTADO_EMPLEADO = "EstadoEmpleado";
 	public final static String FIELD_NAME_STATE = "estado";
 	public final static String FIELD_NAME_GROUP = "grupo";
+	public final static String FIELD_NAME_PARAM = "nombre";
 	public final static Map<String, Object> mapa_grupo;
 	static {
 		mapa_grupo = new HashMap<String, Object>();

@@ -1,6 +1,7 @@
 package com.pyt.service.dto;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotation.proccess.ValueInObject;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;
@@ -20,6 +21,7 @@ public class CentroCostoDTO extends ADto{
 	private String descripcion;
 	private String estado;
 	private Integer orden;
+	@ValueInObject(field = "nit")
 	private EmpresaDTO empresa;
 	public String getNombre() {
 		return nombre;

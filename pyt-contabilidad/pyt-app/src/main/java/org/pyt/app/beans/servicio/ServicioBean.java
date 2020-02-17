@@ -43,7 +43,7 @@ public class ServicioBean extends ABean<ServicioDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Servicios";
+		NombreVentana = i18n().get("fxml.title.list.services");
 		registro = new ServicioDTO();
 		lazy();
 	}
@@ -104,7 +104,7 @@ public class ServicioBean extends ABean<ServicioDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{ServicioBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n().get("wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -117,10 +117,10 @@ public class ServicioBean extends ABean<ServicioDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				serviciosSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminaro la empresa.");
+				notificarI18n("mensaje.service.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un servicio.");
+				alertaI18n("err.service.havent.been.selected");
 			}
 		} catch (ServiciosException e) {
 			error(e);
@@ -132,7 +132,7 @@ public class ServicioBean extends ABean<ServicioDTO> {
 		if (registro != null) {
 			getController(ServicioCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un servicio.");
+			alertaI18n("err.service.havent.been.selected");
 		}
 	}
 

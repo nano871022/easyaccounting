@@ -6,7 +6,9 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.pyt.app.components.PopupFromBean;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.CSSConstant;
@@ -38,6 +40,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	private P lastLayout;
 	private C lastContro;
 	private static Log logger = Log.Log(LoadAppFxml.class);
+	private static I18n i18n = I18n.instance();
 
 	/**
 	 * Se encarga de contruir el objeto loadappfxml como singleton
@@ -125,6 +128,30 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		return genericBean;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public final static <P extends PopupFromBean> P loadBeanFX(P genericBean) throws LoadAppFxmlException {
+		try {
+			Stage stg = new Stage();
+			genericBean.start(stg);
+			genericBean.initialize();
+		} catch (InstantiationException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.instance.problem").get(), e);
+		} catch (IllegalAccessException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.access").get(), e);
+		} catch (IllegalArgumentException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.argument").get(), e);
+		} catch (InvocationTargetException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.invoke.object.problem").get(), e);
+		} catch (NoSuchMethodException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.method.not.found").get(), e);
+		} catch (SecurityException e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.security.problem").get(), e);
+		} catch (Exception e) {
+			throw new LoadAppFxmlException(i18n.valueBundle("err.dont.can.get.stage").get(), e);
+		}
+		return genericBean;
+	}
+
 	/**
 	 * Se encarga de generar una aplicacion cargada segun el bean que debe tener
 	 * anotada el file fxml y el titulo de la ventana.
@@ -134,13 +161,13 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	 * @param title        {@link String} nombre de la ventana
 	 * @throws {@link LoadAppFxmlException}
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "static-access" })
 	public final static <S extends ADto, T extends ABean> T loadBeanFxml2(Stage primaryStage, Class<T> class1)
 			throws LoadAppFxmlException {
 		String file, title;
 		loadApp().setStage(primaryStage);
 		if (!loadApp().isStage()) {
-			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
+			throw new LoadAppFxmlException(i18n.instance().get("err.stage.wasnt.entered"));
 		}
 		try {
 			T lbean = class1.getDeclaredConstructor().newInstance();
@@ -158,19 +185,19 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			loadApp().getStage().show();
 			return loader.getController();
 		} catch (InstantiationException e) {
-			throw new LoadAppFxmlException("Problema en instanciacion.", e);
+			throw new LoadAppFxmlException(i18n.instance().get("err.instancing.problem"), e);
 		} catch (IllegalAccessException e) {
-			throw new LoadAppFxmlException("Acceso ilegal.", e);
+			throw new LoadAppFxmlException(i18n.instance().get("err.ilegal.access"), e);
 		} catch (IllegalArgumentException e) {
-			throw new LoadAppFxmlException("Argumento ilegal.", e);
+			throw new LoadAppFxmlException(i18n.instance().get("err.ilegal.argument"), e);
 		} catch (InvocationTargetException e) {
-			throw new LoadAppFxmlException("Problema en el objetivo de invocacion.", e);
+			throw new LoadAppFxmlException(i18n.instance().get("err.invoke.object.problem"), e);
 		} catch (NoSuchMethodException e) {
-			throw new LoadAppFxmlException("No se encontro el metodo.", e);
+			throw new LoadAppFxmlException(i18n.instance().get("err.method.wasnt.found"), e);
 		} catch (SecurityException e) {
-			throw new LoadAppFxmlException("Problema de seguridad.", e);
+			throw new LoadAppFxmlException(i18n.instance().get("err.security.problem"), e);
 		} catch (IOException e) {
-			throw new LoadAppFxmlException("Problema en I/O.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
 		}
 	}
 
@@ -182,12 +209,13 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	 * @param bean         {@link Object}
 	 * @throws {@link LoadAppFxmlException}
 	 */
+	@SuppressWarnings("static-access")
 	public final static <S extends ADto, T extends Object> T loadFxml(Stage primaryStage, Class<T> controller)
 			throws LoadAppFxmlException {
 		String file, title;
 		loadApp().setStage(primaryStage);
 		if (!loadApp().isStage()) {
-			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
+			throw new LoadAppFxmlException(i18n.instance().get("err.stage.wasnt.entered"));
 		}
 		try {
 			var fxml = controller.getAnnotation(FXMLFile.class);
@@ -214,16 +242,17 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				});
 				return loader.getController();
 			} else {
-				throw new LoadAppFxmlException("El " + controller.getName() + " no se encuentra anotado con @FXML");
+				throw new LoadAppFxmlException(i18n.instance()
+						.valueBundle("err.controller.wasnt.annoted.with.fxml", controller.getName()).get());
 			}
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			throw new LoadAppFxmlException(
-					"Se presento un null pointer exception con el procesamiento de " + controller.getCanonicalName());
+			throw new LoadAppFxmlException(i18n.instance()
+					.valueBundle("err.process.on.throws.nullpointer", controller.getCanonicalName()).get());
 		} catch (SecurityException e) {
-			throw new LoadAppFxmlException("Problema de seguridad.", e);
+			throw new LoadAppFxmlException(i18n.instance().get("err.security.problem"), e);
 		} catch (IOException e) {
-			throw new LoadAppFxmlException("Problema en I/O.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
 		}
 	}
 
@@ -274,7 +303,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (SecurityException e) {
 			throw new LoadAppFxmlException("Problema de seguridad.", e);
 		} catch (IOException e) {
-			throw new LoadAppFxmlException("Problema en I/O.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
 		}
 	}
 
@@ -292,17 +321,17 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			FXMLLoader loader = new FXMLLoader(url, getLanguage());
 			return loader.getController();
 		} catch (InstantiationException e) {
-			throw new LoadAppFxmlException("Problema en instanciacion.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.in.installing").get(), e);
 		} catch (IllegalAccessException e) {
-			throw new LoadAppFxmlException("Acceso ilegal.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.access").get(), e);
 		} catch (IllegalArgumentException e) {
-			throw new LoadAppFxmlException("Argumento ilegal.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.argument").get(), e);
 		} catch (InvocationTargetException e) {
-			throw new LoadAppFxmlException("Problema en el objetivo de invocacion.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.in.invoke", bean.getCanonicalName()).get(), e);
 		} catch (NoSuchMethodException e) {
-			throw new LoadAppFxmlException("No se encontro el metodo.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.dont.found.method").get(), e);
 		} catch (SecurityException e) {
-			throw new LoadAppFxmlException("Problema de seguridad.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.security").get(), e);
 		}
 	}
 
@@ -321,7 +350,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			T lBean = bean.getDeclaredConstructor().newInstance();
 			file = lBean.pathFileFxml();
 			if (file == null) {
-				throw new LoadAppFxmlException("El archivo se encuentra en vacio.");
+				throw new LoadAppFxmlException(i18n.valueBundle("err.file.is.empty").get());
 			}
 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
 				file = AppConstants.SLASH + file;
@@ -329,17 +358,17 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			url = bean.getResource(file);
 			return new FXMLLoader(url, getLanguage());
 		} catch (InstantiationException e) {
-			throw new LoadAppFxmlException("Problema en instanciacion.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.in.installing").get(), e);
 		} catch (IllegalAccessException e) {
-			throw new LoadAppFxmlException("Acceso ilegal.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.access").get(), e);
 		} catch (IllegalArgumentException e) {
-			throw new LoadAppFxmlException("Argumento ilegal.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.ilegal.argument").get(), e);
 		} catch (InvocationTargetException e) {
-			throw new LoadAppFxmlException("Problema en el " + bean.getCanonicalName() + " de invocacion.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.in.invoke", bean.getCanonicalName()).get(), e);
 		} catch (NoSuchMethodException e) {
-			throw new LoadAppFxmlException("No se encontro el metodo.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.dont.found.method").get(), e);
 		} catch (SecurityException e) {
-			throw new LoadAppFxmlException("Problema de seguridad.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.security").get(), e);
 		}
 	}
 
@@ -357,7 +386,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			loadApp().setLastContro(layout);
 		}
 		if (!loadApp().isLastContro()) {
-			throw new LoadAppFxmlException("No se envio el stage y tampoco se encuentra alamacenada.");
+			throw new LoadAppFxmlException(i18n.valueBundle("err.stage.dont.send.and.dont.found.save").get());
 		}
 		FXMLLoader loader = loadFxml(bean);
 		Parent root;
@@ -366,12 +395,12 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			((ScrollPane) loadApp().getLastContro()).setContent(root);
 			return loader.getController();
 		} catch (IllegalStateException e) {
-			throw new LoadAppFxmlException("Problema en cargar load", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.can.load").get(), e);
 		} catch (LoadException e) {
 			e.printStackTrace();
-			throw new LoadAppFxmlException("No se puedde cargar la interfaz seleccionada.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.interface.cant.load.selected").get(), e);
 		} catch (IOException e) {
-			throw new LoadAppFxmlException("Problema en I/O.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
 		}
 	}
 
@@ -392,7 +421,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			layout.getChildren().add(root);
 			return loader.getController();
 		} catch (IOException e) {
-			throw new LoadAppFxmlException("Problema en I/O.", e);
+			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
 		}
 	}
 

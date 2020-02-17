@@ -23,9 +23,10 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 	public List<T> gets(T dto, Integer init, Integer end) throws GenericServiceException {
 		List<T> lista = new ArrayList<T>();
 		if (dto == null)
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO).get());
 		if (!isValidClass(dto.getClass())) {
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM).get());
 		}
 		try {
 			lista = querySvc.gets(dto, init, end);
@@ -39,9 +40,10 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 		List<T> lista = new ArrayList<T>();
 		if (dto == null)
 			
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO).get());
 		if (!isValidClass(dto.getClass())) {
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM).get());
 		}
 
 		try {
@@ -54,9 +56,10 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 
 	public T get(T dto) throws GenericServiceException {
 		if (dto == null)
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO).get());
 		if (!isValidClass(dto.getClass())) {
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM).get());
 		}
 
 		try {
@@ -68,13 +71,15 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 
 	public void update(T dto, UsuarioDTO user) throws GenericServiceException {
 		if (dto == null)
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO).get());
 		if (!isValidClass(dto.getClass())) {
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM).get());
 		}
 
 		if (StringUtils.isBlank(dto.getCodigo()))
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO).get());
 		try {
 			querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -84,13 +89,15 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 
 	public T insert(T dto, UsuarioDTO user) throws GenericServiceException {
 		if (dto == null)
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO).get());
 		if (!isValidClass(dto.getClass())) {
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM).get());
 		}
 
 		if (StringUtils.isNotBlank(dto.getCodigo()))
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO).get());
 		try {
 			return querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -100,12 +107,14 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 
 	public void delete(T dto, UsuarioDTO user) throws GenericServiceException {
 		if (dto == null)
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO).get());
 		if (!isValidClass(dto.getClass())) {
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM).get());
 		}
 		if (StringUtils.isBlank(dto.getCodigo()))
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CODE_EMPTY_DTO).get());
 		try {
 			querySvc.del(dto, user);
 		} catch (Exception e) {
@@ -117,9 +126,10 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 	@Override
 	public Integer getTotalRows(T dto) throws GenericServiceException {
 		if (dto == null)
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO));
+			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_EMPTY_DTO).get());
 		if (!isValidClass(dto.getClass())) {
-			throw new GenericServiceException(i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM));
+			throw new GenericServiceException(
+					i18n().valueBundle(LanguageConstant.GENERIC_SERVICE_CLASS_NOT_PERM).get());
 		}
 		try {
 			return querySvc.countRow(dto);

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
@@ -231,7 +232,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 	public void deleteBtn() {
 		try {
 			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					OptI18n.process(val -> "¿Desea eliminar los registros seleccionados?", null));
 		} catch (Exception e) {
 			error(e);
 		}

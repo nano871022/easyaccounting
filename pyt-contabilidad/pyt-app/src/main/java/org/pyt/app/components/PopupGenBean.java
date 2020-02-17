@@ -1,6 +1,7 @@
 package org.pyt.app.components;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
@@ -70,6 +71,11 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 	 */
 	@SuppressWarnings("unchecked")
 	public final void load(String caller) throws Exception {
+		if (ListUtils.isBlank(listFilters, listColumns)) {
+			this.closeWindow();
+			throw new Exception(i18n().valueBundle("err.popupgen.dto.isnt.configured",
+					i18n().get(LanguageConstant.GENERIC_DOT.concat(getClazz().getSimpleName()))).get());
+		}
 		this.caller = caller;
 		var cantidad = table.getTotalRows(applyFilterToDataTableSearch());
 		if (cantidad == 1) {
@@ -77,8 +83,8 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 			this.closeWindow();
 		} else if (cantidad == 0) {
 			this.closeWindow();
-			throw new Exception(String.format(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText),
-					i18n().valueBundle(LanguageConstant.GENERIC_DOT.concat(getClazz().getSimpleName()))));
+			throw new Exception(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText,
+					i18n().get(LanguageConstant.GENERIC_DOT.concat(getClazz().getSimpleName()))).get());
 		} else {
 			showWindow();
 		}

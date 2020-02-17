@@ -11,9 +11,13 @@ CREATE TABLE TBL_CONFIG_GENERIC_FIELD (
 	,sclasspath VARCHAR2(300)     NOT NULL
 	,sclasspathbean VARCHAR2(300) NOT NULL
 	,sdescription VARCHAR2(300)   NULL
+	,sfieldshow VARCHAR2(300)     NULL
+	,sdefault VARCHAR2(100)       NULL
+	,sgroup     VARCHAR2(300)     NULL
 	,nwidth    NUMBER             NULL
 	,norder    NUMBER             NULL
 	,bcolumn   NUMBER             NOT NULL DEFAULT 0
+	,bvisible   NUMBER            NOT NULL DEFAULT 1
 	,bfield    NUMBER             NOT NULL DEFAULT 0
 	,brequired NUMBER			  NOT NULL DEFAULT 0
 	,nstate    NUMBER             NOT NULL DEFAULT 0

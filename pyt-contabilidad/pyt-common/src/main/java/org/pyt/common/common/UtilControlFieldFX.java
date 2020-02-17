@@ -20,6 +20,7 @@ import org.pyt.common.validates.ValidateValues;
 
 import co.com.japl.ea.common.fxml.ControlValueUtils;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -30,9 +31,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
@@ -63,9 +66,12 @@ public final class UtilControlFieldFX {
 	 *              </li>
 	 * @return {@link Label}
 	 */
-	public final Label createLabel(String name, String... value) {
+	public final Label createLabel(OptI18n name, EventHandler<? super MouseEvent> event, String... value) {
 		var label = new Label();
-		label.setText(name);
+		if (!name.isFound()) {
+			label.setOnMouseClicked(event);
+		}
+		label.setText(name.get());
 		if (value.length > 0) {
 			Tooltip toolTip = new Tooltip();
 			toolTip.setText(value[0]);
@@ -95,16 +101,26 @@ public final class UtilControlFieldFX {
 			return (N) new DatePicker();
 		} else {
 			try {
-				if (field.getType().asSubclass(ADto.class) != null) {
-					var node = new ChoiceBox<T>();
-					node.setId(field.getName());
-					return (N) node;
-				}
-			} catch (ClassCastException e) {
-				logger.DEBUG(e);
+			if (field.getType().asSubclass(ADto.class) != null ) {
+				return getChoiceBox(field);
 			}
+		} catch (ClassCastException e) {
+			logger.DEBUG(e);
+		}
 		}
 		return null;
+	}
+	
+	public <N extends Node,T> N getChoiceBox(Field field) {
+				var node = new ChoiceBox<T>();
+				node.setId(field.getName());
+				return (N) node;
+	}
+	
+	public <N extends Node, T> N getPasswordField(Field field) {
+		var node = new PasswordField();
+		node.setId(field.getName());
+		return (N) node;
 	}
 
 	public <N extends Node> boolean isChoiceBox(N field) {
@@ -171,6 +187,15 @@ public final class UtilControlFieldFX {
 	 */
 	public Button buttonGenericWithEventClicked(ICaller caller, String showName, FontAwesome.Glyph fontIcon) {
 		var button = new Button(showName);
+		button.onMouseClickedProperty().set((event) -> caller.caller());
+
+		Glyph fi = new Glyph("FontAwesome", fontIcon);
+		button.setGraphic(fi);
+		return button;
+	}
+
+	public Button buttonGenericWithEventClicked(ICaller caller, OptI18n showName, FontAwesome.Glyph fontIcon) {
+		var button = new Button(showName.get());
 		button.onMouseClickedProperty().set((event) -> caller.caller());
 
 		Glyph fi = new Glyph("FontAwesome", fontIcon);
@@ -245,9 +270,13 @@ public final class UtilControlFieldFX {
 			if (node instanceof ChoiceBox && map != null && list == null) {
 				SelectList.selectItem((ChoiceBox) node, map, value);
 			}
-			if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
+			if(node instanceof ChoiceBox && map == null && list != null && nameShow != null && value instanceof String) {
+				SelectList.selectItem((ChoiceBox)node, list, nameShow,(String)value);
+			}else if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
 				SelectList.selectItem((ChoiceBox) node, list, nameShow, (M) value);
 			}
+			
+			
 		}
 	}
 

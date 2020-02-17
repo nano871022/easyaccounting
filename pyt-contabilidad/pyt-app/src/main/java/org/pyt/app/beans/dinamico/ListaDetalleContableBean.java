@@ -70,7 +70,6 @@ public class ListaDetalleContableBean
 	private String codigoDocumento;
 	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@FXML
 	private final void initialize() {
 		registro = new DetalleContableDTO();
@@ -113,7 +112,7 @@ public class ListaDetalleContableBean
 	private void searchFilters() {
 		try {
 			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
-				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found.").get());
 			}
 			var documentos = new DocumentosDTO();
 			documentos.setClaseControlar(DetalleContableDTO.class);
@@ -130,7 +129,7 @@ public class ListaDetalleContableBean
 	private void searchColumns() {
 		try {
 			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
-				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found.").get());
 			}
 			var documentos = new DocumentosDTO();
 			documentos.setClaseControlar(DetalleContableDTO.class);
@@ -197,9 +196,9 @@ public class ListaDetalleContableBean
 	 */
 	public final void load(VBox panel, ParametroDTO tipoDocumento, String codigoDocumento) throws Exception {
 		if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo()))
-			throw new Exception("No se suministro el tipo de documento.");
+			throw new Exception(i18n("err.documenttype.wasnt.entered"));
 		if (panel == null)
-			throw new Exception("El panel de creacion no se suministro.");
+			throw new Exception(i18n("err.panel.wasnt.entered"));
 		this.tipoDocumento = tipoDocumento;
 		this.codigoDocumento = codigoDocumento;
 		panelCentral = panel;
@@ -215,7 +214,7 @@ public class ListaDetalleContableBean
 		try {
 			getController(panelCentral, DetalleContableBean.class).load(panelCentral, tipoDocumento, codigoDocumento);
 		} catch (Exception e) {
-			error("No se logro cargar la pantalla para agregar el nuevo detalle.");
+			errorI18n("err.detail.cant.load.on.screen.to.add");
 		}
 	}
 
@@ -239,12 +238,12 @@ public class ListaDetalleContableBean
 					getController(panelCentral, DetalleContableBean.class).load(panelCentral, registro, tipoDocumento,
 							codigoDocumento);
 				} catch (Exception e) {
-					error("No se logro la pantalla para editar el detalle.");
+					errorI18n("err.detail.cant.load.on.screen.to.edit");
 				}
 			} else if (list.size() > 1) {
-				error("Se seleccionaron varios detalles.");
+				errorI18n("err.some.details.was.selected");
 			} else {
-				error("No se selecciono ningun detalle.");
+				errorI18n("err.detail.wasnt.selected");
 			}
 		}
 	}
@@ -255,7 +254,7 @@ public class ListaDetalleContableBean
 	public final void eliminar() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{ListaDetalleContableBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n("mensaje.wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -277,7 +276,7 @@ public class ListaDetalleContableBean
 			} // end for
 			notificar("Se eliminaron " + i + "/" + lista.size() + " detalles.");
 		} else {
-			notificar("No se selecciono registros a eliminar.");
+			alertaI18n("warn.rows.havent.been.selected.to.delete");
 		}
 	}
 

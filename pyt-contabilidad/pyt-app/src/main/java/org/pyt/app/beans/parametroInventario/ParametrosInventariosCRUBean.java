@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.ParametroInventarioConstants;
@@ -313,7 +314,8 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	@SuppressWarnings("unchecked")
 	public void deleteBtn() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}", "¿Desea eliminar el registro?");
+			controllerPopup(ConfirmPopupBean.class).load("#{ParametrosCRUBean.delete}",
+					OptI18n.process(val -> "¿Desea eliminar el registro?", null));
 			;
 		} catch (LoadAppFxmlException e) {
 			error(e);

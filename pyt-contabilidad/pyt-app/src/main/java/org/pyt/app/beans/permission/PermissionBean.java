@@ -2,10 +2,8 @@ package org.pyt.app.beans.permission;
 
 import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -22,7 +20,7 @@ import javafx.scene.layout.GridPane;
 @FXMLFile(file = "permission.fxml", path = "view/permission")
 public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<PermissionDTO> groupUsersSvc;
+	private IGenericServiceSvc<PermissionDTO> permissionSvc;
 	@FXML
 	private GridPane gridPane;
 	@FXML
@@ -47,12 +45,12 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 
 	public final void load() {
 		registro = new PermissionDTO();
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	public final void load(PermissionDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPane);
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	@Override
@@ -62,12 +60,13 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE),
-				true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_ACTION),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		var name = getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME).stream().findFirst().get();
+		var state = getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE).stream().findFirst().get();
+		var action = getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_ACTION).stream().findFirst()
+				.get();
+		valid &= ValidFields.valid((TextField) name, true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) state, true, 1, 2, i18n().valueBundle("msn.error.field.empty"));
+		valid &= ValidFields.valid((TextField) action, true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
 		return valid;
 	}
 
@@ -75,10 +74,10 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
-					groupUsersSvc.insert(registro, getUsuario());
+					permissionSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.group.user.inserted"));
 				} else {
-					groupUsersSvc.update(registro, getUsuario());
+					permissionSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.group.user.updated"));
 				}
 			}
@@ -94,11 +93,6 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 2;
-	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
 	}
 
 }

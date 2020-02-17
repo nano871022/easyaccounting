@@ -180,27 +180,6 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 		}
 	}
 
-	/**
-	 * Se encarga de validar los campos del formulario
-	 * 
-	 * @return
-	 */
-	protected final Boolean valid() {
-		Boolean valid = true;
-		for (DocumentosDTO dto : campos) {
-			if (dto.getNullable()) {
-				try {
-					if (registro.get(dto.getFieldName()) == null) {
-						valid &= false;
-					}
-				} catch (ReflectionException e) {
-					mensajeIzquierdo(e);
-				}
-			}
-		}
-		return valid;
-	}
-
 	@Override
 	public MultiValuedMap<String, Node> getMapFields(TypeGeneric typGeneric) {
 		return this.fields;

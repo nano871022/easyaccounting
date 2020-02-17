@@ -11,7 +11,6 @@ import static org.pyt.common.constants.languages.Menu.CONST_FXML_LABEL_TITLE_LIS
 
 import java.util.List;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
@@ -58,7 +57,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 	public void initialize() {
 		try {
 			filtro = new MenuDTO();
-			lblTitle.setText(i18n().valueBundle(CONST_FXML_LABEL_TITLE_LIST_MENUS));
+			lblTitle.setText(i18n().valueBundle(CONST_FXML_LABEL_TITLE_LIST_MENUS).get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
@@ -83,7 +82,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 
 	public final void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ListMenuBean.delete}",
+			controllerPopup(ConfirmPopupBean.class).load("#{ListMenusBean.delete}",
 					i18n().valueBundle(LanguageConstant.LANGUAGE_WARNING_DELETE_ROW));
 		} catch (Exception e) {
 			error(e);
@@ -98,7 +97,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 					list.forEach(dto -> {
 						try {
 							menusSvc.delete(dto, getUsuario());
-							alerta(String.format(LanguageConstant.LANGUAGE_SUCCESS_DELETE_MENUS_ROW_CODE,
+							alerta(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_MENUS_ROW_CODE,
 									dto.getCodigo()));
 						} catch (Exception e) {
 							error(e);
@@ -145,6 +144,7 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
+		clickTable();
 	}
 
 	@Override
@@ -160,11 +160,6 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 		case COLUMN:
 			return listColumns;
 		}
-		return null;
-	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return null;
 	}
 

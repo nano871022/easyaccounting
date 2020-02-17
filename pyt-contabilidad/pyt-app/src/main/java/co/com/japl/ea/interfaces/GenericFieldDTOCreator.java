@@ -1,9 +1,13 @@
 package co.com.japl.ea.interfaces;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.ParametroConstants;
 
 import com.pyt.service.dto.ParametroDTO;
 
@@ -28,9 +32,9 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	}
 
 	@Override
-	public String getLabelText() {
-		if (field.getAlias() != null && field.getAlias().trim().isEmpty()) {
-			return field.getAlias();
+	public OptI18n getLabelText() {
+		if (field.getAlias() != null && !field.getAlias().trim().isEmpty()) {
+			return OptI18n.noChange(field.getAlias());
 		}
 		var classPath = field.getClassPath().contains("Class") ? field.getClassPath().substring(5)
 				: field.getClassPath();
@@ -52,6 +56,11 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 		try {
 			var clazz = Class.forName(field.getClassPath());
 			Field propertie = clazz.getDeclaredField(field.getName());
+			if (StringUtils.isBlank(field.getFieldShow()) && StringUtils.isNotBlank(field.getNameGroup())) {
+				return controlFieldUtil.getChoiceBox(propertie);
+			} else if ("password".contentEquals(field.getName())) {
+				return controlFieldUtil.getPasswordField(propertie);
+			}
 			var node = controlFieldUtil.getFieldByField(propertie);
 			return node;
 		} catch (NoSuchFieldException | SecurityException | ClassNotFoundException e) {
@@ -62,27 +71,39 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 
 	@Override
 	public String getNameFieldToShowInComboBox() {
-		throw new RuntimeException("No se tiene implementado para mostrar un campo en concreto.");
+		return field.getFieldShow();
 	}
 
 	@Override
 	public ParametroDTO getParametroDto() {
-		return new ParametroDTO();
+		var parametro = new ParametroDTO();
+		parametro.setGrupo(field.getNameGroup());
+		parametro.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+		return parametro;
 	}
 
 	@Override
 	public String getValueDefault() {
-		return null;
+		return field.getValueDefault();
 	}
 
 	@Override
 	public Boolean isVisible() {
-		return true;
+		return field.getIsVisible();
 	}
 
 	@Override
 	public Boolean hasValueDefault() {
-		// TODO Auto-generated method stub
-		return false;
+		return StringUtils.isNotBlank(field.getValueDefault());
+	}
+
+	@Override
+	public Boolean isRequired() {
+		return Optional.ofNullable(field.getIsRequired()).orElse(false);
+	}
+
+	@Override
+	public Integer getOrder() {
+		return Optional.ofNullable(field.getOrden()).orElse(0);
 	}
 }

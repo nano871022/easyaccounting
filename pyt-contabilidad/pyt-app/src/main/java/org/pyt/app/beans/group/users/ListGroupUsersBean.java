@@ -3,6 +3,7 @@ package org.pyt.app.beans.group.users;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.InsertResourceConstants;
@@ -46,18 +47,20 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	private IConfigGenericFieldSvc configSvc;
 	private List<ConfigGenericFieldDTO> listFilters;
 	private List<ConfigGenericFieldDTO> listColumns;
+	private MultiValuedMap<String, Object> toChoiceBox;
 
 	@FXML
 	public void initialize() {
 		try {
 			filtro = new GroupUsersDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.group.users"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.group.users").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
 			listFilters = configSvc.getFieldToFilters(this.getClass(), GroupUsersDTO.class);
 			listColumns = configSvc.getFieldToColumns(this.getClass(), GroupUsersDTO.class);
+			toChoiceBox = new ArrayListValuedHashMap<>();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
@@ -161,7 +164,7 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return toChoiceBox;
 	}
 
 	@Override

@@ -27,6 +27,10 @@ public class ConfigGenericFieldDTO extends ADto {
 	private Boolean isRequired;
 	private Double width;
 	private Integer orden;
+	private String fieldShow;
+	private String nameGroup;
+	private String valueDefault;
+	private Boolean isVisible;
 	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
 	private Integer state;
 
@@ -116,5 +120,37 @@ public class ConfigGenericFieldDTO extends ADto {
 
 	public void setState(Integer state) {
 		this.state = state;
+	}
+
+	public String getFieldShow() {
+		return fieldShow;
+	}
+
+	public void setFieldShow(String fieldShow) {
+		this.fieldShow = fieldShow;
+	}
+
+	public String getNameGroup() {
+		return nameGroup;
+	}
+
+	public void setNameGroup(String group) {
+		this.nameGroup = group;
+	}
+
+	public String getValueDefault() {
+		return valueDefault;
+	}
+
+	public void setValueDefault(String valueDefault) {
+		this.valueDefault = valueDefault;
+	}
+
+	public Boolean getIsVisible() {
+		return isVisible;
+	}
+
+	public void setIsVisible(Boolean isVisible) {
+		this.isVisible = isVisible;
 	}
 }

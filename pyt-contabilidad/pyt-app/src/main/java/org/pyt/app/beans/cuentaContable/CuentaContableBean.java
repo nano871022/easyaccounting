@@ -8,6 +8,7 @@ import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
 
@@ -67,7 +68,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Cuenta Contable";
+		NombreVentana = i18n().get("fxml.title.list.accountingaccount");
 		registro = new CuentaContableDTO();
 		filter = new CuentaContableDTO();
 		registro.setNaturaleza(new ParametroDTO());
@@ -120,10 +121,10 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 				if (StringUtils.isNotBlank(nombre.getText())) {
 					filtro.setNombre(nombre.getText());
 				}
-				if (filter.getAsociado() != null) {
+				if (DtoUtils.haveCode(filter.getAsociado())) {
 					filtro.setAsociado(filter.getAsociado());
 				}
-				if (filter.getTipoPlanContable() != null) {
+				if (DtoUtils.haveCode(filter.getTipoPlanContable())) {
 					filtro.setTipoPlanContable(filter.getTipoPlanContable());
 				}
 				return filtro;
@@ -139,10 +140,8 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	public final void popupTipoPlanContable() {
 		try {
 			var popup = controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class));
-			var parametroGrupo = new ParametroGrupoDTO();
-			parametroGrupo.setGrupo(ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
-			var codigo = parametroGrupoSvc.get(parametroGrupo).getParametro();
-			popup.setWidth(250).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, codigo);
+			popup.setWidth(250).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+					ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
 			popup.load("#{CuentaContableBean.tipoPlanContable}");
 		} catch (Exception e) {
 			error(e);
@@ -151,11 +150,9 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 
 	public final void popupTipoCuentaContable() {
 		try {
-			var popup = controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class));
-			var parametroGrupo = new ParametroGrupoDTO();
-			parametroGrupo.setGrupo(ParametroConstants.GRUPO_TIPO);
-			var codigo = parametroGrupoSvc.get(parametroGrupo).getParametro();
-			popup.setWidth(250).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP, codigo);
+			var popup = controllerGenPopup(ParametroDTO.class);
+			popup.setWidth(250).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+					ParametroConstants.GRUPO_TIPO);
 			popup.load("#{CuentaContableBean.tipoCuentaContable}");
 		} catch (Exception e) {
 			error(e);
@@ -164,8 +161,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 
 	public final void popupAsociado() {
 		try {
-			controllerPopup(new PopupGenBean<CuentaContableDTO>(CuentaContableDTO.class))
-					.load("#{CuentaContableBean.asociado}");
+			controllerGenPopup(CuentaContableDTO.class).load("#{CuentaContableBean.asociado}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -208,7 +204,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	public void del() {
 		try {
 			controllerPopup(ConfirmPopupBean.class).load("#{CuentaContableBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -221,10 +217,10 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				cuentaContableSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminado la cuenta contable.");
+				notificarI18n("mensaje.accountingaccount.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una cuenta contable.");
+				alertaI18n("mensaje.accountingaccount.havent.been.selected");
 			}
 		} catch (Exception e) {
 			error(e);

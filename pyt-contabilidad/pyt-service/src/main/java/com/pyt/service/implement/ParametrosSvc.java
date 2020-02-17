@@ -79,9 +79,9 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 
 	public ParametroDTO insert(ParametroDTO dto, UsuarioDTO user) throws ParametroException {
 		if (dto == null)
-			throw new ParametroException("El objeto empresa se encuentra vacio.");
+			throw new ParametroException("El objeto parametro se encuentra vacio.");
 		if (dto.getCodigo() != null)
-			throw new ParametroException("El codigo de empresa no se encuentra vacio.");
+			throw new ParametroException("El codigo de parametro no se encuentra vacio.");
 		try {
 			return querySvc.set(dto, user);
 		} catch (QueryException e) {
@@ -91,9 +91,9 @@ public class ParametrosSvc extends Services implements IParametrosSvc {
 
 	public void delete(ParametroDTO dto, UsuarioDTO user) throws ParametroException {
 		if (dto == null)
-			throw new ParametroException("El objeto empresa se encuentra vacio.");
+			throw new ParametroException("El objeto parametro se encuentra vacio.");
 		if (dto.getCodigo() == null)
-			throw new ParametroException("El codigo empresa se encuentra vacio.");
+			throw new ParametroException("El codigo parametro se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);
 		} catch (Exception e) {

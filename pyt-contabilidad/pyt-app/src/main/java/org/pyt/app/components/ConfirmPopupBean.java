@@ -2,6 +2,7 @@ package org.pyt.app.components;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.PopupBean.TIPOS;
+import org.pyt.common.common.OptI18n;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
@@ -31,9 +32,12 @@ public class ConfirmPopupBean extends ABean {
 	/**
 	 * Se encarga de cargar el mensaje en el popup
 	 * 
-	 * @param mensaje
-	 *            {@link String}
+	 * @param mensaje {@link String}
 	 */
+	public void load(String caller, OptI18n mensaje) {
+		load(caller, mensaje.get());
+	}
+
 	public void load(String caller, String mensaje) {
 		this.caller = caller;
 		this.mensaje.setText(mensaje);
@@ -43,8 +47,7 @@ public class ConfirmPopupBean extends ABean {
 	/**
 	 * Se encarag de cargar la iagen en imageview
 	 * 
-	 * @param tipo
-	 *            {@link TIPOS}
+	 * @param tipo {@link TIPOS}
 	 */
 	private void loadImage() {
 		String imagen = pathImage();
@@ -57,8 +60,7 @@ public class ConfirmPopupBean extends ABean {
 	/**
 	 * Se encarga de obtener el nombre de la imagen a cargar segun el tipo
 	 * 
-	 * @param tipo
-	 *            {@link TIPOS}
+	 * @param tipo {@link TIPOS}
 	 * @return {@link String}
 	 */
 	private final String pathImage() {

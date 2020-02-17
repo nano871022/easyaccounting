@@ -53,7 +53,7 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregar Producto";
+		NombreVentana = i18n().get("fxml.title.add.movement");
 		registro = new MovimientoDTO();
 		valorUnidad.focusedProperty().addListener((obs, old, news) -> {
 			try {
@@ -73,9 +73,9 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 			List<ParametroInventarioDTO> parametros = parametroSvc.getAllParametros(parametro,
 					ParametroInventarioConstants.GRUPO_DESC_TIPO_MOVIMIENTO);
 			if (parametros == null || parametros.size() == 0)
-				throw new Exception("No se encontro tipos de movimientos.");
+				throw new Exception(i18n().get("err.movements.havent.been.found"));
 			if (parametros.size() > 1)
-				throw new Exception("Se encontro varios registros.");
+				throw new Exception(i18n().get("err.rows.havent.been.found"));
 			if (parametros.size() == 1) {
 				registro.setTipo(parametros.get(0));
 			}
@@ -89,9 +89,10 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 
 	public final void load(String llamar, ProductoDTO producto) throws Exception {
 		if (producto == null)
-			throw new Exception("El producto suministrado esta vacio.");
-		if (StringUtils.isBlank(producto.getCodigo()))
-			throw new Exception("El producto suministrado no ha sido registraddo.");
+			throw new Exception(i18n().get("err.product.is.empty"));
+		if (StringUtils.isBlank(producto.getCodigo())) {
+			throw new Exception(i18n().get("err.product.isnt.registered"));
+		}
 		registro.setProducto(producto);
 		nombre.setText(producto.getNombre());
 		ref.setText(producto.getReferencia());
@@ -110,10 +111,10 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 
 	public final void agregar() {
 		try {
+			loadFxml();
 			if (valid()) {
-				loadFxml();
 				inventarioSvc.agregarInventario(registro, getUsuario());
-				notificar("Se agrego la cantidad de productos al inventario.");
+				notificarI18n("mensaje.product.was.stocktaking");
 				caller(caller, true);
 				cancelar();
 			}
@@ -132,9 +133,12 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 	 */
 	private final boolean valid() {
 		boolean valid = true;
-		valid &= ValidFields.numeric(cantidad, true, 0, null, "Cantidad productos");
-		valid &= ValidFields.numeric(valorUnidad, true, new BigDecimal(0), null, "Valor unidad");
-		valid &= ValidFields.numeric(valorTotal, true, new BigDecimal(0), null, "Valor total");
+		valid &= ValidFields.valid(registro.getCantidad(), cantidad, true, 0, null,
+				i18n().valueBundle("err.movement.field.product.quaity.empty"));
+		valid &= ValidFields.valid(registro.getPrecioCompra(), valorUnidad, true, 0, null,
+				i18n().valueBundle("err.movement.field.purchaseprice.empty"));
+		valid &= ValidFields.valid(registro.getValor(), valorTotal, true, 0, null,
+				i18n().valueBundle("err.movement.field.totalvalue.empty"));
 		return valid;
 	}
 

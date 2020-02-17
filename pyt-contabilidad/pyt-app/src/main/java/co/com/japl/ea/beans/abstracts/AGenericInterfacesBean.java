@@ -30,6 +30,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	private MultiValuedMap<String, Node> mapFieldUseds;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parameterSvc;
+	protected MultiValuedMap<String, Object> toChoiceBox;
 
 	protected void loadDataModel(HBox paginator, TableView<T> tableView) {
 		dataTable = new DataTableFXMLUtil<T, T>(paginator, tableView) {
@@ -90,4 +91,11 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 		return parameterSvc;
 	}
 
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		if (toChoiceBox == null) {
+			toChoiceBox = new ArrayListValuedHashMap<>();
+		}
+		return toChoiceBox;
+	}
 }

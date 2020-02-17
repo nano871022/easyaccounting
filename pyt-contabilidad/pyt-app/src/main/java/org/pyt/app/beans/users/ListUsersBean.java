@@ -5,16 +5,21 @@ import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IM
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.exceptions.GenericServiceException;
 
+import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.dto.system.GroupUsersDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
@@ -30,6 +35,10 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 
 	@Inject(resource = "com.pyt.service.implement.UserSvc")
 	private IUsersSvc usersSvc;
+	@Inject
+	private IGenericServiceSvc<GroupUsersDTO> grupoUserSvc;
+	@Inject
+	private IGenericServiceSvc<PersonaDTO> personSvc;
 	@FXML
 	private Button btnMod;
 	@FXML
@@ -47,23 +56,35 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 	private IConfigGenericFieldSvc configGenericSvc;
 	private List<ConfigGenericFieldDTO> listFilters;
 	private List<ConfigGenericFieldDTO> listColumns;
+	private MultiValuedMap<String, Object> choiceBox;
 
 	@FXML
 	public void initialize() {
 		try {
 			filtro = new UsuarioDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.users"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.users").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 			filterGeneric.getChildren().addAll(gridPane);
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), UsuarioDTO.class);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), UsuarioDTO.class);
+			loadChoiceBox();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
 		} catch (Exception e) {
 			error(e);
+		}
+	}
+
+	private void loadChoiceBox() {
+		try {
+			choiceBox = new ArrayListValuedHashMap<>();
+			grupoUserSvc.getAll(new GroupUsersDTO()).forEach(row -> choiceBox.put("grupoUser", row));
+			personSvc.getAll(new PersonaDTO()).forEach(row -> choiceBox.put("person", row));
+		} catch (GenericServiceException e) {
+			logger.logger(e);
 		}
 	}
 
@@ -190,7 +211,7 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return choiceBox;
 	}
 
 	@Override

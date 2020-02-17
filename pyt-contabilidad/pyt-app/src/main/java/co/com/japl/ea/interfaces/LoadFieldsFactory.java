@@ -8,6 +8,7 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
 import org.pyt.common.common.Comunicacion;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 
 import com.pyt.service.dto.DocumentosDTO;
@@ -58,7 +59,8 @@ public final class LoadFieldsFactory implements INotificationMethods {
 			fieldCreator.setFieldGeneric(genericConfig);
 			return fieldCreator;
 		}
-		throw new RuntimeException("Opcion de generico no valida.");
+		throw new RuntimeException(I18n.instance()
+				.valueBundle("err.msn.option.generic.invalid", genericConfig.getClass().getSimpleName()).get());
 	}
 
 	@Override

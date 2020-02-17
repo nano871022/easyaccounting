@@ -209,7 +209,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	 */
 	@SuppressWarnings("unchecked")
 	public final void guardar() {
-		if (valid()) {
+		if (validFields()) {
 			try {
 				registro.setTipoDocumento(SelectList.get(tipoDocumentos));
 				if (StringUtils.isNotBlank(registro.getCodigo())) {

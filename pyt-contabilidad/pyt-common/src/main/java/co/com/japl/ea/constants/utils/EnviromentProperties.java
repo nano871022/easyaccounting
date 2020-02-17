@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.RefreshCodeValidation;
+import org.pyt.common.common.CacheUtil;
 import org.pyt.common.constants.EnviromentConstants;
 import org.pyt.common.constants.RefreshCodeConstant;
 
@@ -21,8 +21,9 @@ public final class EnviromentProperties {
 	}
 	
 	private final static <T extends Object>Object searchEnviroment(String enviromentProperty,T emptyValue) {
-		if(RefreshCodeValidation.getInstance().validate(RefreshCodeConstant.CONST_CLEAN_CACHE_ENV_PROP)) {
+		if (CacheUtil.INSTANCE().isRefresh(RefreshCodeConstant.CONST_CLEAN_CACHE_ENV_PROP)) {
 			maps.clear();
+			CacheUtil.INSTANCE().load(RefreshCodeConstant.CONST_CLEAN_CACHE_ENV_PROP);
 		}
 		if (maps.containsKey(enviromentProperty)) {
 			return (String) maps.get(enviromentProperty); 

@@ -196,7 +196,6 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	public void nuevoFiltro() {
 		ParametroDTO parametro = new ParametroDTO();
-		parametro.setGrupo("*");
 		getController(ParametrosCRUBean.class).load(parametro);
 	}
 
@@ -230,7 +229,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	public void deleteBtn() {
 		try {
 			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}",
-					"¿Desea eliminar los registros seleccionados?");
+					i18n().valueBundle("mensaje.wish.delete.selected.rows").get());
 		} catch (Exception e) {
 			error(e);
 		}

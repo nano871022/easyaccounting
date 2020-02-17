@@ -5,12 +5,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.inventario.ProductosException;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidFields;
 import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.ParametroDTO;
@@ -22,6 +25,7 @@ import com.pyt.service.interfaces.inventarios.IProductosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -64,13 +68,15 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 	@FXML
 	private BorderPane pane;
 	@FXML
+	private Button btnMovement;
+	@FXML
 	private ChoiceBox<ParametroDTO> choiceBoxIva;
 	private ValidateValues vv;
 	private List<ParametroDTO> listIva;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Repuesto";
+		NombreVentana = i18n().get("fxml.title.add.new.spartpart");
 		titulo.setText(NombreVentana);
 		registro = new ResumenProductoDTO();
 		try {
@@ -118,6 +124,31 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 				error(ex);
 			}
 		});
+		nombre.textProperty().addListener(change -> validProduct());
+		referencia.focusedProperty().addListener(change -> validProduct());
+		btnMovement.setVisible(false);
+	}
+
+	private void validProduct() {
+		try {
+			if (StringUtils.isNotBlank(nombre.getText()) && StringUtils.isNotBlank(referencia.getText())) {
+				var producto = new ProductoDTO();
+				producto.setNombre(nombre.getText());
+				producto.setReferencia(referencia.getText());
+				var list = productosSvc.productos(producto);
+				if (ListUtils.isBlank(list)) {
+					alerta(i18n().valueBundle("err.product.wasnt.found.add.movementing", producto.getNombre(),
+							producto.getReferencia()));
+				} else if (ListUtils.haveMoreOneItem(list)) {
+					alerta(i18n().valueBundle("err.product.was.found.some.rows", producto.getNombre(),
+							producto.getReferencia()));
+				} else {
+					registro.setProducto(list.get(0));
+				}
+			}
+		} catch (ProductosException e) {
+			error(e);
+		}
 	}
 
 	/**
@@ -168,6 +199,8 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 	public final void load() {
 		registro = new ResumenProductoDTO();
 		registro.setProducto(new ProductoDTO());
+		registro.setCantidad(0);
+		btnMovement.setVisible(false);
 	}
 
 	private void getResumenProducto(ProductoDTO dto) {
@@ -180,12 +213,13 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 	}
 
 	public void load(ProductoDTO dto) {
-		if (dto != null && dto.getCodigo() != null) {
+		if (DtoUtils.haveCode(dto)) {
 			getResumenProducto(dto);
 			loadFxml();
-			titulo.setText("Modificando Repuesto");
+			titulo.setText(i18n().get("mensaje.modifing.spartpart"));
+			btnMovement.setVisible(true);
 		} else {
-			error("EL repuesto es invalido para editar.");
+			errorI18n("err.spartpart.cant.edit");
 			cancel();
 		}
 	}
@@ -197,27 +231,73 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getProducto().getNombre());
+		valid &= ValidFields.valid(registro.getProducto().getNombre(), nombre, true, 1, 30,
+				i18n().valueBundle("err.valid.spartpart.field.name.empty"));
+		valid &= ValidFields.valid(registro.getProducto().getDescripcion(), descripcion, true, 1, 100,
+				i18n().valueBundle("err.valid.spartpart.field.description.empty"));
+		valid &= ValidFields.valid(registro.getProducto().getReferencia(), referencia, true, 1, 30,
+				i18n().valueBundle("err.valid.spartpart.field.reference.empty"));
+		valid &= ValidFields.valid(registro.getCantidad(), cantidad, false, null, null,
+				i18n().valueBundle("err.valid.spartpart.field.quantity.empty"));
+		valid &= ValidFields.valid(registro.getGananciaPercentVenta(), percentGanancia, false, null, null,
+				i18n().valueBundle("err.valid.spartpart.field.profitpercent.empty"));
+		valid &= ValidFields.valid(registro.getValorCompra(), valorMercado, false, null, null,
+				i18n().valueBundle("err.valid.spartpart.field.purchasevalue.empty"));
+		valid &= ValidFields.valid(registro.getValorVenta(), valorVenta, false, null, null,
+				i18n().valueBundle("err.valid.spartpart.field.salevalue.empty"));
 		return valid;
+	}
+
+	private void validEmpty() {
+		if (registro.getCantidad() == null) {
+			registro.setCantidad(0);
+		}
+		if (registro.getValorCompra() == null) {
+			registro.setValorCompra(new BigDecimal(0));
+		}
+		if (registro.getValorVenta() == null) {
+			registro.setValorVenta(new BigDecimal(0));
+		}
+	}
+
+	private void updateProduct() throws ProductosException {
+		if (DtoUtils.haveCode(registro.getProducto())) {
+			productosSvc.update(registro.getProducto(), getUsuario());
+		}
+	}
+
+	private void insertProduct() throws ProductosException {
+		if (!DtoUtils.haveCode(registro.getProducto())) {
+			var prod = productosSvc.insert(registro.getProducto(), getUsuario());
+			registro.setProducto(prod);
+		}
+	}
+
+	private void insertProductSummary() throws ResumenProductoException {
+		if (!DtoUtils.haveCode(registro)) {
+			validEmpty();
+			productosSvc.insert(registro, getUsuario());
+			codigo.setText(registro.getCodigo());
+			btnMovement.setVisible(true);
+			notificarI18n("mensaje.spartpart.have.been.inserted.succesfull");
+		}
+	}
+
+	private void updateProductSummary() throws ResumenProductoException {
+		if (DtoUtils.haveCode(registro)) {
+			productosSvc.update(registro, getUsuario());
+			notificarI18n("mensaje.spartpart.have.been.updated.succesfull");
+		}
 	}
 
 	public void add() {
 		fxmlLoad();
 		try {
 			if (valid()) {
-				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					productosSvc.update(registro.getProducto(), getUsuario());
-					productosSvc.update(registro, getUsuario());
-					notificar("Se guardo el repuesto correctamente.");
-					cancel();
-				} else {
-					ProductoDTO prod = productosSvc.insert(registro.getProducto(), getUsuario());
-					registro.setProducto(prod);
-					productosSvc.insert(registro, getUsuario());
-					codigo.setText(registro.getCodigo());
-					notificar("Se agrego el repuesto correctamente.");
-					cancel();
-				}
+				updateProduct();
+				insertProduct();
+				updateProductSummary();
+				insertProductSummary();
 			}
 		} catch (ResumenProductoException e) {
 			error(e);
@@ -234,7 +314,7 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 		}
 	}
 
-	public final void update(boolean valid) {
+	public final void setUpdate(Boolean valid) {
 		try {
 			if (valid) {
 				registro = productosSvc.resumenProducto(registro.getProducto());

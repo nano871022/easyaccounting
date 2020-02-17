@@ -19,11 +19,12 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
-	@Inject(resource = "com.pyt.service.implement.ParametroSvc")
+	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	protected List<ConfigGenericFieldDTO> fields;
 	private Class<F> classTypeDto;
 	private MultiValuedMap<String, Node> mapFieldUseds;
+	protected MultiValuedMap<String, Object> toChoiceBox;
 
 	@Override
 	public MultiValuedMap<String, Node> getMapFields(TypeGeneric typeGeneric) {
@@ -63,6 +64,14 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 	@Override
 	public IParametrosSvc getParametersSvc() {
 		return parametrosSvc;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		if (toChoiceBox == null) {
+			toChoiceBox = new ArrayListValuedHashMap<>();
+		}
+		return toChoiceBox;
 	}
 
 }

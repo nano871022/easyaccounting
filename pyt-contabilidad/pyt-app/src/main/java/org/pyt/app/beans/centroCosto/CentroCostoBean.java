@@ -19,7 +19,6 @@ import com.pyt.service.interfaces.IParametrosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
-import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -27,7 +26,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 /**
  * Bean encargado de crear las empresas
@@ -65,7 +63,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Centro de Costos";
+		NombreVentana = i18n().get("fxml.title.list.costcenter");
 		registro = new CentroCostoDTO();
 		try {
 			listEstados = parametroSvc.getAllParametros(new ParametroDTO(),
@@ -84,6 +82,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 
 	/**
 	 * Se encarga de apartir del valor de un estado obtener el nombre de este estado
+	 * 
 	 * @param value {@link String}
 	 * @return {@link String}
 	 */
@@ -105,7 +104,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 			public List<CentroCostoDTO> getList(CentroCostoDTO filter, Integer page, Integer rows) {
 				List<CentroCostoDTO> lista = new ArrayList<CentroCostoDTO>();
 				try {
-					lista = centroCostoSvc.getCentroCostos(filter, page-1, rows);
+					lista = centroCostoSvc.getCentroCostos(filter, page - 1, rows);
 				} catch (CentroCostosException e) {
 					error(e);
 				}
@@ -162,21 +161,24 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 
 	public void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{CentroCostoBean.delete}", "¿Desea eliminar los registros seleccionados?");
-		}catch(Exception e) {
+			controllerPopup(ConfirmPopupBean.class).load("#{CentroCostoBean.delete}",
+					i18n().get("mensaje.whish.do.delete.selected.rows"));
+		} catch (Exception e) {
 			error(e);
 		}
 	}
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				centroCostoSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminaro la empresa.");
+				notificarI18n("mensaje.enterprise.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una empresa.");
+				alertaI18n("mensaje.enterprise.wasnt.selected");
 			}
 		} catch (CentroCostosException e) {
 			error(e);
@@ -188,7 +190,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 		if (registro != null) {
 			getController(CentroCostoCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado una empresa.");
+			alertaI18n("mensaje.enterprise.wasnt.selected");
 		}
 	}
 

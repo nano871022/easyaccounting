@@ -2,8 +2,8 @@ package org.pyt.app.beans.empresa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ea.app.custom.PopupParametrizedControl;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpresasException;
 
@@ -63,7 +63,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nueva Empresa";
+		NombreVentana = i18n().get("fxml.title.add.new.enterprise");
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
 		pais.setPopupOpenAction(() -> popupPais());
@@ -107,7 +107,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupPais() {
 		try {
-			PopupGenBean.instance(PaisDTO.class).addDefaultValuesToGenericParametrized("estado", 1).setWidth(350)
+			controllerGenPopup(PaisDTO.class).addDefaultValuesToGenericParametrized("estado", 1).setWidth(350)
 					.load("#{EmpresaCRUBean.pais}");
 		} catch (Exception e) {
 			error(e);
@@ -137,12 +137,12 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	}
 
 	public void load(EmpresaDTO dto) {
-		if (dto != null && dto.getCodigo() != null) {
+		if (DtoUtils.haveCode(dto)) {
 			registro = dto;
 			loadFxml();
-			titulo.setText("Modificando Empresa");
+			titulo.setText(i18n().get("mensaje.modifing.enterprise"));
 		} else {
-			error("La empresa es invalida para editar.");
+			error(i18n().get("err.enterprise.cant.edit"));
 			cancel();
 		}
 	}
@@ -152,12 +152,12 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
 				empresaSvc.update(registro, getUsuario());
-				notificar("Se guardo la empresa correctamente.");
+				notificarI18n("mensaje.enterprise.was.updated.succefull");
 				cancel();
 			} else {
 				empresaSvc.insert(registro, getUsuario());
 				codigo.setText(registro.getCodigo());
-				notificar("Se agrego la emrpesa correctamente.");
+				notificarI18n("mensaje.enterprise.was.inserted.succesfull");
 				cancel();
 			}
 		} catch (EmpresasException e) {
@@ -167,7 +167,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupMonedas() {
 		try {
-			PopupGenBean.instance(ParametroDTO.class)
+			controllerGenPopup(ParametroDTO.class)
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
 							ParametroConstants.GRUPO_MONEDA)
 					.setWidth(350).load("#{EmpresaCRUBean.moneda}");
@@ -183,7 +183,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupRepresentante() {
 		try {
-			PopupGenBean.instance(PersonaDTO.class).setWidth(350).load("#{EmpresaCRUBean.representante}");
+			controllerGenPopup(PersonaDTO.class).setWidth(400).load("#{EmpresaCRUBean.representante}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -196,7 +196,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 
 	public void popupContador() {
 		try {
-			PopupGenBean.instance(PersonaDTO.class).setWidth(350).load("#{EmpresaCRUBean.contador}");
+			controllerGenPopup(PersonaDTO.class).setWidth(400).load("#{EmpresaCRUBean.contador}");
 		} catch (Exception e) {
 			error(e);
 		}

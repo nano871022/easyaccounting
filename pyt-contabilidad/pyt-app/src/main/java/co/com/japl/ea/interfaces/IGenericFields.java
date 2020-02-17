@@ -19,24 +19,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
+import org.pyt.app.beans.languages.LanguageBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.implement.GenericServiceSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
@@ -67,14 +73,6 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	 * @return {@link ADto}
 	 */
 	public F getInstanceDto(TypeGeneric typeGeneric);
-
-	/**
-	 * Servicio de parametros, este debe ser el generico, con esto permite realizar
-	 * consultas dinamicamente.
-	 * 
-	 * @return {@link GenericServiceSvc} < {@link ParametroDTO} >
-	 */
-	public IParametrosSvc getParametersSvc();
 
 	/**
 	 * se encarga de retornar la lista de campos que se poenen en campos de tipo
@@ -114,6 +112,35 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			return Uses.FIELD;
 	}
 
+	private void loadDefaultValueDate(TypeGeneric typeGeneric, String valueDefault, Class typeField,
+			IFieldsCreator factory) {
+		if ("now".equalsIgnoreCase(valueDefault)) {
+			if (typeField == LocalDate.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDate.now());
+			} else if (typeField == LocalDateTime.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDateTime.now());
+			} else if (typeField == Date.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), new Date());
+			}
+		} else if (valueDefault.matches(AppConstants.CONST_FORMAT_DATE)) {
+			var loadDate = LocalDate.parse(valueDefault);
+			if (typeField == LocalDate.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
+			} else if (typeField == Date.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(),
+						Date.from(loadDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			}
+		} else if (valueDefault.matches(AppConstants.CONST_FORMAT_DATE_TIME)) {
+			var loadDate = LocalDateTime.parse(valueDefault);
+			if (typeField == LocalDate.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
+			} else if (typeField == Date.class) {
+				getInstanceDto(typeGeneric).set(factory.getNameField(),
+						Date.from(loadDate.atZone(ZoneId.systemDefault()).toInstant()));
+			}
+		}
+	}
+
 	private void assignDefaultValue(TypeGeneric typeGeneric, IFieldsCreator factory) {
 		if (factory.hasValueDefault()) {
 			var eval = factory.getValueDefault();
@@ -126,35 +153,37 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					getInstanceDto(typeGeneric).set(factory.getNameField(), eval);
 				}
 				if (validateValuesUtils.isDate(typeField)) {
-					var date = "\\d{4}/\\d{2}/\\d{2}";
-					var dateTime = "\\d{4}/\\d{2}/\\d{2}T\\d{2}:\\d{2}\\d{2}";
-					if ("now".equalsIgnoreCase(eval)) {
-						if (typeField == LocalDate.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDate.now());
-						} else if (typeField == LocalDateTime.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), LocalDateTime.now());
-						} else if (typeField == Date.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), new Date());
-						}
-					} else if (eval.matches(date)) {
-						var loadDate = LocalDate.parse(eval);
-						if (typeField == LocalDate.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
-						} else if (typeField == Date.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(),
-									Date.from(loadDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-						}
-					} else if (eval.matches(dateTime)) {
-						var loadDate = LocalDateTime.parse(eval);
-						if (typeField == LocalDate.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(), loadDate);
-						} else if (typeField == Date.class) {
-							getInstanceDto(typeGeneric).set(factory.getNameField(),
-									Date.from(loadDate.atZone(ZoneId.systemDefault()).toInstant()));
-						}
-					}
+					loadDefaultValueDate(typeGeneric, eval, typeField, factory);
 				}
 			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<L> getListFieldsAnnotates(TypeGeneric typeGeneric, List<L> list) {
+		if (list == null) {
+			var typeField = getUsesByUsedTypeGeneric(typeGeneric);
+			var generics = LoadFieldsFactory.getAnnotatedField(ConfigGenericFieldDTO.class, getClazz(), typeField);
+			if (generics == null) {
+				throw new RuntimeException(
+						i18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE).get());
+			} else {
+				list = (List<L>) generics;
+			}
+		}
+		return list;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void loadPopupLanguages(IFieldsCreator factory) {
+		var popup = new org.pyt.app.components.PopupFromBean(org.pyt.app.beans.languages.LanguageBean.class);
+		try {
+			LoadAppFxml.loadBeanFX(popup);
+			LanguageBean bean = (LanguageBean) popup.getBean();
+			bean.openPopup();
+			bean.addCode(factory.getLabelText().get());
+		} catch (LoadAppFxmlException e) {
+			logger().logger(e);
 		}
 	}
 
@@ -163,18 +192,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	 * configurados como campos genericos, esto se pone el {@link GridPane}
 	 * 
 	 */
-	@SuppressWarnings({ "unchecked", "static-access" })
 	default void loadFields(TypeGeneric typeGeneric, String... stylesGrid) {
 		var list = getListGenericsFields(typeGeneric);
-		if (list == null) {
-			var typeField = getUsesByUsedTypeGeneric(typeGeneric);
-			var generics = LoadFieldsFactory.getAnnotatedField(ConfigGenericFieldDTO.class, getClazz(), typeField);
-			if (generics == null) {
-				throw new RuntimeException(i18n().valueBundle(LanguageConstant.GENERIC_FIELD_NOT_FOUND_FIELD_TO_USE));
-			} else {
-				list = (List<L>) generics;
-			}
-		}
+		list = getListFieldsAnnotates(typeGeneric, list);
 		var index = new Index();
 		assingValueAnnotations(typeGeneric);
 		genericFormsUtils.configGridPane(getGridPane(typeGeneric));
@@ -183,7 +203,8 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				var factory = LoadFieldsFactory.getInstance(field);
 				assignDefaultValue(typeGeneric, factory);
 				if (factory.isVisible()) {
-					var label = genericFormsUtils.createLabel(factory.getLabelText(), factory.getToolTip());
+					var label = genericFormsUtils.createLabel(factory.getLabelText(),
+							event -> loadPopupLanguages(factory), factory.getToolTip());
 					var fieldControl = factory.create();
 					var nameField = factory.getNameField();
 					var typeField = getInstanceDto(typeGeneric).getType(nameField);
@@ -203,6 +224,11 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				logger().DEBUG(i18n().valueBundle(CONST_ERR_GET_LIST_VALUES), e);
 			}
 		});
+		configFieldFilter(typeGeneric, index);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void configFieldFilter(TypeGeneric typeGeneric, Index index) {
 		if (TypeGeneric.FILTER == typeGeneric) {
 			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> {
 				try {
@@ -221,8 +247,24 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			IFieldsCreator factory, N node) throws ReflectionException, ParametroException {
 		if (genericFormsUtils.isChoiceBox(node)) {
 			var list = getSelectedListToChoiceBox(typeGeneric, fieldName, typeField, factory);
-			genericFormsUtils.loadValuesInFxmlToChoice(factory.getNameFieldToShowInComboBox(), node,
-					getInstanceDto(typeGeneric).get(fieldName), null, list);
+			if (StringUtils.isBlank(factory.getNameFieldToShowInComboBox()) && list != null && list.size() > 0
+					&& list.get(0) instanceof ParametroDTO) {
+				var valueToParametro = getInstanceDto(typeGeneric).get(fieldName);
+				if (valueToParametro != null) {
+					var paramFound = ((ParametroDTO) list.stream()
+							.filter(row -> ((ParametroDTO) row).getValor()
+									.equalsIgnoreCase(validateValuesUtils.cast(valueToParametro, String.class)))
+							.findAny().get());
+					if (paramFound != null) {
+						String nameFound = paramFound.getNombre();
+						genericFormsUtils.loadValuesInFxmlToChoice(ParametroConstants.FIELD_NAME_PARAM, node,
+								paramFound, null, list);
+					}
+				}
+			} else {
+				genericFormsUtils.loadValuesInFxmlToChoice(factory.getNameFieldToShowInComboBox(), node,
+						getInstanceDto(typeGeneric).get(fieldName), null, list);
+			}
 		} else {
 			genericFormsUtils.loadValuesInFxml(node, getInstanceDto(typeGeneric).get(fieldName));
 		}
@@ -231,7 +273,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	default void loadValueIntoForm(TypeGeneric typeGeneric, String fieldName) {
 		try {
 			if (!getMapFields(typeGeneric).containsKey(fieldName)) {
-				throw new RuntimeException(i18n().valueBundle(CONST_ERR_CONFIG_FIELD_NOT_FOUND_));
+				throw new RuntimeException(i18n().valueBundle(CONST_ERR_CONFIG_FIELD_NOT_FOUND_).get());
 			}
 			var field = getInstanceDto(typeGeneric);
 			var factory = LoadFieldsFactory.getInstance(field);
@@ -273,12 +315,18 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			var list = getSelectedListToChoiceBox(typeGeneric, nameField, typeField, factory);
 			((ChoiceBox) fieldControl).valueProperty()
 					.bind(Bindings.createObjectBinding(() -> getInstanceDto(typeGeneric).get(nameField)));
-			SelectList.put((ChoiceBox) fieldControl, list, factory.getNameFieldToShowInComboBox());
+			var nameShow = StringUtils.isNotBlank(factory.getNameFieldToShowInComboBox())
+					? factory.getNameFieldToShowInComboBox()
+					: ParametroConstants.FIELD_NAME_PARAM;
+			SelectList.put((ChoiceBox) fieldControl, list, nameShow);
 			((ChoiceBox) fieldControl).getSelectionModel().selectedItemProperty()
 					.addListener((observable, oldValue, newValue) -> {
-						var value = SelectList.get(((ChoiceBox) fieldControl), list,
-								factory.getNameFieldToShowInComboBox());
-						getInstanceDto(typeGeneric).set(nameField, value);
+						var value = SelectList.get(((ChoiceBox) fieldControl), list, nameShow);
+						if (StringUtils.isNotBlank(factory.getNameFieldToShowInComboBox())) {
+							getInstanceDto(typeGeneric).set(nameField, value);
+						} else if (value instanceof ParametroDTO) {
+							getInstanceDto(typeGeneric).set(nameField, ((ParametroDTO) value).getValor());
+						}
 					});
 		}
 	}
@@ -319,17 +367,32 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	private <D extends ADto> List<D> getSelectedListToChoiceBox(TypeGeneric typeGeneric, String nameField,
 			Class typeField, IFieldsCreator factory) throws ParametroException {
 		var list = getMapListToChoiceBox().get(nameField);
-		if (isParametroDTO(typeField) && list == null) {
+		if ((StringUtils.isBlank(factory.getNameFieldToShowInComboBox()) || isParametroDTO(typeField))
+				&& (list == null || list.size() == 0)) {
 			var parametroDto = factory.getParametroDto();
-			if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
-				parametroDto.setGrupo(getParametersSvc().getIdByParametroGroup(parametroDto.getGrupo()));
+			var parametrosSearch = getParametersSvc().getAllParametros(parametroDto);
+			if (ListUtils.isNotBlank(parametrosSearch)) {
+				getMapListToChoiceBox().put(nameField, parametrosSearch);
+				return (List<D>) parametrosSearch;
+			} else if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
+				var grupoSave = parametroDto.getGrupo();
+				if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
+					parametroDto.setGrupo(getParametersSvc().getIdByParametroGroup(parametroDto.getGrupo()));
+				}
+				parametroDto = getParametroFromFindGroup(parametroDto, grupoSave);
+				var parametros = getParametersSvc().getAllParametros(parametroDto);
+				getMapListToChoiceBox().put(nameField, parametros);
+				return (List<D>) parametros;
 			}
-			var parametros = getParametersSvc().getAllParametros(parametroDto);
-			getMapListToChoiceBox().put(nameField, parametros);
-			return (List<D>) parametros;
 		}
 		var listOut = new ArrayList<D>();
-		list.forEach(row -> listOut.add((D) row));
+		list.forEach(row -> {
+			if (row instanceof List) {
+				((List) row).forEach(reg -> listOut.add((D) reg));
+			} else {
+				listOut.add((D) row);
+			}
+		});
 		return listOut;
 	}
 
@@ -355,4 +418,19 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				});
 		return dto;
 	}
+
+	default Boolean validFields() {
+		var dto = getInstanceDto(TypeGeneric.FIELD);
+		var list = getListGenericsFields(TypeGeneric.FIELD);
+		Function<ADto, Boolean> maping = field -> {
+			var factory = LoadFieldsFactory.getInstance(field);
+			var node = getMapFields(TypeGeneric.FIELD).get(factory.getNameField()).stream().findFirst().get();
+			var value = dto.get(factory.getNameField());
+			return ValidFields.valid(value, node, true, null, null,
+					i18n().valueBundle("err.valid.document.field.field.empty"));
+		};
+		return list.stream().filter(field -> LoadFieldsFactory.getInstance(field).isRequired()).map(maping).reduce(true,
+				(val, result) -> val &= result);
+	}
+
 }

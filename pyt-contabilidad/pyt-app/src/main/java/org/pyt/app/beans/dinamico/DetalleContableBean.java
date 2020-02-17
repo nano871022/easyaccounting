@@ -132,7 +132,7 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
-		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
+		titulo.setText(concat(titulo.getText(), ": ", tipoDoc.getNombre()));
 		loadField();
 	}
 
@@ -141,7 +141,7 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
-		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
+		titulo.setText(concat(titulo.getText(), ": ", tipoDoc.getNombre()));
 		loadField();
 	}
 
@@ -149,15 +149,15 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 	 * Se encarga de guardar todo
 	 */
 	public final void guardar() {
-		if (valid()) {
+		if (validFields()) {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					documentosSvc.update(registro, getUsuario());
-					notificar("Se actualizo el detalle contable.");
+					notificarI18n("mensaje.accountingdetail.have.been.updated.succesfull");
 				} else {
 					registro.setCodigoDocumento(codigoDocumento);
 					registro = documentosSvc.insert(registro, getUsuario());
-					notificar("Se agrego el nuevo detalle contable.");
+					notificarI18n("mensaje.accountingdetail.was.inserted");
 				}
 			} catch (DocumentosException e) {
 				error(e);

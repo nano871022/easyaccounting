@@ -1,6 +1,7 @@
 package co.com.japl.ea.interfaces;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.OptI18n;
 
 import com.pyt.service.dto.ParametroDTO;
 
@@ -27,7 +28,7 @@ public interface IFieldsCreator {
 	 * 
 	 * @return {@link String}
 	 */
-	String getLabelText();
+	OptI18n getLabelText();
 
 	/**
 	 * Se encarga de obtener el nombre del campo
@@ -66,4 +67,8 @@ public interface IFieldsCreator {
 	Boolean isVisible();
 
 	Boolean hasValueDefault();
+
+	Boolean isRequired();
+
+	Integer getOrder();
 }

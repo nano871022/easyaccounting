@@ -154,7 +154,16 @@ public final class SelectList {
 	 * @return {@link String}
 	 */
 	public final static <T extends Object> T get(ChoiceBox<T> choiceBox) {
-		return choiceBox.getValue();
+		var select = choiceBox.selectionModelProperty().get().getSelectedItem();
+		if (select != null) {
+			if (select instanceof String) {
+				if (AppConstants.SELECCIONE.contentEquals((String) select)) {
+					return null;
+				}
+			}
+			return select;
+		}
+		return null;
 	}
 
 	/**
@@ -282,6 +291,24 @@ public final class SelectList {
 			}
 		} // end for
 	}
+	
+	public final static <S extends ADto, M> void selectItem(ChoiceBox<S> choiceBox, List<S> list, String nombreShow,
+			String value) {
+		ValidateValues vv = new ValidateValues();
+		for (S dto : list) {
+			try {
+				if (dto != null && value != null)
+					if (StringUtils.isNotBlank(((ADto) dto).get(nombreShow))) {
+						if (vv.validate(((ADto) dto).get(nombreShow), value)) {
+							choiceBox.getSelectionModel().select(dto);
+							break;
+						}
+					}
+			} catch (ReflectionException | ValidateValueException e) {
+				logger.DEBUG(e);
+			}
+		} // end for
+	}
 
 	/**
 	 * Se encarga de buscar un valor en la lista y seleccionarlo por defecto
@@ -328,6 +355,8 @@ public final class SelectList {
 	}
 
 	public final static <S> void addItems(ChoiceBox<S> choiceBox, List<S> list, String... campos) {
+		choiceBox.getItems().clear();
+		choiceBox.getItems().addAll(list);
 		choiceBox.setConverter(new StringConverter<S>() {
 			private StringBuilder name;
 

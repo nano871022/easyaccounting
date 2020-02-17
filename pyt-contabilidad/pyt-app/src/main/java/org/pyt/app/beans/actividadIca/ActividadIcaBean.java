@@ -48,7 +48,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Actividad Ica";
+		NombreVentana = i18n().valueBundle("fxml.title.list.ica.activity").get();
 		registro = new ActividadIcaDTO();
 		lazy();
 	}
@@ -62,7 +62,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 			public List<ActividadIcaDTO> getList(ActividadIcaDTO filter, Integer page, Integer rows) {
 				List<ActividadIcaDTO> lista = new ArrayList<ActividadIcaDTO>();
 				try {
-					lista = actividadIcaSvc.getActividadesIca(filter, page-1, rows);
+					lista = actividadIcaSvc.getActividadesIca(filter, page - 1, rows);
 				} catch (ActividadIcaException e) {
 					error(e);
 				}
@@ -89,7 +89,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 				if (StringUtils.isNotBlank(descripcion.getText())) {
 					filtro.setDescripcion(descripcion.getText());
 				}
-				if(StringUtils.isNotBlank(codigoIca.getText())) {
+				if (StringUtils.isNotBlank(codigoIca.getText())) {
 					filtro.setCodigoIca(codigoIca.getText());
 				}
 				return filtro;
@@ -112,22 +112,24 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 
 	public void del() {
 		try {
-			controllerPopup(ConfirmPopupBean.class).load("#{ActividadIcaBean.delete}", "¿Desea eliminar los registros seleccionados?");
+			controllerPopup(ConfirmPopupBean.class).load("#{ActividadIcaBean.delete}",
+					i18n().valueBundle("whish.delete.selected.rows").get());
 		} catch (LoadAppFxmlException e) {
 			error(e);
 		}
 	}
-	
+
 	public void setDelete(Boolean valid) {
 		try {
-			if(!valid)return;
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
 				actividadIcaSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminaro la actividad Ica.");
+				notificarI18n("mensaje.ica.activity.was.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una actividad ica.");
+				alerta("mensaje.ica.activity.wasnt.selected");
 			}
 		} catch (ActividadIcaException e) {
 			error(e);
@@ -139,7 +141,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 		if (registro != null) {
 			getController(ActividadIcaCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado una actividad ica.");
+			alerta("mensaje.ica.activity.havent.been.selected");
 		}
 	}
 

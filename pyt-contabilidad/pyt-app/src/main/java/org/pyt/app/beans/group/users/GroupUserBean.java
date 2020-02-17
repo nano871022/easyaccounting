@@ -1,9 +1,9 @@
 package org.pyt.app.beans.group.users;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.InsertResourceConstants;
 import org.pyt.common.validates.ValidFields;
 
@@ -14,8 +14,8 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
 import co.com.japl.ea.dto.system.GroupUsersDTO;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 @FXMLFile(file = "group_user.fxml", path = "view/group_users")
@@ -30,10 +30,12 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 	public static final String CONST_FIELD_NAME_GROUP_USERS_STATE = "state";
 	@Inject(resource = InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
 	private IConfigGenericFieldSvc configSvc;
+	private MultiValuedMap<String, Object> toChoiceBox;
 
 	@FXML
 	public void initialize() {
 		try {
+			toChoiceBox = new ArrayListValuedHashMap<>();
 			registro = new GroupUsersDTO();
 			setClazz(GroupUsersDTO.class);
 			fields = configSvc.getFieldToFields(this.getClass(), GroupUsersDTO.class);
@@ -45,12 +47,12 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 
 	public final void load() {
 		registro = new GroupUsersDTO();
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	public final void load(GroupUsersDTO dto) {
 		registro = dto;
-		var util = new UtilControlFieldFX();
-		util.loadValuesInFxml(dto, gridPane);
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	@Override
@@ -60,10 +62,17 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 
 	public final Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid((TextField) getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE),
-				true, 1, 100, i18n().valueBundle("msn.error.field.empty"));
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_NAME).stream().map(node -> ValidFields
+				.valid(registro.getName(), node, true, 1, 100, i18n().valueBundle("msn.error.field.empty"))).findFirst()
+				.get();
+		valid &= getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_GROUP_USERS_STATE).stream().map(node -> {
+			if (node instanceof ChoiceBox) {
+				return (Boolean) ValidFields.valid(registro.getState(), node, true, null, null,
+						i18n().valueBundle("msn.error.field.empty"));
+			}
+			return (Boolean) ValidFields.valid(registro.getState(), node, true, 1, 100,
+					i18n().valueBundle("msn.error.field.empty"));
+		}).findFirst().get();
 		return valid;
 	}
 
@@ -94,7 +103,7 @@ public class GroupUserBean extends AGenericInterfacesFieldBean<GroupUsersDTO> {
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return toChoiceBox;
 	}
 
 }

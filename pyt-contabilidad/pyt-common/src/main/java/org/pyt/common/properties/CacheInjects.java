@@ -9,8 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pyt.common.common.RefreshCodeValidation;
+import org.pyt.common.common.CacheUtil;
 import org.pyt.common.constants.RefreshCodeConstant;
+
 
 public final class CacheInjects {
 	private static CacheInjects cacheInjects;
@@ -54,10 +55,10 @@ public final class CacheInjects {
 	}
 
 	private synchronized final void cleanCache() {
-		if (RefreshCodeValidation.getInstance()
-				.validate(RefreshCodeConstant.CONST_CLEAN_CACHE_INJECT_AND_POSTCONSTRUCTOR)) {
+		if (CacheUtil.INSTANCE().isRefresh(RefreshCodeConstant.CONST_CLEAN_CACHE_INJECT_AND_POSTCONSTRUCTOR)) {
 			mapPostConstructor.clear();
 			mapInjects.clear();
+			CacheUtil.INSTANCE().load(RefreshCodeConstant.CONST_CLEAN_CACHE_INJECT_AND_POSTCONSTRUCTOR);
 		}
 	}
 

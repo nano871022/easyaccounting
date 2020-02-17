@@ -215,7 +215,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			SelectList.selectItem(campoAsignar, mapa_campoAsignar, docs.getPutNameAssign());
 			manejaDefault();
 		} else {
-			notificar("No se ha seleccionado ningun registro.");
+			alertaI18n("warn.rows.havent.been.seleceted");
 		}
 	}
 
@@ -509,13 +509,13 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		try {
 			ParametroDTO param = SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME);
 			if (StringUtils.isBlank(param.getCodigo())) {
-				error("NO se ha seleccionado ningun tipo de documento.");
+				errorI18n("err.documenttype.havent.been.selected");
 			} else if (documentos.size() > 0) {
 				for (DocumentosDTO dto : documentos) {
 					dto.setDoctype(SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME));
 					dto = documentoSvc.insert(dto, getUsuario());
 				}
-				notificar("Se ha guardado todos los registros correctamente.");
+				notificarI18n("mensaje.rows.have.been.inserted.successfull");
 			}
 		} catch (DocumentosException e) {
 			error(e);
@@ -535,7 +535,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 				guardar.setVisible(true);
 				cancelar.setVisible(true);
 			}
-			notificar("Se ha ingresado el documento.");
+			notificarI18n("mensaje.document.have.been.inserted");
 			cleanItem();
 			dataTable.search();
 		}
@@ -575,7 +575,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 						}
 					}
 				}
-				notificar("Se ha actualizado el documento.");
+				notificarI18n("mensaje.document.have.been.updated");
 				dataTable.search();
 				cleanItem();
 			}
@@ -603,7 +603,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 						cancelar.setVisible(false);
 					}
 				}
-				notificar("Se ha eliminado el documento.");
+				notificarI18n("mensaje.document.have.been.deleted");
 				dataTable.search();
 				cleanItem();
 			}

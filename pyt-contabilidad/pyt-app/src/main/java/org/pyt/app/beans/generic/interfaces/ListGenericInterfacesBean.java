@@ -3,6 +3,7 @@ package org.pyt.app.beans.generic.interfaces;
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
@@ -43,6 +44,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	private List<ConfigGenericFieldDTO> listFieldsToColumns;
 	@Inject(resource = "com.pyt.service.implement.ConfigGenericFieldSvc")
 	private IConfigGenericFieldSvc configGenericFieldsSvc;
+	private MultiValuedMap<String, Object> toChoiceBox;
 
 	@FXML
 	private void initialize() {
@@ -51,7 +53,8 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		gridPane.setVgap(10);
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
-		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES));
+		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES).get());
+		toChoiceBox = new ArrayListValuedHashMap<>();
 		try {
 			listFieldsToFilters = configGenericFieldsSvc.getFieldToFilters(this.getClass(),
 					ConfigGenericFieldDTO.class);
@@ -82,9 +85,8 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 			dataTable.getSelectedRows().forEach(row -> {
 				try {
 					getServiceSvc().delete(row, getUsuario());
-					notificar(
-							String.format(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE),
-									row.getCodigo()));
+					notificar(i18n().valueBundle(LanguageConstant.LANGUAGE_SUCCESS_DELETE_CONFIG_ROW_CODE,
+							row.getCodigo()));
 				} catch (Exception e) {
 					error(e);
 				}
@@ -181,7 +183,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		return null;
+		return toChoiceBox;
 	}
 
 	@Override

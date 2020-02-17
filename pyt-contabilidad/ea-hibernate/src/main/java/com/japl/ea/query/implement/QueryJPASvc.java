@@ -73,7 +73,7 @@ public class QueryJPASvc implements IQuerySvc {
 				db.getHibernateConnect().close();
 			}
 		} catch (ReflectionException | IllegalArgumentException | SecurityException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH).get(), e);
 		}
 		return list;
 	}
@@ -89,11 +89,11 @@ public class QueryJPASvc implements IQuerySvc {
 	public <T extends ADto> T get(T obj) throws QueryException {
 		List<T> list = gets(obj);
 		if (list == null || list.size() == 0) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW));
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW).get());
 		}
 		if (list.size() > 1) {
 			throw new QueryException(
-					String.format(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_FOUND_ROWS), list.size()));
+					i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_FOUND_ROWS, list.size()).get());
 		}
 		return list.get(0);
 	}
@@ -124,7 +124,7 @@ public class QueryJPASvc implements IQuerySvc {
 			}
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE).get(), e);
 		}
 		return obj;
 	}
@@ -145,7 +145,7 @@ public class QueryJPASvc implements IQuerySvc {
 				obj = (T) ReflectionUtils.instanciar().copy(jpa, obj.getClass());
 			}
 		} catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW).get(), e);
 		}
 	}
 
@@ -176,7 +176,7 @@ public class QueryJPASvc implements IQuerySvc {
 				return Integer.valueOf(result.toString());
 			}
 		} catch (ReflectionException | IllegalArgumentException | SecurityException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS).get(), e);
 		}
 		return 0;
 	}
@@ -238,7 +238,7 @@ public class QueryJPASvc implements IQuerySvc {
 				return true;
 			}
 		} catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE).get(), e);
 		}
 		return false;
 	}
@@ -265,7 +265,7 @@ public class QueryJPASvc implements IQuerySvc {
 			}
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE).get(), e);
 		}
 		return false;
 	}

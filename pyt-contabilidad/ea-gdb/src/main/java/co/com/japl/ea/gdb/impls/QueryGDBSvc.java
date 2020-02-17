@@ -13,9 +13,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.CacheUtil;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.RefreshCodeValidation;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.RefreshCodeConstant;
 import org.pyt.common.exceptions.QueryException;
@@ -112,7 +112,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
 				| StatementSqlException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH).get(), e);
 		}
 		return list;
 	}
@@ -152,8 +152,9 @@ public class QueryGDBSvc implements IQuerySvc {
 	}
 
 	private <T extends ADto> void findJoins(List<T> list) {
-		if (RefreshCodeValidation.getInstance().validate(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN)) {
+		if (CacheUtil.INSTANCE().isRefresh(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN)) {
 			mapJoin.clear();
+			CacheUtil.INSTANCE().load(RefreshCodeConstant.CONST_CLEAN_CACHE_QUERY_JOIN);
 		}
 		list.forEach(dto -> searchFieldTypeADTO(dto));
 	}
@@ -175,7 +176,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
 				| StatementSqlException | ClassNotFoundException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH).get(), e);
 		}
 		return list;
 	}
@@ -184,11 +185,11 @@ public class QueryGDBSvc implements IQuerySvc {
 	public <T extends ADto> T get(T obj) throws QueryException {
 		List<T> list = gets(obj, 0, 1);
 		if (list == null || list.size() == 0) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW));
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_NOT_FOUND_ROW).get());
 		}
 		if (list.size() > 1) {
 			throw new QueryException(
-					String.format(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_FOUND_ROWS), list.size()));
+					i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_FOUND_ROWS, list.size()).get());
 		}
 		return list.get(0);
 	}
@@ -210,13 +211,13 @@ public class QueryGDBSvc implements IQuerySvc {
 				}
 				return obj;
 			} else {
-				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_EXEC));
+				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_EXEC).get());
 			}
 		} catch (IllegalArgumentException | SecurityException e) {
 			if (newDto) {
 				obj.setCodigo(null);
 			}
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE).get(), e);
 		}
 	}
 
@@ -229,7 +230,7 @@ public class QueryGDBSvc implements IQuerySvc {
 			var query = statement.update(obj);
 			return db.executeIUD(query);
 		} catch (Exception e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT).get(), e);
 		}
 	}
 
@@ -241,7 +242,7 @@ public class QueryGDBSvc implements IQuerySvc {
 						countRow(obj.getClass().getConstructor().newInstance())));
 			} else {
 				if (countRow(obj) > 0) {
-					throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_ROW_EXISTS));
+					throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_ROW_EXISTS).get());
 				}
 			}
 			obj.setCreador(user.getNombre());
@@ -252,7 +253,8 @@ public class QueryGDBSvc implements IQuerySvc {
 
 			return db.executeIUD(query);
 		} catch (Exception e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT), e);
+			obj.setCodigo(null);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT).get(), e);
 		}
 	}
 
@@ -275,11 +277,11 @@ public class QueryGDBSvc implements IQuerySvc {
 			var statement = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
 			var query = statement.delete(obj);
 			if (!db.executeIUD(query)) {
-				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_EXEC_DELETE));
+				throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_EXEC_DELETE).get());
 			}
 			removeJoinCache(obj.getCodigo());
 		} catch (SQLException | IllegalArgumentException | SecurityException | StatementSqlException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_DELETE_ROW).get(), e);
 		}
 	}
 
@@ -295,7 +297,7 @@ public class QueryGDBSvc implements IQuerySvc {
 				return rs.getInt(QueryConstants.CONST_FIELD_COUNT);
 			}
 		} catch (SQLException | IllegalArgumentException | SecurityException | StatementSqlException e) {
-			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS), e);
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS).get(), e);
 		}
 		return 0;
 	}

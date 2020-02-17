@@ -83,7 +83,6 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	private String codigoDocumento;
 	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@FXML
 	private final void initialize() {
 		registro = new DetalleDTO();
@@ -96,7 +95,7 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	private void searchFilters() {
 		try {
 			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
-				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found.").get());
 			}
 			var documentos = new DocumentosDTO();
 			documentos.setClaseControlar(DetalleDTO.class);
@@ -113,7 +112,7 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	private void searchColumns() {
 		try {
 			if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo())) {
-				throw new Exception(i18n().valueBundle("document_Type_didnt_found."));
+				throw new Exception(i18n().valueBundle("document_Type_didnt_found.").get());
 			}
 			var documentos = new DocumentosDTO();
 			documentos.setClaseControlar(DetalleDTO.class);
@@ -223,11 +222,11 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	 */
 	public final void load(VBox panel, ParametroDTO tipoDocumento, String codigoDocumento) throws Exception {
 		if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo()))
-			throw new Exception("No se suministro el tipo de documento.");
+			throw new Exception(i18n("err.documenttype.havent.been.entered"));
 		if (panel == null)
-			throw new Exception("El panel de creacion no se suministro.");
+			throw new Exception(i18n("err.panel.havent.been.entered"));
 		if (StringUtils.isBlank(codigoDocumento))
-			throw new Exception("No se suministro el codigo del documento..");
+			throw new Exception(i18n("err.documentcode.hevent.been.entered"));
 		this.tipoDocumento = tipoDocumento;
 		this.codigoDocumento = codigoDocumento;
 		panelCentral = panel;
@@ -243,7 +242,7 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 		try {
 			getController(panelCentral, DetalleBean.class).load(panelCentral, tipoDocumento, codigoDocumento);
 		} catch (Exception e) {
-			error("No se logro cargar la pantalla para agregar el nuevo detalle.");
+			errorI18n("err.detail.cant.load.screen.add");
 		}
 	}
 
@@ -266,10 +265,10 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 				try {
 					getController(panelCentral, DetalleBean.class).load(panelCentral, registro, tipoDocumento);
 				} catch (Exception e) {
-					error("No se logro la pantalla para editar el detalle.");
+					errorI18n("err.detial.cant.load.screen.edit");
 				}
 			} else if (list.size() > 1) {
-				error("Se seleccionaron varios detalles.");
+				errorI18n("err.selecting.alotof.details");
 			} else {
 				error("No se selecciono ningun detalle.");
 			}
@@ -283,7 +282,7 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	public final void eliminar() {
 		try {
 			((ConfirmPopupBean) LoadAppFxml.loadBeanFxml(new Stage(), (Class) ConfirmPopupBean.class))
-					.load("#{ListaDetalleBean.delete}", "¿Desea eliminar los registros seleccionados?");
+					.load("#{ListaDetalleBean.delete}", i18n("mensaje.wish.do.delete.selected.rows"));
 		} catch (Exception e) {
 			error(e);
 		}
@@ -303,9 +302,9 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 					error(e);
 				}
 			} // end for
-			notificar("Se eliminaron " + i + "/" + lista.size() + " detalles.");
+			notificar(i18n().valueBundle("mensaje.delete.it.detials", i, lista.size()));
 		} else {
-			notificar("No se selecciono registros a eliminar.");
+			alertaI18n("warn.rows.wasnt.selected.to.delete");
 		}
 	}
 

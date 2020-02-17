@@ -4,7 +4,6 @@ import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IM
 
 import java.util.List;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
@@ -51,7 +50,7 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 	public void initialize() {
 		try {
 			filtro = new HelpDTO();
-			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.helps"));
+			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.helps").get());
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
@@ -59,7 +58,7 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), HelpDTO.class);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), HelpDTO.class);
 			loadDataModel(paginator, tableGeneric);
-			loadFields(TypeGeneric.FIELD);
+			loadFields(TypeGeneric.FILTER);
 			loadColumns();
 		} catch (Exception e) {
 			error(e);
@@ -156,12 +155,6 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 		default:
 			break;
 		}
-		return null;
-	}
-
-	@Override
-	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

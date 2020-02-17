@@ -1,6 +1,5 @@
 package org.pyt.common.common;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,8 +32,9 @@ public final class I18n {
 	}
 
 	public final static synchronized I18n instance() {
-		if (instances == null) {
+		if (CacheUtil.INSTANCE().isRefresh("International(I18n)")) {
 			instances = new I18n();
+			CacheUtil.INSTANCE().load("International(I18n)");
 		}
 		return instances;
 	}
@@ -65,18 +65,29 @@ public final class I18n {
 	}
 
 	/**
+	 * Permite obtener valores de i18n de forma rápida
+	 * 
+	 * @param key {@link String}
+	 * @return {@link String}
+	 */
+	public final String get(String key) {
+		return valueBundle(key).get();
+	}
+
+	/**
 	 * Retorna el valor que se encuentra en la llave suministrada de la
 	 * internacionalizacion
 	 * 
 	 * @param key {@link String}
 	 * @return {@link String}
 	 */
-	public final String valueBundle(String key) {
+	public final OptI18n valueBundle(String key) {
+		return OptI18n.process(value -> {
 		try {
 			if (languagesDB != null && languagesDB.containsKey(key)) {
-				return ((ADto) languagesDB.get(key)).get(LanguageConstant.CONST_TEXT_BUNDLE_LANGUAGES);
+					return ((ADto) languagesDB.get(value)).get(LanguageConstant.CONST_TEXT_BUNDLE_LANGUAGES);
 			} else {
-				return getLanguages().getString(key);
+					return getLanguages().getString(value);
 			}
 		} catch (Exception exception) {
 			try {
@@ -85,13 +96,14 @@ public final class I18n {
 				logger.logger(exception);
 				logger.logger(e);
 			}
-			return key;
+				return value;
 		}
+		}, key);
 	}
 	
-	public final String valueBundle(String key,Object... formats) {
+	public final OptI18n valueBundle(String key, Object... formats) {
 		var pattern = valueBundle(key);
-		return new MessageFormat(pattern).format(formats);
+		return OptI18n.ifNullable(pattern.get(), key, formats);
 	}
 
 	public final void setBunde(String bundle) {

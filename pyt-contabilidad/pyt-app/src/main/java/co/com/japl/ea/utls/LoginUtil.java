@@ -15,11 +15,13 @@ import static org.pyt.common.constants.languages.Login.CONST_LOGIN_CHANGING_STAT
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Inet4Address;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -132,15 +134,28 @@ public class LoginUtil {
 				if (usuario.getState() == 1) {
 					usuarioSystem = usuario;
 				} else {
-					throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_CODE_EMPTY));
+					throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_CODE_EMPTY).get());
 				}
 			} else {
-				throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_STATE_INVALID));
+				throw new RuntimeException(I18n.instance().valueBundle(CONST_LOGIN_CHANGING_STATE_INVALID).get());
 			}
 		}
 	}
 
 	public static final Boolean isRemember() {
 		return Optional.ofNullable(remember).orElse(false);
+	}
+
+	public static final String encodePassword(String userName, String password) {
+		String host = "0.0.0.0/24";
+		try {
+			host = Inet4Address.getLocalHost().toString();
+		} catch (java.net.UnknownHostException e) {
+			LOGGER.logger(e);
+		}
+		password = new StringBuffer().append(userName).append(password).append("|").append(LocalDate.now().toString())
+				.append("|").append(host).toString();
+		password = Base64.getEncoder().encodeToString(password.getBytes());
+		return password;
 	}
 }

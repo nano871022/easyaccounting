@@ -1,13 +1,15 @@
 package co.com.japl.ea.beans.abstracts;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.CacheUtil;
 import org.pyt.common.common.Comunicacion;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
-import org.pyt.common.common.RefreshCodeValidation;
+import org.pyt.common.common.OptI18n;
 import org.pyt.common.constants.RefreshCodeConstant;
 import org.pyt.common.exceptions.ReflectionException;
 
@@ -90,11 +92,19 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 		}
 	}
 
+	public String i18n(String code) {
+		return i18n().get(code);
+	}
+
+	public OptI18n i18nOpt(String code) {
+		return i18n().valueBundle(code);
+	}
+
 	public I18n i18n() {
 		var i18n = I18n.instance();
-		if (i18n.isEmptyDBLanguages()
-				|| RefreshCodeValidation.getInstance().validate(RefreshCodeConstant.CONST_ADD_CACHE_LANGUAGE)) {
+		if (CacheUtil.INSTANCE().isRefresh(RefreshCodeConstant.CONST_ADD_CACHE_LANGUAGE)) {
 			loadLanguagesDB(i18n);
+			CacheUtil.INSTANCE().load(RefreshCodeConstant.CONST_ADD_CACHE_LANGUAGE);
 		}
 		return i18n;
 	}
@@ -105,5 +115,9 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 
 	protected final void setUsuario(UsuarioDTO usuario) {
 		LoginUtil.setUsuarioLogin(Optional.ofNullable(usuario).orElse(new UsuarioDTO()));
+	}
+
+	protected final String concat(String... text) {
+		return Arrays.asList(text).stream().reduce("", (before, now) -> before + now);
 	}
 }

@@ -12,6 +12,8 @@ public interface IUsersSvc {
 
 	public List<UsuarioDTO> getAll(UsuarioDTO user, Integer init, Integer size) throws Exception;
 
+	public List<UsuarioDTO> getAll(UsuarioDTO user) throws Exception;
+
 	public UsuarioDTO get(UsuarioDTO user) throws Exception;
 
 	public void update(UsuarioDTO updUser, UsuarioDTO user) throws Exception;

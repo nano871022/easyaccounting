@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
-import org.pyt.common.common.Compare;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 
@@ -203,10 +203,11 @@ public final class ValidateValues {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	public final <T extends ADto> Boolean validateDto(Object obj, Object obj2) throws ValidateValueException {
 		T dto = (T) obj;
-		if (new Compare<T>((T) obj).to((T) obj2)) {
+		T dto2 = (T) obj2;
+		if (dto.getCodigo().contentEquals(dto2.getCodigo())) {
 			return true;
 		}
 		return false;
@@ -276,7 +277,7 @@ public final class ValidateValues {
 		} else if (clazz == BigDecimal.class) {
 			if (value.getClass() == Integer.class) {
 				return (T) new BigDecimal((int) value);
-			} else if (value.getClass() == String.class) {
+			} else if (value.getClass() == String.class && StringUtils.isNotBlank((String) value)) {
 				return (T) new BigDecimal((String) value);
 			}
 		} else if (clazz == Integer.class) {
@@ -384,11 +385,8 @@ public final class ValidateValues {
 	private final <T, S> T convertValueToClassMethodStatic(S value, Class clazz, Class originClass)
 			throws ValidateValueException {
 		try {
-//		for (var method : list) {
-//			if (method.isClassInOut(value.getClass(), originClass)) {
-//				return (T) method.getValueInvoke(value);
-//			}
-//		}
+			if (value instanceof String && StringUtils.isBlank((String) value))
+				return null;
 			var metodos = clazz.getDeclaredMethods();
 			for (Method metodo : metodos) {
 				if (Modifier.isStatic(metodo.getModifiers())
@@ -463,6 +461,15 @@ public final class ValidateValues {
 		
 	}
 	
+	public final <M, N, V> Boolean numericBetween(M value, N value2, V value3) {
+		Boolean valid = true;
+		var r1 = compareNumbers(value, value2);
+		var r2 = compareNumbers(value, value3);
+		valid &= r1 == 1 || r1 == 0;
+		valid &= r2 == -1 || r2 == 0;
+		return valid;
+	}
+
 	public final Boolean isDate(Class clazz) {
 		return clazz == Date.class || clazz == LocalDate.class || clazz == LocalDateTime.class; 
 	}
@@ -631,5 +638,21 @@ public final class ValidateValues {
 			}
 		}
 		return -1;
+	}
+
+	public final <O> Boolean isNotBlank(O value) {
+		if (value == null) {
+			return false;
+		}
+		if (isString(value.getClass())) {
+			return StringUtils.isNotBlank((String) value);
+		} else if (isDate(value.getClass())) {
+			return true;
+		} else if (isNumber(value.getClass())) {
+			return true;
+		} else if (value instanceof ADto) {
+			return DtoUtils.isNotBlank((ADto) value);
+		}
+		return false;
 	}
 }

@@ -147,9 +147,9 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	 */
 	public final void load(VBox panel, ParametroDTO tipoDoc, String codigoDocumento) throws Exception {
 		if (tipoDoc == null || StringUtils.isBlank(tipoDoc.getCodigo()))
-			throw new Exception("No se suministro el tipo de documento.");
+			throw new Exception(i18n("err.documenttype.wasnt.entered"));
 		if (panel == null)
-			throw new Exception("El panel no se suministro.");
+			throw new Exception(i18n("err.panel.wasnt.entered"));
 		registro = new DetalleDTO();
 		tipoDocumento = tipoDoc;
 		panelCentral = panel;
@@ -160,16 +160,16 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 
 	public final void load(VBox panel, DetalleDTO registro, ParametroDTO tipoDoc) throws Exception {
 		if (tipoDoc == null || StringUtils.isBlank(tipoDoc.getCodigo()))
-			throw new Exception("No se suministro el tipo de documento.");
+			throw new Exception(i18n().get("err.documenttype.wasnt.entered"));
 		if (registro == null || StringUtils.isBlank(registro.getCodigo()))
-			throw new Exception("No se suministro el detalle a modificar.");
+			throw new Exception(i18n("err.detail.wasnt.entered"));
 		if (panel == null)
-			throw new Exception("El panel no se suministro.");
+			throw new Exception(i18n("err.panel.wasnt.entered"));
 		this.registro = registro;
 		tipoDocumento = tipoDoc;
 		codigoDocumento = registro.getCodigoDocumento();
 		panelCentral = panel;
-		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
+		titulo.setText(concat(titulo.getText(), ": ", tipoDoc.getNombre()));
 		loadField();
 	}
 
@@ -177,18 +177,17 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	 * Se encarga de guardar todo
 	 */
 	public final void guardar() {
-		// loadData();
-		if (valid()) {
+		if (validFields()) {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					registro.setCodigoDocumento(codigoDocumento);
 					documentosSvc.update(registro, getUsuario());
-					notificar("Se actualizo el detalle.");
+					notificarI18n("mensaje.detail.have.been.updated");
 					loadField();
 				} else {
 					registro.setCodigoDocumento(codigoDocumento);
 					registro = documentosSvc.insert(registro, getUsuario());
-					notificar("Se agrego el nuevo detalle.");
+					notificarI18n("mensaje.detail.have.been.inserted");
 					loadField();
 				}
 			} catch (DocumentosException e) {
@@ -204,7 +203,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		try {
 			getController(panelCentral, ListaDetalleBean.class).load(panelCentral, tipoDocumento, codigoDocumento);
 		} catch (Exception e) {
-			error("No se logro cargar el panel de lista de detalle.");
+			errorI18n("err.panel.cant.load.list.detail");
 		}
 	}
 
