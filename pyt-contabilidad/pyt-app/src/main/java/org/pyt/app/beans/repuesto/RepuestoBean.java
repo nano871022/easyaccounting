@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.exceptions.RepuestoException;
+import org.pyt.common.exceptions.inventario.ProductosException;
 
-import com.pyt.service.dto.RepuestoDTO;
-import com.pyt.service.interfaces.IRepuestosSvc;
+import com.pyt.service.dto.inventario.ProductoDTO;
+import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -25,23 +26,23 @@ import javafx.scene.layout.HBox;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view/repuesto", file = "listRepuesto.fxml")
-public class RepuestoBean extends ABean<RepuestoDTO> {
-	@Inject(resource = "com.pyt.service.implement.RepuestosSvc")
-	private IRepuestosSvc repuestoSvc;
+public class RepuestoBean extends ABean<ProductoDTO> {
+	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
+	private IProductosSvc productosSvc;
 	@FXML
-	private javafx.scene.control.TableView<RepuestoDTO> tabla;
+	private javafx.scene.control.TableView<ProductoDTO> tabla;
 	@FXML
 	private TextField nombre;
 	@FXML
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
-	private DataTableFXML<RepuestoDTO, RepuestoDTO> dt;
+	private DataTableFXMLUtil<ProductoDTO, ProductoDTO> dt;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Repuestos";
-		registro = new RepuestoDTO();
+		NombreVentana = i18n().get("fxml.title.list.spare.pars");
+		registro = new ProductoDTO();
 		lazy();
 	}
 
@@ -49,34 +50,34 @@ public class RepuestoBean extends ABean<RepuestoDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<RepuestoDTO, RepuestoDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ProductoDTO, ProductoDTO>(paginador, tabla) {
 			@Override
-			public List<RepuestoDTO> getList(RepuestoDTO filter, Integer page, Integer rows) {
-				List<RepuestoDTO> lista = new ArrayList<RepuestoDTO>();
+			public List<ProductoDTO> getList(ProductoDTO filter, Integer page, Integer rows) {
+				List<ProductoDTO> lista = new ArrayList<ProductoDTO>();
 				try {
-					lista = repuestoSvc.getRepuestos(filter, page, rows);
-				} catch (RepuestoException e) {
+					lista = productosSvc.productos(filter, page - 1, rows);
+				} catch (ProductosException e) {
 					error(e);
 				}
 				return lista;
 			}
 
 			@Override
-			public Integer getTotalRows(RepuestoDTO filter) {
+			public Integer getTotalRows(ProductoDTO filter) {
 				Integer count = 0;
 				try {
-					count = repuestoSvc.getTotalRows(filter);
-				} catch (RepuestoException e) {
+					count = productosSvc.getTotalRows(filter);
+				} catch (ProductosException e) {
 					error(e);
 				}
 				return count;
 			}
 
 			@Override
-			public RepuestoDTO getFilter() {
-				RepuestoDTO filtro = new RepuestoDTO();
+			public ProductoDTO getFilter() {
+				ProductoDTO filtro = new ProductoDTO();
 				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre(nombre.getText());
+					filtro.setNombre("%" + nombre.getText() + "%");
 				}
 				return filtro;
 			}
@@ -88,7 +89,7 @@ public class RepuestoBean extends ABean<RepuestoDTO> {
 	}
 
 	public void add() {
-		getController(RepuestoCRUBean.class);
+		getController(RepuestoCRUBean.class).load();
 	}
 
 	public void search() {
@@ -97,15 +98,26 @@ public class RepuestoBean extends ABean<RepuestoDTO> {
 
 	public void del() {
 		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{RepuestoBean.delete}",
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				repuestoSvc.delete(registro, userLogin);
-				notificar("Se ha eliminado el repuesto.");
+				productosSvc.del(registro, getUsuario());
+				notificarI18n("mensaje.spartpart.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un repuesto.");
+				alertaI18n("err.spartpart.havent.been.selected");
 			}
-		} catch (RepuestoException e) {
+		} catch (ProductosException e) {
 			error(e);
 		}
 	}
@@ -115,7 +127,7 @@ public class RepuestoBean extends ABean<RepuestoDTO> {
 		if (registro != null) {
 			getController(RepuestoCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un repuesto.");
+			alertaI18n("err.spartpart.havent.been.selected");
 		}
 	}
 
@@ -123,7 +135,7 @@ public class RepuestoBean extends ABean<RepuestoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<RepuestoDTO, RepuestoDTO> getDt() {
+	public DataTableFXMLUtil<ProductoDTO, ProductoDTO> getDt() {
 		return dt;
 	}
 }

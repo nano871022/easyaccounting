@@ -1,26 +1,23 @@
 package org.pyt.app.beans.concepto;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
+import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
+import org.pyt.common.constants.CuentaContableConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
-import org.pyt.common.exceptions.EmpresasException;
-import org.pyt.common.exceptions.ParametroException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.ConceptoDTO;
+import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
-import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -37,43 +34,41 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 	private IDocumentosSvc documentoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
-	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
-	private IEmpresasSvc empresaSvc;
 	@FXML
 	private Label codigo;
 	@FXML
 	private TextField nombre;
 	@FXML
+	private TextField subConcepto;
+	@FXML
 	private TextField descripcion;
 	@FXML
-	private ChoiceBox<String> empresa;
+	private PopupParametrizedControl empresa;
 	@FXML
-	private ChoiceBox<String> estado;
+	private PopupParametrizedControl cuentasGastos;
+	@FXML
+	private PopupParametrizedControl cuentasXPagar;
+	@FXML
+	private PopupParametrizedControl estado;
 	@FXML
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
-	private List<ParametroDTO> listEstado;
-	private List<EmpresaDTO> listEmpresa;
+	public final static String FIELD_NAME = "nombre";
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Concepto";
+		NombreVentana = i18n().valueBundle("fxml.title.add.new.concept").get();
 		titulo.setText(NombreVentana);
 		registro = new ConceptoDTO();
-		ParametroDTO estados = new ParametroDTO();
-		try {
-			listEmpresa = empresaSvc.getAllEmpresas(new EmpresaDTO());
-			listEstado = parametroSvc.getAllParametros(estados,ParametroConstants.GRUPO_ESTADO_CONCEPTO);
-		} catch (ParametroException e) {
-			error(e);
-		} catch (EmpresasException e) {
-			error(e);
-		}
-		SelectList.put(empresa, listEmpresa, "nombre");
-		SelectList.put(estado, listEstado, "nombre");
-		empresa.getSelectionModel().selectFirst();
-		estado.getSelectionModel().selectFirst();
+		empresa.setPopupOpenAction(() -> popupEmpresa());
+		empresa.setCleanValue(() -> registro.setEmpresa(null));
+		estado.setPopupOpenAction(() -> popupEstado());
+		estado.setCleanValue(() -> registro.setEstado(null));
+		cuentasGastos.setPopupOpenAction(() -> popupCuentaGasto());
+		cuentasGastos.setCleanValue(() -> registro.setCuentaGasto(null));
+		cuentasXPagar.setPopupOpenAction(() -> popupCuentaXPagar());
+		cuentasXPagar.setCleanValue(() -> registro.setCuentaXPagar(null));
 	}
 
 	/**
@@ -86,8 +81,7 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		registro.setCodigo(codigo.getText());
 		registro.setNombre(nombre.getText());
 		registro.setDescripcion(descripcion.getText());
-		registro.setEmpresa(SelectList.get(empresa, listEmpresa, "nombre"));
-		registro.setEstado(SelectList.get(estado, listEstado, "nombre"));
+		registro.setSubconcepto(subConcepto.getText());
 	}
 
 	private void loadFxml() {
@@ -96,15 +90,20 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		codigo.setText(registro.getCodigo());
 		nombre.setText(registro.getNombre());
 		descripcion.setText(registro.getDescripcion());
+		subConcepto.setText(registro.getSubconcepto());
+		empresa.setText(registro.getEmpresa().getNombre());
+		estado.setText(registro.getEstado().getDescripcion());
+		cuentasGastos.setText(registro.getCuentaGasto().getNombre());
+		cuentasXPagar.setText(registro.getCuentaXPagar().getNombre());
 	}
 
 	public void load(ConceptoDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
 			loadFxml();
-			titulo.setText("Modificando concepto");
+			titulo.setText(i18n().get("fxml.title.update.concept"));
 		} else {
-			error("EL concepto es invalido para editar.");
+			error(i18n().valueBundle("err.concept.invalid.to.edit"));
 			cancel();
 		}
 	}
@@ -116,10 +115,18 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getDescripcion());
-		valid &= registro.getEstado() != null && StringUtils.isNotBlank(registro.getEstado().getCodigo());
-		valid &= registro.getEmpresa() != null && StringUtils.isNotBlank(registro.getEmpresa().getCodigo());
+		valid &= ValidFields.valid(registro.getNombre(), nombre, true, 1, 100,
+				i18n().valueBundle("err.msn.concept.field.name.empty"));
+		valid &= ValidFields.valid(registro.getDescripcion(), descripcion, true, 1, 100,
+				i18n().valueBundle("err.msn.concept.field.description.empty"));
+		valid &= ValidFields.valid(registro.getEstado(), estado, true, null, null,
+				i18n().valueBundle("err.msn.concept.field.state.empty"));
+		valid &= ValidFields.valid(registro.getEmpresa(), empresa, true, null, null,
+				i18n().valueBundle("err.msn.concept.field.enterprise.empty"));
+		valid &= ValidFields.valid(registro.getCuentaGasto(), cuentasGastos, true, null, null,
+				i18n().valueBundle("err.msn.concept.field.expenseaccount.empty"));
+		valid &= ValidFields.valid(registro.getCuentaXPagar(), cuentasXPagar, true, null, null,
+				i18n().valueBundle("err.msn.concept.field.debtstopay.empty"));
 		return valid;
 	}
 
@@ -128,13 +135,13 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					documentoSvc.update(registro, userLogin);
-					notificar("Se guardo el concepto correctamente.");
+					documentoSvc.update(registro, getUsuario());
+					notificarI18n(("mensaje.concept.have.been.update.succesfull"));
 					cancel();
 				} else {
-					documentoSvc.insert(registro, userLogin);
+					documentoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
-					notificar("Se agrego el concepto correctamente.");
+					notificarI18n(("mensaje.concept.have.been.insert.succesfull"));
 					cancel();
 				}
 			}
@@ -143,8 +150,70 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		}
 	}
 
+	public final void popupEmpresa() {
+		try {
+			controllerGenPopup(EmpresaDTO.class).setWidth(350).load("#{ConceptoCRUBean.empresa}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setEmpresa(EmpresaDTO empresa) {
+		registro.setEmpresa(empresa);
+		this.empresa.setText(empresa.getNombre());
+	}
+
+	public final void popupCuentaGasto() {
+		try {
+			controllerGenPopup(CuentaContableDTO.class).setWidth(350)
+					.addDefaultValuesToGenericParametrized(CuentaContableConstants.FIELD_ASOCIADO,
+							CuentaContableConstants.CUENTA_GASTO)
+					.load("#{ConceptoCRUBean.cuentaGasto}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setCuentaGasto(CuentaContableDTO cuentaContable) {
+		registro.setCuentaGasto(cuentaContable);
+		cuentasGastos.setText(cuentaContable.getNombre());
+	}
+
+	public final void popupCuentaXPagar() {
+		try {
+			controllerGenPopup(CuentaContableDTO.class).setWidth(350)
+					.addDefaultValuesToGenericParametrized(CuentaContableConstants.FIELD_ASOCIADO,
+							CuentaContableConstants.CUENTA_X_PAGAR)
+					.load("#{ConceptoCRUBean.cuentaXPagar}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setCuentaXPagar(CuentaContableDTO cuentaContable) {
+		registro.setCuentaXPagar(cuentaContable);
+		cuentasXPagar.setText(cuentaContable.getNombre());
+	}
+
+	public final void popupEstado() {
+		try {
+			controllerGenPopup(ParametroDTO.class)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_ESTADO_CONCEPTO)
+					.setWidth(350).load("#{ConceptoCRUBean.estado}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setEstado(ParametroDTO parametro) {
+		registro.setEstado(parametro);
+		estado.setText(parametro.getDescripcion());
+	}
+
 	public void cancel() {
 		getController(ConceptoBean.class);
+		destroy();
 	}
 
 }

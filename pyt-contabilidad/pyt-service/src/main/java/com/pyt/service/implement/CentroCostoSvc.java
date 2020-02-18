@@ -1,11 +1,14 @@
 package com.pyt.service.implement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -13,6 +16,11 @@ import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.CentroCostoDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
+
+import co.com.arquitectura.annotation.proccessor.Services.Type;
+import co.com.arquitectura.annotation.proccessor.Services.kind;
+import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class CentroCostoSvc extends Services implements ICentroCostosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
@@ -102,4 +110,65 @@ public class CentroCostoSvc extends Services implements ICentroCostosSvc {
 		}
 	}
 
+	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso Centro de Costos", descripcion = "Ingreso de servicios de centro de costos", tipo = kind.PUBLIC, type = Type.CREATE)
+	public CentroCostoDTO insertService(CentroCostoDTO dto, UsuarioDTO user) throws CentroCostosException {
+		if (DtoUtils.isBlank(dto)) {
+			throw new CentroCostosException(i18n().get("err.costcenter.is.invalid"));
+		}
+		if (!DtoUtils.haveCode(user)) {
+			throw new CentroCostosException(i18n().get("err.user.is.invalid"));
+		}
+		try {
+			// VERIFICACION DEL CAMPO EMPRESA BUSCADO POR EL NIT
+			if (DtoUtils.isNotBlankFields(dto.getEmpresa(), "nit")) {
+				var enterprises = querySvc.gets(dto.getEmpresa());
+				if (ListUtils.isNotBlank(enterprises)) {
+					if (ListUtils.haveOneItem(enterprises)) {
+						dto.setEmpresa(enterprises.get(0));
+					} else {
+						throw new CentroCostosException(i18n().get("err.enterprise.have.been.found.alotof.rows"));
+					}
+				} else {
+					throw new CentroCostosException(i18n().get("err.enterprise.wasnt.found"));
+				}
+			} else {
+				throw new CentroCostosException(i18n().get("err.enterprise.is.empty"));
+			}
+			// VERIFICACION DEL CAMPO ESTADO VALIDA QUE EL VALOR SUMINISTRADO SEA ALGUNO DE
+			// LOS PERMITIDOS Y ADEMAS PONE EL VALOR CORRECTO
+			var list = Arrays.asList("S", "N", "1", "0");
+			if (StringUtils.isNotBlank(dto.getEstado())) {
+				Stream<String> foundState = list.stream().filter(row -> row.contentEquals(dto.getEstado()));
+				if (foundState.count() == 0) {
+					throw new CentroCostosException(i18n().get("err.status.wasnt.found"));
+				} else if ("S".contentEquals(foundState.findFirst().get())) {
+					dto.setEstado("1");
+				} else if ("N".contentEquals(foundState.findFirst().get())) {
+					dto.setEstado("0");
+				}
+			} else if (StringUtils.isBlank(dto.getEstado())) {
+				throw new CentroCostosException(i18n().get("err.status.is.empty"));
+			}
+			// VERIFICACION DEL CAMPO ORDEN, SI NO LO TIENE BUSCA LA CANTIDAD DE REGISTROS Y
+			// LE SUMA 1
+			if (dto.getOrden() == null) {
+				var cc = new CentroCostoDTO();
+				cc.setEstado("1");
+				cc.setEmpresa(dto.getEmpresa());
+				var found = querySvc.countRow(cc);
+				if (found != null) {
+					dto.setOrden(found + 1);
+				} else {
+					dto.setOrden(0);
+				}
+			}
+			if (querySvc.get(dto) != null && querySvc.insert(dto, user)) {
+				return dto;
+			} else {
+				throw new CentroCostosException(i18n().get("err.costcenter.was.saved"));
+			}
+		} catch (QueryException e) {
+			throw new CentroCostosException(i18n().get("err.costcenter.have.problems"), e);
+		}
+	}
 }

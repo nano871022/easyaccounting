@@ -3,15 +3,16 @@ package org.pyt.app.beans.empresa;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -38,12 +39,14 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	@FXML
 	private Button btnMod;
 	@FXML
+	private Button btnDel;
+	@FXML
 	private HBox paginador;
-	private DataTableFXML<EmpresaDTO, EmpresaDTO> dt;
+	private DataTableFXMLUtil<EmpresaDTO, EmpresaDTO> dt;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Empresas";
+		NombreVentana = i18n().get("fxml.title.list.enterprise");
 		registro = new EmpresaDTO();
 		lazy();
 	}
@@ -52,12 +55,12 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<EmpresaDTO, EmpresaDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<EmpresaDTO, EmpresaDTO>(paginador, tabla) {
 			@Override
 			public List<EmpresaDTO> getList(EmpresaDTO filter, Integer page, Integer rows) {
 				List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
 				try {
-					lista = empresaSvc.getEmpresas(filter, page, rows);
+					lista = empresaSvc.getEmpresas(filter, page - 1, rows);
 				} catch (EmpresasException e) {
 					error(e);
 				}
@@ -78,9 +81,15 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 			@Override
 			public EmpresaDTO getFilter() {
 				EmpresaDTO filtro = new EmpresaDTO();
-				filtro.setCodigo(codigo.getText());
-				filtro.setNombre(codigo.getText());
-				filtro.setCorreoElectronico(email.getText());
+				if (!codigo.getText().isEmpty()) {
+					filtro.setCodigo(codigo.getText());
+				}
+				if (!nombre.getText().isEmpty()) {
+					filtro.setNombre(nombre.getText());
+				}
+				if (!email.getText().isEmpty()) {
+					filtro.setCorreoElectronico(email.getText());
+				}
 				return filtro;
 			}
 		};
@@ -88,6 +97,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {
@@ -100,13 +110,24 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 
 	public void del() {
 		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{EmpresaBean.delete}",
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				empresaSvc.delete(registro, userLogin);
-				notificar("Se ha eliminaro la empresa.");
+				empresaSvc.delete(registro, getUsuario());
+				notificarI18n("mensaje.enterprise.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una empresa.");
+				alertaI18n("err.enterprise.have.been.selected");
 			}
 		} catch (EmpresasException e) {
 			error(e);
@@ -118,7 +139,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		if (registro != null) {
 			getController(EmpresaCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado una empresa.");
+			alertaI18n("err.enterprise.havent.been.selected");
 		}
 	}
 
@@ -126,7 +147,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<EmpresaDTO, EmpresaDTO> getDt() {
+	public DataTableFXMLUtil<EmpresaDTO, EmpresaDTO> getDt() {
 		return dt;
 	}
 }

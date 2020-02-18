@@ -1,22 +1,21 @@
 package org.pyt.app.beans.empresa;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
+import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
-import org.pyt.common.constants.AppConstants;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.EmpresasException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.EmpresaDTO;
+import com.pyt.service.dto.PaisDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -48,36 +47,46 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	@FXML
 	private javafx.scene.control.TextField telefono;
 	@FXML
-	private javafx.scene.control.TextField pais;
+	private PopupParametrizedControl pais;
 	@FXML
-	private javafx.scene.control.ChoiceBox<String> moneda;
+	private PopupParametrizedControl representante;
 	@FXML
-	private javafx.scene.control.TextField representante;
-	@FXML
-	private javafx.scene.control.TextField contador;
+	private PopupParametrizedControl contador;
 	@FXML
 	private javafx.scene.control.TextField nContador;
 	@FXML
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
-	private List<ParametroDTO> lMoneda;
+	@FXML
+	private PopupParametrizedControl moneda;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nueva Empresa";
+		NombreVentana = i18n().get("fxml.title.add.new.enterprise");
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
-
-		try {
-			ParametroDTO moneda = new ParametroDTO();
-			moneda.setGrupo(ParametroConstants.GRUPO_MONEDA);
-			lMoneda = parametroSvc.getAllParametros(moneda);
-			SelectList.put(this.moneda, lMoneda, "descripcion");
-			pais.setText(AppConstants.DEFAULT_PAIS_COL);
-		} catch (ParametroException e) {
-			error(e);
-		}
+		pais.setPopupOpenAction(() -> popupPais());
+		pais.setCleanValue(() -> {
+			pais.setText(null);
+			registro.setPais(null);
+		});
+		moneda.setPopupOpenAction(() -> popupMonedas());
+		moneda.setCleanValue(() -> {
+			registro.setMonedaDefecto(null);
+			this.moneda.setText("");
+		});
+		representante.setPopupOpenAction(() -> popupRepresentante());
+		representante.setCleanValue(() -> {
+			registro.setRepresentante(null);
+			this.representante.setText("");
+		});
+		contador.setPopupOpenAction(() -> popupContador());
+		contador.setCleanValue(() -> {
+			registro.setContador(null);
+			this.contador.setText("");
+		});
+		nContador.setDisable(true);
 	}
 
 	/**
@@ -94,11 +103,20 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		registro.setDireccion(direccion.getText());
 		registro.setCorreoElectronico(email.getText());
 		registro.setTelefono(telefono.getText());
-		registro.setPais(pais.getText());
-		registro.setMonedaDefecto(SelectList.get(moneda, lMoneda, "descripcion"));
-		registro.setNombreRepresentante(representante.getText());
-		registro.setNombreContador(contador.getText());
-		registro.setTarjetaProfeccionalContador(nContador.getText());
+	}
+
+	public void popupPais() {
+		try {
+			controllerGenPopup(PaisDTO.class).addDefaultValuesToGenericParametrized("estado", 1).setWidth(350)
+					.load("#{EmpresaCRUBean.pais}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setPais(PaisDTO pais) {
+		registro.setPais(pais);
+		this.pais.setText(pais.getNombre());
 	}
 
 	private void loadFxml() {
@@ -111,20 +129,20 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		direccion.setText(registro.getDireccion());
 		email.setText(registro.getCorreoElectronico());
 		telefono.setText(registro.getTelefono());
-		pais.setText(registro.getPais());
-		SelectList.selectItem(moneda, lMoneda, "descripcion", registro.getMonedaDefecto(), "descripcion");
-		representante.setText(registro.getNombreRepresentante());
-		contador.setText(registro.getNombreContador());
-		nContador.setText(registro.getTarjetaProfeccionalContador());
+		moneda.setText(registro.getMonedaDefecto().getDescripcion());
+		representante.setText(registro.getRepresentante().getNombres());
+		contador.setText(registro.getContador().getNombres());
+		nContador.setText(registro.getContador().getNumeroTarjetaProfesional());
+		pais.setText(registro.getPais().getNombre());
 	}
 
 	public void load(EmpresaDTO dto) {
-		if (dto != null && dto.getCodigo() != null) {
+		if (DtoUtils.haveCode(dto)) {
 			registro = dto;
 			loadFxml();
-			titulo.setText("Modificando Empresa");
+			titulo.setText(i18n().get("mensaje.modifing.enterprise"));
 		} else {
-			error("La empresa es invalida para editar.");
+			error(i18n().get("err.enterprise.cant.edit"));
 			cancel();
 		}
 	}
@@ -133,13 +151,13 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		load();
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				empresaSvc.update(registro, userLogin);
-				notificar("Se guardo la empresa correctamente.");
+				empresaSvc.update(registro, getUsuario());
+				notificarI18n("mensaje.enterprise.was.updated.succefull");
 				cancel();
 			} else {
-				empresaSvc.insert(registro, userLogin);
+				empresaSvc.insert(registro, getUsuario());
 				codigo.setText(registro.getCodigo());
-				notificar("Se agrego la emrpesa correctamente.");
+				notificarI18n("mensaje.enterprise.was.inserted.succesfull");
 				cancel();
 			}
 		} catch (EmpresasException e) {
@@ -147,8 +165,49 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 		}
 	}
 
+	public void popupMonedas() {
+		try {
+			controllerGenPopup(ParametroDTO.class)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_MONEDA)
+					.setWidth(350).load("#{EmpresaCRUBean.moneda}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setMoneda(ParametroDTO moneda) {
+		registro.setMonedaDefecto(moneda);
+		this.moneda.setText(moneda.getDescripcion());
+	}
+
+	public void popupRepresentante() {
+		try {
+			controllerGenPopup(PersonaDTO.class).setWidth(400).load("#{EmpresaCRUBean.representante}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setRepresentante(PersonaDTO persona) {
+		registro.setRepresentante(persona);
+		this.representante.setText(persona.getNombres());
+	}
+
+	public void popupContador() {
+		try {
+			controllerGenPopup(PersonaDTO.class).setWidth(400).load("#{EmpresaCRUBean.contador}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setContador(PersonaDTO persona) {
+		registro.setContador(persona);
+		this.contador.setText(persona.getNombres());
+	}
+
 	public void cancel() {
 		getController(EmpresaBean.class);
 	}
-
 }

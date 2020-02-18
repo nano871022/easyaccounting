@@ -1,7 +1,6 @@
 package org.pyt.app.beans.interfaces;
 
-import org.pyt.app.components.DataTableFXML;
-
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 
 /**
@@ -21,7 +20,7 @@ public interface ListBasicBean {
 
 	/**
 	 * Este metodo es el encargado de tener la implementacion de
-	 * {@link DataTableFXML}
+	 * {@link DataTableFXMLUtil}
 	 */
 	public void lazy();
 

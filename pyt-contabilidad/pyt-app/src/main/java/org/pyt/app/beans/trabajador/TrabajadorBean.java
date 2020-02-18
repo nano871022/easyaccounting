@@ -1,18 +1,20 @@
 package org.pyt.app.beans.trabajador;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.EmpleadoException;
 
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -51,36 +53,46 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	@FXML
 	private TableColumn<TrabajadorDTO, String> cedula;
 	@FXML
+	private TableColumn<TrabajadorDTO, String> estado;
+	@FXML
 	private TableColumn<TrabajadorDTO, String> fechaNacimiento;
-	private DataTableFXML<TrabajadorDTO, TrabajadorDTO> dt;
+	private DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO> dt;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Empleados";
+		NombreVentana = i18n().get("fxml.title.list.employed");
 		registro = new TrabajadorDTO();
-		fechaNacimiento.setCellValueFactory(e->{
+		fechaNacimiento.setCellValueFactory(e -> {
+			var date = new SimpleDateFormat().format(e.getValue().getPersona().getFechaNacimiento());
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			sp.setValue(e.getValue().getPersona().getFechaNacimiento().toString());
+			if (date != null) {
+				sp.setValue(date);
+			}
 			return sp;
 		});
-		nombre.setCellValueFactory(e->{
+		nombre.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getPersona().getNombre());
 			return sp;
 		});
-		apellido.setCellValueFactory(e->{
+		apellido.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getPersona().getApellido());
 			return sp;
 		});
-		cedula.setCellValueFactory(e->{
+		cedula.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getPersona().getDocumento());
 			return sp;
 		});
-		email.setCellValueFactory(e->{
+		email.setCellValueFactory(e -> {
 			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
 			sp.setValue(e.getValue().getCorreo());
+			return sp;
+		});
+		estado.setCellValueFactory(e -> {
+			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
+			sp.setValue(e.getValue().getEstado().getNombre());
 			return sp;
 		});
 		lazy();
@@ -90,12 +102,12 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<TrabajadorDTO, TrabajadorDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO>(paginador, tabla) {
 			@Override
 			public List<TrabajadorDTO> getList(TrabajadorDTO filter, Integer page, Integer rows) {
 				List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
 				try {
-					lista = empleadosSvc.getTrabajadores(getFilter(), page, rows);
+					lista = empleadosSvc.getTrabajadores(filter, page - 1, rows);
 				} catch (EmpleadoException e) {
 					error(e);
 				}
@@ -117,9 +129,15 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 			public TrabajadorDTO getFilter() {
 				TrabajadorDTO filtro = new TrabajadorDTO();
 				filtro.setPersona(new PersonaDTO());
-				filtro.getPersona().setDocumento(documento.getText());
-				filtro.getPersona().setNombre(nombres.getText());
-				filtro.getPersona().setApellido(apellidos.getText());
+				if (!documento.getText().isEmpty()) {
+					filtro.getPersona().setDocumento(documento.getText());
+				}
+				if (!nombres.getText().isEmpty()) {
+					filtro.getPersona().setNombre(nombres.getText());
+				}
+				if (!apellidos.getText().isEmpty()) {
+					filtro.getPersona().setApellido(apellidos.getText());
+				}
 				return filtro;
 			}
 		};
@@ -139,13 +157,24 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 
 	public void del() {
 		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{TrabajadorBean.delete}",
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				empleadosSvc.delete(registro, userLogin);
-				notificar("Se ha eliminaro la empresa.");
+				empleadosSvc.delete(registro, getUsuario());
+				notificarI18n("mensaje.employe.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una empresa.");
+				alertaI18n("mensaje.employe.havent.been.selected");
 			}
 		} catch (EmpleadoException e) {
 			error(e);
@@ -157,7 +186,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 		if (registro != null) {
 			getController(TrabajadorCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado una empresa.");
+			alertaI18n("warn.employe.havent.been.selected");
 		}
 	}
 
@@ -165,7 +194,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<TrabajadorDTO, TrabajadorDTO> getDt() {
+	public DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO> getDt() {
 		return dt;
 	}
 }

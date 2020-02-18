@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.UsuarioDTO;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.QueryException;
 
@@ -13,6 +12,8 @@ import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
+
+import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class EmpleadosSvc extends Services implements IEmpleadosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
@@ -33,7 +34,7 @@ public class EmpleadosSvc extends Services implements IEmpleadosSvc {
 	public List<TrabajadorDTO> getTrabajadores(TrabajadorDTO dto, Integer init, Integer end) throws EmpleadoException {
 		List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
 		if (dto == null)
-			throw new EmpleadoException("El objeto trabajaro esta vacio.");
+			throw new EmpleadoException("El objeto trabajo esta vacio.");
 		try {
 			lista = querySvc.gets(dto, init, end);
 		} catch (QueryException e) {
@@ -162,6 +163,16 @@ public class EmpleadosSvc extends Services implements IEmpleadosSvc {
 	public Integer getTotalRows(TrabajadorDTO dto) throws EmpleadoException {
 		if (dto == null)
 			throw new EmpleadoException("EL objeto Trabajador esta vacio");
+		try {
+			return querySvc.countRow(dto);
+		} catch (QueryException e) {
+			throw new EmpleadoException(e.getMensage(), e);
+		}
+	}
+	@Override
+	public Integer getTotalRows(PersonaDTO dto) throws EmpleadoException {
+		if (dto == null)
+			throw new EmpleadoException("EL objeto persona esta vacio");
 		try {
 			return querySvc.countRow(dto);
 		} catch (QueryException e) {

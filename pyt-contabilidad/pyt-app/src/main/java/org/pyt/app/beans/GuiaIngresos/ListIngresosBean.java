@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.IngresoException;
 
 import com.pyt.service.dto.IngresoDTO;
 import com.pyt.service.interfaces.IIngresosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,7 +30,7 @@ import javafx.scene.layout.HBox;
 @FXMLFile(path = "view/guiaIngresos", file = "listIngresos.fxml")
 public class ListIngresosBean extends ABean<IngresoDTO> {
 	@Inject(resource = "com.pyt.service.implement.IngresosSvc")
-	private IIngresosSvc ingresosSvc;	
+	private IIngresosSvc ingresosSvc;
 	@FXML
 	private javafx.scene.control.TableView<IngresoDTO> tabla;
 	@FXML
@@ -42,31 +43,34 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
-	private DataTableFXML<IngresoDTO, IngresoDTO> dt;
+	@FXML
+	private Button eliminar;
+	private DataTableFXMLUtil<IngresoDTO, IngresoDTO> dt;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Ingresos";
+		NombreVentana = i18n().get("fxml.title.list.entry");
 		registro = new IngresoDTO();
-		empresa.cellValueFactoryProperty().setValue(e->{
-			if(e.getValue().getEmpresa() != null)
-			return new SimpleStringProperty(e.getValue().getEmpresa().getNombre());
+		empresa.cellValueFactoryProperty().setValue(e -> {
+			if (e.getValue().getEmpresa() != null)
+				return new SimpleStringProperty(e.getValue().getEmpresa().getNombre());
 			return null;
-			});
+		});
 		lazy();
 		search();
+		eliminar.setVisible(false);
 	}
 
 	/**
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<IngresoDTO, IngresoDTO>(paginador, tabla) {
-			@Override 
+		dt = new DataTableFXMLUtil<IngresoDTO, IngresoDTO>(paginador, tabla) {
+			@Override
 			public List<IngresoDTO> getList(IngresoDTO filter, Integer page, Integer rows) {
 				List<IngresoDTO> lista = new ArrayList<IngresoDTO>();
 				try {
-					lista = ingresosSvc.getIngresos(filter, page, rows);
+					lista = ingresosSvc.getIngresos(filter, page - 1, rows);
 				} catch (IngresoException e) {
 					error(e);
 				}
@@ -87,10 +91,10 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 			@Override
 			public IngresoDTO getFilter() {
 				IngresoDTO filtro = new IngresoDTO();
-				if(StringUtils.isNotBlank(placa.getText())) {
+				if (StringUtils.isNotBlank(placa.getText())) {
 					filtro.setPlacaVehiculo(placa.getText());
 				}
-				if(StringUtils.isNotBlank(descripcion.getText())) {
+				if (StringUtils.isNotBlank(descripcion.getText())) {
 					filtro.setDescripcion(descripcion.getText());
 				}
 				return filtro;
@@ -100,6 +104,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		eliminar.setVisible(isSelected());
 	}
 
 	public void add() {
@@ -112,13 +117,24 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 
 	public void del() {
 		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{ListIngresosBean.delete}",
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				ingresosSvc.delete(registro, userLogin);
-				notificar("Se ha eliminado el ingreso.");
+				ingresosSvc.delete(registro, getUsuario());
+				notificarI18n("mensaje.entry.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un ingreso.");
+				alertaI18n("mensaje.entry.havent.been.selected");
 			}
 		} catch (IngresoException e) {
 			error(e);
@@ -130,7 +146,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 		if (registro != null) {
 			getController(IngresosCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un ingreso.");
+			alertaI18n("mensaje.entry.have.been.selected");
 		}
 	}
 
@@ -138,7 +154,7 @@ public class ListIngresosBean extends ABean<IngresoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<IngresoDTO, IngresoDTO> getDt() {
+	public DataTableFXMLUtil<IngresoDTO, IngresoDTO> getDt() {
 		return dt;
 	}
 }

@@ -4,24 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.ConfirmPopupBean;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CuentaContableDTO;
+import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.interfaces.ICuentaContableSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -36,16 +39,18 @@ import javafx.scene.layout.HBox;
 public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
-	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
-	private IParametrosSvc parametroSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ParametroGrupoDTO> parametroGrupoSvc;
 	@FXML
 	private javafx.scene.control.TableView<CuentaContableDTO> tabla;
 	@FXML
 	private TextField nombre;
 	@FXML
-	private TextField asociado;
+	private PopupParametrizedControl asociado;
 	@FXML
-	private ChoiceBox<String> tipoCuentaContables;
+	private PopupParametrizedControl tipoPlanContable;
+	@FXML
+	private PopupParametrizedControl tipoCuentaContables;
 	@FXML
 	private Button btnMod;
 	@FXML
@@ -53,24 +58,33 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private HBox paginador;
 	@FXML
+	private TableColumn<CuentaContableDTO, String> tipo;
+	@FXML
+	private TableColumn<CuentaContableDTO, String> naturaleza;
+	@FXML
 	private TableColumn<CuentaContableDTO, String> tipoCuentaContable;
-	private DataTableFXML<CuentaContableDTO, CuentaContableDTO> dt;
-	private List<ParametroDTO> listTipoCuentas;
+	private DataTableFXMLUtil<CuentaContableDTO, CuentaContableDTO> dt;
+	private CuentaContableDTO filter;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Cuenta Contable";
+		NombreVentana = i18n().get("fxml.title.list.accountingaccount");
 		registro = new CuentaContableDTO();
-		registro.setTipoCuenta(new ParametroDTO());
-		ParametroDTO pEstado = new ParametroDTO();
-		try {
-			listTipoCuentas = parametroSvc.getAllParametros(pEstado, ParametroConstants.GRUPO_TIPO_CUENTA_CONTABLE);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
-		tipoCuentaContables.getSelectionModel().selectFirst();
-		tipoCuentaContable.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoCuenta().getNombre()));
+		filter = new CuentaContableDTO();
+		registro.setNaturaleza(new ParametroDTO());
+		registro.setTipoPlanContable(new ParametroDTO());
+		registro.setTipo(new ParametroDTO());
+		registro.setEmpresa(new EmpresaDTO());
+		asociado.setPopupOpenAction(() -> popupAsociado());
+		asociado.setCleanValue(() -> filter.setAsociado(null));
+		tipoCuentaContables.setPopupOpenAction(() -> popupTipoCuentaContable());
+		tipoCuentaContables.setCleanValue(() -> filter.setTipo(null));
+		tipoPlanContable.setPopupOpenAction(() -> popupTipoPlanContable());
+		tipoPlanContable.setCleanValue(() -> filter.setTipoPlanContable(null));
+		tipoCuentaContable
+				.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
+		tipo.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipo().getNombre()));
+		naturaleza.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getNaturaleza().getNombre()));
 		lazy();
 	}
 
@@ -78,12 +92,12 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<CuentaContableDTO, CuentaContableDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<CuentaContableDTO, CuentaContableDTO>(paginador, tabla) {
 			@Override
 			public List<CuentaContableDTO> getList(CuentaContableDTO filter, Integer page, Integer rows) {
 				List<CuentaContableDTO> lista = new ArrayList<CuentaContableDTO>();
 				try {
-					lista = cuentaContableSvc.getCuentaContables(filter, page, rows);
+					lista = cuentaContableSvc.getCuentaContables(filter, page - 1, rows);
 				} catch (CuentaContableException e) {
 					error(e);
 				}
@@ -94,7 +108,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 			public Integer getTotalRows(CuentaContableDTO filter) {
 				Integer count = 0;
 				try {
-					count = cuentaContableSvc.getTotalRows(filter);  
+					count = cuentaContableSvc.getTotalRows(filter);
 				} catch (CuentaContableException e) {
 					error(e);
 				}
@@ -107,11 +121,11 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 				if (StringUtils.isNotBlank(nombre.getText())) {
 					filtro.setNombre(nombre.getText());
 				}
-				if (StringUtils.isNotBlank(asociado.getText())) {
-					filtro.setAsociado(asociado.getText());
+				if (DtoUtils.haveCode(filter.getAsociado())) {
+					filtro.setAsociado(filter.getAsociado());
 				}
-				if (StringUtils.isNotBlank(tipoCuentaContables.getValue())) {
-					filtro.setTipoCuenta(SelectList.get(tipoCuentaContables, listTipoCuentas, "nombre"));
+				if (DtoUtils.haveCode(filter.getTipoPlanContable())) {
+					filtro.setTipoPlanContable(filter.getTipoPlanContable());
 				}
 				return filtro;
 			}
@@ -123,6 +137,57 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		btnDel.setVisible(isSelected());
 	}
 
+	public final void popupTipoPlanContable() {
+		try {
+			var popup = controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class));
+			popup.setWidth(250).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+					ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
+			popup.load("#{CuentaContableBean.tipoPlanContable}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void popupTipoCuentaContable() {
+		try {
+			var popup = controllerGenPopup(ParametroDTO.class);
+			popup.setWidth(250).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+					ParametroConstants.GRUPO_TIPO);
+			popup.load("#{CuentaContableBean.tipoCuentaContable}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void popupAsociado() {
+		try {
+			controllerGenPopup(CuentaContableDTO.class).load("#{CuentaContableBean.asociado}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setAsociado(CuentaContableDTO asociado) {
+		if (asociado != null) {
+			filter.setAsociado(asociado);
+			this.asociado.setText(asociado.getCodigoCuenta() + ":" + asociado.getNombre());
+		}
+	}
+
+	public final void setTipoPlanContable(ParametroDTO tipoPlanContable) {
+		if (tipoPlanContable != null) {
+			filter.setTipoPlanContable(tipoPlanContable);
+			this.tipoPlanContable.setText(tipoPlanContable.getNombre());
+		}
+	}
+
+	public final void setTipoCuentaContable(ParametroDTO tipoCuentaContable) {
+		if (tipoCuentaContable != null) {
+			filter.setTipo(tipoCuentaContable);
+			tipoCuentaContables.setText(tipoCuentaContable.getNombre());
+		}
+	}
+
 	public void add() {
 		getController(CuentaContableCRUBean.class);
 	}
@@ -131,27 +196,34 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		dt.search();
 	}
 
+	public void set() {
+		registro = dt.getSelectedRow();
+		getController(CuentaContableCRUBean.class).load(registro);
+	}
+
 	public void del() {
 		try {
-			registro = dt.getSelectedRow();
-			if (registro != null) {
-				cuentaContableSvc.delete(registro, userLogin);
-				notificar("Se ha eliminado la cuenta contable.");
-				dt.search();
-			} else {
-				notificar("No se ha seleccionado una cuenta contable.");
-			}
-		} catch (CuentaContableException e) {
+			controllerPopup(ConfirmPopupBean.class).load("#{CuentaContableBean.delete}",
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
+		} catch (Exception e) {
 			error(e);
 		}
 	}
 
-	public void set() {
-		registro = dt.getSelectedRow();
-		if (registro != null) {
-			getController(CuentaContableCRUBean.class).load(registro);
-		} else {
-			notificar("No se ha seleccionado un concepto.");
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
+			registro = dt.getSelectedRow();
+			if (registro != null) {
+				cuentaContableSvc.delete(registro, getUsuario());
+				notificarI18n("mensaje.accountingaccount.have.been.deleted");
+				dt.search();
+			} else {
+				alertaI18n("mensaje.accountingaccount.havent.been.selected");
+			}
+		} catch (Exception e) {
+			error(e);
 		}
 	}
 
@@ -159,7 +231,7 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<CuentaContableDTO, CuentaContableDTO> getDt() {
+	public DataTableFXMLUtil<CuentaContableDTO, CuentaContableDTO> getDt() {
 		return dt;
 	}
 }

@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.beans.abstracts.AListBasicBean;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.Log;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.ParametroException;
@@ -17,6 +14,9 @@ import org.pyt.common.exceptions.ParametroException;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.AListBasicBean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -60,7 +60,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	private Button addGroup;
 	@FXML
 	private Button modifyGroup;
-	private DataTableFXML<ParametroDTO, ParametroDTO> lazyFiltrar;
+	private DataTableFXMLUtil<ParametroDTO, ParametroDTO> lazyFiltrar;
 	private ParametroDTO filtrarGrupo;
 	private ParametroDTO seleccionFiltro;
 	@FXML
@@ -84,7 +84,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	}
 
 	public void lazy2() {
-		lazyFiltrar = new DataTableFXML<ParametroDTO, ParametroDTO>(paginador2, filtrar) {
+		lazyFiltrar = new DataTableFXMLUtil<ParametroDTO, ParametroDTO>(paginador2, filtrar) {
 
 			@Override
 			public Integer getTotalRows(ParametroDTO filter) {
@@ -100,7 +100,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			public List<ParametroDTO> getList(ParametroDTO filter, Integer page, Integer rows) {
 				List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 				try {
-					lista = parametrosSvc.getParametros(filter, page - 1, rows);
+					lista = parametrosSvc.getParametros(filter, page, rows);
 				} catch (ParametroException e) {
 					error(e);
 				}
@@ -121,15 +121,15 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	@Override
 	public void lazy() {
-		dataTable = new DataTableFXML<ParametroDTO, ParametroDTO>(paginador, tabla) {
+		dataTable = new DataTableFXMLUtil<ParametroDTO, ParametroDTO>(paginador, tabla) {
 
 			@Override
 			public Integer getTotalRows(ParametroDTO filter) {
 				Integer count = 0;
 				try {
-					count = parametrosSvc.totalCount(getFilter());
+					count = parametrosSvc.totalCount(filter);
 				} catch (ParametroException e) {
-					Log.logger(e);
+					logger.logger(e);
 					error(e);
 				}
 				return count;
@@ -139,9 +139,9 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			public List<ParametroDTO> getList(ParametroDTO filter, Integer page, Integer rows) {
 				List<ParametroDTO> lista = new ArrayList<ParametroDTO>();
 				try {
-					lista = parametrosSvc.getParametros(getFilter(), page - 1, rows);
+					lista = parametrosSvc.getParametros(filter, page - 1, rows);
 				} catch (ParametroException e) {
-					Log.logger(e);
+					logger.logger(e);
 					error(e);
 				}
 				return lista;
@@ -150,13 +150,17 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			@Override
 			public ParametroDTO getFilter() {
 				ParametroDTO filtro = new ParametroDTO();
-				filtro.setNombre(nombre.getText());
-				filtro.setDescripcion(descripcion.getText());
+				if (StringUtils.isNotBlank(nombre.getText())) {
+					filtro.setNombre(nombre.getText());
+				}
+				if (StringUtils.isNotBlank(descripcion.getText())) {
+					filtro.setDescripcion(descripcion.getText());
+				}
 				if (StringUtils.isNotBlank(estado.getValue())) {
 					filtro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
 				}
-				if (StringUtils.isNotBlank(seleccionFiltro.getCodigo())) {
-					filtro.setGrupo(seleccionFiltro.getCodigo());
+				if (StringUtils.isNotBlank(lazyFiltrar.getSelectedRow().getCodigo())) {
+					filtro.setGrupo(lazyFiltrar.getSelectedRow().getCodigo());
 				}
 				return filtro;
 			}
@@ -192,7 +196,6 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	public void nuevoFiltro() {
 		ParametroDTO parametro = new ParametroDTO();
-		parametro.setGrupo("*");
 		getController(ParametrosCRUBean.class).load(parametro);
 	}
 
@@ -209,7 +212,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	@Override
 	public void createBtn() {
-		ParametroDTO dto = new ParametroDTO(); 
+		ParametroDTO dto = new ParametroDTO();
 		dto.setGrupo(seleccionFiltro.getCodigo());
 		getController(ParametrosCRUBean.class).load(dto);
 	}
@@ -225,9 +228,20 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	@Override
 	public void deleteBtn() {
 		try {
+			this.controllerPopup(ConfirmPopupBean.class).load("#{ParametrosBean.delete}",
+					i18n().valueBundle("mensaje.wish.delete.selected.rows").get());
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dataTable.getSelectedRow();
 			if (registro != null) {
-				parametrosSvc.delete(registro, userLogin);
+				parametrosSvc.delete(registro, getUsuario());
 				notificar("Se ha eliminado el parametro.");
 				dataTable.search();
 			} else {

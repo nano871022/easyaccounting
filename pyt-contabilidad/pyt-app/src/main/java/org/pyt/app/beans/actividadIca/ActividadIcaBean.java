@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.ActividadIcaException;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 
 import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.interfaces.IActividadIcaSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -33,16 +35,20 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 	@FXML
 	private TextField nombre;
 	@FXML
+	private TextField codigoIca;
+	@FXML
 	private TextField descripcion;
 	@FXML
 	private Button btnMod;
 	@FXML
+	private Button btnDel;
+	@FXML
 	private HBox paginador;
-	private DataTableFXML<ActividadIcaDTO, ActividadIcaDTO> dt;
+	private DataTableFXMLUtil<ActividadIcaDTO, ActividadIcaDTO> dt;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista Actividad Ica";
+		NombreVentana = i18n().valueBundle("fxml.title.list.ica.activity").get();
 		registro = new ActividadIcaDTO();
 		lazy();
 	}
@@ -51,12 +57,12 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ActividadIcaDTO, ActividadIcaDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ActividadIcaDTO, ActividadIcaDTO>(paginador, tabla) {
 			@Override
 			public List<ActividadIcaDTO> getList(ActividadIcaDTO filter, Integer page, Integer rows) {
 				List<ActividadIcaDTO> lista = new ArrayList<ActividadIcaDTO>();
 				try {
-					lista = actividadIcaSvc.getActividadesIca(filter, page, rows);
+					lista = actividadIcaSvc.getActividadesIca(filter, page - 1, rows);
 				} catch (ActividadIcaException e) {
 					error(e);
 				}
@@ -83,6 +89,9 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 				if (StringUtils.isNotBlank(descripcion.getText())) {
 					filtro.setDescripcion(descripcion.getText());
 				}
+				if (StringUtils.isNotBlank(codigoIca.getText())) {
+					filtro.setCodigoIca(codigoIca.getText());
+				}
 				return filtro;
 			}
 		};
@@ -90,6 +99,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
 	}
 
 	public void add() {
@@ -102,13 +112,24 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 
 	public void del() {
 		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{ActividadIcaBean.delete}",
+					i18n().valueBundle("whish.delete.selected.rows").get());
+		} catch (LoadAppFxmlException e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				actividadIcaSvc.delete(registro, userLogin);
-				notificar("Se ha eliminaro la actividad Ica.");
+				actividadIcaSvc.delete(registro, getUsuario());
+				notificarI18n("mensaje.ica.activity.was.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado una actividad ica.");
+				alerta("mensaje.ica.activity.wasnt.selected");
 			}
 		} catch (ActividadIcaException e) {
 			error(e);
@@ -120,7 +141,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 		if (registro != null) {
 			getController(ActividadIcaCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado una actividad ica.");
+			alerta("mensaje.ica.activity.havent.been.selected");
 		}
 	}
 
@@ -128,7 +149,7 @@ public class ActividadIcaBean extends ABean<ActividadIcaDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ActividadIcaDTO, ActividadIcaDTO> getDt() {
+	public DataTableFXMLUtil<ActividadIcaDTO, ActividadIcaDTO> getDt() {
 		return dt;
 	}
 }

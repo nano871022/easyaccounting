@@ -1,23 +1,22 @@
 package org.pyt.app.beans.cuentaContable;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
+import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.CuentaContableException;
-import org.pyt.common.exceptions.ParametroException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.CuentaContableDTO;
+import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.dto.ParametroGrupoDTO;
 import com.pyt.service.interfaces.ICuentaContableSvc;
-import com.pyt.service.interfaces.IParametrosSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -32,37 +31,44 @@ import javafx.scene.layout.BorderPane;
 public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
-	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
-	private IParametrosSvc parametroSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<ParametroGrupoDTO> parametroSvc;
 	@FXML
 	private Label codigo;
 	@FXML
 	private TextField nombre;
 	@FXML
-	private TextField asociado;
+	private PopupParametrizedControl asociado;
 	@FXML
 	private TextField codigoCuenta;
 	@FXML
-	private ChoiceBox<String> tipoCuentaContables;
+	private PopupParametrizedControl naturaleza;
+	@FXML
+	private PopupParametrizedControl tipoPlanContable;
+	@FXML
+	private PopupParametrizedControl tipo;
+	@FXML
+	private PopupParametrizedControl empresa;
 	@FXML
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
-	private List<ParametroDTO> listTipoCuentas;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nueva Cuenta Contable";
+		NombreVentana = i18n().get("fxml.title.add.new.accountingaccount");
 		titulo.setText(NombreVentana);
 		registro = new CuentaContableDTO();
-		ParametroDTO estados = new ParametroDTO();
-		try {
-			listTipoCuentas = parametroSvc.getAllParametros(estados, ParametroConstants.GRUPO_TIPO_CUENTA_CONTABLE);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
-		tipoCuentaContables.getSelectionModel().selectFirst();
+		naturaleza.setPopupOpenAction(() -> popupNaturaleza());
+		naturaleza.setCleanValue(() -> registro.setNaturaleza(null));
+		tipoPlanContable.setPopupOpenAction(() -> popupTipoPlanContable());
+		tipoPlanContable.setCleanValue(() -> registro.setTipoPlanContable(null));
+		tipo.setPopupOpenAction(() -> popupTipoCuentaContable());
+		tipo.setCleanValue(() -> registro.setTipo(null));
+		empresa.setPopupOpenAction(() -> popupEmpresa());
+		empresa.setCleanValue(() -> registro.setEmpresa(null));
+		asociado.setPopupOpenAction(() -> popupAsociado());
+		asociado.setCleanValue(() -> registro.setAsociado(null));
 	}
 
 	/**
@@ -72,10 +78,12 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		if (registro == null) {
 			registro = new CuentaContableDTO();
 		}
-		registro.setNombre(nombre.getText());
-		registro.setAsociado(asociado.getText());
-		registro.setCodigoCuenta(codigoCuenta.getText());
-		registro.setTipoCuenta(SelectList.get(tipoCuentaContables, listTipoCuentas, "nombre"));
+		if (!nombre.getText().isEmpty()) {
+			registro.setNombre(nombre.getText());
+		}
+		if (!codigoCuenta.getText().isEmpty()) {
+			registro.setCodigoCuenta(codigoCuenta.getText());
+		}
 	}
 
 	private void loadFxml() {
@@ -83,10 +91,19 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 			return;
 		codigo.setText(registro.getCodigo());
 		nombre.setText(registro.getNombre());
-		asociado.setText(registro.getAsociado());
+		asociado.setText(getCuentaAsociadaShow());
 		codigoCuenta.setText(registro.getCodigoCuenta());
-		SelectList.put(tipoCuentaContables, listTipoCuentas, "nombre");
-		SelectList.selectItem(tipoCuentaContables, listTipoCuentas, "nombre", registro.getTipoCuenta());
+		tipoPlanContable.setText(registro.getTipoPlanContable().getNombre());
+		naturaleza.setText(registro.getNaturaleza().getDescripcion());
+		tipo.setText(registro.getTipo().getDescripcion());
+		empresa.setText(registro.getEmpresa().getNombre());
+	}
+
+	private final String getCuentaAsociadaShow() {
+		if (registro.getAsociado().getCodigoCuenta() != null && registro.getAsociado().getNombre() != null) {
+			return registro.getAsociado().getCodigoCuenta() + ":" + registro.getAsociado().getNombre();
+		}
+		return null;
 	}
 
 	public void load(CuentaContableDTO dto) {
@@ -107,10 +124,18 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getAsociado());
-		valid &= StringUtils.isNotBlank(registro.getCodigoCuenta());
-		valid &= StringUtils.isNotBlank(registro.getTipoCuenta().getCodigo());
+		valid &= ValidFields.valid(registro.getNombre(), nombre, true, 1, 100,
+				i18n().valueBundle("err.accountingaccount.field.name.empty"));
+		valid &= ValidFields.valid(registro.getCodigoCuenta(), codigoCuenta, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.accountcode.empty"));
+		valid &= ValidFields.valid(registro.getNaturaleza(), naturaleza, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.nature.empty"));
+		valid &= ValidFields.valid(registro.getTipoPlanContable(), tipoPlanContable, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.accountingplantype.empty"));
+		valid &= ValidFields.valid(registro.getTipo(), tipo, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.type.empty"));
+		valid &= ValidFields.valid(registro.getEmpresa(), empresa, true, null, null,
+				i18n().valueBundle("err.accountingaccount.field.enterprise.empty"));
 		return valid;
 	}
 
@@ -119,13 +144,13 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					cuentaContableSvc.update(registro, userLogin);
-					notificar("Se guardo la cuenta contable correctamente.");
+					cuentaContableSvc.update(registro, getUsuario());
+					notificarI18n("mensaje.accountingaccount.was.updated.succesfull");
 					cancel();
 				} else {
-					cuentaContableSvc.insert(registro, userLogin);
+					cuentaContableSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
-					notificar("Se agrego la cuenta contable correctamente.");
+					notificarI18n("mensaje.accountingaccount.was.inserted.succesfull");
 					cancel();
 				}
 			}
@@ -136,6 +161,82 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 
 	public void cancel() {
 		getController(CuentaContableBean.class);
+	}
+
+	public final void popupAsociado() {
+		try {
+			controllerGenPopup(CuentaContableDTO.class).load("#{CuentaContableCRUBean.asociado}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setAsociado(CuentaContableDTO cuentaContable) {
+		if (cuentaContable != null) {
+			registro.setAsociado(cuentaContable);
+			asociado.setText(getCuentaAsociadaShow());
+		}
+	}
+
+	public final void popupTipoPlanContable() {
+		try {
+			controllerGenPopup(ParametroDTO.class).setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE)
+					.load("#{CuentaContableCRUBean.tipoPlanContable}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setTipoPlanContable(ParametroDTO tipoPlanContable) {
+		registro.setTipoPlanContable(tipoPlanContable);
+		this.tipoPlanContable.setText(tipoPlanContable.getNombre());
+	}
+
+	public final void popupNaturaleza() {
+		try {
+			var bean = controllerGenPopup(ParametroDTO.class);
+			bean.setWidth(350).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+					ParametroConstants.GRUPO_NATURALEZA);
+			bean.load("#{CuentaContableCRUBean.naturaleza}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setNaturaleza(ParametroDTO naturaleza) {
+		registro.setNaturaleza(naturaleza);
+		this.naturaleza.setText(naturaleza.getNombre());
+	}
+
+	public final void popupTipoCuentaContable() {
+		try {
+			controllerGenPopup(ParametroDTO.class).setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_TIPO)
+					.load("#{CuentaContableCRUBean.tipoCuentaContable}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setTipoCuentaContable(ParametroDTO tipoCuentaContable) {
+		registro.setTipo(tipoCuentaContable);
+		tipo.setText(tipoCuentaContable.getDescripcion());
+	}
+
+	public final void popupEmpresa() {
+		try {
+			controllerGenPopup(EmpresaDTO.class).setWidth(350).load("#{CuentaContableCRUBean.empresa}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setEmpresa(EmpresaDTO empresa) {
+		registro.setEmpresa(empresa);
+		this.empresa.setText(empresa.getNombre());
 	}
 
 }

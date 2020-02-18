@@ -1,26 +1,36 @@
 package org.pyt.app.load;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
-import org.pyt.app.beans.GuiaIngresos.ListIngresosBean;
-import org.pyt.app.beans.actividadIca.ActividadIcaBean;
-import org.pyt.app.beans.banco.BancoBean;
-import org.pyt.app.beans.centroCosto.CentroCostoBean;
-import org.pyt.app.beans.concepto.ConceptoBean;
-import org.pyt.app.beans.cuentaContable.CuentaContableBean;
-import org.pyt.app.beans.dinamico.FormularioBean;
-import org.pyt.app.beans.dinamico.ListaDocumentosBean;
-import org.pyt.app.beans.empresa.EmpresaBean;
-import org.pyt.app.beans.parametros.ParametrosBean;
-import org.pyt.app.beans.repuesto.RepuestoBean;
-import org.pyt.app.beans.servicio.ServicioBean;
-import org.pyt.app.beans.trabajador.TrabajadorBean;
-import org.pyt.common.common.LoadAppFxml;
+import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
+import org.pyt.common.constants.AppConstants;
+import org.pyt.common.constants.PropertiesConstants;
+import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
+import org.pyt.common.properties.PropertiesUtils;
+import org.pyt.common.reflection.Reflection;
 
+import com.pyt.service.interfaces.IGenericServiceSvc;
+import com.pyt.service.interfaces.IUsersSvc;
+
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.dto.system.LanguagesDTO;
+import co.com.japl.ea.dto.system.MenuDTO;
+import co.com.japl.ea.dto.system.MenuPermUsersDTO;
+import co.com.japl.ea.interfaces.IUrlLoadBean;
+import co.com.japl.ea.utls.LoadAppFxml;
+import co.com.japl.ea.utls.LoginUtil;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,43 +45,147 @@ import javafx.scene.control.ScrollPane;
  * @author Alejandro Parra
  * @since 22-06-2018
  */
-public class MenuItems {
+public class MenuItems implements Reflection {
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<MenuPermUsersDTO> menuPermUsersSvc;
+	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
+	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
+	@Inject(resource = "com.pyt.service.implement.UserSvc")
+	private IUsersSvc loginSvc;
+	private Properties propertiesMenu;
+
 	private Map<String, Menu> mapaMenu;
 	private MenuBar menu;
 	private ScrollPane scroll;
-	private final static String MENU_PRINCIPAL = "Principal";
-	private final static String MENU_ADMINISTRADOR = "Administrador";
-	private final static String MENU_MODULOS = "Modulos";
+	private final static String MENU_PRINCIPAL = "Inicio";
 	private final static String BTN_CERRAR = "Cerrar";
-	private final static String BTN_PROVEEDOR = "Proveedores";
-	private final static String BTN_EMPLEADOS = "Empleados";
-	private final static String BTN_PARAMETRO = "Parametros";
-	private final static String BTN_CENTRO_COSTO = "Centro de Costos";
-	private final static String BTN_ACTIVIDAD_ICA = "Actividad Ica";
-	private final static String BTN_BANCO = "Banco";
-	private final static String BTN_REPUESTO = "Repuesto";
-	private final static String BTN_CONCEPTO = "Concepto";
-	private final static String BTN_SERVICIO = "Servicio";
-	private final static String BTN_CUENTA_CONTABLE = "Cuenta Contable";
-	private final static String BTN_DOCUMENTO_DINAMICO = "Documento Dinamico";
-	private final static String BTN_FORMULARIO_DOCUMENTO= "Documento";
-	private final static String BTN_LIST_DOCUMENTO= "Documentos";
-	private final static String BTN_LIST_INGRESOS= "Ingresos";
+	private final static String BTN_LOGOUT = "Logout";
+	private final static String LBL_MENU = "lbl.menu.";
+	private final static String CONST_URL_INIT_PARAMS = "?";
+	private final static String CONST_URL_SPLIT_PARAMS = "&";
+	private Log logger = Log.Log(this.getClass());
 
 	public MenuItems(MenuBar menu, ScrollPane scroll) {
-		mapaMenu = new HashMap<String, Menu>();
-		this.menu = menu;
-		this.scroll = scroll;
-		menus();
+		try {
+			mapaMenu = new HashMap<String, Menu>();
+			propertiesMenu = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_MENU).load()
+					.getProperties();
+			this.menu = menu;
+			this.scroll = scroll;
+			inject();
+			var listLanguages = languagesSvc.getAll(new LanguagesDTO());
+			I18n.instance().setLanguagesDB(listLanguages);
+		} catch (Exception e) {
+			logger.logger(e);
+		}
 	}
 
-	private final void menus() {
-		mapaMenu.put("Principal", new Menu(MENU_PRINCIPAL));
-		mapaMenu.put("Administrador", new Menu(MENU_ADMINISTRADOR));
-		mapaMenu.put("Modulos", new Menu(MENU_MODULOS));
+	private final List<MenuDTO> getMenusFromDB() {
+		List<MenuDTO> list = new ArrayList<MenuDTO>();
+		try {
+			var dto = new MenuPermUsersDTO();
+			dto.setGroupUsers(LoginUtil.getUsuarioLogin().getGrupoUser());
+			dto.setState(1);
+			menuPermUsersSvc.getAll(dto).stream().filter(row -> row.getMenu() != null && row.getPerm() != null)
+					.forEach(row -> list.add(row.getMenu()));
+		} catch (GenericServiceException e) {
+			logger.logger(e);
+		}
+		return list;
+	}
+
+	private final void loadMenus() {
+		var list = getMenusFromDB();
+		if (list != null && list.size() > 0) {
+			list.stream().forEach(menuDto -> {
+				var menus = menuDto.getUrl().split(AppConstants.SLASH);
+				var menu = getMenu(menus[0]);
+				processMenu(menu, menuDto.getClassPath(), 0, menus);//
+			});
+		} else {
+			propertiesMenu.keySet().forEach(key -> {
+				var menus = ((String) key).split(AppConstants.SLASH);
+				var menu = getMenu(menus[0]);
+				processMenu(menu, (String) propertiesMenu.get(key), 0, menus);
+			});
+		}
+	}
+
+	private final <T extends ADto, B extends ABean<T>> void processMenu(Menu menu, String classString, Integer position,
+			String... menusSplit) {
+		var nameLabel = nameLabel(menusSplit[position + 1]);
+		if (menusSplit.length > position) {
+			var founds = menu.getItems().stream().filter(menuFilter -> menuFilter.getText().contentEquals(nameLabel))
+					.toArray(Menu[]::new);
+			Menu found = null;
+			if (founds == null || founds.length == 0) {
+
+				if (menusSplit.length - 1 == position + 1) {
+					var nameLabel2 = "";
+					if (nameLabel.contains("?")) {
+						nameLabel2 = nameLabel.substring(0, nameLabel.indexOf("?"));
+					} else {
+						nameLabel2 = nameLabel;
+					}
+					var menuItem = new MenuItem(nameLabel2);
+					menu.getItems().add(menuItem);
+					menuItem.onActionProperty().set(event -> onActionProperty(classString, nameLabel));
+					return;
+				} else {
+					found = new Menu(nameLabel);
+					menu.getItems().add(found);
+				}
+			}
+			if (founds.length == 1) {
+				found = founds[0];
+			}
+			if (found != null) {
+				processMenu(found, classString, position + 1, menusSplit);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private final <B extends ABean<T>, T extends ADto> void onActionProperty(String classString, String nameLabel) {
+		try {
+			Class<B> beanToLoad = (Class<B>) Class.forName(classString);
+			var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, beanToLoad);
+			invokeLoadParameters(nameLabel, beanFxml);
+		} catch (LoadAppFxmlException | ClassNotFoundException | SecurityException | IllegalArgumentException e) {
+			logger.logger(e);
+		}
+	}
+
+	/**
+	 * Se encarga de obtener los parameteros apartir del nombre del menu a cargar y
+	 * imvoicar los parametros si contiene parametros, ademas que debe ser
+	 * implemetacion de la interfaz {@link IUrlLoadBean}
+	 * 
+	 * @param nameLabel {@link String}
+	 * @param beanFxml  {@link ABean}
+	 */
+	private final <B extends ABean<T>, T extends ADto> void invokeLoadParameters(String nameLabel, B beanFxml) {
+		String[] parameters = null;
+		if (nameLabel.contains(CONST_URL_INIT_PARAMS)) {
+			var nameParameters = nameLabel.substring(nameLabel.indexOf(CONST_URL_INIT_PARAMS) + 1);
+			parameters = nameParameters.split(CONST_URL_SPLIT_PARAMS);
+		}
+		if (beanFxml instanceof IUrlLoadBean && parameters != null && parameters.length > 0) {
+			((IUrlLoadBean) beanFxml).loadParameters(parameters);
+		}
+	}
+
+	private final String nameLabel(String key) {
+		var search = LBL_MENU + key;
+		var result = I18n.instance().valueBundle(search);
+		if (!search.contains(result.get())) {
+			key = result.get();
+		}
+		return key;
 	}
 
 	private final Menu getMenu(String key) {
+		key = nameLabel(key);
 		Menu menu = mapaMenu.get(key);
 		if (menu == null) {
 			menu = new Menu(key);
@@ -91,6 +205,7 @@ public class MenuItems {
 	}
 
 	private final MenuItem addItem(String nombre, EventHandler<ActionEvent> event) {
+		nombre = nameLabel(nombre);
 		MenuItem item = new MenuItem(nombre);
 		item.onActionProperty().set(event);
 		return item;
@@ -99,115 +214,32 @@ public class MenuItems {
 	private final void loadPrincipal() {
 		Menu principal = getMenu(MENU_PRINCIPAL);
 		ObservableList<MenuItem> items = getItems(principal);
+		var logOut = addItem(BTN_LOGOUT, event -> {
+			try {
+				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(),
+						LoginUtil.isRemember());
+				LoginUtil.deleteRemember();
+			} catch (UnknownHostException e) {
+				logger.logger(e);
+			} catch (Exception e) {
+				logger.logger(e);
+			}
+			Platform.exit();
+			System.exit(0);
+		});
+		logOut.visibleProperty().bind(Bindings.createBooleanBinding(() -> LoginUtil.isRemember()));
+		items.add(logOut);
 		items.add(addItem(BTN_CERRAR, event -> {
+			try {
+				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(), false);
+			} catch (UnknownHostException e) {
+				logger.logger(e);
+			} catch (Exception e) {
+				logger.logger(e);
+			}
 			Platform.exit();
 			System.exit(0);
 		}));
-		add(principal);
-	}
-
-	private final void loadModulos() {
-		Menu modulo = getMenu(MENU_MODULOS);
-		ObservableList<MenuItem> items = getItems(modulo);
-		items.add(addItem(MENU_MODULOS, event -> System.out.println("sin config.")));
-		items.add(addItem(BTN_LIST_DOCUMENTO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, ListaDocumentosBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_LIST_INGRESOS, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, ListIngresosBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		add(modulo);
-	}
-
-	private final void loadAdministrador() {
-		Menu admin = getMenu(MENU_ADMINISTRADOR);
-		ObservableList<MenuItem> items = getItems(admin);
-		items.add(addItem(BTN_PROVEEDOR, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, EmpresaBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_EMPLEADOS, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, TrabajadorBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_PARAMETRO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, ParametrosBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_CENTRO_COSTO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, CentroCostoBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_ACTIVIDAD_ICA, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, ActividadIcaBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_BANCO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, BancoBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_CONCEPTO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, ConceptoBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_REPUESTO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, RepuestoBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_CUENTA_CONTABLE, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, CuentaContableBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_SERVICIO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, ServicioBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		items.add(addItem(BTN_DOCUMENTO_DINAMICO, event -> {
-			try {
-				LoadAppFxml.BeanFxmlScroller(scroll, FormularioBean.class);
-			} catch (LoadAppFxmlException e) {
-				Log.logger(e);
-			}
-		}));
-		add(admin);
 	}
 
 	/**
@@ -215,7 +247,12 @@ public class MenuItems {
 	 */
 	public final void load() {
 		loadPrincipal();
-		loadModulos();
-		loadAdministrador();
+		loadMenus();
+		mapaMenu.entrySet().forEach(entry -> add(entry.getValue()));
+	}
+
+	@Override
+	public Log logger() {
+		return logger;
 	}
 }

@@ -1,21 +1,23 @@
 package org.pyt.app.beans.actividadIca;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.ActividadIcaException;
+import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.interfaces.IActividadIcaSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 
 /**
- * Se encarga de procesar la pantalla de creacion y actualizacion de una actividad ica
+ * Se encarga de procesar la pantalla de creacion y actualizacion de una
+ * actividad ica
  * 
  * @author Alejandro Parra
  * @since 2018-05-22
@@ -29,6 +31,8 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 	@FXML
 	private TextField nombre;
 	@FXML
+	private TextField codigoIca;
+	@FXML
 	private TextField descripcion;
 	@FXML
 	private TextField tarifa;
@@ -41,7 +45,7 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Actividad ICa";
+		NombreVentana = i18n().valueBundle("fxml.title.add.ica.activity").get();
 		titulo.setText(NombreVentana);
 		registro = new ActividadIcaDTO();
 	}
@@ -54,6 +58,7 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 			registro = new ActividadIcaDTO();
 		}
 		registro.setCodigo(codigo.getText());
+		registro.setCodigoIca(codigoIca.getText());
 		registro.setNombre(nombre.getText());
 		registro.setDescripcion(descripcion.getText());
 		registro.setBase(base.getText());
@@ -64,6 +69,7 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 		if (registro == null)
 			return;
 		codigo.setText(registro.getCodigo());
+		codigoIca.setText(registro.getCodigoIca());
 		nombre.setText(registro.getNombre());
 		descripcion.setText(registro.getDescripcion());
 		base.setText(registro.getBase());
@@ -88,10 +94,16 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getDescripcion());
-		valid &= StringUtils.isNotBlank(registro.getBase());
-		valid &= StringUtils.isNotBlank(registro.getTarifa());
+		valid &= ValidFields.validI18n(registro.getNombre(), nombre, true, 1, 100,
+				"err.valid.actividadica.field.name.empty");
+		valid &= ValidFields.validI18n(registro.getDescripcion(), descripcion, true, 1, 100,
+				"err.valid.actividadica.field.description.empty");
+		valid &= ValidFields.validI18n(registro.getBase(), base, true, 1, 30,
+				"err.valid.actividadica.field.base.empty");
+		valid &= ValidFields.validI18n(registro.getTarifa(), tarifa, true, 1, 30,
+				"err.valid.actividadica.field.rate.empty");
+		valid &= ValidFields.validI18n(registro.getCodigoIca(), codigoIca, true, 1, 30,
+				"err.valid.actividadica.field.codeica.empty");
 		return valid;
 	}
 
@@ -100,13 +112,13 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					actividadIcaSvc.update(registro, userLogin);
-					notificar("Se guardo la actividad ica correctamente.");
+					actividadIcaSvc.update(registro, getUsuario());
+					notificarI18n("mensaje.icaactivity,have.been.insert.succesfill");
 					cancel();
 				} else {
-					actividadIcaSvc.insert(registro, userLogin);
+					actividadIcaSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
-					notificar("Se agrego la actividad ica correctamente.");
+					notificarI18n("menaje.icaactivity.have.been.update.succesfull");
 					cancel();
 				}
 			}

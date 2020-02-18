@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.ea.app.custom.PopupParametrizedControl;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
-import org.pyt.common.exceptions.EmpresasException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.EmpresaDTO;
@@ -21,10 +17,12 @@ import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -46,46 +44,37 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	@FXML
 	private javafx.scene.control.TableView<ConceptoDTO> tabla;
 	@FXML
-	private ChoiceBox<String> empresa;
+	private PopupParametrizedControl empresa;
 	@FXML
 	private TextField nombre;
 	@FXML
 	private TextField descripcion;
 	@FXML
-	private ChoiceBox<String> estado;
+	private PopupParametrizedControl estado;
 	@FXML
 	private Button btnMod;
+	@FXML
+	private Button btnDel;
 	@FXML
 	private HBox paginador;
 	@FXML
 	private TableColumn<ConceptoDTO, String> columnEmpresa;
 	@FXML
 	private TableColumn<ConceptoDTO, String> columnEstado;
-	private DataTableFXML<ConceptoDTO, ConceptoDTO> dt;
-	private List<ParametroDTO> listEstado;
-	private List<EmpresaDTO> listEmpresa;
+	private DataTableFXMLUtil<ConceptoDTO, ConceptoDTO> dt;
+	private ConceptoDTO filter;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Conceptos";
+		NombreVentana = i18n().get("fxml.title.concept.list");
 		registro = new ConceptoDTO();
-		ParametroDTO pEstado = new ParametroDTO();
-		EmpresaDTO pEmpresa = new EmpresaDTO();
-		try {
-			listEstado = parametroSvc.getAllParametros(pEstado,ParametroConstants.GRUPO_ESTADO_CONCEPTO);
-			listEmpresa = empresaSvc.getAllEmpresas(pEmpresa);
-		} catch (EmpresasException e) {
-			error(e);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		SelectList.put(estado, listEstado, "nombre");
-		SelectList.put(empresa, listEmpresa, "nombre");
-		estado.getSelectionModel().selectFirst();
-		empresa.getSelectionModel().selectFirst();
-		
-		columnEstado.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getEstado().getNombre()));
-		columnEmpresa.setCellValueFactory(e->new SimpleStringProperty(e.getValue().getEmpresa().getNombre()));
+		filter = new ConceptoDTO();
+		estado.setPopupOpenAction(() -> popupEstado());
+		estado.setCleanValue(() -> filter.setEstado(null));
+		empresa.setPopupOpenAction(() -> popupEmpresa());
+		empresa.setCleanValue(() -> filter.setEmpresa(null));
+		columnEstado.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getEstado().getNombre()));
+		columnEmpresa.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getEmpresa().getNombre()));
 		lazy();
 	}
 
@@ -93,12 +82,12 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ConceptoDTO, ConceptoDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ConceptoDTO, ConceptoDTO>(paginador, tabla) {
 			@Override
 			public List<ConceptoDTO> getList(ConceptoDTO filter, Integer page, Integer rows) {
 				List<ConceptoDTO> lista = new ArrayList<ConceptoDTO>();
 				try {
-					lista = documentoSvc.getConceptos(filter, page, rows);
+					lista = documentoSvc.getConceptos(filter, page - 1, rows);
 				} catch (DocumentosException e) {
 					error(e);
 				}
@@ -125,11 +114,11 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 				if (StringUtils.isNotBlank(descripcion.getText())) {
 					filtro.setDescripcion(descripcion.getText());
 				}
-				if (StringUtils.isNotBlank(empresa.getValue())) {
-					filtro.setEmpresa(SelectList.get(empresa, listEmpresa, "nombre"));
+				if (filter.getEmpresa() != null) {
+					filtro.setEmpresa(filter.getEmpresa());
 				}
-				if (StringUtils.isNotBlank(empresa.getValue())) {
-					filtro.setEstado(SelectList.get(estado, listEstado, "nombre"));
+				if (filter.getEstado() != null) {
+					filtro.setEstado(filter.getEstado());
 				}
 				return filtro;
 			}
@@ -138,6 +127,36 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 
 	public void clickTable() {
 		btnMod.setVisible(isSelected());
+		btnDel.setVisible(isSelected());
+	}
+
+	public final void popupEstado() {
+		try {
+			controllerGenPopup(ParametroDTO.class).setWidth(350)
+					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+							ParametroConstants.GRUPO_ESTADO_CONCEPTO)
+					.load("#{ConceptoBean.estado}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setEstado(ParametroDTO parametro) {
+		registro.setEstado(parametro);
+		estado.setText(parametro.getDescripcion());
+	}
+
+	public final void popupEmpresa() {
+		try {
+			controllerGenPopup(EmpresaDTO.class).setWidth(350).load("#{ConceptoBean.empresa}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setEmpresa(EmpresaDTO empresa) {
+		registro.setEmpresa(empresa);
+		this.empresa.setText(empresa.getNombre());
 	}
 
 	public void add() {
@@ -150,13 +169,24 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 
 	public void del() {
 		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{ConceptoBean.delete}",
+					i18n().get("mensaje.wish.do.delete.selected.rows"));
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				documentoSvc.delete(registro, userLogin);
-				notificar("Se ha eliminado el concepto.");
+				documentoSvc.delete(registro, getUsuario());
+				notificarI18n("mensaje.concept.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un concepto.");
+				notificarI18n("mensaje.concept.havent.been.selected");
 			}
 		} catch (DocumentosException e) {
 			error(e);
@@ -168,7 +198,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		if (registro != null) {
 			getController(ConceptoCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un concepto.");
+			notificarI18n("err.concept.wasnt.selected");
 		}
 	}
 
@@ -176,7 +206,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ConceptoDTO, ConceptoDTO> getDt() {
+	public DataTableFXMLUtil<ConceptoDTO, ConceptoDTO> getDt() {
 		return dt;
 	}
 }

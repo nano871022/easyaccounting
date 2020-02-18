@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.app.components.DataTableFXML;
-import org.pyt.common.annotations.FXMLFile;
+import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
 import org.pyt.common.exceptions.ServiciosException;
 
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.interfaces.IServiciosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -38,11 +39,11 @@ public class ServicioBean extends ABean<ServicioDTO> {
 	private Button btnMod;
 	@FXML
 	private HBox paginador;
-	private DataTableFXML<ServicioDTO, ServicioDTO> dt;
+	private DataTableFXMLUtil<ServicioDTO, ServicioDTO> dt;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Servicios";
+		NombreVentana = i18n().get("fxml.title.list.services");
 		registro = new ServicioDTO();
 		lazy();
 	}
@@ -51,12 +52,12 @@ public class ServicioBean extends ABean<ServicioDTO> {
 	 * encargada de crear el objeto que va controlar la tabla
 	 */
 	public void lazy() {
-		dt = new DataTableFXML<ServicioDTO, ServicioDTO>(paginador, tabla) {
+		dt = new DataTableFXMLUtil<ServicioDTO, ServicioDTO>(paginador, tabla) {
 			@Override
 			public List<ServicioDTO> getList(ServicioDTO filter, Integer page, Integer rows) {
 				List<ServicioDTO> lista = new ArrayList<ServicioDTO>();
 				try {
-					lista = serviciosSvc.getServicios(filter, page, rows);
+					lista = serviciosSvc.getServicios(filter, page - 1, rows);
 				} catch (ServiciosException e) {
 					error(e);
 				}
@@ -102,13 +103,24 @@ public class ServicioBean extends ABean<ServicioDTO> {
 
 	public void del() {
 		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{ServicioBean.delete}",
+					i18n().get("wish.do.delete.selected.rows"));
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setDelete(Boolean valid) {
+		try {
+			if (!valid)
+				return;
 			registro = dt.getSelectedRow();
 			if (registro != null) {
-				serviciosSvc.delete(registro, userLogin);
-				notificar("Se ha eliminaro la empresa.");
+				serviciosSvc.delete(registro, getUsuario());
+				notificarI18n("mensaje.service.have.been.deleted");
 				dt.search();
 			} else {
-				notificar("No se ha seleccionado un servicio.");
+				alertaI18n("err.service.havent.been.selected");
 			}
 		} catch (ServiciosException e) {
 			error(e);
@@ -120,7 +132,7 @@ public class ServicioBean extends ABean<ServicioDTO> {
 		if (registro != null) {
 			getController(ServicioCRUBean.class).load(registro);
 		} else {
-			notificar("No se ha seleccionado un servicio.");
+			alertaI18n("err.service.havent.been.selected");
 		}
 	}
 
@@ -128,7 +140,7 @@ public class ServicioBean extends ABean<ServicioDTO> {
 		return dt.isSelected();
 	}
 
-	public DataTableFXML<ServicioDTO, ServicioDTO> getDt() {
+	public DataTableFXMLUtil<ServicioDTO, ServicioDTO> getDt() {
 		return dt;
 	}
 }

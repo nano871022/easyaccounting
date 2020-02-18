@@ -26,6 +26,7 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 	private Map<String, Object[]> comandoValor;
 	@SuppressWarnings("rawtypes")
 	private static Comunicacion comunicacion;
+	private Log logger = Log.Log(this.getClass());
 
 	private Comunicacion() {
 	}
@@ -113,7 +114,7 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 				comandoValor.put(comando, lvalores.toArray());
 			}
 		} catch (Exception e) {
-			Log.logger(e);
+			logger.DEBUG(e);
 		}
 	}
 
@@ -131,7 +132,7 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 			this.suscriptores = new HashMap<>();
 		}
 		if (comandos == null || comandos.length == 0 || subscriber == null) {
-			Log.error("No se suministro el subscriptor o los comandos.");
+			logger.error("No se suministro el subscriptor o los comandos.");
 			return;
 		}
 		if (comandos.length > 0) {
@@ -161,7 +162,7 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 				Thread.sleep(500);
 			}
 		} catch (InterruptedException e) {
-			Log.logger(e);
+			logger.logger(e);
 		}
 	}
 

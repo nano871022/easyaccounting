@@ -1,16 +1,17 @@
 package org.pyt.app.beans.servicio;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.ABean;
-import org.pyt.common.common.ValidateValues;
 import org.pyt.common.exceptions.ServiciosException;
-import org.pyt.common.exceptions.ValidateValueException;
+import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.validates.ValidFields;
+import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.interfaces.IServiciosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -42,7 +43,7 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nuevo Servicio";
+		NombreVentana = i18n().get("fxml.title.add.new.service");
 		titulo.setText(NombreVentana);
 		registro = new ServicioDTO();
 		vv = new ValidateValues();
@@ -71,16 +72,18 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 		codigo.setText(registro.getCodigo());
 		nombre.setText(registro.getNombre());
 		descripcion.setText(registro.getDescripcion());
-		valorManoObra.setText(String.valueOf(registro.getValorManoObra()));
+		if (registro.getValorManoObra() != null) {
+			valorManoObra.setText(String.valueOf(registro.getValorManoObra()));
+		}
 	}
 
 	public void load(ServicioDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
 			loadFxml();
-			titulo.setText("Modificando Servicio");
+			titulo.setText(i18n().get("mensaje.modifig.service"));
 		} else {
-			error("EL servicio es invalido para editar.");
+			error(i18n().get("err.service.cant.edit"));
 			cancel();
 		}
 	}
@@ -92,9 +95,12 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= StringUtils.isNotBlank(registro.getNombre());
-		valid &= StringUtils.isNotBlank(registro.getDescripcion());
-		valid &= registro.getValorManoObra() != null;
+		valid &= ValidFields.valid(registro.getNombre(), nombre, true, 1, 100,
+				i18n().valueBundle("err.service.field.name.empty"));
+		valid &= ValidFields.valid(registro.getDescripcion(), descripcion, true, 1, 100,
+				i18n().valueBundle("err.service.field.description.empty"));
+		valid &= ValidFields.valid(registro.getValorManoObra(), valorManoObra, true, null, null,
+				i18n().valueBundle("err.service.field.value.empty"));
 		return valid;
 	}
 
@@ -103,13 +109,13 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					servicioSvc.update(registro, userLogin);
-					notificar("Se guardo el servicio correctamente.");
+					servicioSvc.update(registro, getUsuario());
+					notificarI18n("mensaje.service.have.been.updated.succefull");
 					cancel();
 				} else {
-					servicioSvc.insert(registro, userLogin);
+					servicioSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
-					notificar("Se agrego el servicio correctamente.");
+					notificarI18n("mensaje.service.have.been.inserted.succefull");
 					cancel();
 				}
 			}

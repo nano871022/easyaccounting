@@ -1,18 +1,30 @@
 package org.pyt.app.beans.dinamico;
 
-import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.annotations.FXMLFile;
-import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.DocumentosException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
+import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.UtilControlFieldFX;
+import org.pyt.common.constants.StylesPrincipalConstant;
+import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.GenericServiceException;
+
+import com.pyt.service.dto.ConceptoDTO;
+import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
+import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -22,11 +34,15 @@ import javafx.scene.layout.VBox;
  * @since 07-07-2018
  */
 @FXMLFile(path = "view/dinamico", file = "detalleContable.fxml")
-public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
+public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentoSvc;
+	@Inject
+	private IGenericServiceSvc<ConceptoDTO> conceptoSvc;
+	@Inject
+	private IGenericServiceSvc<CuentaContableDTO> cuentaContableSvc;
 	@FXML
 	private VBox central;
 	private VBox centro;
@@ -34,12 +50,15 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 	private Label titulo;
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
+	private GridPane gridPane;
 
 	@FXML
 	public void initialize() {
 		super.initialize();
 		registro = new DetalleContableDTO();
 		tipoDocumento = new ParametroDTO();
+		gridPane = new GridPane();
+		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 	}
 
 	/**
@@ -58,7 +77,51 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 			}
 		}
 		central.getChildren().clear();
-		central.getChildren().add(loadGrid());
+		central.getStyleClass().add("borderView");
+		central.getChildren().add(gridPane);
+
+		genericsLoads();
+		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
+	}
+
+	private <D extends ADto> void loadInMapList(String name, List<D> rows) {
+		rows.stream().forEach(row -> mapListSelects.put(name, row));
+	}
+
+	@SuppressWarnings("unchecked")
+	private void genericsLoads() {
+		getListGenericsFields(TypeGeneric.FIELD).stream().filter(row -> {
+			Object instance;
+			try {
+				instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+				var clazz = ((ADto) instance).getType(row.getFieldName());
+				clazz.asSubclass(ADto.class);
+				return true;
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException | ClassCastException e) {
+				logger().logger(e);
+				return false;
+			}
+		}).forEach(row -> {
+			try {
+				var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+				if (instance instanceof ADto) {
+					var clazz = ((ADto) instance).getType(row.getFieldName());
+					var instanceClass = clazz.getDeclaredConstructor().newInstance();
+					if (instanceClass instanceof ConceptoDTO) {
+						loadInMapList(row.getFieldName(), conceptoSvc.getAll(new ConceptoDTO()));
+					} else if (instanceClass instanceof CuentaContableDTO) {
+						loadInMapList(row.getFieldName(), cuentaContableSvc.getAll(new CuentaContableDTO()));
+					}
+				}
+
+			} catch (ClassCastException | InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				logger().logger(e);
+			} catch (GenericServiceException e) {
+				logger().logger(e);
+			}
+		});
 	}
 
 	/**
@@ -69,6 +132,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
+		titulo.setText(concat(titulo.getText(), ": ", tipoDoc.getNombre()));
 		loadField();
 	}
 
@@ -77,6 +141,7 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 		tipoDocumento = tipoDoc;
 		this.centro = centro;
 		this.codigoDocumento = codigoDocumento;
+		titulo.setText(concat(titulo.getText(), ": ", tipoDoc.getNombre()));
 		loadField();
 	}
 
@@ -84,16 +149,15 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 	 * Se encarga de guardar todo
 	 */
 	public final void guardar() {
-		loadData();
-		if (valid()) {
+		if (validFields()) {
 			try {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
-					documentosSvc.update(registro, userLogin);
-					notificar("Se actualizo el detalle contable.");
+					documentosSvc.update(registro, getUsuario());
+					notificarI18n("mensaje.accountingdetail.have.been.updated.succesfull");
 				} else {
 					registro.setCodigoDocumento(codigoDocumento);
-					registro = documentosSvc.insert(registro, userLogin);
-					notificar("Se agrego el nuevo detalle contable.");
+					registro = documentosSvc.insert(registro, getUsuario());
+					notificarI18n("mensaje.accountingdetail.was.inserted");
 				}
 			} catch (DocumentosException e) {
 				error(e);
@@ -111,4 +175,25 @@ public class DetalleContableBean extends DinamicoBean<DetalleContableDTO> {
 			error(e);
 		}
 	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return gridPane;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 2;
+	}
+
+	@Override
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return mapListSelects;
+	}
+
+	@Override
+	public Class<DetalleContableDTO> getClazz() {
+		return DetalleContableDTO.class;
+	}
+
 }

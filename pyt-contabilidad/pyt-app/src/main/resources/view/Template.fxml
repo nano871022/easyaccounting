@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+
+<BorderPane maxHeight="-Infinity"  maxWidth="-Infinity" prefHeight="800" prefWidth="1024" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.load.Template">
+	<top>
+		<MenuBar fx:id="menu" BorderPane.alignment="CENTER" />
+	</top>
+	<bottom>
+		<GridPane alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" opacity="0.73" BorderPane.alignment="CENTER">
+			<columnConstraints>
+				<ColumnConstraints hgrow="always" />
+				<ColumnConstraints hgrow="always" />
+				<ColumnConstraints hgrow="always" />
+				<ColumnConstraints hgrow="always" />
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints vgrow="always" />
+			</rowConstraints>
+			<children>
+				<Label fx:id="leftMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Mensaje Izquierdo" GridPane.hgrow="always">
+					<padding>
+						<Insets left="5.0" right="5.0" />
+					</padding>
+				</Label>
+				<Label fx:id="centerMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Mensaje Central" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.hgrow="always">
+					<padding>
+						<Insets left="5.0" right="5.0" />
+					</padding>
+				</Label>
+				<Label fx:id="rightMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Mensaje Derecho" GridPane.columnIndex="2" GridPane.hgrow="always">
+					<padding>
+						<Insets left="5.0" right="5.0" />
+					</padding>
+				</Label>
+				<ProgressBar fx:id="progressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.columnIndex="3" GridPane.fillWidth="true" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+					<padding>
+						<Insets left="5.0" right="5.0" />
+					</padding>
+				</ProgressBar>
+			</children>
+			<BorderPane.margin>
+				<Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
+			</BorderPane.margin>
+		</GridPane>
+	</bottom>
+	<right>
+		<VBox fx:id="notificacion" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="150.0" minWidth="90.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+			<opaqueInsets>
+				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+			</opaqueInsets>
+			<BorderPane.margin>
+				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+			</BorderPane.margin>
+		</VBox>
+	</right>
+	<center>
+		<ScrollPane fx:id="scroller" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" fitToWidth="true">
+			<content>
+				<VBox fx:id="principal" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: red;" />
+			</content>
+			<BorderPane.margin>
+				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+			</BorderPane.margin>
+		</ScrollPane>
+	</center>
+</BorderPane>
