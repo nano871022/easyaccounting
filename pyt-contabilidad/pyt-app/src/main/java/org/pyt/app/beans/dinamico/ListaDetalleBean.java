@@ -206,6 +206,12 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 				return dto;
 			}
 		};
+		table.selectRow(list -> {
+			if (list.size() > 0) {
+				eliminar.setVisible(true);
+				editar.setVisible(true);
+			}
+		});
 	}
 
 	/**
@@ -308,16 +314,6 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 		}
 	}
 
-	/**
-	 * Se encarga de seleccionar un registro de la tabla
-	 */
-	public final void seleccionar() {
-		if (table.isSelected()) {
-			eliminar.setVisible(true);
-			editar.setVisible(true);
-		}
-	}
-
 	@Override
 	public void loadParameters(String... tipoDocumento) {
 	}
@@ -349,6 +345,10 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
+		if (table.isSelected()) {
+			eliminar.setVisible(true);
+			editar.setVisible(true);
+		}
 	}
 
 	@Override
