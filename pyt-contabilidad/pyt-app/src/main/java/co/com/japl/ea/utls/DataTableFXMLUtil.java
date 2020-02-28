@@ -7,6 +7,7 @@ import static org.pyt.common.constants.css.DataTable.CONST_CSS_TEXT_NO_LINK;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
@@ -46,6 +47,8 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 	private ValidateValues validate = new ValidateValues();
 	private Log logger = Log.Log(this.getClass());
 	private Boolean firstSearch;
+
+	Consumer<List<S>> predicateSelected;
 
 	public DataTableFXMLUtil() {
 		currentPage = 1;
@@ -87,6 +90,12 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 			btnUltimo.onActionProperty().set(e -> last());
 			btnPaginatorHidden();
 		}
+	}
+
+	public final void selectRow(Consumer<List<S>> consumer) {
+		predicateSelected = consumer;
+		table.selectionModelProperty()
+				.addListener((cahnge, oldva, newval) -> predicateSelected.accept(getSelectedRows()));
 	}
 
 	/**

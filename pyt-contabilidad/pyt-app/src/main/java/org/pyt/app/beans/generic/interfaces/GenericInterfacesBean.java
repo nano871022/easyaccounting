@@ -101,16 +101,18 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			tbDefault.setVisible(chkDefault.isSelected());
 			lbDefault.setVisible(chkDefault.isSelected());
 		});
-		txtClassDto.textProperty().addListener((obs, oldValue, newValue) -> {
-			if (!validClass(newValue)) {
-				error(i18n().valueBundle("err.dto.no.exists", newValue));
-			} else {
-				verifyChange();
+		txtClassDto.focusedProperty().addListener((obs, oldValue, newValue) -> {
+			if (!newValue) {
+				if (!validClass(txtClassDto.getText())) {
+					error(i18n().valueBundle("err.dto.no.exists", txtClassDto.getText()));
+				} else {
+					verifyChange();
+				}
 			}
 		});
-		txtClassBean.textProperty().addListener((obs, oldValue, newValue) -> {
-			if (!validClass(newValue)) {
-				error(i18n().valueBundle("err.class.no.exists", newValue));
+		txtClassBean.focusedProperty().addListener((change, oldval, newval) -> {
+			if (!newval && !validClass(txtClassBean.getText())) {
+				error(i18n().valueBundle("err.class.no.exists", txtClassBean.getText()));
 			}
 		});
 		txtName.textProperty().addListener((obs, s1, s2) -> {

@@ -232,7 +232,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 
 	public final void loadParameters(String... tipoDocumento) {
 		try {
-			if (tipoDocumento.length == 1 && tipoDocumento[0].trim().contains("tipoDocumento")) {
+			if (tipoDocumento.length == 1 && tipoDocumento[0].trim().toLowerCase().contains("tipodocumento")) {
 				var grupo = parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 				var parametro = new ParametroDTO();
 				parametro.setValor2(tipoDocumento[0].substring(tipoDocumento[0].indexOf("$") + 1));
@@ -245,7 +245,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 				dataTable.search();
 				searchFilters();
 				searchColumns();
-			} else if (tipoDocumento.length == 1 && !tipoDocumento[0].trim().contains("tipoDocumento")) {
+			} else if (tipoDocumento.length == 1 && !tipoDocumento[0].trim().toLowerCase().contains("tipodocumento")) {
 				var grupo = parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 				var parametro = new ParametroDTO();
 				parametro.setValor2(tipoDocumento[0]);
