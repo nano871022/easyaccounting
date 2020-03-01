@@ -63,7 +63,7 @@ public class PermissionUtil implements Reflection {
 		try {
 			var menu = new MenuDTO();
 			menu.setState(1);
-			menu.setClassPath(clazz.getSimpleName());
+			menu.setClassPath(clazz.getName().replace("Class ", ""));
 			var menus = menusSvc.getAll(menu);
 			if (menus != null && menus.size() > 1) {
 				throw new RuntimeException(I18n.instance().valueBundle("err.msn.menu.found.some").get());

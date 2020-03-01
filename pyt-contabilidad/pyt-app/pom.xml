@@ -101,7 +101,6 @@
 			<artifactId>controlsfx</artifactId>
 			<version>9.0.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>${project.connect.model}</artifactId>

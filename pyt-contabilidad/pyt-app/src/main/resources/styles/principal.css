@@ -1,3 +1,7 @@
+button{
+ -fx-margin-left:10px;
+}
+
 .grid-standard{
 	-fx-padding: 35;
     -fx-spacing: 30;
