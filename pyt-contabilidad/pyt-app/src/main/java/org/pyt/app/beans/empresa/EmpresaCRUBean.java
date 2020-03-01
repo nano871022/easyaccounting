@@ -1,10 +1,12 @@
 package org.pyt.app.beans.empresa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
@@ -16,9 +18,14 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -60,12 +67,26 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	private BorderPane pane;
 	@FXML
 	private PopupParametrizedControl moneda;
+	@FXML
+	private FlowPane buttons;
+	private BooleanProperty save;
+	private BooleanProperty edit;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.enterprise");
 		titulo.setText(NombreVentana);
 		registro = new EmpresaDTO();
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		configFields();
+		visibleButtons();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
+	}
+
+	protected void configFields() {
 		pais.setPopupOpenAction(() -> popupPais());
 		pais.setCleanValue(() -> {
 			pais.setText(null);
@@ -139,6 +160,7 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	public void load(EmpresaDTO dto) {
 		if (DtoUtils.haveCode(dto)) {
 			registro = dto;
+			visibleButtons();
 			loadFxml();
 			titulo.setText(i18n().get("mensaje.modifing.enterprise"));
 		} else {
@@ -205,6 +227,15 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	public void setContador(PersonaDTO persona) {
 		registro.setContador(persona);
 		this.contador.setText(persona.getNombres());
+	}
+
+	public void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, EmpresaBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, EmpresaBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 	public void cancel() {

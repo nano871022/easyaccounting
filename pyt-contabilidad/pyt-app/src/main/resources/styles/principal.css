@@ -1,5 +1,5 @@
-button{
- -fx-margin-left:10px;
+.button-bottom{
+ -fx-margin: 10px;
 }
 
 .grid-standard{

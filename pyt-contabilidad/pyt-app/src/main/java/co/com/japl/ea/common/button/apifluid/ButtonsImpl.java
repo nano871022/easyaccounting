@@ -15,6 +15,7 @@ import org.pyt.common.common.I18n;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 public class ButtonsImpl<P extends Pane> implements Buttons<P> {
@@ -44,6 +45,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 		return new ButtonsImpl<P>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Pane> Buttons<P> setLayout(T layout) {
 		this.layout = (P) layout;
@@ -101,9 +103,13 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 
 	@Override
 	public void build() {
+		var gridPane = new GridPane();
+		layout.getChildren().add(gridPane);
 		names.stream().forEach(name -> {
 			var button = buttons.get(name);
-			button.getStyleClass().addAll(styles.get(name));
+			button.getStylesheets().add("./styles/principal.css");
+			button.setStyle("-fx-margin: 10px");
+			styles.get(name).forEach(style -> button.getStyleClass().add(style));
 			if (visibilities.get(name).size() > 0) {
 				button.setVisible(visibilities.get(name).stream().map(val -> val.get()).reduce(true,
 						(val1, val2) -> val1 &= val2));
@@ -115,7 +121,8 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 				button.setGraphic(new Glyph("FontAwesome", icons.get(name)));
 			}
 			actions.get(name).stream().forEach(action -> button.setOnAction(event -> action.call()));
-			layout.getChildren().add(button);
+			gridPane.setHgap(10);
+			gridPane.addRow(1, button);
 		});
 	}
 

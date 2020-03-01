@@ -22,6 +22,7 @@ public class PermissionUtil implements Reflection {
 	private static PermissionUtil permission;
 	private MultiValuedMap<String, PermissionDTO> cachePerm;
 	private MultiValuedMap<String, MenuDTO> cacheMenu;
+
 	@Inject
 	private IGenericServiceSvc<MenuPermUsersDTO> groupsSvc;
 	@Inject
@@ -61,6 +62,10 @@ public class PermissionUtil implements Reflection {
 
 	public Boolean havePerm(String permission, Class clazz, GroupUsersDTO group) {
 		try {
+			var found = cachePerm.get(LoginUtil.getUsuarioLogin().getNombre());
+			if (found.size() > 0) {
+				return found.stream().anyMatch(perm -> perm.getAction().contains(permission));
+			}
 			var menu = new MenuDTO();
 			menu.setState(1);
 			menu.setClassPath(clazz.getName().replace("Class ", ""));
@@ -75,8 +80,9 @@ public class PermissionUtil implements Reflection {
 				menuPerm.setMenu(menus.get(0));
 				menuPerm.setState(1);
 				var menuPerms = groupsSvc.getAll(menuPerm);
-				return groupsSvc.getAll(menuPerm).stream().filter(row -> row.getPerm().getAction().contains(permission))
-						.findAny().isPresent();
+				var perms = groupsSvc.getAll(menuPerm);
+				perms.forEach(perm -> cachePerm.put(LoginUtil.getUsuarioLogin().getNombre(), perm.getPerm()));
+				return perms.stream().anyMatch(row -> row.getPerm().getAction().contains(permission));
 			}
 		} catch (GenericServiceException e) {
 			logger.logger(e);

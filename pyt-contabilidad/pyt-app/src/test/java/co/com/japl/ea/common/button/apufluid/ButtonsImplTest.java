@@ -63,7 +63,7 @@ public class ButtonsImplTest {
 				.action(() -> System.out.println("cancel")).setCommand("ALT+C").styleCss("button-cancel")
 				.isVisible(() -> false).build();
 
-		assertEquals(2, hb.getChildren().size());
+		assertEquals(1, hb.getChildren().size());
 	}
 
 }

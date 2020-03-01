@@ -1,21 +1,30 @@
 package org.pyt.app.beans.empresa;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.EmpresasException;
 
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -25,79 +34,50 @@ import javafx.scene.layout.HBox;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view", file = "empresa/listEmpresa.fxml")
-public class EmpresaBean extends ABean<EmpresaDTO> {
+public class EmpresaBean extends AGenericInterfacesBean<EmpresaDTO> {
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
 	private IEmpresasSvc empresaSvc;
 	@FXML
 	private javafx.scene.control.TableView<EmpresaDTO> tabla;
 	@FXML
-	private TextField codigo;
-	@FXML
-	private TextField nombre;
-	@FXML
-	private TextField email;
-	@FXML
-	private Button btnMod;
-	@FXML
-	private Button btnDel;
-	@FXML
 	private HBox paginador;
-	private DataTableFXMLUtil<EmpresaDTO, EmpresaDTO> dt;
+	@FXML
+	private FlowPane buttons;
+	@FXML
+	private GridPane filters;
+	private BooleanProperty save;
+	private BooleanProperty edit;
+	private BooleanProperty view;
+	private BooleanProperty delete;
+	private MultiValuedMap<TypeGeneric, ConfigGenericFieldDTO> configGenerics;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.list.enterprise");
 		registro = new EmpresaDTO();
-		lazy();
+		filtro = new EmpresaDTO();
+		configGenerics = new ArrayListValuedHashMap<>();
+		loadProperties();
+		loadDataModel(paginador, tabla);
+		visibleButtons();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::add).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.view").action(this::add).icon(Glyph.FILE_TEXT).isVisible(view).build();
+
+		findFields(TypeGeneric.FILTER, EmpresaDTO.class, EmpresaBean.class)
+				.forEach(row -> configGenerics.put(TypeGeneric.FILTER, row));
+		findFields(TypeGeneric.COLUMN, EmpresaDTO.class, EmpresaBean.class)
+				.forEach(row -> configGenerics.put(TypeGeneric.COLUMN, row));
+		loadColumns();
+		loadFields(TypeGeneric.FILTER);
 	}
 
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<EmpresaDTO, EmpresaDTO>(paginador, tabla) {
-			@Override
-			public List<EmpresaDTO> getList(EmpresaDTO filter, Integer page, Integer rows) {
-				List<EmpresaDTO> lista = new ArrayList<EmpresaDTO>();
-				try {
-					lista = empresaSvc.getEmpresas(filter, page - 1, rows);
-				} catch (EmpresasException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(EmpresaDTO filter) {
-				Integer count = 0;
-				try {
-					count = empresaSvc.getTotalRows(filter);
-				} catch (EmpresasException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public EmpresaDTO getFilter() {
-				EmpresaDTO filtro = new EmpresaDTO();
-				if (!codigo.getText().isEmpty()) {
-					filtro.setCodigo(codigo.getText());
-				}
-				if (!nombre.getText().isEmpty()) {
-					filtro.setNombre(nombre.getText());
-				}
-				if (!email.getText().isEmpty()) {
-					filtro.setCorreoElectronico(email.getText());
-				}
-				return filtro;
-			}
-		};
-	}
-
-	public void clickTable() {
-		btnMod.setVisible(isSelected());
-		btnDel.setVisible(isSelected());
+	protected void loadProperties() {
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
 	}
 
 	public void add() {
@@ -105,7 +85,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	}
 
 	public void search() {
-		dt.search();
+		dataTable.search();
 	}
 
 	public void del() {
@@ -121,11 +101,11 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 		try {
 			if (!valid)
 				return;
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				empresaSvc.delete(registro, getUsuario());
 				notificarI18n("mensaje.enterprise.have.been.deleted");
-				dt.search();
+				dataTable.search();
 			} else {
 				alertaI18n("err.enterprise.have.been.selected");
 			}
@@ -135,7 +115,7 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		if (registro != null) {
 			getController(EmpresaCRUBean.class).load(registro);
 		} else {
@@ -144,10 +124,56 @@ public class EmpresaBean extends ABean<EmpresaDTO> {
 	}
 
 	public Boolean isSelected() {
-		return dt.isSelected();
+		return dataTable.isSelected();
 	}
 
-	public DataTableFXMLUtil<EmpresaDTO, EmpresaDTO> getDt() {
-		return dt;
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
+	}
+
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, EmpresaBean.class,
+				getUsuario().getGrupoUser());
+		var update = isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				EmpresaBean.class, getUsuario().getGrupoUser());
+		var delete = isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				EmpresaBean.class, getUsuario().getGrupoUser());
+		var read = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, EmpresaBean.class,
+				getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(update);
+		this.delete.setValue(delete);
+		this.view.setValue(read);
+	}
+
+	@Override
+	public TableView<EmpresaDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return (List<ConfigGenericFieldDTO>) configGenerics.get(typeGeneric);
+	}
+
+	@Override
+	public Class<EmpresaDTO> getClazz() {
+		return EmpresaDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return filters;
+	}
+
+	@Override
+	public EmpresaDTO getFilterToTable(EmpresaDTO filter) {
+		return filtro;
 	}
 }
