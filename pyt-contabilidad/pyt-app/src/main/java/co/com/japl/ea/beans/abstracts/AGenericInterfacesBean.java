@@ -16,6 +16,7 @@ import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
@@ -33,6 +34,10 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parameterSvc;
 	protected MultiValuedMap<String, Object> toChoiceBox;
+	protected BooleanProperty save;
+	protected BooleanProperty delete;
+	protected BooleanProperty edit;
+	protected BooleanProperty view;
 
 	protected void loadDataModel(HBox paginator, TableView<T> tableView) {
 		dataTable = new DataTableFXMLUtil<T, T>(paginator, tableView) {
@@ -95,6 +100,9 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 
 	@Override
 	public T getInstanceDto(TypeGeneric typeGeneric) {
+		if (TypeGeneric.FIELD == typeGeneric) {
+			return registro;
+		}
 		return filtro;
 	}
 

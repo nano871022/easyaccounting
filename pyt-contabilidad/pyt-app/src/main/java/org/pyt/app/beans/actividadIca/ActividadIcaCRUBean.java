@@ -1,6 +1,7 @@
 package org.pyt.app.beans.actividadIca;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.exceptions.ActividadIcaException;
 import org.pyt.common.validates.ValidFields;
@@ -9,11 +10,14 @@ import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.interfaces.IActividadIcaSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una
@@ -23,66 +27,42 @@ import javafx.scene.layout.BorderPane;
  * @since 2018-05-22
  */
 @FXMLFile(path = "view/actividadIca", file = "actividadIca.fxml")
-public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
+public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIcaDTO> {
 	@Inject(resource = "com.pyt.service.implement.ActividadIcaSvc")
 	private IActividadIcaSvc actividadIcaSvc;
-	@FXML
-	private Label codigo;
-	@FXML
-	private TextField nombre;
-	@FXML
-	private TextField codigoIca;
-	@FXML
-	private TextField descripcion;
-	@FXML
-	private TextField tarifa;
-	@FXML
-	private TextField base;
 	@FXML
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
+	@FXML
+	private GridPane fields;
+	@FXML
+	private FlowPane buttons;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().valueBundle("fxml.title.add.ica.activity").get();
 		titulo.setText(NombreVentana);
 		registro = new ActividadIcaDTO();
-	}
-
-	/**
-	 * Pasa los campos de la pantalla el objeto dto
-	 */
-	private void load() {
-		if (registro == null) {
-			registro = new ActividadIcaDTO();
-		}
-		registro.setCodigo(codigo.getText());
-		registro.setCodigoIca(codigoIca.getText());
-		registro.setNombre(nombre.getText());
-		registro.setDescripcion(descripcion.getText());
-		registro.setBase(base.getText());
-		registro.setTarifa(tarifa.getText());
-	}
-
-	private void loadFxml() {
-		if (registro == null)
-			return;
-		codigo.setText(registro.getCodigo());
-		codigoIca.setText(registro.getCodigoIca());
-		nombre.setText(registro.getNombre());
-		descripcion.setText(registro.getDescripcion());
-		base.setText(registro.getBase());
-		tarifa.setText(registro.getTarifa());
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		classTypeDto = ActividadIcaDTO.class;
+		loadFields();
+		visibleFields(ActividadIcaBean.class);
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).isVisible(save)
+				.icon(Glyph.SAVE).setName("fxml.btn.edit").action(this::add).isVisible(edit).icon(Glyph.EDIT)
+				.setName("fxml.btn.cancel").action(this::cancel).build();
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	public void load(ActividadIcaDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
-			loadFxml();
-			titulo.setText("Modificando Actividad ICa");
+			visibleFields(ActividadIcaBean.class);
+			titulo.setText(i18n("mensaje.title.activiadaica.modify"));
+			loadFields(TypeGeneric.FIELD);
 		} else {
-			error("La actividad Ica es invalida para editar.");
+			errorI18n("err.actividadica.invalid.toedit");
 			cancel();
 		}
 	}
@@ -94,21 +74,22 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.validI18n(registro.getNombre(), nombre, true, 1, 100,
-				"err.valid.actividadica.field.name.empty");
-		valid &= ValidFields.validI18n(registro.getDescripcion(), descripcion, true, 1, 100,
-				"err.valid.actividadica.field.description.empty");
-		valid &= ValidFields.validI18n(registro.getBase(), base, true, 1, 30,
-				"err.valid.actividadica.field.base.empty");
-		valid &= ValidFields.validI18n(registro.getTarifa(), tarifa, true, 1, 30,
-				"err.valid.actividadica.field.rate.empty");
-		valid &= ValidFields.validI18n(registro.getCodigoIca(), codigoIca, true, 1, 30,
+		valid &= ValidFields.validI18n(registro.getNombre(), mapFieldUseds.get("nombre").stream().findFirst().get(),
+				true, 1, 100, i18n("err.valid.actividadica.field.name.empty"));
+		valid &= ValidFields.validI18n(registro.getDescripcion(),
+				mapFieldUseds.get("descripcion").stream().findFirst().get(), true, 1, 100,
+				i18n("err.valid.actividadica.field.description.empty"));
+		valid &= ValidFields.validI18n(registro.getBase(), mapFieldUseds.get("base").stream().findFirst().get(), true,
+				1, 30, "err.valid.actividadica.field.base.empty");
+		valid &= ValidFields.validI18n(registro.getTarifa(), mapFieldUseds.get("tarifa").stream().findFirst().get(),
+				true, 1, 30, "err.valid.actividadica.field.rate.empty");
+		valid &= ValidFields.validI18n(registro.getCodigoIca(),
+				mapFieldUseds.get("codigoIca").stream().findFirst().get(), true, 1, 30,
 				"err.valid.actividadica.field.codeica.empty");
 		return valid;
 	}
 
 	public void add() {
-		load();
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
@@ -117,7 +98,6 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 					cancel();
 				} else {
 					actividadIcaSvc.insert(registro, getUsuario());
-					codigo.setText(registro.getCodigo());
 					notificarI18n("menaje.icaactivity.have.been.update.succesfull");
 					cancel();
 				}
@@ -129,6 +109,16 @@ public class ActividadIcaCRUBean extends ABean<ActividadIcaDTO> {
 
 	public void cancel() {
 		getController(ActividadIcaBean.class);
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return fields;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
 	}
 
 }
