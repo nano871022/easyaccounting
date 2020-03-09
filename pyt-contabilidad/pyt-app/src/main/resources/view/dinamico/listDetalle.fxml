@@ -11,16 +11,7 @@
 <BorderPane prefHeight="478.0" prefWidth="553.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.dinamico.ListaDetalleBean">
   <!-- TODO Add Nodes -->
   <bottom>
-    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="25.999900000002526" prefWidth="200.0" BorderPane.alignment="CENTER">
-      <children>
-        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#agregar" text="Agregar" textAlignment="CENTER" />
-        <Button fx:id="editar" mnemonicParsing="false" onAction="#editar" text="Editar" />
-        <Button fx:id="eliminar" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
-      </children>
-      <BorderPane.margin>
-        <Insets bottom="5.0" top="5.0" />
-      </BorderPane.margin>
-    </HBox>
+    <HBox fx:id="buttons" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="25.999900000002526" prefWidth="200.0" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <VBox alignment="TOP_LEFT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="TOP_LEFT">

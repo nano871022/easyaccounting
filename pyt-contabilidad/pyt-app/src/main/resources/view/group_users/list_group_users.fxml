@@ -11,20 +11,7 @@
 
 <BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.group.users.ListGroupUsersBean">
   <bottom>
-    <FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
-      <children>
-        <Button mnemonicParsing="false" onAction="#add" text="%fxml.form.button.add" />
-        <Button fx:id="btnMod" mnemonicParsing="false" onAction="#set" text="%fxml.form.button.edit" visible="false">
-          <FlowPane.margin>
-            <Insets left="10.0" right="10.0" />
-          </FlowPane.margin>
-        </Button>
-        <Button fx:id="btnDel" mnemonicParsing="false" onAction="#del" text="%fxml.form.button.delete" visible="false" />
-      </children>
-      <padding>
-        <Insets bottom="5.0" top="5.0" />
-      </padding>
-    </FlowPane>
+    <HBox fx:id="buttons" alignment="CENTER" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <BorderPane prefHeight="200.0" prefWidth="200.0">

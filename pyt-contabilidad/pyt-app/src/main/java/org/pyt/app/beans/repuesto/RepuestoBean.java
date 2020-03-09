@@ -1,22 +1,28 @@
 package org.pyt.app.beans.repuesto;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.inventario.ProductosException;
 
 import com.pyt.service.dto.inventario.ProductoDTO;
 import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -26,74 +32,41 @@ import javafx.scene.layout.HBox;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view/repuesto", file = "listRepuesto.fxml")
-public class RepuestoBean extends ABean<ProductoDTO> {
+public class RepuestoBean extends AGenericInterfacesBean<ProductoDTO> {
 	@Inject(resource = "com.pyt.service.implement.inventario.ProductosSvc")
 	private IProductosSvc productosSvc;
 	@FXML
 	private javafx.scene.control.TableView<ProductoDTO> tabla;
 	@FXML
-	private TextField nombre;
-	@FXML
-	private Button btnMod;
-	@FXML
 	private HBox paginador;
-	private DataTableFXMLUtil<ProductoDTO, ProductoDTO> dt;
+	@FXML
+	private HBox buttons;
+	@FXML
+	private GridPane filter;
+	private MultiValuedMap<TypeGeneric, ConfigGenericFieldDTO> fieldsConfig;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.list.spare.pars");
 		registro = new ProductoDTO();
-		lazy();
-	}
-
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<ProductoDTO, ProductoDTO>(paginador, tabla) {
-			@Override
-			public List<ProductoDTO> getList(ProductoDTO filter, Integer page, Integer rows) {
-				List<ProductoDTO> lista = new ArrayList<ProductoDTO>();
-				try {
-					lista = productosSvc.productos(filter, page - 1, rows);
-				} catch (ProductosException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(ProductoDTO filter) {
-				Integer count = 0;
-				try {
-					count = productosSvc.getTotalRows(filter);
-				} catch (ProductosException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public ProductoDTO getFilter() {
-				ProductoDTO filtro = new ProductoDTO();
-				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre("%" + nombre.getText() + "%");
-				}
-				return filtro;
-			}
-		};
-	}
-
-	public void clickTable() {
-		btnMod.setVisible(isSelected());
+		filtro = new ProductoDTO();
+		fieldsConfig = new ArrayListValuedHashMap<>();
+		findFields(TypeGeneric.FILTER, ProductoDTO.class, RepuestoBean.class)
+				.forEach(row -> fieldsConfig.put(TypeGeneric.FILTER, row));
+		findFields(TypeGeneric.COLUMN, ProductoDTO.class, RepuestoBean.class)
+				.forEach(row -> fieldsConfig.put(TypeGeneric.COLUMN, row));
+		loadDataModel(paginador, tabla);
+		loadFields(TypeGeneric.FILTER);
+		loadColumns();
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT).isVisible(edit)
+				.setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();
 	}
 
 	public void add() {
 		getController(RepuestoCRUBean.class).load();
-	}
-
-	public void search() {
-		dt.search();
 	}
 
 	public void del() {
@@ -109,11 +82,11 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 		try {
 			if (!valid)
 				return;
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				productosSvc.del(registro, getUsuario());
 				notificarI18n("mensaje.spartpart.have.been.deleted");
-				dt.search();
+				dataTable.search();
 			} else {
 				alertaI18n("err.spartpart.havent.been.selected");
 			}
@@ -123,7 +96,7 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		if (registro != null) {
 			getController(RepuestoCRUBean.class).load(registro);
 		} else {
@@ -131,11 +104,54 @@ public class RepuestoBean extends ABean<ProductoDTO> {
 		}
 	}
 
-	public Boolean isSelected() {
-		return dt.isSelected();
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, RepuestoBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				RepuestoBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				RepuestoBean.class, getUsuario().getGrupoUser());
+		var view = !save && !edit && !delete && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				RepuestoBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 
-	public DataTableFXMLUtil<ProductoDTO, ProductoDTO> getDt() {
-		return dt;
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
+	}
+
+	@Override
+	public TableView<ProductoDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return fieldsConfig.get(typeGeneric).stream().collect(Collectors.toList());
+	}
+
+	@Override
+	public Class<ProductoDTO> getClazz() {
+		return ProductoDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return filter;
+	}
+
+	@Override
+	public ProductoDTO getFilterToTable(ProductoDTO filter) {
+		return filter;
 	}
 }

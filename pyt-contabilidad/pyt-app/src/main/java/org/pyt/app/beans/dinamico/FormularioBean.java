@@ -173,8 +173,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldColumn.setVisible(false);
 		fieldFilter.setVisible(false);
 		fieldLabel.setVisible(false);
-		guardar.setVisible(false);
-		cancelar.setVisible(false);
+		// guardar.setVisible(false);
+		// cancelar.setVisible(false);
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
 		lazy();
@@ -610,5 +610,11 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		} catch (DocumentosException e) {
 			error(e);
 		}
+	}
+
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
 	}
 }

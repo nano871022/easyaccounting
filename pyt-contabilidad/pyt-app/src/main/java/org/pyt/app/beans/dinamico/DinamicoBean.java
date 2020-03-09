@@ -27,6 +27,8 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.interfaces.IGenericFields;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
@@ -52,13 +54,16 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
 	protected IParametrosSvc parametroSvc;
 	protected MultiValuedMap<String, Object> mapListSelects;
+	protected BooleanProperty save;
+	protected BooleanProperty edit;
 
 	public void initialize() {
 		listas = new HashMap<String, Object>();
 		fields = new ArrayListValuedHashMap<>();
 		validateValue = new ValidateValues();
 		mapListSelects = new ArrayListValuedHashMap<>();
-
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
 	}
 
 	/**
@@ -208,4 +213,6 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return mapListSelects;
 	}
+
+	protected abstract void visibleButtons();
 }

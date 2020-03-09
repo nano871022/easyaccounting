@@ -110,4 +110,5 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 		this.delete.setValue(delete);
 	}
 
+	protected abstract void visibleButtons();
 }

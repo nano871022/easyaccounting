@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.inventario.ProductosException;
 import org.pyt.common.exceptions.inventario.ResumenProductoException;
@@ -24,13 +26,15 @@ import com.pyt.service.interfaces.inventarios.IProductosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
 /**
@@ -68,11 +72,11 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 	@FXML
 	private BorderPane pane;
 	@FXML
-	private Button btnMovement;
-	@FXML
 	private ChoiceBox<ParametroDTO> choiceBoxIva;
 	private ValidateValues vv;
 	private List<ParametroDTO> listIva;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -126,7 +130,11 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 		});
 		nombre.textProperty().addListener(change -> validProduct());
 		referencia.focusedProperty().addListener(change -> validProduct());
-		btnMovement.setVisible(false);
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
+				.setName("fxml.btn.movements").action(this::agregarMovimiento).isVisible(edit)
+				.setName("fxml.btn.cancel").action(this::cancel).build();
 	}
 
 	private void validProduct() {
@@ -200,7 +208,6 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 		registro = new ResumenProductoDTO();
 		registro.setProducto(new ProductoDTO());
 		registro.setCantidad(0);
-		btnMovement.setVisible(false);
 	}
 
 	private void getResumenProducto(ProductoDTO dto) {
@@ -217,7 +224,7 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 			getResumenProducto(dto);
 			loadFxml();
 			titulo.setText(i18n().get("mensaje.modifing.spartpart"));
-			btnMovement.setVisible(true);
+			visibleButtons();
 		} else {
 			errorI18n("err.spartpart.cant.edit");
 			cancel();
@@ -278,7 +285,6 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 			validEmpty();
 			productosSvc.insert(registro, getUsuario());
 			codigo.setText(registro.getCodigo());
-			btnMovement.setVisible(true);
 			notificarI18n("mensaje.spartpart.have.been.inserted.succesfull");
 		}
 	}
@@ -327,6 +333,16 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 
 	public void cancel() {
 		getController(RepuestoBean.class);
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, RepuestoBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, RepuestoBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 }

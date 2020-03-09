@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.beans.interfaces.ListCRUDBean;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.ParametroDTO;
@@ -16,9 +18,10 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AListBasicBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -50,21 +53,17 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 	private TableView<ParametroDTO> filtrar;
 	@FXML
 	private TableView<ParametroDTO> tabla;
-	@FXML
-	private Button modify;
-	@FXML
-	private Button add;
-	@FXML
-	private Button del;
-	@FXML
-	private Button addGroup;
-	@FXML
-	private Button modifyGroup;
 	private DataTableFXMLUtil<ParametroDTO, ParametroDTO> lazyFiltrar;
 	private ParametroDTO filtrarGrupo;
 	private ParametroDTO seleccionFiltro;
 	@FXML
 	private TextField filtroGrupo;
+	@FXML
+	private HBox buttons;
+	@FXML
+	private HBox addGroup;
+	@FXML
+	private HBox modifyGroup;
 
 	@FXML
 	public void initialize() {
@@ -73,14 +72,20 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 		SelectList.put(grupo, ParametroConstants.mapa_grupo);
 		estado.getSelectionModel().selectFirst();
 		grupo.getSelectionModel().selectFirst();
-		add.setVisible(false);
-		modify.setVisible(false);
-		del.setVisible(false);
 		addGroup.setVisible(true);
 		modifyGroup.setVisible(false);
 		tabla.setVisible(false);
 		lazy();
 		lazy2();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::createBtn)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modifyBtn).icon(Glyph.EDIT)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::deleteBtn).icon(Glyph.REMOVE).isVisible(delete)
+				.build();
+		ButtonsImpl.Stream(HBox.class).setLayout(addGroup).setName("fxml.btn.search").action(this::buscarFiltro)
+				.icon(Glyph.SEARCH).setName("fxml.btn.save").action(this::nuevoFiltro).icon(Glyph.SAVE).isVisible(save)
+				.build();
+		ButtonsImpl.Stream(HBox.class).setLayout(modifyGroup).setName("fxml.btn.edit").action(this::modifyFiltro)
+				.icon(Glyph.EDIT).isVisible(edit).build();
 	}
 
 	public void lazy2() {
@@ -168,13 +173,6 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 
 	}
 
-	@Override
-	public void clickTable() {
-		modify.setVisible(isSelected());
-		del.setVisible(isSelected());
-		add.setVisible(!isSelected());
-	}
-
 	public void clickTableFiltrar() {
 		if (lazyFiltrar.isSelected()) {
 			tabla.setVisible(true);
@@ -182,12 +180,12 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			dataTable.search();
 			modifyGroup.setVisible(true);
 			addGroup.setVisible(false);
-			add.setVisible(true);
 		} else {
 			tabla.setVisible(false);
 			addGroup.setVisible(true);
 			modifyGroup.setVisible(false);
 		}
+		visibleButtons();
 	}
 
 	public void buscarFiltro() {
@@ -242,14 +240,32 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				parametrosSvc.delete(registro, getUsuario());
-				notificar("Se ha eliminado el parametro.");
+				notificarI18n("mensaje.parametro.was.deleted");
 				dataTable.search();
 			} else {
-				notificar("No se ha seleccionado una empresa.");
+				alertaI18n("warn.parametros.no.selected");
 			}
 		} catch (ParametroException e) {
 			error(e);
 		}
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ParametrosBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ParametrosBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ParametrosBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+	}
+
+	@Override
+	public void clickTable() {
+		visibleButtons();
 	}
 
 }

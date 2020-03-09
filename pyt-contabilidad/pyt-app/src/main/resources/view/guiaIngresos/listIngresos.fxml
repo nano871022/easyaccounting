@@ -14,20 +14,7 @@
 	style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
 	fx:controller="org.pyt.app.beans.GuiaIngresos.ListIngresosBean">
 	<bottom>
-		<FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
-			<children>
-				<Button mnemonicParsing="false" onAction="#add" text="Agregar" />
-				<Button fx:id="btnMod" mnemonicParsing="false" onAction="#set" text="Modificar" visible="false">
-					<FlowPane.margin>
-						<Insets left="10.0" right="10.0" />
-					</FlowPane.margin>
-				</Button>
-				<Button fx:id="eliminar" mnemonicParsing="false" onAction="#del" text="Eliminar" />
-			</children>
-			<padding>
-				<Insets bottom="5.0" top="5.0" />
-			</padding>
-		</FlowPane>
+		<HBox fx:id="buttons" alignment="CENTER" BorderPane.alignment="CENTER"/>
 	</bottom>
 	<center>
 		<BorderPane prefHeight="200.0" prefWidth="200.0">

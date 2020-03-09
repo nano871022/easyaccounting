@@ -5,9 +5,11 @@ import java.util.List;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.ConfigGenericFieldException;
 
@@ -15,9 +17,10 @@ import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -36,15 +39,13 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	private Label lblTitle;
 	private GridPane gridPane;
 
-	@FXML
-	private Button btnDel;
-	@FXML
-	private Button btnMod;
 	private List<ConfigGenericFieldDTO> listFieldsToFilters;
 	private List<ConfigGenericFieldDTO> listFieldsToColumns;
 	@Inject(resource = "com.pyt.service.implement.ConfigGenericFieldSvc")
 	private IConfigGenericFieldSvc configGenericFieldsSvc;
 	private MultiValuedMap<String, Object> toChoiceBox;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	private void initialize() {
@@ -63,8 +64,14 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		} catch (ConfigGenericFieldException e) {
 			error(e);
 		}
+		visibleButtons();
 		loadDataModel(paginador, tableGeneric);
 		load();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.copy").action(this::copy).icon(Glyph.SAVE).isVisible(save)
+				.setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT).isVisible(edit).setName("fxml.btn.delete")
+				.action(this::del).icon(Glyph.REMOVE).isVisible(delete).setName("fxml.btn.view").action(this::set)
+				.icon(Glyph.FILE_TEXT).isVisible(view).build();
 	}
 
 	public final void add() {
@@ -99,13 +106,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	}
 
 	public final void clickTable() {
-		if (dataTable.getSelectedRow() != null) {
-			btnDel.setVisible(true);
-			btnMod.setVisible(true);
-		} else {
-			btnDel.setVisible(false);
-			btnMod.setVisible(false);
-		}
+		visibleButtons();
 	}
 
 	public final void load() {
@@ -164,9 +165,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		if (getTable().isSelected()) {
-			set();
-		}
+		visibleButtons();
 	}
 
 	@Override
@@ -189,5 +188,20 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	@Override
 	public Class<ConfigGenericFieldDTO> getClazz() {
 		return ConfigGenericFieldDTO.class;
+	}
+
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
+				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 }

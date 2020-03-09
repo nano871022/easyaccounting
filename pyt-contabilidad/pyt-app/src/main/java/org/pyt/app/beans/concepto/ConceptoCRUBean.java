@@ -1,10 +1,13 @@
 package org.pyt.app.beans.concepto;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.CuentaContableConstants;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.validates.ValidFields;
 
@@ -17,10 +20,15 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de un concepto
@@ -55,6 +63,10 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 	@FXML
 	private BorderPane pane;
 	public final static String FIELD_NAME = "nombre";
+	@FXML
+	private FlowPane buttons;
+	private BooleanProperty save;
+	private BooleanProperty edit;
 
 	@FXML
 	public void initialize() {
@@ -69,6 +81,12 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		cuentasGastos.setCleanValue(() -> registro.setCuentaGasto(null));
 		cuentasXPagar.setPopupOpenAction(() -> popupCuentaXPagar());
 		cuentasXPagar.setCleanValue(() -> registro.setCuentaXPagar(null));
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		visibleButtons();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
 	}
 
 	/**
@@ -100,6 +118,7 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 	public void load(ConceptoDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
+			visibleButtons();
 			loadFxml();
 			titulo.setText(i18n().get("fxml.title.update.concept"));
 		} else {
@@ -128,6 +147,15 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 		valid &= ValidFields.valid(registro.getCuentaXPagar(), cuentasXPagar, true, null, null,
 				i18n().valueBundle("err.msn.concept.field.debtstopay.empty"));
 		return valid;
+	}
+
+	public void visibleButtons() {
+		var save = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ConceptoBean.class, getUsuario().getGrupoUser());
+		var edit = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ConceptoBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 	public void add() {

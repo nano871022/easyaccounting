@@ -80,7 +80,7 @@ public class ActividadIcaBean extends AGenericInterfacesBean<ActividadIcaDTO> {
 				.forEach(ica -> config.put(TypeGeneric.COLUMN, ica));
 	}
 
-	private void visibleButtons() {
+	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ActividadIcaBean.class,
 				getUsuario().getGrupoUser());
 		var edit = isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,

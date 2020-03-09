@@ -151,4 +151,10 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 		}
 	}
 
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

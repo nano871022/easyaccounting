@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.InsertResourceConstants;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -15,10 +17,11 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.GroupUsersDTO;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -30,10 +33,6 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<GroupUsersDTO> groupUsersSvc;
-	@FXML
-	private Button btnMod;
-	@FXML
-	private Button btnDel;
 	@FXML
 	private TableView<GroupUsersDTO> tableGeneric;
 	@FXML
@@ -48,6 +47,8 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	private List<ConfigGenericFieldDTO> listFilters;
 	private List<ConfigGenericFieldDTO> listColumns;
 	private MultiValuedMap<String, Object> toChoiceBox;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -61,9 +62,14 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 			listFilters = configSvc.getFieldToFilters(this.getClass(), GroupUsersDTO.class);
 			listColumns = configSvc.getFieldToColumns(this.getClass(), GroupUsersDTO.class);
 			toChoiceBox = new ArrayListValuedHashMap<>();
+			visibleButtons();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.delete").action(this::add).icon(Glyph.REMOVE).isVisible(delete)
+					.setName("fxml.btn.view").action(this::add).icon(Glyph.FILE_TEXT).isVisible(view).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -109,10 +115,7 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	}
 
 	public final void clickTable() {
-		if (dataTable.getSelectedRows().size() > 0) {
-			btnDel.setVisible(true);
-			btnMod.setVisible(true);
-		}
+		visibleButtons();
 	}
 
 	public final void set() {
@@ -136,7 +139,7 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		set();
+		visibleButtons();
 	}
 
 	@Override
@@ -170,5 +173,21 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	@Override
 	public Class<GroupUsersDTO> getClazz() {
 		return GroupUsersDTO.class;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListGroupUsersBean.class,
+				getUsuario().getGrupoUser());
+		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListGroupUsersBean.class,
+				getUsuario().getGrupoUser());
+		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, ListGroupUsersBean.class,
+				getUsuario().getGrupoUser());
+		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, ListGroupUsersBean.class,
+				getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 }

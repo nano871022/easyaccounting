@@ -170,8 +170,7 @@ public class GenConfigBean extends ABean {
 	/**
 	 * Se encarga de retornar el nombre de salida
 	 * 
-	 * @param nameFileOrig
-	 *            {@link String} nombre de entrada del archivo
+	 * @param nameFileOrig {@link String} nombre de entrada del archivo
 	 * @return {@link String} nombre de salida
 	 */
 	private String fileOut(String nameFileOrig) {
@@ -186,5 +185,11 @@ public class GenConfigBean extends ABean {
 	public void cancelar() {
 		Stage stage = (Stage) window.getScene().getWindow();
 		stage.close();
+	}
+
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
 	}
 }

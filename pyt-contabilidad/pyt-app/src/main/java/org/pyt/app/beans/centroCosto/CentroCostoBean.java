@@ -70,7 +70,7 @@ public class CentroCostoBean extends AGenericInterfacesBean<CentroCostoDTO> {
 				.setName("fxml.btn.view").action(this::set).isVisible(view).icon(Glyph.FILE_TEXT).build();
 	}
 
-	private void visibleButtons() {
+	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, CentroCostoBean.class,
 				getUsuario().getGrupoUser());
 		var edit = isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,

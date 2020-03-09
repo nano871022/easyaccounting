@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.constants.languages.Documento;
 import org.pyt.common.exceptions.DocumentosException;
@@ -27,10 +29,13 @@ import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IEmpresasSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -52,7 +57,8 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	private ParametroDTO tipoDocumento;
 	private List<ParametroDTO> listTipoDocumento;
 	private ValidateValues valid;
-
+	@FXML
+	private HBox buttons;
 	private GridPane gridPane;
 
 	@FXML
@@ -86,6 +92,9 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		});
 		SelectList.put(tipoDocumentos, listTipoDocumento);
 		titulo.setText("");
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
+				.isVisible(edit).setName("fxml.btn.cancel").action(this::cancelar).build();
 	}
 
 	/**
@@ -246,5 +255,15 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	@Override
 	public Class<DocumentoDTO> getClazz() {
 		return DocumentoDTO.class;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class,
+				getUsuario().getGrupoUser());
+		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListaDocumentosBean.class,
+				getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 }

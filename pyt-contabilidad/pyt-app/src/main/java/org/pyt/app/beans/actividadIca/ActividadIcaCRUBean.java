@@ -3,6 +3,7 @@ package org.pyt.app.beans.actividadIca;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.ActividadIcaException;
 import org.pyt.common.validates.ValidFields;
 
@@ -12,6 +13,7 @@ import com.pyt.service.interfaces.IActividadIcaSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -47,6 +49,7 @@ public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIc
 		save = new SimpleBooleanProperty();
 		edit = new SimpleBooleanProperty();
 		classTypeDto = ActividadIcaDTO.class;
+		visibleButtons();
 		loadFields();
 		visibleFields(ActividadIcaBean.class);
 		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).isVisible(save)
@@ -65,6 +68,7 @@ public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIc
 			errorI18n("err.actividadica.invalid.toedit");
 			cancel();
 		}
+		visibleButtons();
 	}
 
 	/**
@@ -119,6 +123,17 @@ public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIc
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
 		return 4;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ActividadIcaBean.class,
+				getUsuario().getGrupoUser());
+		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ActividadIcaBean.class,
+				getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+
 	}
 
 }

@@ -6,12 +6,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.EmpleadoException;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.exceptions.ParametroException;
@@ -28,9 +30,12 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -82,6 +87,8 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	private List<ParametroDTO> lEstados;
 	public final static String FIELD_NAME = "nombre";
 	public final static String FIELD_VALOR = "valor";
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -112,6 +119,10 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 				registro.setCentroCosto(null);
 				centroCostos.setText(null);
 			});
+			visibleButtons();
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
 		} catch (ParametroException e) {
 			error(e);
 		}
@@ -250,6 +261,7 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 		if (DtoUtils.haveCode(dto)) {
 			registro = dto;
 			loadFxml();
+			visibleButtons();
 			titulo.setText(i18n().get("mensaje.modifing.employe"));
 		} else {
 			error(i18n().get("err.employe.cant.edit"));
@@ -283,6 +295,16 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 
 	public void cancel() {
 		getController(TrabajadorBean.class);
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, TrabajadorBean.class,
+				getUsuario().getGrupoUser());
+		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, TrabajadorBean.class,
+				getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 }

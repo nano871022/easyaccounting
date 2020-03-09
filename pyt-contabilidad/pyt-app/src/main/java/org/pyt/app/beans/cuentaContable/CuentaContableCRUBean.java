@@ -1,9 +1,12 @@
 package org.pyt.app.beans.cuentaContable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.CuentaContableException;
 import org.pyt.common.validates.ValidFields;
 
@@ -16,10 +19,15 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de un concepto
@@ -53,10 +61,16 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
+	@FXML
+	private FlowPane buttons;
+	private BooleanProperty save;
+	private BooleanProperty edit;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.accountingaccount");
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
 		titulo.setText(NombreVentana);
 		registro = new CuentaContableDTO();
 		naturaleza.setPopupOpenAction(() -> popupNaturaleza());
@@ -69,6 +83,11 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		empresa.setCleanValue(() -> registro.setEmpresa(null));
 		asociado.setPopupOpenAction(() -> popupAsociado());
 		asociado.setCleanValue(() -> registro.setAsociado(null));
+		visibleButtons();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
+
 	}
 
 	/**
@@ -109,6 +128,7 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	public void load(CuentaContableDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
+			visibleButtons();
 			loadFxml();
 			titulo.setText("Modificando Cuenta Contable");
 		} else {
@@ -237,6 +257,15 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 	public final void setEmpresa(EmpresaDTO empresa) {
 		registro.setEmpresa(empresa);
 		this.empresa.setText(empresa.getNombre());
+	}
+
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, CuentaContableDTO.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, CuentaContableDTO.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 }

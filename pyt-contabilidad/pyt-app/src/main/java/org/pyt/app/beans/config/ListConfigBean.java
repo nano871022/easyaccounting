@@ -1,10 +1,12 @@
 package org.pyt.app.beans.config;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
@@ -12,12 +14,17 @@ import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -27,112 +34,61 @@ import javafx.scene.layout.HBox;
  * @since 16/09/2018
  */
 @FXMLFile(path = "view/config/servicios", file = "listConfigService.fxml")
-public class ListConfigBean extends ABean<ConfiguracionDTO> {
+public class ListConfigBean extends AGenericInterfacesBean<ConfiguracionDTO> {
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configMarcadorServicioSvc;
 	@FXML
 	private TableView<ConfiguracionDTO> tabla;
 	@FXML
-	private TextField configuracion;
-	@FXML
-	private TextField descripcion;
-	@FXML
-	private Button btnMod;
-	@FXML
-	private Button btnDel;
-	@FXML
-	private Button btnCargue;
-	@FXML
-	private Button btnReporte;
-	@FXML
 	private HBox paginador;
-	private DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> dt;
+	@FXML
+	private FlowPane buttons;
+	@FXML
+	private GridPane filterGrid;
+	private BooleanProperty cargue;
+	private BooleanProperty report;
+	private MultiValuedMap<TypeGeneric, ConfigGenericFieldDTO> config;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = "Lista de Configutaciones";
+		config = new ArrayListValuedHashMap<>();
 		registro = new ConfiguracionDTO();
-		btnCargue.setVisible(false);
-		btnReporte.setVisible(false);
-		lazy();
-	}
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		cargue = new SimpleBooleanProperty();
+		report = new SimpleBooleanProperty();
+		filtro = new ConfiguracionDTO();
+		findFields(TypeGeneric.FILTER, ConfiguracionDTO.class, this.getClass())
+				.forEach(row -> config.put(TypeGeneric.FIELD, row));
+		findFields(TypeGeneric.COLUMN, ConfiguracionDTO.class, this.getClass())
+				.forEach(row -> config.put(TypeGeneric.COLUMN, row));
+		loadDataModel(paginador, tabla);
+		visibleButtons();
+		loadFields(TypeGeneric.FILTER);
+		loadColumns();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view)
+				.setName("fxml.btn.carge").action(this::cargue).icon(Glyph.FILE_ARCHIVE_ALT).isVisible(cargue)
+				.setName("fxml.btn.report").action(this::reporte).icon(Glyph.FILE_PDF_ALT).isVisible(report).build();
 
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO>(paginador, tabla) {
-			@Override
-			public List<ConfiguracionDTO> getList(ConfiguracionDTO filter, Integer page, Integer rows) {
-				List<ConfiguracionDTO> lista = new ArrayList<ConfiguracionDTO>();
-				try {
-					lista = configMarcadorServicioSvc.getConfiguracion(filter, page - 1, rows);
-				} catch (MarcadorServicioException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(ConfiguracionDTO filter) {
-				Integer count = 0;
-				try {
-					count = configMarcadorServicioSvc.count(filter);
-				} catch (MarcadorServicioException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public ConfiguracionDTO getFilter() {
-				ConfiguracionDTO filtro = new ConfiguracionDTO();
-				if (StringUtils.isNotBlank(configuracion.getText())) {
-					filtro.setConfiguracion("%" + configuracion.getText() + "%");
-				}
-				if (StringUtils.isNotBlank(descripcion.getText())) {
-					filtro.setDescripcion("%" + descripcion.getText() + "%");
-				}
-				return filtro;
-			}
-		};
-	}
-
-	public void clickTable() {
-		btnMod.setVisible(isSelected());
-		btnDel.setVisible(isSelected());
-		if (isSelected()) {
-			if (dt.getSelectedRow().getReport()) {
-				btnReporte.setVisible(true);
-				btnCargue.setVisible(false);
-			} else {
-				btnCargue.setVisible(true);
-				btnReporte.setVisible(false);
-			}
-
-		}
 	}
 
 	public void add() {
 		getController(ConfigServiceBean.class).load();
 	}
 
-	public void search() {
-		dt.search();
-	}
-
-	public final void limpiar() {
-		descripcion.setText("");
-		configuracion.setText("");
-	}
-
 	public void del() {
 		try {
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				configMarcadorServicioSvc.deleteConfiguracion(registro, getUsuario());
 				notificar("Se ha eliminado la configuración.");
-				dt.search();
+				dataTable.search();
 			} else {
 				notificar("No se ha seleccionado una registro.");
 			}
@@ -142,7 +98,7 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		if (registro != null) {
 			getController(ConfigServiceBean.class).load(registro);
 		} else {
@@ -150,17 +106,9 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 		}
 	}
 
-	public Boolean isSelected() {
-		return dt.isSelected();
-	}
-
-	public DataTableFXMLUtil<ConfiguracionDTO, ConfiguracionDTO> getDt() {
-		return dt;
-	}
-
 	public void reporte() {
 		try {
-			controllerPopup(GenConfigBean.class).load(dt.getSelectedRow().getConfiguracion());
+			controllerPopup(GenConfigBean.class).load(dataTable.getSelectedRow().getConfiguracion());
 		} catch (LoadAppFxmlException e) {
 			error(e);
 		}
@@ -168,10 +116,63 @@ public class ListConfigBean extends ABean<ConfiguracionDTO> {
 
 	public void cargue() {
 		try {
-			controllerPopup(LoaderServiceBean.class).load(dt.getSelectedRow().getConfiguracion());
+			controllerPopup(LoaderServiceBean.class).load(dataTable.getSelectedRow().getConfiguracion());
 		} catch (LoadAppFxmlException e) {
 			error(e);
 		}
+	}
 
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListConfigBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListConfigBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListConfigBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListConfigBean.class, getUsuario().getGrupoUser());
+		var report = dataTable.isSelected() ? dataTable.getSelectedRow().getReport() : false;
+		var cargue = dataTable.isSelected() ? !dataTable.getSelectedRow().getReport() : false;
+		this.save.setValue(save);
+		this.delete.setValue(save);
+		this.edit.setValue(save);
+		this.view.setValue(view);
+		this.cargue.setValue(cargue);
+		this.report.setValue(report);
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
+	}
+
+	@Override
+	public TableView<ConfiguracionDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return (List<ConfigGenericFieldDTO>) config.get(typeGeneric);
+	}
+
+	@Override
+	public Class<ConfiguracionDTO> getClazz() {
+		return ConfiguracionDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return filterGrid;
+	}
+
+	@Override
+	public ConfiguracionDTO getFilterToTable(ConfiguracionDTO filter) {
+		return filter;
 	}
 }

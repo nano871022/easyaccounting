@@ -174,4 +174,10 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		return InetAddress.getLocalHost().getHostAddress();
 	}
 
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

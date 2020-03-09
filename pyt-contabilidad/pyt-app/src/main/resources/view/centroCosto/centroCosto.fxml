@@ -14,19 +14,7 @@
 	prefWidth="489.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
 	fx:controller="org.pyt.app.beans.centroCosto.CentroCostoCRUBean">
 	<bottom>
-		<FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER">
-			<children>
-				<Button mnemonicParsing="false" onAction="#add" text="Guardar" />
-				<Button mnemonicParsing="false" onAction="#cancel" text="Cancelar">
-					<FlowPane.margin>
-						<Insets left="10.0" />
-					</FlowPane.margin>
-				</Button>
-			</children>
-			<BorderPane.margin>
-				<Insets bottom="5.0" top="5.0" />
-			</BorderPane.margin>
-		</FlowPane>
+		<FlowPane fx:id="buttons" alignment="CENTER" columnHalignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
 	</bottom>
 	<center>
 		<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0"

@@ -13,6 +13,7 @@ import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.constants.DataPropertiesConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.PropertiesConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.MarcadorServicioException;
@@ -37,6 +38,7 @@ import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -176,6 +178,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		campos = new ArrayList<String>();
 		serviciosCampoBusqueda = new ArrayList<ServicioCampoBusquedaDTO>();
 		marcadoresServicios = new ArrayList<MarcadorServicioDTO>();
+		visibleButtons();
 		config = new ConfiguracionDTO();
 		posicion = ConfigServiceConstant.TAB_MARCADOR;
 		max = ConfigServiceConstant.TAB_CONFIGURACION;
@@ -937,5 +940,20 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		serviciosCampoBusqueda.clear();
 		marcadoresServicios.clear();
 		tabView();
+	}
+
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListConfigBean.class,
+				getUsuario().getGrupoUser());
+		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListConfigBean.class,
+				getUsuario().getGrupoUser());
+		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, ListConfigBean.class,
+				getUsuario().getGrupoUser());
+		btnGuardar.setVisible(save);
+		btnUpdateMark.setVisible(edit);
+		btnAddMark.setVisible(save);
+		btnDelMarcador.setVisible(delete);
+		btnSaveMarcador.setVisible(save);
+		btnDelServicio.setVisible(delete);
 	}
 }

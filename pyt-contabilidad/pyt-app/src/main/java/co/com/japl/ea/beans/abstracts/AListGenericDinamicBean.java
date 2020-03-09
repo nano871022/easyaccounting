@@ -14,6 +14,8 @@ import com.pyt.service.interfaces.IParametrosSvc;
 import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
 import co.com.japl.ea.interfaces.IUrlLoadBean;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 
 public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F extends ADto> extends ABean<T>
@@ -25,9 +27,17 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 	private IGenericServiceSvc<S> querySvc;
 	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
+	protected BooleanProperty save;
+	protected BooleanProperty edit;
+	protected BooleanProperty delete;
+	protected BooleanProperty view;
 
 	public AListGenericDinamicBean() {
 		configFields = new ArrayListValuedHashMap<>();
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
 	}
 
 	public IGenericServiceSvc<S> getServiceSvc() {
@@ -60,4 +70,5 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 		return null;
 	}
 
+	protected abstract void visibleButtons();
 }

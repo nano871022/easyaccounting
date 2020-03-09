@@ -5,11 +5,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.validates.ValidFields;
 import org.pyt.common.validates.ValidateValues;
@@ -20,12 +22,16 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 @FXMLFile(path = "/view/genericInterfaces", file = "generic_interfaces.fxml")
 public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
@@ -79,6 +85,10 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@FXML
 	private TextField txtOrder;
 	private List<ParametroDTO> listParam;
+	@FXML
+	private HBox buttons;
+	private BooleanProperty save;
+	private BooleanProperty edit;
 
 	@FXML
 	private void initialize() {
@@ -127,6 +137,13 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			verifyChange();
 		});
 		cbName.setVisible(false);
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
+				.setName("fxml.btn.cancel").action(this::cancel).setName("fxml.btn.new").action(this::newRow)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY)
+				.isVisible(save).build();
+
 	}
 
 	private final boolean validClass(String clazz) {
@@ -371,5 +388,14 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		registro.setOrden(null);
 		load(registro);
 		notificar(i18n().valueBundle("message.copy.generic.interface.success"));
+	}
+
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
+				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 }

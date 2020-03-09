@@ -9,24 +9,7 @@
 
 <BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.beans.parametroInventario.ParametrosInventariosCRUBean">
   <bottom>
-    <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-      <children>
-        <Button fx:id="insert" mnemonicParsing="false" onAction="#createBtn" text="Agregar">
-          <HBox.margin>
-            <Insets right="10.0" fx:id="x1" />
-          </HBox.margin>
-        </Button>
-        <Button fx:id="update" mnemonicParsing="false" onAction="#modifyBtn" text="Actualizar" HBox.margin="$x1" />
-        <Button fx:id="delete" mnemonicParsing="false" onAction="#deleteBtn" text="Eliminar" HBox.margin="$x1" />
-        <Button mnemonicParsing="false" onAction="#cancelBtn" text="Cancelar" />
-      </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets bottom="5.0" />
-         </padding>
-    </HBox>
+    <HBox fx:id="buttons" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0" BorderPane.alignment="CENTER">
