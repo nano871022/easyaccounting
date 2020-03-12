@@ -49,9 +49,8 @@ public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIc
 		save = new SimpleBooleanProperty();
 		edit = new SimpleBooleanProperty();
 		classTypeDto = ActividadIcaDTO.class;
-		visibleButtons();
 		loadFields();
-		visibleFields(ActividadIcaBean.class);
+		visibleButtons();
 		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).isVisible(save)
 				.icon(Glyph.SAVE).setName("fxml.btn.edit").action(this::add).isVisible(edit).icon(Glyph.EDIT)
 				.setName("fxml.btn.cancel").action(this::cancel).build();
@@ -61,7 +60,7 @@ public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIc
 	public void load(ActividadIcaDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
-			visibleFields(ActividadIcaBean.class);
+			visibleButtons();
 			titulo.setText(i18n("mensaje.title.activiadaica.modify"));
 			loadFields(TypeGeneric.FIELD);
 		} else {

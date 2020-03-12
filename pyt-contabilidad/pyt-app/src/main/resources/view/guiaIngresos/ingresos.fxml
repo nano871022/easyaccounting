@@ -17,7 +17,7 @@
 	prefWidth="599.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
 	fx:controller="org.pyt.app.beans.GuiaIngresos.IngresosCRUBean">
 	<bottom>
-		<HBox fx:id="buttons" alignment="CENTER" columnHalignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
+		<HBox fx:id="buttons" alignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
 	</bottom>
 	<center>
 		<GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"

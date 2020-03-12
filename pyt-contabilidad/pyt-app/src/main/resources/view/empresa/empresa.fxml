@@ -13,7 +13,7 @@
 	prefWidth="520.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="org.pyt.app.beans.empresa.EmpresaCRUBean">
 	<bottom>
-		<FlowPane fx:id="buttons" alignment="CENTER" columnHalignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
+		<FlowPane fx:id="buttons" alignment="CENTER"  prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
 	</bottom>
 	<center>
 		<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="255.0"

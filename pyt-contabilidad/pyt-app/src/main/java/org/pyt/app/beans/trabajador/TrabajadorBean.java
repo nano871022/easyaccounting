@@ -58,6 +58,7 @@ public class TrabajadorBean extends AGenericInterfacesBean<TrabajadorDTO> {
 		loadDataModel(paginador, tabla);
 		loadColumns();
 		loadFields(TypeGeneric.FILTER);
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
 				.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE).isVisible(edit)
 				.setName("fxml.btn.delete").action(this::del).icon(Glyph.SAVE).isVisible(delete)

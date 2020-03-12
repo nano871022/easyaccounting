@@ -60,10 +60,10 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 			filterGeneric.getChildren().addAll(gridPane);
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), LanguagesDTO.class);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), LanguagesDTO.class);
-			visibleButtons();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
@@ -147,7 +147,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		set();
+		visibleButtons();
 	}
 
 	@Override

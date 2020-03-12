@@ -63,10 +63,10 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 			registro.setState("1");
 			newBtn = new SimpleBooleanProperty();
 			newBtn.setValue(true);
-			visibleButtons();
 			setClazz(LanguagesDTO.class);
-			fields = configSvc.getFieldToFields(this.getClass(), LanguagesDTO.class);
+			loadFields();
 			loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).setName("fxml.btn.newRow")

@@ -47,10 +47,10 @@ public class ServicioCRUBean extends AGenericInterfacesFieldBean<ServicioDTO> {
 		titulo.setText(NombreVentana);
 		registro = new ServicioDTO();
 		vv = new ValidateValues();
-		visibleButtons();
 		setClazz(ServicioDTO.class);
 		loadFields();
 		loadFields(TypeGeneric.FIELD);
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
 				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.SAVE).isVisible(save)
 				.setName("fxml.btn.close").action(this::cancel).build();

@@ -10,7 +10,7 @@
 
 <BorderPane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="207.99997792968497" prefWidth="272.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.users.LoginBean">
   <bottom>
-    <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
+    <FlowPane alignment="CENTER"  prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
       <children>
         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#connect" text="%fxml.form.button.connect" />
         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearAll" text="%fxml.form.button.clear.all">

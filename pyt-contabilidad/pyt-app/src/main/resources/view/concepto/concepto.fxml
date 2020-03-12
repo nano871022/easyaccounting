@@ -12,7 +12,7 @@
 
 <BorderPane fx:id="pane" maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="243.0" prefWidth="622.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.concepto.ConceptoCRUBean">
   <bottom>
-    <FlowPane fx:id="buttons" alignment="CENTER" columnHalignment="CENTER" prefHeight="33.0" prefWidth="567.0" BorderPane.alignment="CENTER"/>
+    <FlowPane fx:id="buttons" alignment="CENTER"  prefHeight="33.0" prefWidth="567.0" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <GridPane alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER" BorderPane.margin="$x2">

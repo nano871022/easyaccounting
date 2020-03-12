@@ -11,7 +11,7 @@
 
 <BorderPane fx:id="pane" maxHeight="-1.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="333.0" prefWidth="489.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.repuesto.RepuestoCRUBean">
   <bottom>
-    <HBox fx:id="buttons" alignment="CENTER" columnHalignment="CENTER" hgap="5.0" prefHeight="33.0" prefWidth="489.0" vgap="5.0" BorderPane.alignment="CENTER"/>
+    <HBox fx:id="buttons" alignment="CENTER" prefHeight="33.0" prefWidth="489.0" vgap="5.0" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="192.0" prefWidth="469.0" vgap="5.0" BorderPane.alignment="CENTER">

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
@@ -25,7 +26,6 @@ import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.utls.PermissionUtil;
-import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -87,8 +87,6 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	private List<ParametroDTO> listParam;
 	@FXML
 	private HBox buttons;
-	private BooleanProperty save;
-	private BooleanProperty edit;
 
 	@FXML
 	private void initialize() {
@@ -146,6 +144,23 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 
 	}
 
+	private final void countRowsBetweenBeanAndDTO() {
+		try {
+			if (StringUtils.isNotBlank(registro.getClassPath())
+					&& StringUtils.isNotBlank(registro.getClassPathBean())) {
+				var registro = new ConfigGenericFieldDTO();
+				registro.setClassPathBean(this.registro.getClassPathBean());
+				registro.setClassPath(this.registro.getClassPath());
+				registro.setState(1);
+				var count = configGenericSvc.getTotalRows(registro);
+				txtOrder.setText(String.valueOf(count));
+				this.registro.setOrden(count + 1);
+			}
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
 	private final boolean validClass(String clazz) {
 		try {
 			if (StringUtils.isNotBlank(clazz)) {
@@ -164,6 +179,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	public final void load(ConfigGenericFieldDTO dto) {
 		registro = dto;
 		putFxml();
+		visibleButtons();
 	}
 
 	private final void loadFxml() {
@@ -377,6 +393,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 
 	public void newRow() {
 		load();
+		countRowsBetweenBeanAndDTO();
 		putFxml();
 	}
 
@@ -387,14 +404,16 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		registro.setDescription(null);
 		registro.setOrden(null);
 		load(registro);
+		countRowsBetweenBeanAndDTO();
+		verifyChange();
 		notificar(i18n().valueBundle("message.copy.generic.interface.success"));
 	}
 
 	protected void visibleButtons() {
-		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
-				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
-				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_CREATE, ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_UPDATE, ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 	}

@@ -14,7 +14,7 @@
 	prefWidth="489.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
 	fx:controller="org.pyt.app.beans.centroCosto.CentroCostoCRUBean">
 	<bottom>
-		<FlowPane fx:id="buttons" alignment="CENTER" columnHalignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
+		<FlowPane fx:id="buttons" alignment="CENTER"  prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
 	</bottom>
 	<center>
 		<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0"

@@ -79,8 +79,8 @@ public class ConceptoBean extends AGenericInterfacesBean<ConceptoDTO> {
 		edit = new SimpleBooleanProperty();
 		delete = new SimpleBooleanProperty();
 		view = new SimpleBooleanProperty();
-		visibleButtons();
 		loadColumns();
+		visibleButtons();
 		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
 				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
@@ -166,11 +166,11 @@ public class ConceptoBean extends AGenericInterfacesBean<ConceptoDTO> {
 	public void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ConceptoBean.class,
 				getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ConceptoBean.class,
-				getUsuario().getGrupoUser());
-		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, ConceptoBean.class,
-				getUsuario().getGrupoUser());
-		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, ConceptoBean.class,
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ConceptoBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ConceptoBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, ConceptoBean.class,
 				getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);

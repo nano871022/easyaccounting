@@ -64,9 +64,9 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		} catch (ConfigGenericFieldException e) {
 			error(e);
 		}
-		visibleButtons();
 		loadDataModel(paginador, tableGeneric);
 		load();
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
 				.isVisible(save).setName("fxml.btn.copy").action(this::copy).icon(Glyph.SAVE).isVisible(save)
 				.setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT).isVisible(edit).setName("fxml.btn.delete")
@@ -193,11 +193,11 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
 				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
 				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
-		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
 				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
-		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
 				ListGenericInterfacesBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);

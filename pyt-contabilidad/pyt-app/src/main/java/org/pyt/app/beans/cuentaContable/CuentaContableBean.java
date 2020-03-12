@@ -79,9 +79,9 @@ public class CuentaContableBean extends AGenericInterfacesBean<CuentaContableDTO
 		edit = new SimpleBooleanProperty();
 		delete = new SimpleBooleanProperty();
 		view = new SimpleBooleanProperty();
-		visibleButtons();
 		loadDataModel(paginador, tabla);
 		loadColumns();
+		visibleButtons();
 		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
 				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
@@ -181,12 +181,12 @@ public class CuentaContableBean extends AGenericInterfacesBean<CuentaContableDTO
 	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, CuentaContableBean.class,
 				getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, CuentaContableBean.class,
-				getUsuario().getGrupoUser());
-		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, CuentaContableBean.class,
-				getUsuario().getGrupoUser());
-		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, CuentaContableBean.class,
-				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				CuentaContableBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				CuentaContableBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				CuentaContableBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 		this.delete.setValue(delete);

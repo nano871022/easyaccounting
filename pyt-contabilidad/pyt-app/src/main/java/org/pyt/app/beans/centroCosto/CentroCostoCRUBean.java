@@ -182,9 +182,9 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 	}
 
 	public void visibleButtons() {
-		var save = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
 				.havePerm(PermissionConstants.CONST_PERM_CREATE, CentroCostoBean.class, getUsuario().getGrupoUser());
-		var edit = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
 				.havePerm(PermissionConstants.CONST_PERM_UPDATE, CentroCostoBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);
