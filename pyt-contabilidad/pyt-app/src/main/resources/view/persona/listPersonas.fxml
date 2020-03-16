@@ -10,10 +10,9 @@
 <?import javafx.scene.text.*?>
 
 <BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
-	fx:controller="org.pyt.app.beans.persona.PersonaBean"
->
+	fx:controller="org.pyt.app.beans.persona.PersonaBean">
   <bottom>
-    <HBox fx:id="buttons" alignment="CENTER" BorderPane.alignment="CENTER"/>
+    <HBox fx:id="buttons" alignment="CENTER" BorderPane.alignment="CENTER" />
   </bottom>
   <center>
     <BorderPane prefHeight="200.0" prefWidth="200.0">

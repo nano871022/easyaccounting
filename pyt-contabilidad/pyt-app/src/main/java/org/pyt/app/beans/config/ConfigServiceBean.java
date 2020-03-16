@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SearchService;
@@ -37,13 +38,15 @@ import co.com.arquitectura.annotation.proccessor.Services;
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
 import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -58,28 +61,6 @@ import javafx.util.StringConverter;
 
 @FXMLFile(path = "view/config/servicios", file = "ConfigService.fxml")
 public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
-	@FXML
-	private Button btnAnterior;
-	@FXML
-	private Button btnEliminar;
-	@FXML
-	private Button btnGuardar;
-	@FXML
-	private Button btnSiguiente;
-	@FXML
-	private Button btnUpdateMark;
-	@FXML
-	private Button btnCancelar;
-	@FXML
-	private Button btnAddMark;
-	@FXML
-	private Button btnDelServicio;
-	@FXML
-	private Button btnSaveMarcador;
-	@FXML
-	private Button btnDelMarcador;
-	@FXML
-	private Button btnLimpiar;
 	@FXML
 	private Tab tabServicios;
 	@FXML
@@ -144,6 +125,31 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private Label lNameFiler;
 	@FXML
 	private Label lNameFilerOut;
+	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
+	private IConfigMarcadorServicio configMarcadorServicio;
+	@FXML
+	private RadioButton rbIn;
+	@FXML
+	private RadioButton rbOut;
+	@FXML
+	private RadioButton rbCargues;
+	@FXML
+	private RadioButton rbReportes;
+	@FXML
+	private HBox markButtons;
+	@FXML
+	private HBox serviceButtons;
+	@FXML
+	private HBox addServiceButtons;
+	@FXML
+	private HBox associacionButtons;
+	@FXML
+	private HBox associacion2Buttons;
+	@FXML
+	private HBox configButtons;
+	@FXML
+	private HBox moveButtons;
+
 	private ToggleGroup group;
 	private ToggleGroup group2;
 	private List<MarcadorDTO> marcadores;
@@ -154,50 +160,115 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private Integer posicion;
 	private Integer max;
 	private String servicePackageList;
-
-	private AbstractListFromProccess<ServicePOJO> listServices;
-	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
-	private IConfigMarcadorServicio configMarcadorServicio;
 	private ConfiguracionDTO config;
 	private DataTableFXMLUtil<ServicioCampoBusquedaDTO, ServicioCampoBusquedaDTO> tbServicioCampoBusqueda;
 	private DataTableFXMLUtil<MarcadorServicioDTO, MarcadorServicioDTO> tbMarcadorSerivicio;
 	private DataTableFXMLUtil<MarcadorDTO, MarcadorDTO> tbMarcador;
-	@FXML
-	private RadioButton rbIn;
-	@FXML
-	private RadioButton rbOut;
-	@FXML
-	private RadioButton rbCargues;
-	@FXML
-	private RadioButton rbReportes;
+	private AbstractListFromProccess<ServicePOJO> listServices;
+
+	private BooleanProperty addMark;
+	private BooleanProperty updMark;
+	private BooleanProperty delMark;
+	private BooleanProperty cleanMark;
+	private BooleanProperty delService;
+	private BooleanProperty delAssociate;
+	private BooleanProperty before;
+	private BooleanProperty next;
 
 	@FXML
 	public void initialize() {
+		newsInstances();
+		instanceBooleanProperties();
+		configButtons();
+		configRadioButton();
+		radioButton();
+		loadProperties();
+		visibleButtons();
+		hiddenTabs();
+		hiddenBtns();
+		configColmn();
+		loadServices();
+		loadButtons();
+	}
+
+	private void instanceBooleanProperties() {
+		addMark = new SimpleBooleanProperty();
+		updMark = new SimpleBooleanProperty();
+		delMark = new SimpleBooleanProperty();
+		cleanMark = new SimpleBooleanProperty();
+		delService = new SimpleBooleanProperty();
+		delAssociate = new SimpleBooleanProperty();
+		before = new SimpleBooleanProperty();
+		next = new SimpleBooleanProperty(true);
+	}
+
+	private void loadButtons() {
+		ButtonsImpl.Stream(HBox.class).setLayout(markButtons).setName("fxml.btn.add").action(this::addMarcador)
+				.isVisible(addMark).icon(Glyph.SAVE).setName("fxml.btn.update").action(this::updMarcador)
+				.isVisible(updMark).icon(Glyph.SAVE).setName("fxml.btn.delete").action(this::delMarcador)
+				.isVisible(delMark).icon(Glyph.REMOVE).setName("fxml.btn.clean").action(this::cleanMarcador)
+				.isVisible(cleanMark).build();
+		ButtonsImpl.Stream(HBox.class).setLayout(serviceButtons).setName("fxml.btn.delete")
+				.action(this::delServicioCampo).isVisible(delService).icon(Glyph.REMOVE).build();
+		ButtonsImpl.Stream(HBox.class).setLayout(addServiceButtons).setName("fxml.btn.add")
+				.action(this::addServicioCampo).isVisible(save).icon(Glyph.REMOVE).build();
+		ButtonsImpl.Stream(HBox.class).setLayout(associacionButtons).setName("fxml.btn.add").action(this::agregar)
+				.isVisible(save).icon(Glyph.SAVE).build();
+		ButtonsImpl.Stream(HBox.class).setLayout(associacion2Buttons).setName("fxml.btn.delete").action(this::eliminar)
+				.isVisible(delAssociate).icon(Glyph.REMOVE).build();
+		ButtonsImpl.Stream(HBox.class).setLayout(configButtons).setName("fxml.btn.saveAll").action(this::generar)
+				.isVisible(save).icon(Glyph.SAVE).setName("fxml.btn.generate").action(this::saveAll).isVisible(true)
+				.icon(Glyph.GEAR).build();
+		ButtonsImpl.Stream(HBox.class).setLayout(moveButtons).setName("fxml.btn.before").action(this::anterior)
+				.isVisible(before).icon(Glyph.ARROW_CIRCLE_O_LEFT).setName("fxml.btn.next").action(this::siguiente)
+				.isVisible(next).icon(Glyph.ARROW_CIRCLE_O_RIGHT).setName("fxml.btn.cancel").action(this::cancelar)
+				.isVisible(true).build();
+
+	}
+
+	private void newsInstances() {
 		marcadores = new ArrayList<MarcadorDTO>();
 		servicios = new ArrayList<String>();
 		campos = new ArrayList<String>();
 		serviciosCampoBusqueda = new ArrayList<ServicioCampoBusquedaDTO>();
 		marcadoresServicios = new ArrayList<MarcadorServicioDTO>();
-		visibleButtons();
 		config = new ConfiguracionDTO();
 		posicion = ConfigServiceConstant.TAB_MARCADOR;
 		max = ConfigServiceConstant.TAB_CONFIGURACION;
 		group = new ToggleGroup();
 		group2 = new ToggleGroup();
-		btnUpdateMark.setVisible(false);
-		btnLimpiar.setVisible(false);
+	}
+
+	private void configButtons() {
+		updMark.setValue(false);
+		cleanMark.setValue(false);
+	}
+
+	private void configRadioButton() {
 		rbIn.setToggleGroup(group);
 		rbOut.setToggleGroup(group);
 		rbCargues.setToggleGroup(group2);
 		rbReportes.setToggleGroup(group2);
 		rbOut.setSelected(true);
 		rbReportes.setSelected(true);
+	}
+
+	private void loadProperties() {
+		try {
+			servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load()
+					.getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
+		} catch (Exception e) {
+			logger.logger(e);
+		}
+	}
+
+	private void radioButton() {
 		rbCargues.onActionProperty().set(e -> {
 			rbOut.setVisible(false);
 			rbIn.setSelected(true);
 			nameFiler.setVisible(false);
 			nameFilerOut.setVisible(false);
-			lNameFiler.setVisible(false);
+			// lNameFiler.setVisible(false);
 			lNameFilerOut.setVisible(false);
 		});
 		rbReportes.onActionProperty().set(e -> {
@@ -205,19 +276,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			rbOut.setSelected(true);
 			nameFiler.setVisible(true);
 			nameFilerOut.setVisible(true);
-			lNameFiler.setVisible(true);
+			// lNameFiler.setVisible(true);
 			lNameFilerOut.setVisible(true);
 		});
-		try {
-			servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load()
-					.getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
-		} catch (Exception e) {
-			logger.logger(e);
-		}
-		hiddenTabs();
-		hiddenBtns();
-		configColmn();
-		loadServices();
 	}
 
 	public final void load() {
@@ -260,7 +321,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				rbIn.setSelected(true);
 				nameFiler.setVisible(false);
 				nameFilerOut.setVisible(false);
-				lNameFiler.setVisible(false);
+				// lNameFiler.setVisible(false);
 				lNameFilerOut.setVisible(false);
 			}
 			if (StringUtils.isNotBlank(config.getDescripcion())) {
@@ -277,8 +338,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 * el campo de eliminar
 	 */
 	public final void marcadorSelect() {
-		btnEliminar.setVisible(tbMarcador.isSelected());
-		btnUpdateMark.setVisible(tbMarcador.isSelected());
+		delAssociate.setValue(delete.get() && tbMarcador.isSelected());
+		updMark.setValue(edit.get() && tbMarcador.isSelected());
 		var mark = tbMarcador.getSelectedRow();
 		orderMarcador.setText(String.valueOf(mark.getOrden()));
 		nameMarcador.setText(mark.getMarcador());
@@ -289,9 +350,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			rbCargues.setSelected(false);
 			rbReportes.setSelected(true);
 		}
-		btnAddMark.setVisible(false);
-		btnUpdateMark.setVisible(true);
-		btnLimpiar.setVisible(true);
+		addMark.setValue(false);
+		cleanMark.setValue(true);
 	}
 
 	/**
@@ -299,7 +359,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 * el campo de eliminar
 	 */
 	public final void servicioCampo() {
-		btnDelServicio.setVisible(tbServicioCampoBusqueda.isSelected());
+		delService.setValue(delete.get() && tbServicioCampoBusqueda.isSelected());
 	}
 
 	/**
@@ -307,7 +367,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 * campo
 	 */
 	public final void servicioMarcador() {
-		btnDelMarcador.setVisible(tbMarcadorSerivicio.isSelected());
+		delMark.setValue(delete.get() && tbMarcadorSerivicio.isSelected());
 	}
 
 	/**
@@ -524,11 +584,10 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	private void hiddenBtns() {
-		btnAnterior.setVisible(false);
-		btnEliminar.setVisible(false);
-		btnDelServicio.setVisible(false);
-		btnDelMarcador.setVisible(false);
-		btnSaveMarcador.setVisible(false);
+		before.setValue(false);
+		delAssociate.setValue(false);
+		delService.setValue(false);
+		delMark.setValue(false);
 	}
 
 	private void tabView() {
@@ -612,7 +671,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			marcadores.add(marca);
 			nameMarcador.clear();
 			tbMarcador.search();
-			btnLimpiar.setVisible(false);
+			cleanMark.setValue(false);
 			orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
 		}
 	}
@@ -638,9 +697,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			}
 			nameMarcador.clear();
 			orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
-			btnAddMark.setVisible(true);
-			btnUpdateMark.setVisible(false);
-			btnLimpiar.setVisible(false);
+			addMark.setValue(save.get());
+			updMark.setValue(false);
+			cleanMark.setValue(false);
 			tbMarcador.search();
 		} catch (MarcadorServicioException e) {
 			error(e);
@@ -651,9 +710,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	public final void cleanMarcador() {
 		nameMarcador.clear();
 		orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
-		btnAddMark.setVisible(true);
-		btnUpdateMark.setVisible(false);
-		btnLimpiar.setVisible(false);
+		addMark.setValue(save.get());
+		updMark.setValue(false);
+		cleanMark.setValue(false);
 	}
 
 	public void delMarcador() {
@@ -867,10 +926,6 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		}
 	}
 
-	public void guardar() {
-
-	}
-
 	/**
 	 * Se encarga de eliminar el marcador asociado al campo del servicio
 	 */
@@ -898,8 +953,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	private void mostrarBotonesMov() {
-		btnSiguiente.setVisible(posicion < max);
-		btnAnterior.setVisible(posicion > ConfigServiceConstant.TAB_MARCADOR);
+		next.setValue(posicion < max);
+		before.setValue(posicion > ConfigServiceConstant.TAB_MARCADOR);
 	}
 
 	public void anterior() {
@@ -949,11 +1004,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				getUsuario().getGrupoUser());
 		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, ListConfigBean.class,
 				getUsuario().getGrupoUser());
-		btnGuardar.setVisible(save);
-		btnUpdateMark.setVisible(edit);
-		btnAddMark.setVisible(save);
-		btnDelMarcador.setVisible(delete);
-		btnSaveMarcador.setVisible(save);
-		btnDelServicio.setVisible(delete);
+		this.save.setValue(save);
+		this.delete.setValue(delete);
+		this.edit.setValue(edit);
+
 	}
 }

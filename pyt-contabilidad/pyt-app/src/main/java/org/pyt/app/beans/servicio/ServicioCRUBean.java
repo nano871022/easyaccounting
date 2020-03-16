@@ -3,6 +3,7 @@ package org.pyt.app.beans.servicio;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.ServiciosException;
 import org.pyt.common.validates.ValidFields;
@@ -59,7 +60,9 @@ public class ServicioCRUBean extends AGenericInterfacesFieldBean<ServicioDTO> {
 	public void load(ServicioDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
-			titulo.setText(i18n().get("mensaje.modifig.service"));
+			titulo.setText(i18n().get("mensaje.modifing.service"));
+			loadFields(TypeGeneric.FIELD);
+			visibleButtons();
 		} else {
 			error(i18n().get("err.service.cant.edit"));
 			cancel();
@@ -103,10 +106,10 @@ public class ServicioCRUBean extends AGenericInterfacesFieldBean<ServicioDTO> {
 
 	@Override
 	protected void visibleButtons() {
-		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ServicioBean.class,
-				getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ServicioBean.class,
-				getUsuario().getGrupoUser());
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ServicioBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, ServicioBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 	}

@@ -88,8 +88,8 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 				.isVisible(edit).setName("fxml.btn.delete").action(this::deleteBtn).icon(Glyph.REMOVE).isVisible(delete)
 				.build();
 		ButtonsImpl.Stream(HBox.class).setLayout(addGroup).setName("fxml.btn.search").action(this::buscarFiltro)
-				.icon(Glyph.SEARCH).setName("fxml.btn.add.group").action(this::nuevoFiltro).icon(Glyph.SAVE)
-				.isVisible(save).build();
+				.icon(Glyph.SEARCH).isVisible(true).setName("fxml.btn.add.group").action(this::nuevoFiltro)
+				.icon(Glyph.SAVE).isVisible(save).build();
 		ButtonsImpl.Stream(HBox.class).setLayout(modifyGroup).setName("fxml.btn.edit.group").action(this::modifyFiltro)
 				.icon(Glyph.EDIT).isVisible(editFilter).build();
 	}
@@ -189,14 +189,10 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 			tabla.setVisible(true);
 			seleccionFiltro = lazyFiltrar.getSelectedRow();
 			dataTable.search();
-			modifyGroup.setVisible(true);
-			addGroup.setVisible(false);
-			visibleButtons();
 		} else {
 			tabla.setVisible(false);
-			addGroup.setVisible(true);
-			modifyGroup.setVisible(false);
 		}
+		visibleButtons();
 	}
 
 	public void buscarFiltro() {

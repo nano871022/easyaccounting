@@ -51,7 +51,7 @@ public class ListConfigBean extends AGenericInterfacesBean<ConfiguracionDTO> {
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Lista de Configutaciones";
+		NombreVentana = i18n("fxml.title.list.configs");
 		config = new ArrayListValuedHashMap<>();
 		registro = new ConfiguracionDTO();
 		save = new SimpleBooleanProperty();
@@ -62,13 +62,13 @@ public class ListConfigBean extends AGenericInterfacesBean<ConfiguracionDTO> {
 		report = new SimpleBooleanProperty();
 		filtro = new ConfiguracionDTO();
 		findFields(TypeGeneric.FILTER, ConfiguracionDTO.class, this.getClass())
-				.forEach(row -> config.put(TypeGeneric.FIELD, row));
+				.forEach(row -> config.put(TypeGeneric.FILTER, row));
 		findFields(TypeGeneric.COLUMN, ConfiguracionDTO.class, this.getClass())
 				.forEach(row -> config.put(TypeGeneric.COLUMN, row));
 		loadDataModel(paginador, tabla);
-		visibleButtons();
 		loadFields(TypeGeneric.FILTER);
 		loadColumns();
+		visibleButtons();
 		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
 				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
@@ -134,8 +134,8 @@ public class ListConfigBean extends AGenericInterfacesBean<ConfiguracionDTO> {
 		var report = dataTable.isSelected() ? dataTable.getSelectedRow().getReport() : false;
 		var cargue = dataTable.isSelected() ? !dataTable.getSelectedRow().getReport() : false;
 		this.save.setValue(save);
-		this.delete.setValue(save);
-		this.edit.setValue(save);
+		this.delete.setValue(delete);
+		this.edit.setValue(edit);
 		this.view.setValue(view);
 		this.cargue.setValue(cargue);
 		this.report.setValue(report);

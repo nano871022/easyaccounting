@@ -12,7 +12,7 @@
 
 <BorderPane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="538.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.trabajador.TrabajadorCRUBean">
   <bottom>
-    <HBox fx:id="buttons" alignment="CENTER"  prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER">
+    <HBox fx:id="buttons" alignment="CENTER"  prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="285.0" prefWidth="489.0" BorderPane.alignment="CENTER">

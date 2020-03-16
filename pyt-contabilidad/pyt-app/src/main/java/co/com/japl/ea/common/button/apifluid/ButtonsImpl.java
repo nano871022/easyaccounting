@@ -15,6 +15,7 @@ import org.pyt.common.common.I18n;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
@@ -24,6 +25,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	private List<String> names;
 	private Map<String, Button> buttons;
 	private MultiValuedMap<String, Supplier<Boolean>> visibilities;
+	private Map<String, Boolean> booleanvisibilities;
 	private Map<String, BooleanProperty> visibilitiesProperties;
 	private Map<String, FontAwesome.Glyph> icons;
 	private MultiValuedMap<String, Caller> actions;
@@ -35,6 +37,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 		visibilities = new ArrayListValuedHashMap<String, Supplier<Boolean>>();
 		actions = new ArrayListValuedHashMap<String, Caller>();
 		styles = new ArrayListValuedHashMap<String, String>();
+		booleanvisibilities = new HashMap<String, Boolean>();
 		names = new ArrayList<>();
 		icons = new HashMap<>();
 		commands = new ArrayListValuedHashMap<String, String>();
@@ -56,7 +59,10 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	public Buttons<P> setName(String name) {
 		name = I18n.instance().get(name);
 		names.add(name);
-		buttons.put(name, newButton(name));
+		var button = newButton(name);
+		var tooltip = new Tooltip(name);
+		button.setTooltip(tooltip);
+		buttons.put(name, button);
 		return this;
 	}
 
@@ -117,6 +123,9 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 			if (visibilitiesProperties.get(name) != null) {
 				button.visibleProperty().bind(visibilitiesProperties.get(name));
 			}
+			if (booleanvisibilities.containsKey(name)) {
+				button.setVisible(booleanvisibilities.get(name));
+			}
 			if (icons.get(name) != null) {
 				button.setGraphic(new Glyph("FontAwesome", icons.get(name)));
 			}
@@ -133,6 +142,12 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	@Override
 	public Buttons<P> icon(FontAwesome.Glyph fontIcon) {
 		icons.put(getLastName(), fontIcon);
+		return this;
+	}
+
+	@Override
+	public Buttons<P> isVisible(Boolean isVisible) {
+		booleanvisibilities.put(getLastName(), isVisible);
 		return this;
 	}
 }

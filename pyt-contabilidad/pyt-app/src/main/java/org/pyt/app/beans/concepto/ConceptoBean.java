@@ -65,6 +65,7 @@ public class ConceptoBean extends AGenericInterfacesBean<ConceptoDTO> {
 	private ConceptoDTO filter;
 	@FXML
 	private FlowPane buttons;
+	private List<ConfigGenericFieldDTO> columns;
 
 	@FXML
 	public void initialize() {
@@ -79,6 +80,8 @@ public class ConceptoBean extends AGenericInterfacesBean<ConceptoDTO> {
 		edit = new SimpleBooleanProperty();
 		delete = new SimpleBooleanProperty();
 		view = new SimpleBooleanProperty();
+		columns = findFields(TypeGeneric.COLUMN, ConceptoDTO.class, ConceptoBean.class);
+		loadDataModel(paginador, tabla);
 		loadColumns();
 		visibleButtons();
 		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
@@ -199,7 +202,7 @@ public class ConceptoBean extends AGenericInterfacesBean<ConceptoDTO> {
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
-		return null;
+		return columns;
 	}
 
 	@Override

@@ -48,6 +48,14 @@ public interface Buttons<P extends Pane> {
 	public Buttons<P> isVisible(Supplier<Boolean> isVisible);
 
 	/**
+	 * Usado para indicar si es visible pero solo instancia actual, {@link Boolean}
+	 * 
+	 * @param isVisible {@link Boolean}
+	 * @return {@link Buttons}
+	 */
+	public Buttons<P> isVisible(Boolean isVisible);
+
+	/**
 	 * Solo se puedde cargar un boolean property por boton, usar cuando la
 	 * visibilidad del boton dependa de cambios en la pantalla y no solo al inicio
 	 * de la carga de los botones

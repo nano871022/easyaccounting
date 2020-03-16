@@ -114,6 +114,7 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		orden.setText(String.valueOf(registro.getOrden()));
 		SelectList.put(estado, listEstados, FIELD_NAME);
 		SelectList.selectItem(estado, listEstados, FIELD_NAME, registro.getEstado(), FIELD_NAME);
+		setEmpresa(registro.getEmpresa());
 	}
 
 	public void load(CentroCostoDTO dto) {
@@ -149,14 +150,13 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					centroCostoSvc.update(registro, getUsuario());
 					notificarI18n("mensaje.costcenter.have.been.update.succefull");
-					cancel();
 				} else {
 					centroCostoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificarI18n("mensaje.costcenter.have.been.insert.succesfull");
-					cancel();
 				}
 			}
+			visibleButtons();
 		} catch (CentroCostosException e) {
 			error(e);
 		}

@@ -139,8 +139,8 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
 				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
 				.setName("fxml.btn.cancel").action(this::cancel).setName("fxml.btn.new").action(this::newRow)
-				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY)
-				.isVisible(save).build();
+				.icon(Glyph.SAVE).isVisible(edit).setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY)
+				.isVisible(edit).build();
 
 	}
 
@@ -304,6 +304,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 					notificar(i18n().valueBundle("message.update.generic.interface"));
 				}
 			}
+			visibleButtons();
 		} catch (Exception e) {
 			error(e);
 		}

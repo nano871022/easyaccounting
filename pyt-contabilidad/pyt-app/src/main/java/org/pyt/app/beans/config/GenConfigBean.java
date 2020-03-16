@@ -73,7 +73,6 @@ public class GenConfigBean extends ABean {
 	/**
 	 * Se encarga de inicializar
 	 */
-	@SuppressWarnings("unchecked")
 	public void load(String nameGen) {
 		if (StringUtils.isNotBlank(nameGen)) {
 			this.nameGen.setText(nameGen);

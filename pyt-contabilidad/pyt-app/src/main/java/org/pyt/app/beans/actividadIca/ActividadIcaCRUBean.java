@@ -121,7 +121,7 @@ public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIc
 
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
-		return 4;
+		return 2;
 	}
 
 	@Override

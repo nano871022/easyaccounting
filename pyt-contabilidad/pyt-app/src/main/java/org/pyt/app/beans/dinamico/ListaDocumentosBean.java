@@ -77,8 +77,8 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 		try {
 			registro = new DocumentoDTO();
 			filter = new DocumentoDTO();
-			visibleButtons();
 			lazy();
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::agregar)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::agregar).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.delete").action(this::agregar).icon(Glyph.REMOVE)
