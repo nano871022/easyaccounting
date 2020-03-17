@@ -22,7 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
-@FXMLFile(file = "help.fxml", path = "view/help")
+@FXMLFile(file = "show.fxml", path = "view/help")
 public class HelpViewBean extends AGenericInterfacesFieldBean<HelpDTO> {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<HelpDTO> helpsSvc;
