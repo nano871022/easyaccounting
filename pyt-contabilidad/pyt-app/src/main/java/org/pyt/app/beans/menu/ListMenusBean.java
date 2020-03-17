@@ -65,10 +65,10 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 			filterGeneric.getChildren().addAll(gridPane);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), MenuDTO.class);
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), MenuDTO.class);
-			visibleButtons();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(FILTER, CONST_GRID_STANDARD);
 			loadColumns(CONST_TABLE_CUSTOM);
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
 					.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT).isVisible(edit)
 					.setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
@@ -175,12 +175,12 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListMenusBean.class,
 				getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListMenusBean.class,
-				getUsuario().getGrupoUser());
-		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, ListMenusBean.class,
-				getUsuario().getGrupoUser());
-		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, ListMenusBean.class,
-				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListMenusBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListMenusBean.class, getUsuario().getGrupoUser());
+		var view = !save && !edit && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListMenusBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 		this.delete.setValue(delete);

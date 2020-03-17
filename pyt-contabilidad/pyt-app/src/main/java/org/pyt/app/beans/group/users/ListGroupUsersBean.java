@@ -62,14 +62,14 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 			listFilters = configSvc.getFieldToFilters(this.getClass(), GroupUsersDTO.class);
 			listColumns = configSvc.getFieldToColumns(this.getClass(), GroupUsersDTO.class);
 			toChoiceBox = new ArrayListValuedHashMap<>();
-			visibleButtons();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
-					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
-					.isVisible(edit).setName("fxml.btn.delete").action(this::add).icon(Glyph.REMOVE).isVisible(delete)
-					.setName("fxml.btn.view").action(this::add).icon(Glyph.FILE_TEXT).isVisible(view).build();
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+					.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -179,12 +179,12 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListGroupUsersBean.class,
 				getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListGroupUsersBean.class,
-				getUsuario().getGrupoUser());
-		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, ListGroupUsersBean.class,
-				getUsuario().getGrupoUser());
-		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, ListGroupUsersBean.class,
-				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListGroupUsersBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListGroupUsersBean.class, getUsuario().getGrupoUser());
+		var view = !save && !edit && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListGroupUsersBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 		this.delete.setValue(delete);

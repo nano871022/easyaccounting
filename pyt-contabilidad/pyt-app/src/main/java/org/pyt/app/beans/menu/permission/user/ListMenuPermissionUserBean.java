@@ -72,11 +72,11 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 			filterGeneric.getChildren().addAll(gridPane);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), MenuPermUsersDTO.class);
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), MenuPermUsersDTO.class);
-			visibleButtons();
 			findChoiceBox();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
@@ -175,7 +175,7 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		set();
+		visibleButtons();
 	}
 
 	@Override
@@ -198,11 +198,11 @@ public class ListMenuPermissionUserBean extends AGenericInterfacesBean<MenuPermU
 	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
 				ListMenuPermissionUserBean.class, getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
 				ListMenuPermissionUserBean.class, getUsuario().getGrupoUser());
-		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
 				ListMenuPermissionUserBean.class, getUsuario().getGrupoUser());
-		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+		var view = !save && !edit && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
 				ListMenuPermissionUserBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);

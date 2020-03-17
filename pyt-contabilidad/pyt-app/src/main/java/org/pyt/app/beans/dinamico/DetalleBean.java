@@ -84,7 +84,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
-				.isVisible(edit).setName("fxml.btn.back").action(this::regresar).icon(Glyph.FORWARD).build();
+				.isVisible(edit).setName("fxml.btn.back").action(this::regresar).icon(Glyph.BACKWARD).build();
 	}
 
 	/**

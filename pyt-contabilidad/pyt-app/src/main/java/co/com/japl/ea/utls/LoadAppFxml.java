@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.pyt.app.components.PopupFromBean;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
@@ -24,6 +25,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -423,6 +425,25 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (IOException e) {
 			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
 		}
+	}
+
+	public static final void addCommands(KeyCombination keyboard, Runnable runnable) {
+		if (loadApp().getLastContro() != null && loadApp().getLastContro().getScene() != null) {
+			var accelerator = loadApp().getLastContro().getScene().getAccelerators();
+			accelerator.put(keyboard, runnable);
+		}
+	}
+
+	public static final <D extends ADto> void addCommandsToPopup(KeyCombination keyboard, Class<D> dto) {
+		Runnable runnable = () -> {
+			try {
+				var popupBean = new PopupGenBean<D>(dto);
+				loadBeanFX(popupBean);
+			} catch (Exception e) {
+				logger.logger(e);
+			}
+		};
+		addCommands(keyboard, runnable);
 	}
 
 	public P getLastLayout() {

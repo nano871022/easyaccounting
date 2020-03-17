@@ -140,7 +140,7 @@ public class GenericServiceSvc<T extends ADto> extends Services implements IGene
 
 	public final <D extends ADto> boolean isValidClass(Class<D> clazz) {
 		var valid = true;
-		valid &= clazz != UsuarioDTO.class;
+
 		return valid;
 	}
 }

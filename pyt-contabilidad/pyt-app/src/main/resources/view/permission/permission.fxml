@@ -11,6 +11,7 @@
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="533.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.permission.PermissionBean">
   <bottom>
     <HBox fx:id="buttons" alignment="CENTER"  prefHeight="29.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
+  </bottom>
   <center>
     <GridPane fx:id="gridPane" alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="258.0" prefWidth="513.0" vgap="5.0" BorderPane.alignment="CENTER"/>
   </center>

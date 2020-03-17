@@ -46,8 +46,6 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 	@FXML
 	private Label lblTitle;
 	@FXML
-	private Button btnAdd;
-	@FXML
 	private Button btnCopy;
 	public static final String CONST_FIELD_NAME_MPU_MENU = "menu";
 	public static final String CONST_FIELD_NAME_MPU_PERMSSION = "perm";
@@ -63,9 +61,9 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 			registro = new MenuPermUsersDTO();
 			setClazz(MenuPermUsersDTO.class);
 			fields = configGenericSvc.getFieldToFields(this.getClass(), MenuPermUsersDTO.class);
-			visibleButtons();
 			findChoiceBox();
 			loadFields(TypeGeneric.FIELD);
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY).isVisible(edit)
@@ -92,14 +90,12 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 
 	public final void load() {
 		registro = new MenuPermUsersDTO();
-		btnAdd.setText(i18n().valueBundle("fxml.form.button.add").get());
 		btnCopy.setVisible(false);
 		loadFields(TypeGeneric.FIELD);
 	}
 
 	public final void load(MenuPermUsersDTO dto) {
 		registro = dto;
-		btnAdd.setText(i18n().valueBundle("fxml.form.button.update").get());
 		visibleButtons();
 		loadFields(TypeGeneric.FIELD);
 	}

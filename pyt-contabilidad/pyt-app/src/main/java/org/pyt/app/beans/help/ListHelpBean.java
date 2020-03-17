@@ -58,10 +58,10 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 			filterGeneric.getChildren().addAll(gridPane);
 			listFilters = configGenericSvc.getFieldToFilters(this.getClass(), HelpDTO.class);
 			listColumns = configGenericSvc.getFieldToColumns(this.getClass(), HelpDTO.class);
-			visibleButtons();
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
@@ -170,12 +170,12 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListHelpBean.class,
 				getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListHelpBean.class,
-				getUsuario().getGrupoUser());
-		var delete = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE, ListHelpBean.class,
-				getUsuario().getGrupoUser());
-		var view = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, ListHelpBean.class,
-				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListHelpBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListHelpBean.class, getUsuario().getGrupoUser());
+		var view = !save && !edit && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListHelpBean.class, getUsuario().getGrupoUser());
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 		this.delete.setValue(delete);

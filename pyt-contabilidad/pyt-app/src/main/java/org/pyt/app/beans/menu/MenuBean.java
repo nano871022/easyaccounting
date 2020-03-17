@@ -53,8 +53,8 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 			registro = new MenuDTO();
 			setClazz(MenuDTO.class);
 			fields = configGenericSvc.getFieldToFields(this.getClass(), MenuDTO.class);
-			visibleButtons();
 			this.loadFields(TypeGeneric.FIELD, CONST_GRID_STANDARD);
+			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 					.icon(Glyph.NEWSPAPER_ALT).isVisible(save).setName("fxml.btn.edit").action(this::add)
 					.icon(Glyph.EDIT).isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();

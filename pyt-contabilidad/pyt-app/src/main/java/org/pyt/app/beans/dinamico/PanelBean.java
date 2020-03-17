@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.Glyph;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
@@ -132,6 +133,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 			}
 		} // end for
 		Button regresar = new Button(Documento.CONST_RETURN);
+		regresar.setGraphic(new Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.BACKWARD));
 		regresar.setMaxWidth(Double.MAX_VALUE);
 		regresar.onActionProperty().set(e -> {
 			getController(ListaDocumentosBean.class).loadParameters(registro.getTipoDocumento().getValor2());

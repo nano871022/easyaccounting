@@ -121,7 +121,7 @@ public class ServicioCRUBean extends AGenericInterfacesFieldBean<ServicioDTO> {
 
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
-		return 4;
+		return 2;
 	}
 
 }

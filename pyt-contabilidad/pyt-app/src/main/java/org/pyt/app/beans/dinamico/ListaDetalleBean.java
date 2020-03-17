@@ -37,7 +37,6 @@ import co.com.japl.ea.utls.DataTableFXMLUtil;
 import co.com.japl.ea.utls.LoadAppFxml;
 import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -72,10 +71,6 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	@FXML
 	private TableView<DetalleDTO> tabla;
 	@FXML
-	private Button editar;
-	@FXML
-	private Button eliminar;
-	@FXML
 	private Label sumatoria;
 	@FXML
 	private GridPane filterTable;
@@ -93,10 +88,8 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	private final void initialize() {
 		registro = new DetalleDTO();
 		filtro = new DetalleDTO();
-		eliminar.setVisible(false);
-		editar.setVisible(false);
-		visibleButtons();
 		lazy();
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::agregar)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::editar).icon(Glyph.SAVE)
 				.isVisible(edit).setName("fxml.btn.delete").action(this::eliminar).icon(Glyph.REMOVE).isVisible(delete)
@@ -219,8 +212,8 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 		};
 		table.selectRow(list -> {
 			if (list.size() > 0) {
-				eliminar.setVisible(true);
-				editar.setVisible(true);
+				delete.setValue(true);
+				edit.setValue(true);
 			}
 		});
 	}

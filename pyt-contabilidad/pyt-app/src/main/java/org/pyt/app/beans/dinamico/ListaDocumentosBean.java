@@ -80,9 +80,9 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 			lazy();
 			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::agregar)
-					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::agregar).icon(Glyph.EDIT)
-					.isVisible(edit).setName("fxml.btn.delete").action(this::agregar).icon(Glyph.REMOVE)
-					.isVisible(delete).setName("fxml.btn.view").action(this::agregar).icon(Glyph.FILE_TEXT)
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modificar).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.delete").action(this::eliminar).icon(Glyph.REMOVE)
+					.isVisible(delete).setName("fxml.btn.view").action(this::modificar).icon(Glyph.FILE_TEXT)
 					.isVisible(view).build();
 		} catch (Exception e) {
 			error(e);
