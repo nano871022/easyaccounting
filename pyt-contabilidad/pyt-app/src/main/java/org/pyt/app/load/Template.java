@@ -101,10 +101,12 @@ public class Template implements IComunicacion, Reflection {
 			LoadAppFxml.addCommandsToPopup(new KeyCodeCombination(KeyCode.I, KeyCombination.ALT_DOWN),
 					LanguagesDTO.class);
 			visibleButtons();
-			ButtonsImpl.Stream(HBox.class).setLayout(topBodyTemplate).setName("fxml.btn.language")
-					.action(this::language).isVisible(languageBP).icon(Glyph.LANGUAGE).setName("fxml.btn.help")
-					.action(this::help).isVisible(helpBP).icon(Glyph.QUESTION).setName("fxml.btn.dinamic.documents")
-					.action(this::configDinamicDocuments).isVisible(documentsBP).setName("fxml.btn.generic.interface")
+			ButtonsImpl.Stream(HBox.class).setLayout(topBodyTemplate).setReference("fxml.btn.language")
+					.action(this::language).isVisible(languageBP).icon(Glyph.LANGUAGE).setReference("fxml.btn.help")
+					.action(this::help).isVisible(helpBP).icon(Glyph.QUESTION)
+					.setReference("fxml.btn.dinamic.documents").icon(Glyph.FILE_TEXT)
+					.action(this::configDinamicDocuments).isVisible(documentsBP)
+					.setReference("fxml.btn.generic.interface").icon(Glyph.FILE_TEXT_ALT)
 					.action(this::configGenericInterface).isVisible(genericBP).build();
 		} catch (ReflectionException e1) {
 			logger.logger(e1);
@@ -122,6 +124,7 @@ public class Template implements IComunicacion, Reflection {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void help() {
 		try {
 			var popup = new PopupFromBean(HelpViewBean.class);

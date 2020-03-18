@@ -29,6 +29,15 @@ public interface Buttons<P extends Pane> {
 	public Buttons<P> setName(String name);
 
 	/**
+	 * Ingresa el nombre de referencia a la configuración con esto permite que se
+	 * generen botones solo con el icono
+	 * 
+	 * @param referenceName {@link String}
+	 * @return {@link Buttons}
+	 */
+	public Buttons<P> setReference(String referenceName);
+
+	/**
 	 * En este punto por medio de un {@link Caller} que no retorna nada, ejecuta los
 	 * que se ha dejado configurado
 	 * 

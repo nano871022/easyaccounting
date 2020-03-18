@@ -57,13 +57,23 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 
 	@Override
 	public Buttons<P> setName(String name) {
-		name = I18n.instance().get(name);
-		names.add(name);
-		var button = newButton(name);
-		var tooltip = new Tooltip(name);
-		button.setTooltip(tooltip);
-		buttons.put(name, button);
+		configButtons(name, name);
 		return this;
+	}
+
+	@Override
+	public Buttons<P> setReference(String reference) {
+		configButtons(reference, "");
+		return this;
+	}
+
+	private void configButtons(String reference, String name) {
+		reference = I18n.instance().get(reference);
+		names.add(reference);
+		var button = newButton(name);
+		var tooltip = new Tooltip(reference);
+		button.setTooltip(tooltip);
+		buttons.put(reference, button);
 	}
 
 	public Button newButton(String name) {

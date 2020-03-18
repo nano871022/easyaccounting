@@ -1,54 +1,57 @@
 package org.pyt.app.beans.help;
 
-import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.controlsfx.glyphfont.FontAwesome.Glyph;
+import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.DtoUtils;
-import org.pyt.common.constants.PermissionConstants;
-import org.pyt.common.validates.ValidFields;
 
-import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
-import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.beans.abstracts.AGenericToBean;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.HelpDTO;
-import co.com.japl.ea.utls.PermissionUtil;
+import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
 @FXMLFile(file = "show.fxml", path = "view/help")
-public class HelpViewBean extends AGenericInterfacesFieldBean<HelpDTO> {
+public class HelpViewBean extends AGenericToBean<HelpDTO> {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<HelpDTO> helpsSvc;
 	@FXML
-	private GridPane gridPane;
+	private WebView wvBottom;
 	@FXML
-	private Label lblTitle;
-	public static final String CONST_FIELD_NAME_MENUS_STATE = "state";
-	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
-	private IConfigGenericFieldSvc configGenericSvc;
+	private WebView wvRight;
 	@FXML
-	private HBox buttons;
+	private WebView titlePanel;
+	@FXML
+	private WebView bodyPanel;
+	private static final String CONST_TEXT_HTML = "text/html";
 
 	@FXML
 	public void initialize() {
 		try {
 			registro = new HelpDTO();
-			setClazz(HelpDTO.class);
-			fields = configGenericSvc.getFieldToFields(this.getClass(), HelpDTO.class);
-			visibleButtons();
-			loadFields(TypeGeneric.FIELD);
-			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
-					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.SAVE)
-					.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
+			registro.setClassPathBean(LoadAppFxml.getCurrentControl().getClass().getName().replace("Class ", ""));
+			var list = helpsSvc.getAll(registro);
+			if (list.size() == 0 || list == null) {
+				var stage = (Stage) LoadAppFxml.getLastControl().getParent().getScene().getWindow();
+				if (stage != null) {
+					stage.close();
+				}
+			}
+			titlePanel.getEngine().loadContent(registro.getTitle(), CONST_TEXT_HTML);
+			wvRight.getEngine().loadContent(registro.getMsgRigth(), CONST_TEXT_HTML);
+			wvBottom.getEngine().loadContent(registro.getMsgBottom(), CONST_TEXT_HTML);
+			bodyPanel.getEngine().loadContent(registro.getBody(), CONST_TEXT_HTML);
 		} catch (Exception e) {
-			error(e);
+			logger().logger(e);
 		}
 	}
 
@@ -56,75 +59,38 @@ public class HelpViewBean extends AGenericInterfacesFieldBean<HelpDTO> {
 		registro = new HelpDTO();
 	}
 
-	public final void load(HelpDTO dto) {
-		registro = dto;
-		visibleButtons();
-		loadFields(TypeGeneric.FIELD);
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return null;
 	}
 
 	@Override
-	public GridPane getGridPane(TypeGeneric typeGeneric) {
-		return gridPane;
-	}
-
-	public final Boolean valid() {
-		Boolean valid = true;
-
-		valid &= ValidFields.valid(registro.getClassPathBean(),
-				getMapFields(TypeGeneric.FIELD).get("classPathBean").stream().findFirst().get(), true, 1, 300,
-				i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid(registro.getState(),
-				getMapFields(TypeGeneric.FIELD).get(CONST_FIELD_NAME_MENUS_STATE).stream().findFirst().get(), true, 1,
-				2, i18n().valueBundle("msn.error.field.empty"));
-		valid &= ValidFields.valid(validClass(registro.getClassPathBean()),
-				getMapFields(TypeGeneric.FIELD).get("classPathBean").stream().findFirst().get(), true, null, null,
-				i18n().valueBundle("msn.error.field.empty"));
-		return valid;
-	}
-
-	private final boolean validClass(String clazz) {
-		try {
-			if (StringUtils.isNotBlank(clazz)) {
-				Class.forName(clazz);
-			}
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
-
-	public final void add() {
-		try {
-			if (valid()) {
-				if (StringUtils.isBlank(registro.getCodigo())) {
-					helpsSvc.insert(registro, getUsuario());
-					notificar(i18n().valueBundle("mensaje.help.inserted"));
-				} else {
-					helpsSvc.update(registro, getUsuario());
-					notificar(i18n().valueBundle("mensaje.help.updated"));
-				}
-			}
-		} catch (Exception e) {
-			error(e);
-		}
-	}
-
-	public final void cancel() {
-		getController(ListHelpBean.class);
+	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
+		return null;
 	}
 
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
-		return 2;
+		return null;
 	}
 
 	@Override
-	protected void visibleButtons() {
-		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
-				.havePerm(PermissionConstants.CONST_PERM_CREATE, ListHelpBean.class, getUsuario().getGrupoUser());
-		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
-				.havePerm(PermissionConstants.CONST_PERM_UPDATE, ListHelpBean.class, getUsuario().getGrupoUser());
-		this.save.setValue(save);
-		this.edit.setValue(edit);
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return null;
 	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+	}
+
+	@Override
+	public TableView<HelpDTO> getTableView() {
+		return null;
+	}
+
+	@Override
+	public DataTableFXMLUtil<HelpDTO, HelpDTO> getTable() {
+		return null;
+	}
+
 }
