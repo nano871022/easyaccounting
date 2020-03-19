@@ -18,6 +18,7 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.beans.abstracts.AGenericToBean;
+import co.com.japl.ea.beans.abstracts.APopupFromBean;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
@@ -106,6 +107,45 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		}
 	}
 
+	public final static <S extends ADto, T extends APopupFromBean<S>> T loadBeanPopup(Stage primaryStage,
+			Class<T> class1) throws LoadAppFxmlException {
+		String file, title;
+		loadApp().setStage(primaryStage);
+		if (!loadApp().isStage()) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.stage.didnt.sent.and.didnt.saved"));
+		}
+		try {
+			T lbean = class1.getDeclaredConstructor().newInstance();
+			file = lbean.pathFileFxml();
+			title = lbean.getNombreVentana();
+			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
+				file = AppConstants.SLASH + file;
+			}
+			URL url = class1.getResource(file);
+			FXMLLoader loader = new FXMLLoader(url, getLanguage());
+			Parent root = loader.load();
+			Scene scene = new Scene(root);
+			loadApp().getStage().setTitle(title);
+			loadApp().getStage().setScene(scene);
+			loadApp().getStage().show();
+			return loader.getController();
+		} catch (InstantiationException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.instance"), e);
+		} catch (IllegalAccessException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.ilegal.access"), e);
+		} catch (IllegalArgumentException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.ilegal.argument"), e);
+		} catch (InvocationTargetException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.object.invoke"), e);
+		} catch (NoSuchMethodException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.method.didnt.found"), e);
+		} catch (SecurityException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.security"), e);
+		} catch (IOException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.io"), e);
+		}
+	}
+
 	public final static <T extends AGenericToBean<D>, D extends ADto> T loadBeanFX(T genericBean)
 			throws LoadAppFxmlException {
 		try {
@@ -131,12 +171,37 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		return genericBean;
 	}
 
+	public final static <T extends APopupFromBean<D>, D extends ADto> T loadBeanPopupBean(T genericBean)
+			throws LoadAppFxmlException {
+		try {
+			Stage stg = new Stage();
+			genericBean.start(stg);
+			genericBean.load();
+
+		} catch (InstantiationException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.instance"), e);
+		} catch (IllegalAccessException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.ilegal.access"), e);
+		} catch (IllegalArgumentException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.ilegal.argument"), e);
+		} catch (InvocationTargetException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.object.invoke"), e);
+		} catch (NoSuchMethodException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.method.didnt.found"), e);
+		} catch (SecurityException e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.security"), e);
+		} catch (Exception e) {
+			throw new LoadAppFxmlException(i18n.get("err.loadappfxml.stage.didnt.found"), e);
+		}
+		return genericBean;
+	}
+
 	@SuppressWarnings("rawtypes")
 	public final static <P extends PopupFromBean> P loadBeanFX(P genericBean) throws LoadAppFxmlException {
 		try {
 			Stage stg = new Stage();
 			genericBean.start(stg);
-			genericBean.initialize();
+			genericBean.load();
 		} catch (InstantiationException e) {
 			throw new LoadAppFxmlException(i18n.valueBundle("err.instance.problem").get(), e);
 		} catch (IllegalAccessException e) {
@@ -173,7 +238,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException(i18n.instance().get("err.stage.wasnt.entered"));
 		}
 		try {
-			T lbean = class1.getDeclaredConstructor().newInstance();
+			var lbean = class1.getDeclaredConstructor().newInstance();
 			file = lbean.pathFileFxml();
 			title = lbean.getNombreVentana();
 			if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {

@@ -124,16 +124,16 @@ public class Template implements IComunicacion, Reflection {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void help() {
 		try {
-			var popup = new PopupFromBean(HelpViewBean.class);
-			LoadAppFxml.loadBeanFX(popup);
+			var popup = new HelpViewBean();
+			LoadAppFxml.loadBeanPopupBean(popup);
 		} catch (Exception e) {
 			logger().logger(e);
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void configGenericInterface() {
 		try {
 			var popup = new PopupFromBean(ListGenericInterfacesBean.class);
