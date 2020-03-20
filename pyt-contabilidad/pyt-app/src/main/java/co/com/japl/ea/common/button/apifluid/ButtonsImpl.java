@@ -57,7 +57,8 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 
 	@Override
 	public Buttons<P> setName(String name) {
-		configButtons(name, name);
+		var name2 = I18n.instance().get(name);
+		configButtons(name, name2);
 		return this;
 	}
 
