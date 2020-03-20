@@ -19,6 +19,7 @@ public abstract class APopupFromBean<D extends ADto> implements IBean<D>, INotif
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
+	protected Stage stage;
 
 	public APopupFromBean(Class<D> clazz) {
 		this.clazz = clazz;
@@ -46,6 +47,10 @@ public abstract class APopupFromBean<D extends ADto> implements IBean<D>, INotif
 	@Override
 	public Comunicacion comunicacion() {
 		return comunicacion;
+	}
+
+	public void setStage(Stage primaryStage) {
+		this.stage = primaryStage;
 	}
 
 	/**

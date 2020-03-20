@@ -45,14 +45,10 @@ public class HelpViewBean extends APopupFromBean<HelpDTO> {
 	public void initialize() {
 		try {
 			registro = new HelpDTO();
-			// principalPanel.setCenter(panel);
 			registro.setClassPathBean(LoadAppFxml.getCurrentControl().getClass().getName().replace("Class ", ""));
 			var list = helpsSvc.getAll(registro);
 			if (list.size() == 0 || list == null) {
-				var stage = (Stage) LoadAppFxml.getLastControl().getParent().getScene().getWindow();
-				if (stage != null) {
-					stage.close();
-				}
+				stage.close();
 			}
 			registro = list.get(0);
 			wvTittle.getEngine().loadContent(registro.getTitle(), CONST_TEXT_HTML);
@@ -61,6 +57,7 @@ public class HelpViewBean extends APopupFromBean<HelpDTO> {
 			wvCenter.getEngine().loadContent(registro.getBody(), CONST_TEXT_HTML);
 		} catch (Exception e) {
 			logger().logger(e);
+			stage.close();
 		}
 	}
 

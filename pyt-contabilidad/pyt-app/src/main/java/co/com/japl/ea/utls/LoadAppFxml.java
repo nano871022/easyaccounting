@@ -176,6 +176,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		try {
 			Stage stg = new Stage();
 			genericBean.start(stg);
+			genericBean.setStage(stg);
 			genericBean.load();
 
 		} catch (InstantiationException e) {
