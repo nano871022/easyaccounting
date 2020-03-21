@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -354,8 +355,10 @@ public final class SelectList {
 		choiceBox.getSelectionModel().select(value);
 	}
 
+	@SuppressWarnings("unchecked")
 	public final static <S> void addItems(ChoiceBox<S> choiceBox, List<S> list, String... campos) {
 		choiceBox.getItems().clear();
+		choiceBox.getItems().add((S) AppConstants.SELECCIONE);
 		choiceBox.getItems().addAll(list);
 		choiceBox.setConverter(new StringConverter<S>() {
 			private StringBuilder name;
@@ -377,5 +380,12 @@ public final class SelectList {
 				return null;
 			}
 		});
+	}
+
+	public final static <T> void selectChange(ChoiceBox<T> choiceBox, Consumer<T> caller) {
+		choiceBox.getSelectionModel().selectedIndexProperty()
+				.addListener((observable, oldValue, newValue) -> {
+					caller.accept(choiceBox.getSelectionModel().getSelectedItem());
+				});
 	}
 }

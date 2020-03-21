@@ -48,6 +48,8 @@ public class PersonaBean extends AGenericInterfacesBean<PersonaDTO> {
 	public void initialize() {
 		NombreVentana = i18n("fxml.personasbean");
 		registro = new PersonaDTO();
+		filtro = new PersonaDTO();
+		fieldsConfig = new ArrayListValuedHashMap<>();
 		loadDataModel(paginador, tabla);
 		loadFields(TypeGeneric.FILTER);
 		loadColumns();

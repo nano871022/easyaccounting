@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.load.Template;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
@@ -20,6 +21,7 @@ import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.utls.LoadAppFxml;
 import co.com.japl.ea.utls.LoginUtil;
@@ -28,6 +30,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 /**
@@ -52,14 +55,21 @@ public class LoginBean extends ABean<UsuarioDTO> {
 	private Label message;
 	@FXML
 	private Label title;
+	@FXML
+	private HBox buttons;
 	private Stage stage;
 	private Boolean login = false;
 
 	@FXML
 	public void initialize() {
 		registro = new UsuarioDTO();
+		user.setPromptText(i18n("inputtext.promp.usuario.user.name"));
+		password.setPromptText(i18n("inputtext.promp.usuario.password"));
 		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN).get());
 		verifyLoginRemember();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.form.button.connect").action(this::connect)
+				.icon(Glyph.SIGN_IN).setName("fxml.form.button.clear.all").action(this::clearAll).icon(Glyph.ERASER)
+				.setName("fxml.form.button.cancel").action(this::cancel).build();
 	}
 
 	private void verifyLoginRemember() {

@@ -3,6 +3,7 @@ package org.pyt.app.beans.generic.interfaces;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
@@ -10,6 +11,7 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.SelectList;
+import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.PermissionConstants;
@@ -87,13 +89,27 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	private List<ParametroDTO> listParam;
 	@FXML
 	private HBox buttons;
+	private UtilControlFieldFX utilFx;
 
 	@FXML
 	private void initialize() {
+		utilFx = new UtilControlFieldFX();
 		titulo.setText(i18n().valueBundle(LanguageConstant.FXML_LBL_TITLE_GENERIC_INTERFACES).get());
 		SelectList.put(chbState, ParametroConstants.mapa_estados_parametros);
 		registro = new ConfigGenericFieldDTO();
 		validateValues = new ValidateValues();
+		hidenFields();
+		configFieldProperty();
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
+				.setName("fxml.btn.cancel").action(this::cancel).setName("fxml.btn.new").action(this::newRow)
+				.icon(Glyph.SAVE).isVisible(edit).setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY)
+				.isVisible(edit).build();
+
+	}
+
+	private void hidenFields() {
 		lbField.setVisible(false);
 		cbField.setVisible(false);
 		lbGroup.setVisible(false);
@@ -104,44 +120,57 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		chkVisible.setSelected(true);
 		chkGroup.setSelected(false);
 		chkGroup.setVisible(false);
-		chkGroup.selectedProperty().addListener(change -> manejaGrupo());
-		chkDefault.selectedProperty().addListener(event -> {
+		cbName.setVisible(false);
+	}
+
+	private void configFieldProperty() {
+
+		utilFx.change(chkIsColumn, registro::setIsColumn);
+		utilFx.change(chkIsFilter, registro::setIsFilter);
+		utilFx.change(chkIsRequired, registro::setIsRequired);
+		utilFx.change(chkVisible, registro::setIsVisible);
+		utilFx.change(chkGroup, value -> manejaGrupo());
+		utilFx.change(chkDefault, value -> {
 			tbDefault.setVisible(chkDefault.isSelected());
 			lbDefault.setVisible(chkDefault.isSelected());
 		});
-		txtClassDto.focusedProperty().addListener((obs, oldValue, newValue) -> {
-			if (!newValue) {
-				if (!validClass(txtClassDto.getText())) {
-					error(i18n().valueBundle("err.dto.no.exists", txtClassDto.getText()));
-				} else {
-					verifyChange();
-				}
+		utilFx.focusOut(txtClassDto, () -> {
+			if (!validClass(txtClassDto.getText())) {
+				error(i18n().valueBundle("err.dto.no.exists", txtClassDto.getText()));
+			} else {
+				verifyChange();
 			}
 		});
-		txtClassBean.focusedProperty().addListener((change, oldval, newval) -> {
-			if (!newval && !validClass(txtClassBean.getText())) {
+		utilFx.focusOut(txtClassBean, () -> {
+			if (!validClass(txtClassBean.getText())) {
 				error(i18n().valueBundle("err.class.no.exists", txtClassBean.getText()));
 			}
 		});
-		txtName.textProperty().addListener((obs, s1, s2) -> {
+		utilFx.change(txtClassBean, registro::setClassPathBean);
+		utilFx.change(tbDefault, registro::setFieldShow);
+		utilFx.change(txtClassDto, registro::setClassPath);
+		utilFx.change(txtDescription, registro::setDescription);
+		utilFx.change(txtAlias, registro::setAlias);
+		utilFx.change(txtOrder, value -> registro.setOrden(validateValues.cast(value, Integer.class)));
+		utilFx.change(txtWidth, value -> registro.setWidth(validateValues.cast(value, Double.class)));
+		utilFx.change(txtName, value -> {
+			registro.setName(value);
 			txtDescription.setText(txtName.getText());
 			txtAlias.setText(txtName.getText().substring(0, 1).toUpperCase() + txtName.getText().substring(1));
 			verifyChange();
 		});
-		cbName.selectionModelProperty().addListener(change -> {
+		SelectList.selectChange(cbName, change -> {
 			txtName.setText(SelectList.get(cbName));
 			txtDescription.setText(txtName.getText());
 			txtAlias.setText(txtName.getText().substring(0, 1).toUpperCase() + txtName.getText().substring(1));
 			verifyChange();
 		});
-		cbName.setVisible(false);
-		visibleButtons();
-		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
-				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
-				.setName("fxml.btn.cancel").action(this::cancel).setName("fxml.btn.new").action(this::newRow)
-				.icon(Glyph.SAVE).isVisible(edit).setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY)
-				.isVisible(edit).build();
-
+		SelectList.selectChange(chbState,
+				value -> registro.setState((Integer) ParametroConstants.mapa_estados_parametros.get(value)));
+		SelectList.selectChange(cbGroup, change -> {
+			registro.setNameGroup(Optional.ofNullable(change).orElse(new ParametroDTO()).getNombre());
+			verifyChange();
+		});
 	}
 
 	private final void countRowsBetweenBeanAndDTO() {
@@ -182,52 +211,6 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		visibleButtons();
 	}
 
-	private final void loadFxml() {
-		try {
-			if (StringUtils.isNotBlank(txtName.getText())) {
-				registro.setName(txtName.getText());
-			}
-			if (StringUtils.isNotBlank(SelectList.get(cbName))) {
-				txtName.setText(SelectList.get(cbName));
-				registro.setName(SelectList.get(cbName));
-			}
-			if (StringUtils.isNotBlank(txtAlias.getText())) {
-				registro.setAlias(txtAlias.getText());
-			}
-			if (StringUtils.isNotBlank(txtDescription.getText())) {
-				registro.setDescription(txtDescription.getText());
-			}
-			if (StringUtils.isNotBlank(txtClassDto.getText())) {
-				registro.setClassPath(txtClassDto.getText());
-			}
-			if (StringUtils.isNotBlank(txtClassBean.getText())) {
-				registro.setClassPathBean(txtClassBean.getText());
-			}
-			if (StringUtils.isNotBlank(txtWidth.getText())) {
-				registro.setWidth(validateValues.cast(txtWidth.getText(), Double.class));
-			}
-			if (StringUtils.isNotBlank(txtOrder.getText())) {
-				registro.setOrden(validateValues.cast(txtOrder.getText(), Integer.class));
-			}
-			if (StringUtils.isNotBlank(tbDefault.getText())) {
-				registro.setValueDefault(tbDefault.getText());
-			}
-			if (chkVisible.isSelected()) {
-				registro.setIsVisible(chkVisible.isSelected());
-			}
-			registro.setFieldShow(validateValues.cast(SelectList.get(cbField), String.class));
-			registro.setState(validateValues.cast(SelectList.get(chbState, ParametroConstants.mapa_estados_parametros),
-					Integer.class));
-			registro.setIsColumn(chkIsColumn.isSelected());
-			registro.setIsFilter(chkIsFilter.isSelected());
-			registro.setIsRequired(chkIsRequired.isSelected());
-			var selGroup = SelectList.get(cbGroup);
-			registro.setNameGroup(selGroup != null ? selGroup.getNombre() : null);
-		} catch (Exception e) {
-			error(e);
-		}
-	}
-
 	private final void putFxml() {
 		txtName.setText(registro.getName());
 		txtAlias.setText(registro.getAlias());
@@ -258,12 +241,18 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		}
 		SelectList.selectItem(chbState, ParametroConstants.mapa_estados_parametros, registro.getState());
 		loadGroupParam();
-		if (StringUtils.isBlank(registro.getFieldShow()) && StringUtils.isNotBlank(registro.getNameGroup())) {
+		if (StringUtils.isNotBlank(registro.getNameGroup())) {
 			SelectList.selectItem(cbGroup, listParam, ParametroConstants.FIELD_NAME_PARAM, registro.getNameGroup());
 			chkGroup.setVisible(true);
 			chkGroup.setSelected(true);
+			lbGroup.setVisible(true);
 		}
-		SelectList.selectItem(cbField, registro.getFieldShow());
+		if (StringUtils.isNotBlank(registro.getFieldShow())) {
+			SelectList.selectItem(cbField, registro.getFieldShow());
+			cbField.setVisible(true);
+			lbField.setVisible(true);
+		}
+
 	}
 
 	private final boolean validRecord() {
@@ -291,7 +280,6 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@FXML
 	public void add() {
 		try {
-			loadFxml();
 			if (validRecord()) {
 				if (StringUtils.isBlank(registro.getCodigo())) {
 					if (registro.getOrden() == null) {
@@ -328,7 +316,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 						cbGroup.setVisible(true);
 						lbGroup.setVisible(true);
 					}
-					((ADto) instance).getNameFields().forEach(fieldName -> SelectList.add(cbField, fieldName));
+					SelectList.put(cbField, ((ADto) instance).getNameFields());
 					cbField.setVisible(true);
 					lbField.setVisible(true);
 					chkGroup.setVisible(false);
@@ -404,6 +392,8 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		registro.setName(null);
 		registro.setDescription(null);
 		registro.setOrden(null);
+		registro.setFieldShow(null);
+		registro.setNameGroup(null);
 		load(registro);
 		countRowsBetweenBeanAndDTO();
 		verifyChange();
