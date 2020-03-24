@@ -12,7 +12,10 @@ import static org.pyt.common.constants.languages.Menu.CONST_MSN_MENU_UPDATED;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -20,10 +23,13 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.MenuDTO;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 @FXMLFile(file = CONST_MENU_FXML, path = CONST_PATH_MENU)
 public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
@@ -38,6 +44,8 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 	public static final String CONST_FIELD_NAME_MENUS_STATE = "state";
 	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
 	private IConfigGenericFieldSvc configGenericSvc;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -46,6 +54,10 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 			setClazz(MenuDTO.class);
 			fields = configGenericSvc.getFieldToFields(this.getClass(), MenuDTO.class);
 			this.loadFields(TypeGeneric.FIELD, CONST_GRID_STANDARD);
+			visibleButtons();
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+					.icon(Glyph.NEWSPAPER_ALT).isVisible(save).setName("fxml.btn.edit").action(this::add)
+					.icon(Glyph.EDIT).isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -68,6 +80,7 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 
 	public final void load(MenuDTO dto) {
 		registro = dto;
+		visibleButtons();
 		loadFields(TypeGeneric.FIELD);
 	}
 
@@ -128,6 +141,16 @@ public class MenuBean extends AGenericInterfacesFieldBean<MenuDTO> {
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		var map = new ArrayListValuedHashMap<String, Object>();
 		return map;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ListMenusBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, ListMenusBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 }

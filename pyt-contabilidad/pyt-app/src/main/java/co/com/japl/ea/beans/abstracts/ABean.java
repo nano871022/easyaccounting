@@ -20,6 +20,8 @@ import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.interfaces.IBean;
 import co.com.japl.ea.utls.LoginUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * Se encarga de implementar {@link IBean} para contruir controlladores de
@@ -38,9 +40,14 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	@Inject
 	protected Comunicacion comunicacion;
 	protected Log logger = Log.Log(this.getClass());
+	protected BooleanProperty save;
+	protected BooleanProperty edit;
+	protected BooleanProperty delete;
+	protected BooleanProperty view;
 
 	public ABean() {
 		try {
+			configBooleanProperties();
 			inject();
 			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);
 		} catch (ReflectionException e) {
@@ -50,6 +57,13 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 		} catch (Exception e) {
 			logger.logger(e);
 		}
+	}
+
+	protected void configBooleanProperties() {
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -120,4 +134,6 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 	protected final String concat(String... text) {
 		return Arrays.asList(text).stream().reduce("", (before, now) -> before + now);
 	}
+
+	protected abstract void visibleButtons();
 }

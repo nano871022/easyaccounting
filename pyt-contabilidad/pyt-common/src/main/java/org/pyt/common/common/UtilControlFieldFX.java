@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import org.controlsfx.glyphfont.FontAwesome;
@@ -380,5 +381,21 @@ public final class UtilControlFieldFX {
 		table.setPadding(new Insets(10));
 		BorderPane.setAlignment(table, Pos.TOP_LEFT);
 		return table;
+	}
+
+	public final void focusOut(TextField field,ICaller caller) {
+		field.focusedProperty().addListener((change, oldval, newval) -> {
+			if (!newval) {
+				caller.caller();
+			}
+		});
+	}
+
+	public final void change(TextField field, Consumer<String> caller) {
+		field.textProperty().addListener((obs, oldValue, newValue) -> caller.accept(newValue));
+	}
+
+	public final void change(CheckBox field, Consumer<Boolean> caller) {
+		field.selectedProperty().addListener(change -> caller.accept(field.isSelected()));
 	}
 }

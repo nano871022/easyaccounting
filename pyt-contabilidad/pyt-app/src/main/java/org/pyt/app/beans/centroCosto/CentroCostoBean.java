@@ -1,30 +1,30 @@
 package org.pyt.app.beans.centroCosto;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.SelectList;
-import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.CentroCostosException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.CentroCostoDTO;
-import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.ICentroCostosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
-import javafx.beans.property.SimpleObjectProperty;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -34,7 +34,7 @@ import javafx.scene.layout.HBox;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view/centroCosto", file = "listCentroCosto.fxml")
-public class CentroCostoBean extends ABean<CentroCostoDTO> {
+public class CentroCostoBean extends AGenericInterfacesBean<CentroCostoDTO> {
 	@Inject(resource = "com.pyt.service.implement.CentroCostoSvc")
 	private ICentroCostosSvc centroCostoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -42,113 +42,58 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	@FXML
 	private javafx.scene.control.TableView<CentroCostoDTO> tabla;
 	@FXML
-	private TextField orden;
-	@FXML
-	private TextField nombre;
-	@FXML
-	private TextField descripcion;
-	@FXML
-	private ChoiceBox<String> estado;
-	@FXML
-	private Button btnMod;
-	@FXML
-	private Button btnDel;
-	@FXML
 	private HBox paginador;
 	@FXML
-	private TableColumn<CentroCostoDTO, String> estados;
-	private DataTableFXMLUtil<CentroCostoDTO, CentroCostoDTO> dt;
-	private List<ParametroDTO> listEstados;
+	private GridPane filter;
+	@FXML
+	private FlowPane buttons;
 	private final static String FIELD_NAME = "nombre";
+	private MultiValuedMap<TypeGeneric, ConfigGenericFieldDTO> config;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.list.costcenter");
-		registro = new CentroCostoDTO();
-		try {
-			listEstados = parametroSvc.getAllParametros(new ParametroDTO(),
-					ParametroConstants.GRUPO_ESTADO_CENTRO_COSTO);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		SelectList.put(estado, listEstados, FIELD_NAME);
-		estados.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
-			property.setValue(nombreEstado(e.getValue().getEstado()));
-			return property;
-		});
-		lazy();
+		filtro = new CentroCostoDTO();
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		config = new ArrayListValuedHashMap<>();
+		loadDataModel(paginador, tabla);
+		configFields();
+		visibleButtons();
+		loadFields(TypeGeneric.FILTER);
+		loadColumns();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).isVisible(save)
+				.icon(Glyph.SAVE).setName("fxml.btn.edit").action(this::set).isVisible(edit).icon(Glyph.EDIT)
+				.setName("fxml.btn.delete").action(this::del).isVisible(delete).icon(Glyph.REMOVE)
+				.setName("fxml.btn.view").action(this::set).isVisible(view).icon(Glyph.FILE_TEXT).build();
 	}
 
-	/**
-	 * Se encarga de apartir del valor de un estado obtener el nombre de este estado
-	 * 
-	 * @param value {@link String}
-	 * @return {@link String}
-	 */
-	public final String nombreEstado(String value) {
-		for (ParametroDTO parametro : listEstados) {
-			if (parametro.getValor().equalsIgnoreCase(value)) {
-				return parametro.getNombre();
-			}
-		}
-		return value;
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, CentroCostoBean.class,
+				getUsuario().getGrupoUser());
+		var edit = isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				CentroCostoBean.class, getUsuario().getGrupoUser());
+		var delete = isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				CentroCostoBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				CentroCostoBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<CentroCostoDTO, CentroCostoDTO>(paginador, tabla) {
-			@Override
-			public List<CentroCostoDTO> getList(CentroCostoDTO filter, Integer page, Integer rows) {
-				List<CentroCostoDTO> lista = new ArrayList<CentroCostoDTO>();
-				try {
-					lista = centroCostoSvc.getCentroCostos(filter, page - 1, rows);
-				} catch (CentroCostosException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(CentroCostoDTO filter) {
-				Integer count = 0;
-				try {
-					count = centroCostoSvc.getTotalRows(filter);
-				} catch (CentroCostosException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public CentroCostoDTO getFilter() {
-				CentroCostoDTO filtro = new CentroCostoDTO();
-				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre(nombre.getText());
-				}
-				if (StringUtils.isNotBlank(descripcion.getText())) {
-					filtro.setDescripcion(descripcion.getText());
-				}
-				if (SelectList.get(estado, listEstados, FIELD_NAME) != null) {
-					filtro.setEstado((String) SelectList.get(estado, listEstados, FIELD_NAME).getValor());
-				}
-				try {
-					if (StringUtils.isNotBlank(orden.getText())) {
-						filtro.setOrden(Integer.valueOf(orden.getText()));
-					}
-				} catch (Exception e) {
-					logger.logger(e);
-				}
-				return filtro;
-			}
-		};
+	private void configFields() {
+		findFields(TypeGeneric.FILTER, CentroCostoDTO.class, CentroCostoBean.class)
+				.forEach(centroCosto -> config.put(TypeGeneric.FILTER, centroCosto));
+		findFields(TypeGeneric.COLUMN, CentroCostoDTO.class, CentroCostoBean.class)
+				.forEach(centroCosto -> config.put(TypeGeneric.COLUMN, centroCosto));
 	}
 
 	public void clickTable() {
-		btnMod.setVisible(isSelected());
-		btnDel.setVisible(isSelected());
+		visibleButtons();
 	}
 
 	public void add() {
@@ -156,7 +101,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	}
 
 	public void search() {
-		dt.search();
+		dataTable.search();
 	}
 
 	public void del() {
@@ -172,11 +117,11 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 		try {
 			if (!valid)
 				return;
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				centroCostoSvc.delete(registro, getUsuario());
 				notificarI18n("mensaje.enterprise.have.been.deleted");
-				dt.search();
+				dataTable.search();
 			} else {
 				alertaI18n("mensaje.enterprise.wasnt.selected");
 			}
@@ -186,7 +131,7 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		if (registro != null) {
 			getController(CentroCostoCRUBean.class).load(registro);
 		} else {
@@ -195,10 +140,41 @@ public class CentroCostoBean extends ABean<CentroCostoDTO> {
 	}
 
 	public Boolean isSelected() {
-		return dt.isSelected();
+		return dataTable.isSelected();
 	}
 
-	public DataTableFXMLUtil<CentroCostoDTO, CentroCostoDTO> getDt() {
-		return dt;
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
+	}
+
+	@Override
+	public TableView<CentroCostoDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return (List<ConfigGenericFieldDTO>) config.get(typeGeneric);
+	}
+
+	@Override
+	public Class<CentroCostoDTO> getClazz() {
+		return CentroCostoDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return filter;
+	}
+
+	@Override
+	public CentroCostoDTO getFilterToTable(CentroCostoDTO filter) {
+		return filter;
 	}
 }

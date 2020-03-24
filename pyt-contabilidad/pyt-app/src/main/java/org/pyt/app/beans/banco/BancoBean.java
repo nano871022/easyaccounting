@@ -1,14 +1,16 @@
 package org.pyt.app.beans.banco;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.BancoException;
 
 import com.pyt.service.dto.BancoDTO;
@@ -17,13 +19,20 @@ import com.pyt.service.interfaces.IBancosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
-import javafx.beans.property.SimpleObjectProperty;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -33,7 +42,7 @@ import javafx.scene.layout.HBox;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view/banco", file = "listBanco.fxml")
-public class BancoBean extends ABean<BancoDTO> {
+public class BancoBean extends AGenericInterfacesBean<BancoDTO> {
 	@Inject(resource = "com.pyt.service.implement.BancoSvc")
 	private IBancosSvc bancoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -53,21 +62,46 @@ public class BancoBean extends ABean<BancoDTO> {
 	@FXML
 	private PopupParametrizedControl estado;
 	@FXML
-	private Button btnMod;
-	@FXML
 	private HBox paginador;
 	@FXML
-	private TableColumn<BancoDTO, String> tipoBancos;
-	@FXML
-	private TableColumn<BancoDTO, String> tipoCuentas;
-	@FXML
-	private TableColumn<BancoDTO, String> estados;
-	private DataTableFXMLUtil<BancoDTO, BancoDTO> dt;
+	private FlowPane panel;
+	private BooleanProperty save;
+	private BooleanProperty update;
+	private BooleanProperty delete;
+	private BooleanProperty view;
+	private StringProperty spName;
+	private StringProperty spDescription;
+
+	private MultiValuedMap<TypeGeneric, ConfigGenericFieldDTO> configGenericFields;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().valueBundle("fxml.tittle.list.bank").get();
 		registro = new BancoDTO();
+		configGenericFields = new ArrayListValuedHashMap<>();
+		findFields(TypeGeneric.COLUMN, BancoDTO.class, BancoBean.class)
+				.forEach(row -> configGenericFields.put(TypeGeneric.COLUMN, row));
+		loadDataModel(paginador, tabla);
+		loadColumns();
+		configProperties();
+		configFields();
+		visibleButtons();
+		ButtonsImpl.Stream(panel.getClass()).setLayout(panel).setName("fxml.btn.create").isVisible(save)
+				.icon(Glyph.SAVE).action(this::add).setName("fxml.btn.update").isVisible(update).icon(Glyph.EDIT)
+				.action(this::set).setName("fxml.btn.delete").isVisible(delete).icon(Glyph.REMOVE).action(this::del)
+				.setName("fxml.btn.view").isVisible(view).icon(Glyph.FILE_TEXT).action(this::set).build();
+	}
+
+	protected void configProperties() {
+		save = new SimpleBooleanProperty();
+		update = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		spName = new SimpleStringProperty();
+		spDescription = new SimpleStringProperty();
+	}
+
+	protected void configFields() {
 		tipoBanco.setPopupOpenAction(() -> popupOpenTipoBanco());
 		tipoBanco.setCleanValue(() -> {
 			registro.setTipoBanco(null);
@@ -83,75 +117,14 @@ public class BancoBean extends ABean<BancoDTO> {
 			registro.setEstado(null);
 			estado.setText(null);
 		});
-		tipoBancos.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
-			property.setValue(e.getValue().getTipoBanco().getNombre());
-			return property;
-		});
-		tipoCuentas.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
-			property.setValue(e.getValue().getTipoCuenta().getNombre());
-			return property;
-		});
-		estados.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> property = new SimpleObjectProperty<String>();
-			property.setValue(e.getValue().getEstado().getNombre());
-			return property;
-		});
-		lazy();
-	}
-
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<BancoDTO, BancoDTO>(paginador, tabla) {
-			@Override
-			public List<BancoDTO> getList(BancoDTO filter, Integer page, Integer rows) {
-				List<BancoDTO> lista = new ArrayList<BancoDTO>();
-				try {
-					lista = bancoSvc.getBancos(filter, page - 1, rows);
-				} catch (BancoException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(BancoDTO filter) {
-				Integer count = 0;
-				try {
-					count = bancoSvc.getTotalRows(filter);
-				} catch (BancoException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public BancoDTO getFilter() {
-				BancoDTO filtro = new BancoDTO();
-				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre(nombre.getText());
-				}
-				if (StringUtils.isNotBlank(descripcion.getText())) {
-					filtro.setDescripcion(descripcion.getText());
-				}
-				return filtro;
-			}
-		};
-	}
-
-	public void clickTable() {
-		btnMod.setVisible(isSelected());
+		spName.addListener(value -> registro.setNombre(spName.get()));
+		spDescription.addListener(value -> registro.setDescripcion(spDescription.get()));
+		nombre.textProperty().bindBidirectional(spName);
+		descripcion.textProperty().bindBidirectional(spDescription);
 	}
 
 	public void add() {
 		getController(BancoCRUBean.class);
-	}
-
-	public void search() {
-		dt.search();
 	}
 
 	public void del() {
@@ -211,15 +184,19 @@ public class BancoBean extends ABean<BancoDTO> {
 		estado.setText(parametro.getDescripcion());
 	}
 
+	public final void search() {
+		dataTable.search();
+	}
+
 	public void setDelete(Boolean valid) {
 		try {
 			if (!valid)
 				return;
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				bancoSvc.delete(registro, getUsuario());
 				notificarI18n("mensaje.bank.have.been.deleted");
-				dt.search();
+				dataTable.search();
 			} else {
 				notificarI18n("mensaje.bank.havent.been.deleted");
 			}
@@ -229,7 +206,7 @@ public class BancoBean extends ABean<BancoDTO> {
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		if (registro != null) {
 			getController(BancoCRUBean.class).load(registro);
 		} else {
@@ -238,10 +215,56 @@ public class BancoBean extends ABean<BancoDTO> {
 	}
 
 	public Boolean isSelected() {
-		return dt.isSelected();
+		return dataTable.isSelected();
 	}
 
-	public DataTableFXMLUtil<BancoDTO, BancoDTO> getDt() {
-		return dt;
+	public void visibleButtons() {
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				BancoBean.class, getUsuario().getGrupoUser());
+		var add = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, BancoBean.class,
+				getUsuario().getGrupoUser());
+		var del = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				BancoBean.class, getUsuario().getGrupoUser());
+		var view = !edit && !add && !del && dataTable.isSelected() && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_READ, BancoBean.class, getUsuario().getGrupoUser());
+		save.setValue(add);
+		update.setValue(edit);
+		delete.setValue(del);
+		this.view.setValue(view);
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
+	}
+
+	@Override
+	public TableView<BancoDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return (List<ConfigGenericFieldDTO>) configGenericFields.get(typeGeneric);
+	}
+
+	@Override
+	public Class<BancoDTO> getClazz() {
+		return BancoDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public BancoDTO getFilterToTable(BancoDTO filter) {
+		return registro;
 	}
 }

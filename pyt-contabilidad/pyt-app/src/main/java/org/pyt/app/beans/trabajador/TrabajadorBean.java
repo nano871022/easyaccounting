@@ -1,25 +1,28 @@
 package org.pyt.app.beans.trabajador;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.EmpleadoException;
 
-import com.pyt.service.dto.PersonaDTO;
 import com.pyt.service.dto.TrabajadorDTO;
 import com.pyt.service.interfaces.IEmpleadosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
-import javafx.beans.property.SimpleObjectProperty;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -29,130 +32,41 @@ import javafx.scene.layout.HBox;
  * @since 21/06/2018
  */
 @FXMLFile(path = "view/persona", file = "listTrabajador.fxml")
-public class TrabajadorBean extends ABean<TrabajadorDTO> {
+public class TrabajadorBean extends AGenericInterfacesBean<TrabajadorDTO> {
 	@Inject(resource = "com.pyt.service.implement.EmpleadosSvc")
 	private IEmpleadosSvc empleadosSvc;
 	@FXML
 	private javafx.scene.control.TableView<TrabajadorDTO> tabla;
 	@FXML
-	private TextField nombres;
-	@FXML
-	private TextField apellidos;
-	@FXML
-	private TextField documento;
-	@FXML
-	private Button btnMod;
-	@FXML
 	private HBox paginador;
 	@FXML
-	private TableColumn<TrabajadorDTO, String> nombre;
+	private HBox buttons;
 	@FXML
-	private TableColumn<TrabajadorDTO, String> apellido;
-	@FXML
-	private TableColumn<TrabajadorDTO, String> email;
-	@FXML
-	private TableColumn<TrabajadorDTO, String> cedula;
-	@FXML
-	private TableColumn<TrabajadorDTO, String> estado;
-	@FXML
-	private TableColumn<TrabajadorDTO, String> fechaNacimiento;
-	private DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO> dt;
+	private GridPane filter;
+	private MultiValuedMap<TypeGeneric, ConfigGenericFieldDTO> fieldsConfig;
 
 	@FXML
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.list.employed");
 		registro = new TrabajadorDTO();
-		fechaNacimiento.setCellValueFactory(e -> {
-			var date = new SimpleDateFormat().format(e.getValue().getPersona().getFechaNacimiento());
-			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			if (date != null) {
-				sp.setValue(date);
-			}
-			return sp;
-		});
-		nombre.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			sp.setValue(e.getValue().getPersona().getNombre());
-			return sp;
-		});
-		apellido.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			sp.setValue(e.getValue().getPersona().getApellido());
-			return sp;
-		});
-		cedula.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			sp.setValue(e.getValue().getPersona().getDocumento());
-			return sp;
-		});
-		email.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			sp.setValue(e.getValue().getCorreo());
-			return sp;
-		});
-		estado.setCellValueFactory(e -> {
-			SimpleObjectProperty<String> sp = new SimpleObjectProperty<String>();
-			sp.setValue(e.getValue().getEstado().getNombre());
-			return sp;
-		});
-		lazy();
-	}
-
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO>(paginador, tabla) {
-			@Override
-			public List<TrabajadorDTO> getList(TrabajadorDTO filter, Integer page, Integer rows) {
-				List<TrabajadorDTO> lista = new ArrayList<TrabajadorDTO>();
-				try {
-					lista = empleadosSvc.getTrabajadores(filter, page - 1, rows);
-				} catch (EmpleadoException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(TrabajadorDTO filter) {
-				Integer count = 0;
-				try {
-					count = empleadosSvc.getTotalRows(filter);
-				} catch (EmpleadoException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public TrabajadorDTO getFilter() {
-				TrabajadorDTO filtro = new TrabajadorDTO();
-				filtro.setPersona(new PersonaDTO());
-				if (!documento.getText().isEmpty()) {
-					filtro.getPersona().setDocumento(documento.getText());
-				}
-				if (!nombres.getText().isEmpty()) {
-					filtro.getPersona().setNombre(nombres.getText());
-				}
-				if (!apellidos.getText().isEmpty()) {
-					filtro.getPersona().setApellido(apellidos.getText());
-				}
-				return filtro;
-			}
-		};
-	}
-
-	public void clickTable() {
-		btnMod.setVisible(isSelected());
+		filtro = new TrabajadorDTO();
+		fieldsConfig = new ArrayListValuedHashMap<>();
+		findFields(TypeGeneric.COLUMN, TrabajadorDTO.class, TrabajadorBean.class)
+				.forEach(row -> fieldsConfig.put(TypeGeneric.COLUMN, row));
+		findFields(TypeGeneric.FILTER, TrabajadorDTO.class, TrabajadorBean.class)
+				.forEach(row -> fieldsConfig.put(TypeGeneric.FILTER, row));
+		loadDataModel(paginador, tabla);
+		loadColumns();
+		loadFields(TypeGeneric.FILTER);
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE).isVisible(edit)
+				.setName("fxml.btn.delete").action(this::del).icon(Glyph.SAVE).isVisible(delete)
+				.setName("fxml.btn.view").action(this::set).icon(Glyph.SAVE).isVisible(view).build();
 	}
 
 	public void add() {
 		getController(TrabajadorCRUBean.class);
-	}
-
-	public void search() {
-		dt.search();
 	}
 
 	public void del() {
@@ -168,11 +82,11 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 		try {
 			if (!valid)
 				return;
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				empleadosSvc.delete(registro, getUsuario());
 				notificarI18n("mensaje.employe.have.been.deleted");
-				dt.search();
+				dataTable.search();
 			} else {
 				alertaI18n("mensaje.employe.havent.been.selected");
 			}
@@ -182,7 +96,7 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		if (registro != null) {
 			getController(TrabajadorCRUBean.class).load(registro);
 		} else {
@@ -190,11 +104,54 @@ public class TrabajadorBean extends ABean<TrabajadorDTO> {
 		}
 	}
 
-	public Boolean isSelected() {
-		return dt.isSelected();
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, TrabajadorBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				TrabajadorBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				TrabajadorBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				TrabajadorBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 
-	public DataTableFXMLUtil<TrabajadorDTO, TrabajadorDTO> getDt() {
-		return dt;
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
+	}
+
+	@Override
+	public TableView<TrabajadorDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return fieldsConfig.get(typeGeneric).stream().collect(Collectors.toList());
+	}
+
+	@Override
+	public Class<TrabajadorDTO> getClazz() {
+		return TrabajadorDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return filter;
+	}
+
+	@Override
+	public TrabajadorDTO getFilterToTable(TrabajadorDTO filter) {
+		return filter;
 	}
 }

@@ -58,7 +58,6 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 		fields = new ArrayListValuedHashMap<>();
 		validateValue = new ValidateValues();
 		mapListSelects = new ArrayListValuedHashMap<>();
-
 	}
 
 	/**
@@ -208,4 +207,6 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return mapListSelects;
 	}
+
+	protected abstract void visibleButtons();
 }

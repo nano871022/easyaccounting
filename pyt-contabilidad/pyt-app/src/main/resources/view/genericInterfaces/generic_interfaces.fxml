@@ -10,29 +10,7 @@
 
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="411.0" prefWidth="533.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.generic.interfaces.GenericInterfacesBean">
   <bottom>
-    <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="29.0" prefWidth="489.0" BorderPane.alignment="CENTER">
-      <children>
-        <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#add" text="Guardar" />
-        <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancel" text="Cancelar">
-          <FlowPane.margin>
-            <Insets left="10.0" />
-          </FlowPane.margin>
-        </Button>
-        <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#newRow" text="%fxml.form.button.new">
-          <FlowPane.margin>
-            <Insets left="10.0" />
-          </FlowPane.margin>
-        </Button>
-        <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#copy" text="%fxml.form.button.copy">
-          <FlowPane.margin>
-            <Insets left="10.0" />
-          </FlowPane.margin>
-        </Button>
-      </children>
-      <BorderPane.margin>
-        <Insets bottom="5.0" top="5.0" />
-      </BorderPane.margin>
-    </FlowPane>
+    <HBox fx:id="buttons" alignment="CENTER"  prefHeight="29.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="258.0" prefWidth="513.0" vgap="5.0" BorderPane.alignment="CENTER">

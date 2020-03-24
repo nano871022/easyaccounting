@@ -1,18 +1,17 @@
 package org.pyt.app.beans.persona;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.SelectList;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.EmpleadoException;
-import org.pyt.common.exceptions.ParametroException;
 
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.dto.PersonaDTO;
@@ -20,10 +19,15 @@ import com.pyt.service.interfaces.IEmpleadosSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -32,29 +36,11 @@ import javafx.scene.layout.BorderPane;
  * @since 2018-05-22
  */
 @FXMLFile(path = "/view", file = "persona/personas.fxml")
-public class PersonaCRUBean extends ABean<PersonaDTO> {
+public class PersonaCRUBean extends AGenericInterfacesFieldBean<PersonaDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
 	@Inject(resource = "com.pyt.service.implement.EmpleadosSvc")
 	private IEmpleadosSvc empleadosSvc;
-	@FXML
-	private javafx.scene.control.TextField nombre;
-	@FXML
-	private javafx.scene.control.TextField apellido;
-	@FXML
-	private javafx.scene.control.TextField documento;
-	@FXML
-	private javafx.scene.control.TextField direccion;
-	@FXML
-	private javafx.scene.control.TextField email;
-	@FXML
-	private javafx.scene.control.TextField telefono;
-	@FXML
-	private javafx.scene.control.TextField numeroTarjetaProfesional;
-	@FXML
-	private javafx.scene.control.ChoiceBox<String> tipoDocumentos;
-	@FXML
-	private javafx.scene.control.DatePicker fechaNacimiento;
 	@FXML
 	private Label titulo;
 	@FXML
@@ -65,84 +51,46 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 	public final static String FIELD_NAME = "nombre";
 	public final static String FIELD_CODE = "codigo";
 	public final static String FIELD_VALOR = "valor";
+	private MultiValuedMap<TypeGeneric, ConfigGenericFieldDTO> fieldsConfig;
+	@FXML
+	private HBox buttons;
+	@FXML
+	private GridPane fields;
 
 	@FXML
 	public void initialize() {
-		NombreVentana = "Agregando Nueva Persona";
+		NombreVentana = i18n("fxml.personacrubean");
 		titulo.setText(NombreVentana);
 		registro = new PersonaDTO();
-		try {
-			fechaNacimiento.setOnAction(event -> registro.setFechaNacimiento(
-					Date.from(fechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())));
-			lTipoDocumentos = parametroSvc.getAllParametros(new ParametroDTO(),
-					ParametroConstants.GRUPO_TIPOS_DOCUMENTO_PERSONA);
-			SelectList.put(tipoDocumentos, lTipoDocumentos, FIELD_NAME);
-			profesion.setPopupOpenAction(() -> popupProfesion());
-			profesion.setCleanValue(() -> {
-				registro.setProfesion(null);
-				profesion.setText(null);
-				numeroTarjetaProfesional.setText(null);
-				registro.setNumeroTarjetaProfesional(null);
-				numeroTarjetaProfesional.setDisable(true);
-			});
-			numeroTarjetaProfesional.setDisable(true);
-		} catch (ParametroException e) {
-			error(e);
-		}
-	}
+		fieldsConfig = new ArrayListValuedHashMap<>();
+		setClazz(PersonaDTO.class);
+		loadFields();
+		loadFields(TypeGeneric.FIELD);
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
+				.setName("fxml.btn.cancel").action(this::cancel).build();
 
-	/**
-	 * Pasa los campos de la pantalla el objeto dto
-	 */
-	private void load() {
-		if (registro == null) {
-			registro = new PersonaDTO();
-		}
-		registro.setNombre(nombre.getText());
-		registro.setDocumento(documento.getText());
-		registro.setApellido(apellido.getText());
-		registro.setEmail(email.getText());
-		registro.setTelefono(telefono.getText());
-		registro.setDireccion(direccion.getText());
-		if (fechaNacimiento.getValue() != null)
-			registro.setFechaNacimiento(
-					Date.from(fechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		registro.setTipoDocumento(SelectList.get(tipoDocumentos, lTipoDocumentos, FIELD_NAME));
-	}
-
-	private void loadFxml() {
-		if (registro == null)
-			return;
-		documento.setText(registro.getDocumento());
-		nombre.setText(registro.getNombre());
-		apellido.setText(registro.getNombre());
-		direccion.setText(registro.getDireccion());
-		email.setText(registro.getEmail());
-		telefono.setText(registro.getTelefono());
-		if (registro != null && registro.getFechaNacimiento() != null)
-			fechaNacimiento
-					.setValue(LocalDate.ofInstant(registro.getFechaNacimiento().toInstant(), ZoneId.systemDefault()));
-		SelectList.selectItem(tipoDocumentos, lTipoDocumentos, FIELD_NAME, registro.getTipoDocumento(),FIELD_NAME);
 	}
 
 	public void load(PersonaDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
-			loadFxml();
-			titulo.setText("Modificando Trabajador");
+			titulo.setText(i18n("fxml.personacrubean.edit"));
+			loadFields(TypeGeneric.FIELD);
+			visibleButtons();
 		} else {
-			error("El persona es invalido para editar.");
+			errorI18n("err.personacrubean.person.edit.invalid");
 			cancel();
 		}
 	}
 
 	public void popupProfesion() {
 		try {
-			((PopupGenBean<ParametroDTO>) controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class))
-					.addDefaultValuesToGenericParametrized("estado", "A")
+			controllerGenPopup(ParametroDTO.class).addDefaultValuesToGenericParametrized("estado", "A")
 					.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
-							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_PROFESIONES)))
-									.load("#{PersonaCRUBean.profesion}");
+							parametroSvc.getIdByParametroGroup(ParametroConstants.GRUPO_PROFESIONES))
+					.load("#{PersonaCRUBean.profesion}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -151,19 +99,17 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 	public void setProfesion(ParametroDTO profesion) {
 		registro.setProfesion(profesion);
 		this.profesion.setText(profesion.getNombre());
-		numeroTarjetaProfesional.setDisable(false);
 	}
 
 	public void add() {
-		load();
 		try {
 			if (StringUtils.isNotBlank(registro.getCodigo())) {
 				empleadosSvc.update(registro, getUsuario());
-				notificar("Se guardo la persona correctamente.");
+				notificarI18n("mensaje.personacrubean.person.added.succefull");
 				cancel();
 			} else {
 				empleadosSvc.insert(registro, getUsuario());
-				notificar("Se agrego la persona correctamente.");
+				notificarI18n("mensaje.personacrubean.person.saved.succefull");
 				cancel();
 			}
 		} catch (EmpleadoException e) {
@@ -173,6 +119,26 @@ public class PersonaCRUBean extends ABean<PersonaDTO> {
 
 	public void cancel() {
 		getController(PersonaBean.class);
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, PersonaBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, PersonaBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return fields;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 2;
 	}
 
 }

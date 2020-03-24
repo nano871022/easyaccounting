@@ -147,4 +147,10 @@ public class PopupAgregarMovimientoBean extends ABean<MovimientoDTO> {
 		stage.close();
 		destroy();
 	}
+
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
+	}
 }

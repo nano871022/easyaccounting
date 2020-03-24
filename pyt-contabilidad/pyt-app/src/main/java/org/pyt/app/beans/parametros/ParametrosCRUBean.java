@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
@@ -23,11 +25,13 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 /**
  * Se encarga de controlar la pantalla de parametros cru
@@ -63,13 +67,9 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	private ChoiceBox<String> estado;
 	private ParametroDTO registro;
 	private ParametroGrupoDTO parametroGrupo;
-	@FXML
-	private Button insert;
-	@FXML
-	private Button update;
-	@FXML
-	private Button delete;
 	private ValidateValues validate;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -81,9 +81,11 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		cGrupo.getSelectionModel().selectFirst();
 		lGrupo.setVisible(false);
 		cGrupo.setVisible(false);
-		insert.setVisible(false);
-		update.setVisible(false);
-		delete.setVisible(false);
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::createBtn)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modifyBtn).icon(Glyph.EDIT)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::deleteBtn).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.cancel").action(this::cancelBtn).build();
 	}
 
 	/**
@@ -106,22 +108,6 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
 			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroConstants.MAPA_GRUPOS));
 		}
-		buttones_update();
-	}
-
-	/**
-	 * Verifica si un boton se muestra o no
-	 */
-	private final void buttones_update() {
-		if (!DtoUtils.haveCode(registro)) {
-			insert.setVisible(true);
-			update.setVisible(false);
-			delete.setVisible(false);
-		} else {
-			insert.setVisible(false);
-			update.setVisible(true);
-			delete.setVisible(true);
-		}
 	}
 
 	/**
@@ -137,6 +123,7 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		} else {
 			editParameter(dto);
 		}
+		visibleButtons();
 	}
 
 	private void editParametertGroupPrincipal(ParametroDTO dto) {
@@ -195,7 +182,6 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		showGroup(true);
 		showOrder(false);
 		assign();
-		btnActionNew(true);
 	}
 
 	private void editParameter(ParametroDTO dto) {
@@ -203,7 +189,6 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		registro = dto;
 		showOrder(!isGrupoPrincipal(dto));
 		assign();
-		btnActionNew(false);
 	}
 
 	private void newParameterWithGroup(ParametroDTO dto) {
@@ -212,13 +197,6 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 		registro = dto;
 		addNextOrder();
 		assign();
-		btnActionNew(true);
-	}
-
-	private void btnActionNew(Boolean value) {
-		update.setVisible(!value);
-		delete.setVisible(!value);
-		insert.setVisible(value);
 	}
 
 	private void assign() {
@@ -385,6 +363,17 @@ public class ParametrosCRUBean extends ABean<ParametroDTO> {
 	public void cancelBtn() {
 		getController(ParametrosBean.class);
 		destroy();
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ParametrosBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, ParametrosBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+
 	}
 
 }

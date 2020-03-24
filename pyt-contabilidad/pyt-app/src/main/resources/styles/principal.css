@@ -1,3 +1,7 @@
+.button-bottom{
+ -fx-margin: 10px;
+}
+
 .grid-standard{
 	-fx-padding: 35;
     -fx-spacing: 30;
@@ -16,8 +20,7 @@
 	-fx-padding:20;
 }
 .tooltip-error{
- -fx-background-color:red;
- -fx-color:white;
+ -fx-text-fill:red;
 }
 .field-error{
   -fx-border-color:red;
@@ -29,13 +32,12 @@
   -fx-border-color:green;
 }
 .message-error{
-  -fx-background-color:red;
-  -fx-color:white;
+  -fx-text-fill:red;
+  -fx-padding:10;
 }
 
 .message-warn{
-  -fx-background-color:orange;
-  -fx-color:white;
+  -fx-text-fill:orange;
 }
 
 .borderView{

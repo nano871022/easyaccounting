@@ -8,11 +8,13 @@ import java.util.Optional;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.EmpresasException;
@@ -29,7 +31,9 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -65,6 +69,8 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	protected DocumentoDTO filter;
 	private ParametroDTO tipoDocumento;
 	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -72,6 +78,12 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 			registro = new DocumentoDTO();
 			filter = new DocumentoDTO();
 			lazy();
+			visibleButtons();
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::agregar)
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modificar).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.delete").action(this::eliminar).icon(Glyph.REMOVE)
+					.isVisible(delete).setName("fxml.btn.view").action(this::modificar).icon(Glyph.FILE_TEXT)
+					.isVisible(view).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -243,6 +255,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 				this.tipoDocumento = tdoc;
 				lblTitle.setText(this.tipoDocumento.getNombre());
 				dataTable.search();
+				visibleButtons();
 				searchFilters();
 				searchColumns();
 			} else if (tipoDocumento.length == 1 && !tipoDocumento[0].trim().toLowerCase().contains("tipodocumento")) {
@@ -256,6 +269,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 				this.tipoDocumento = tdoc;
 				lblTitle.setText(this.tipoDocumento.getNombre());
 				dataTable.search();
+				visibleButtons();
 				searchFilters();
 				searchColumns();
 			}
@@ -298,11 +312,28 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
 	}
 
 	@Override
 	public DataTableFXMLUtil<DocumentoDTO, DocumentoDTO> getTable() {
 		return dataTable;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 
 }

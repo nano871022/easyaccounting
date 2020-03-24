@@ -62,4 +62,10 @@ public class ListCountry extends AGenericInterfacesBean<PaisDTO> {
 		return null;
 	}
 
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

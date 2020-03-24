@@ -1,9 +1,11 @@
 package org.pyt.app.beans.servicio;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.ServiciosException;
-import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidFields;
 import org.pyt.common.validates.ValidateValues;
 
@@ -11,11 +13,14 @@ import com.pyt.service.dto.ServicioDTO;
 import com.pyt.service.interfaces.IServiciosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -24,22 +29,18 @@ import javafx.scene.layout.BorderPane;
  * @since 2018-05-22
  */
 @FXMLFile(path = "view/servicio", file = "servicio.fxml")
-public class ServicioCRUBean extends ABean<ServicioDTO> {
+public class ServicioCRUBean extends AGenericInterfacesFieldBean<ServicioDTO> {
 	@Inject(resource = "com.pyt.service.implement.ServiciosSvc")
 	private IServiciosSvc servicioSvc;
-	@FXML
-	private Label codigo;
-	@FXML
-	private TextField nombre;
-	@FXML
-	private TextField descripcion;
-	@FXML
-	private TextField valorManoObra;
 	@FXML
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
 	private ValidateValues vv;
+	@FXML
+	private HBox buttons;
+	@FXML
+	private GridPane fields;
 
 	@FXML
 	public void initialize() {
@@ -47,65 +48,41 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 		titulo.setText(NombreVentana);
 		registro = new ServicioDTO();
 		vv = new ValidateValues();
-	}
-
-	/**
-	 * Pasa los campos de la pantalla el objeto dto
-	 */
-	private void load() {
-		if (registro == null) {
-			registro = new ServicioDTO();
-		}
-		registro.setCodigo(codigo.getText());
-		registro.setNombre(nombre.getText());
-		registro.setDescripcion(descripcion.getText());
-		try {
-			registro.setValorManoObra(vv.cast(valorManoObra.getText(), Long.class));
-		} catch (ValidateValueException e) {
-			error(e);
-		}
-	}
-
-	private void loadFxml() {
-		if (registro == null)
-			return;
-		codigo.setText(registro.getCodigo());
-		nombre.setText(registro.getNombre());
-		descripcion.setText(registro.getDescripcion());
-		if (registro.getValorManoObra() != null) {
-			valorManoObra.setText(String.valueOf(registro.getValorManoObra()));
-		}
+		setClazz(ServicioDTO.class);
+		loadFields();
+		loadFields(TypeGeneric.FIELD);
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.SAVE).isVisible(save)
+				.setName("fxml.btn.close").action(this::cancel).build();
 	}
 
 	public void load(ServicioDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
-			loadFxml();
-			titulo.setText(i18n().get("mensaje.modifig.service"));
+			titulo.setText(i18n().get("mensaje.modifing.service"));
+			loadFields(TypeGeneric.FIELD);
+			visibleButtons();
 		} else {
 			error(i18n().get("err.service.cant.edit"));
 			cancel();
 		}
 	}
 
-	/**
-	 * Se encarga de validar los campos que se encuentren llenos
-	 * 
-	 * @return {@link Boolean}
-	 */
 	private Boolean valid() {
 		Boolean valid = true;
-		valid &= ValidFields.valid(registro.getNombre(), nombre, true, 1, 100,
-				i18n().valueBundle("err.service.field.name.empty"));
-		valid &= ValidFields.valid(registro.getDescripcion(), descripcion, true, 1, 100,
+		valid &= ValidFields.valid(registro.getNombre(), mapFieldUseds.get("nombre").stream().findFirst().get(), true,
+				1, 100, i18n().valueBundle("err.service.field.name.empty"));
+		valid &= ValidFields.valid(registro.getDescripcion(),
+				mapFieldUseds.get("descripcion").stream().findFirst().get(), true, 1, 100,
 				i18n().valueBundle("err.service.field.description.empty"));
-		valid &= ValidFields.valid(registro.getValorManoObra(), valorManoObra, true, null, null,
+		valid &= ValidFields.valid(registro.getValorManoObra(),
+				mapFieldUseds.get("valorManoObra").stream().findFirst().get(), true, null, null,
 				i18n().valueBundle("err.service.field.value.empty"));
 		return valid;
 	}
 
 	public void add() {
-		load();
 		try {
 			if (valid()) {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
@@ -114,7 +91,6 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 					cancel();
 				} else {
 					servicioSvc.insert(registro, getUsuario());
-					codigo.setText(registro.getCodigo());
 					notificarI18n("mensaje.service.have.been.inserted.succefull");
 					cancel();
 				}
@@ -126,6 +102,26 @@ public class ServicioCRUBean extends ABean<ServicioDTO> {
 
 	public void cancel() {
 		getController(ServicioBean.class);
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ServicioBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, ServicioBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return fields;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 2;
 	}
 
 }

@@ -3,12 +3,15 @@ package org.pyt.app.beans.parametroInventario;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.OptI18n;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.ParametroInventarioConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
@@ -20,11 +23,13 @@ import com.pyt.service.interfaces.inventarios.IParametroInventariosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 /**
  * Se encarga de controlar la pantalla de parametros cru
@@ -60,13 +65,9 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	private ChoiceBox<String> estado;
 	private ParametroInventarioDTO registro;
 	private ParametroGrupoInventarioDTO parametroGrupo;
-	@FXML
-	private Button insert;
-	@FXML
-	private Button update;
-	@FXML
-	private Button delete;
 	private ValidateValues validate;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -78,9 +79,11 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 		cGrupo.getSelectionModel().selectFirst();
 		lGrupo.setVisible(false);
 		cGrupo.setVisible(false);
-		insert.setVisible(false);
-		update.setVisible(false);
-		delete.setVisible(false);
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::createBtn)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modifyBtn).icon(Glyph.EDIT)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::deleteBtn).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.cancel").action(this::cancelBtn).build();
 	}
 
 	/**
@@ -103,22 +106,6 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 		if (StringUtils.isNotBlank(cGrupo.getValue()) && cGrupo.isVisible()) {
 			parametroGrupo.setGrupo((String) SelectList.get(cGrupo, ParametroInventarioConstants.mapa_grupo));
 		}
-		buttones_update();
-	}
-
-	/**
-	 * Verifica si un boton se muestra o no
-	 */
-	private final void buttones_update() {
-		if (StringUtils.isBlank(registro.getCodigo())) {
-			insert.setVisible(true);
-			update.setVisible(false);
-			delete.setVisible(false);
-		} else {
-			insert.setVisible(false);
-			update.setVisible(true);
-			delete.setVisible(true);
-		}
 	}
 
 	/**
@@ -129,7 +116,6 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	public void load(ParametroInventarioDTO dto) {
 		if (StringUtils.isBlank(dto.getGrupo()) && (dto == null || StringUtils.isBlank(dto.getCodigo()))) {
 			registro = new ParametroInventarioDTO();
-			insert.setVisible(true);
 		}
 		lGrupo.setVisible(false);
 		cGrupo.setVisible(false);
@@ -139,14 +125,11 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 			registro = dto;
 			lGrupo.setVisible(true);
 			cGrupo.setVisible(true);
-			insert.setVisible(true);
 		}
 
 		if (dto != null && StringUtils.isNotBlank(dto.getCodigo()) && !dto.getGrupo().contains("*")) {
 			registro = dto;
 			assign();
-			update.setVisible(true);
-			delete.setVisible(true);
 		} else {
 			if (StringUtils.isNotBlank(dto.getCodigo())) {
 				parametroGrupo = new ParametroGrupoInventarioDTO();
@@ -181,13 +164,8 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 				}
 			}
 			assign();
-			if (StringUtils.isNotBlank(registro.getCodigo())) {
-				update.setVisible(true);
-				delete.setVisible(true);
-			} else {
-				insert.setVisible(true);
-			}
 		}
+		visibleButtons();
 	}
 
 	private void assign() {
@@ -348,6 +326,20 @@ public class ParametrosInventariosCRUBean extends ABean<ParametroInventarioDTO> 
 	public void cancelBtn() {
 		getController(ParametrosInventariosBean.class);
 		destroy();
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_CREATE, ParametrosInventariosBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_UPDATE, ParametrosInventariosBean.class, getUsuario().getGrupoUser());
+		var delete = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_DELETE, ParametrosInventariosBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+
 	}
 
 }

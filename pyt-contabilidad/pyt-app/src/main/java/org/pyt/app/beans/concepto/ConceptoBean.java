@@ -1,13 +1,13 @@
 package org.pyt.app.beans.concepto;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.ConceptoDTO;
@@ -18,13 +18,18 @@ import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
-import javafx.beans.property.SimpleStringProperty;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -34,7 +39,7 @@ import javafx.scene.layout.HBox;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view/concepto", file = "listConcepto.fxml")
-public class ConceptoBean extends ABean<ConceptoDTO> {
+public class ConceptoBean extends AGenericInterfacesBean<ConceptoDTO> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	private IDocumentosSvc documentoSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -57,12 +62,10 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	private Button btnDel;
 	@FXML
 	private HBox paginador;
-	@FXML
-	private TableColumn<ConceptoDTO, String> columnEmpresa;
-	@FXML
-	private TableColumn<ConceptoDTO, String> columnEstado;
-	private DataTableFXMLUtil<ConceptoDTO, ConceptoDTO> dt;
 	private ConceptoDTO filter;
+	@FXML
+	private FlowPane buttons;
+	private List<ConfigGenericFieldDTO> columns;
 
 	@FXML
 	public void initialize() {
@@ -73,61 +76,22 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		estado.setCleanValue(() -> filter.setEstado(null));
 		empresa.setPopupOpenAction(() -> popupEmpresa());
 		empresa.setCleanValue(() -> filter.setEmpresa(null));
-		columnEstado.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getEstado().getNombre()));
-		columnEmpresa.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getEmpresa().getNombre()));
-		lazy();
-	}
-
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<ConceptoDTO, ConceptoDTO>(paginador, tabla) {
-			@Override
-			public List<ConceptoDTO> getList(ConceptoDTO filter, Integer page, Integer rows) {
-				List<ConceptoDTO> lista = new ArrayList<ConceptoDTO>();
-				try {
-					lista = documentoSvc.getConceptos(filter, page - 1, rows);
-				} catch (DocumentosException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(ConceptoDTO filter) {
-				Integer count = 0;
-				try {
-					count = documentoSvc.getTotalRows(filter);
-				} catch (DocumentosException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public ConceptoDTO getFilter() {
-				ConceptoDTO filtro = new ConceptoDTO();
-				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre(nombre.getText());
-				}
-				if (StringUtils.isNotBlank(descripcion.getText())) {
-					filtro.setDescripcion(descripcion.getText());
-				}
-				if (filter.getEmpresa() != null) {
-					filtro.setEmpresa(filter.getEmpresa());
-				}
-				if (filter.getEstado() != null) {
-					filtro.setEstado(filter.getEstado());
-				}
-				return filtro;
-			}
-		};
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		columns = findFields(TypeGeneric.COLUMN, ConceptoDTO.class, ConceptoBean.class);
+		loadDataModel(paginador, tabla);
+		loadColumns();
+		visibleButtons();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();
 	}
 
 	public void clickTable() {
-		btnMod.setVisible(isSelected());
-		btnDel.setVisible(isSelected());
+		visibleButtons();
 	}
 
 	public final void popupEstado() {
@@ -164,7 +128,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	}
 
 	public void search() {
-		dt.search();
+		dataTable.search();
 	}
 
 	public void del() {
@@ -180,11 +144,11 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		try {
 			if (!valid)
 				return;
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				documentoSvc.delete(registro, getUsuario());
 				notificarI18n("mensaje.concept.have.been.deleted");
-				dt.search();
+				dataTable.search();
 			} else {
 				notificarI18n("mensaje.concept.havent.been.selected");
 			}
@@ -194,7 +158,7 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		if (registro != null) {
 			getController(ConceptoCRUBean.class).load(registro);
 		} else {
@@ -202,11 +166,57 @@ public class ConceptoBean extends ABean<ConceptoDTO> {
 		}
 	}
 
-	public Boolean isSelected() {
-		return dt.isSelected();
+	public void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ConceptoBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ConceptoBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ConceptoBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ, ConceptoBean.class,
+				getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 
-	public DataTableFXMLUtil<ConceptoDTO, ConceptoDTO> getDt() {
-		return dt;
+	public Boolean isSelected() {
+		return dataTable.isSelected();
+	}
+
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
+	}
+
+	@Override
+	public TableView<ConceptoDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return 4;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return columns;
+	}
+
+	@Override
+	public Class<ConceptoDTO> getClazz() {
+		return ConceptoDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public ConceptoDTO getFilterToTable(ConceptoDTO filter) {
+		return this.filter;
 	}
 }

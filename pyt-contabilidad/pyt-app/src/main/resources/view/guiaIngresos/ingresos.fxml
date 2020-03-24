@@ -17,19 +17,7 @@
 	prefWidth="599.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
 	fx:controller="org.pyt.app.beans.GuiaIngresos.IngresosCRUBean">
 	<bottom>
-		<FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER">
-			<children>
-				<Button mnemonicParsing="false" onAction="#add" text="Guardar" />
-				<Button mnemonicParsing="false" onAction="#cancel" text="Cancelar">
-					<FlowPane.margin>
-						<Insets left="10.0" />
-					</FlowPane.margin>
-				</Button>
-			</children>
-			<BorderPane.margin>
-				<Insets bottom="5.0" top="5.0" />
-			</BorderPane.margin>
-		</FlowPane>
+		<HBox fx:id="buttons" alignment="CENTER" prefHeight="0.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
 	</bottom>
 	<center>
 		<GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"

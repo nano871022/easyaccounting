@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.GenericServiceException;
 
 import com.pyt.service.dto.PersonaDTO;
@@ -18,12 +20,12 @@ import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.GroupUsersDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -40,10 +42,6 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 	@Inject
 	private IGenericServiceSvc<PersonaDTO> personSvc;
 	@FXML
-	private Button btnMod;
-	@FXML
-	private Button btnDel;
-	@FXML
 	private TableView<UsuarioDTO> tableGeneric;
 	@FXML
 	private HBox filterGeneric;
@@ -57,6 +55,8 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 	private List<ConfigGenericFieldDTO> listFilters;
 	private List<ConfigGenericFieldDTO> listColumns;
 	private MultiValuedMap<String, Object> choiceBox;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -73,6 +73,11 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
+			visibleButtons();
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+					.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -86,36 +91,6 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 		} catch (GenericServiceException e) {
 			logger.logger(e);
 		}
-	}
-
-	@Override
-	protected void loadDataModel(HBox paginator, TableView<UsuarioDTO> tableView) {
-		dataTable = new DataTableFXMLUtil<UsuarioDTO, UsuarioDTO>(paginator, tableView) {
-			@Override
-			public Integer getTotalRows(UsuarioDTO filter) {
-				try {
-					return usersSvc.countRow(filter);
-				} catch (Exception e) {
-					error(e);
-				}
-				return 0;
-			}
-
-			@Override
-			public List<UsuarioDTO> getList(UsuarioDTO filter, Integer page, Integer rows) {
-				try {
-					return usersSvc.getAll(filter, page, rows);
-				} catch (Exception e) {
-					error(e);
-				}
-				return null;
-			}
-
-			@Override
-			public UsuarioDTO getFilter() {
-				return filtro;
-			}
-		};
 	}
 
 	public final void add() {
@@ -158,10 +133,7 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 	}
 
 	public final void clickTable() {
-		if (dataTable.getSelectedRows().size() > 0) {
-			btnDel.setVisible(true);
-			btnMod.setVisible(true);
-		}
+		visibleButtons();
 	}
 
 	public final void set() {
@@ -190,12 +162,12 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 
 	@Override
 	public UsuarioDTO getFilterToTable(UsuarioDTO filter) {
-		return null;
+		return filter;
 	}
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		set();
+		visibleButtons();
 	}
 
 	@Override
@@ -217,5 +189,21 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 	@Override
 	public Class<UsuarioDTO> getClazz() {
 		return UsuarioDTO.class;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListUsersBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListUsersBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListUsersBean.class, getUsuario().getGrupoUser());
+		var view = !save && !edit && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListUsersBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.view.setValue(view);
+		this.delete.setValue(delete);
 	}
 }

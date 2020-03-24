@@ -8,9 +8,11 @@ import java.util.Optional;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.GenericServiceException;
@@ -25,9 +27,10 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -55,10 +58,6 @@ public class ListaDetalleContableBean
 	@FXML
 	private TableView<DetalleContableDTO> tabla;
 	@FXML
-	private Button editar;
-	@FXML
-	private Button eliminar;
-	@FXML
 	private Label sumatoria;
 	@FXML
 	private GridPane filterTable;
@@ -69,14 +68,19 @@ public class ListaDetalleContableBean
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
 	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	private final void initialize() {
 		registro = new DetalleContableDTO();
 		filtro = new DetalleContableDTO();
-		eliminar.setVisible(false);
-		editar.setVisible(false);
 		lazy();
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::agregar)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::editar).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::eliminar).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.view").action(this::editar).icon(Glyph.FILE_TEXT).isVisible(view).build();
 	}
 
 	private <D extends ADto> void loadInMapList(String name, List<D> rows) {
@@ -202,6 +206,7 @@ public class ListaDetalleContableBean
 		this.tipoDocumento = tipoDocumento;
 		this.codigoDocumento = codigoDocumento;
 		panelCentral = panel;
+		visibleButtons();
 		searchFilters();
 		searchColumns();
 		table.search();
@@ -284,10 +289,7 @@ public class ListaDetalleContableBean
 	 * Se encarga de seleccionar un registro de la tabla
 	 */
 	public final void seleccionar() {
-		if (table.isSelected()) {
-			eliminar.setVisible(true);
-			editar.setVisible(true);
-		}
+		visibleButtons();
 	}
 
 	@Override
@@ -331,5 +333,22 @@ public class ListaDetalleContableBean
 	@Override
 	public DataTableFXMLUtil<DetalleContableDTO, DetalleContableDTO> getTable() {
 		return table;
+	}
+
+	@Override
+	@SuppressWarnings("rawtypes")
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class,
+				getUsuario().getGrupoUser());
+		var edit = table.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		var delete = table.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		var view = !save && !edit && !delete && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.view.setValue(view);
+		this.delete.setValue(delete);
 	}
 }

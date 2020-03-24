@@ -14,8 +14,8 @@ public class App extends Application {
 		var loginBean = LoadAppFxml.loadFxml(stage, LoginBean.class);
 		stage.setAlwaysOnTop(true);
 		stage.show();
-		stage.setWidth(280);
-		stage.setHeight(240);
+		stage.setWidth(300);
+		stage.setHeight(280);
 		stage.centerOnScreen();
 		stage.setResizable(false);
 		stage.setMaximized(false);

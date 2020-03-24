@@ -1,11 +1,13 @@
 package co.com.japl.ea.beans.abstracts;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.exceptions.GenericServiceException;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
@@ -23,7 +25,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 
 	protected DataTableFXMLUtil<T, T> dataTable;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
+	protected IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<T> serviceSvc;
 	protected T filtro;
@@ -62,6 +64,25 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 		};
 	}
 
+	public <D extends ADto, B extends ABean<D>> List<ConfigGenericFieldDTO> findFields(TypeGeneric typeGeneric,
+			Class<D> dto, Class<B> bean) {
+		try {
+			var cgf = new ConfigGenericFieldDTO();
+			cgf.setClassPathBean(bean.getName().replace("Class ", ""));
+			cgf.setClassPath(dto.getName().replace("Class ", ""));
+			if (TypeGeneric.COLUMN == typeGeneric) {
+				cgf.setIsColumn(true);
+			} else if (TypeGeneric.FILTER == typeGeneric) {
+				cgf.setIsFilter(true);
+			}
+			return configGenericSvc.getAll(cgf).stream()
+					.sorted((row1, row2) -> row1.getOrden().compareTo(row2.getOrden())).collect(Collectors.toList());
+		} catch (GenericServiceException e) {
+			error(e);
+		}
+		return null;
+	}
+
 	public abstract T getFilterToTable(T filter);
 
 	@Override
@@ -74,6 +95,9 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 
 	@Override
 	public T getInstanceDto(TypeGeneric typeGeneric) {
+		if (TypeGeneric.FIELD == typeGeneric) {
+			return registro;
+		}
 		return filtro;
 	}
 
@@ -98,4 +122,5 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 		}
 		return toChoiceBox;
 	}
+
 }

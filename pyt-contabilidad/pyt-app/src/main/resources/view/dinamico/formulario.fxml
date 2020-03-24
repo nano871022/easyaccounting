@@ -11,23 +11,14 @@
 	fx:controller="org.pyt.app.beans.dinamico.DocumentoBean" style="-fx-border-color:orange;-fx-border-width:1;">
 	<!-- TODO Add Nodes -->
 	<bottom>
-		<HBox alignment="CENTER" prefHeight="26.0" prefWidth="200.0">
-			<children>
-				<Button mnemonicParsing="false" onAction="#guardar" text="Guardar">
-					<HBox.margin>
-						<Insets right="10.0" />
-					</HBox.margin>
-				</Button>
-				<Button mnemonicParsing="false" onAction="#cancelar" text="Cancelar" />
-			</children>
-		</HBox>
+		<HBox fx:id="buttons" alignment="CENTER" prefHeight="26.0" prefWidth="200.0"/>
 	</bottom>
 	<center>
 		<VBox prefHeight="200.0" prefWidth="100.0">
 			<children>
 				<HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="258.0">
 					<children>
-						<Label text="Tipo de Documento">
+						<Label text="%fxml.form.document.type">
 							<HBox.margin>
 								<Insets right="10.0" />
 							</HBox.margin>

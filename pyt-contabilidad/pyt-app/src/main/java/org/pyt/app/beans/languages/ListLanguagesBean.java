@@ -5,9 +5,11 @@ import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IM
 
 import java.util.List;
 
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
@@ -15,10 +17,11 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.dto.system.LanguagesDTO;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -30,10 +33,6 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 
 	@Inject(resource = CONST_RESOURCE_IMPL_SVC_GENERIC_SERVICE)
 	private IGenericServiceSvc<LanguagesDTO> languagesSvc;
-	@FXML
-	private Button btnMod;
-	@FXML
-	private Button btnDel;
 	@FXML
 	private TableView<LanguagesDTO> tableGeneric;
 	@FXML
@@ -47,6 +46,8 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	private IConfigGenericFieldSvc configGenericSvc;
 	private List<ConfigGenericFieldDTO> listFilters;
 	private List<ConfigGenericFieldDTO> listColumns;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -62,6 +63,11 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 			loadDataModel(paginator, tableGeneric);
 			loadFields(TypeGeneric.FILTER, StylesPrincipalConstant.CONST_GRID_STANDARD);
 			loadColumns(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
+			visibleButtons();
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
+					.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT).isVisible(edit)
+					.setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+					.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -107,10 +113,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	}
 
 	public final void clickTable() {
-		if (dataTable.getSelectedRows().size() > 0) {
-			btnDel.setVisible(true);
-			btnMod.setVisible(true);
-		}
+		visibleButtons();
 	}
 
 	public final void set() {
@@ -144,7 +147,7 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		set();
+		visibleButtons();
 	}
 
 	@Override
@@ -163,5 +166,21 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 	@Override
 	public Class<LanguagesDTO> getClazz() {
 		return LanguagesDTO.class;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListLanguagesBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				ListLanguagesBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				ListLanguagesBean.class, getUsuario().getGrupoUser());
+		var view = !save && !edit && !delete && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				ListLanguagesBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
 	}
 }

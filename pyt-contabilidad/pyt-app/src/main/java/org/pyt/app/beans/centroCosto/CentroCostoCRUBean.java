@@ -3,11 +3,13 @@ package org.pyt.app.beans.centroCosto;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.CentroCostosException;
 import org.pyt.common.exceptions.ParametroException;
 
@@ -19,11 +21,16 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una empresa
@@ -53,6 +60,10 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 	private BorderPane pane;
 	@FXML
 	private PopupParametrizedControl empresa;
+	@FXML
+	private FlowPane buttons;
+	private BooleanProperty save;
+	private BooleanProperty edit;
 	private List<ParametroDTO> listEstados;
 	private final static String FIELD_NAME = "nombre";
 	private final static String FIELD_VALUE = "valor";
@@ -64,7 +75,12 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		registro = new CentroCostoDTO();
 		empresa.setPopupOpenAction(() -> popupEmpresa());
 		empresa.setCleanValue(() -> registro.setEmpresa(null));
-
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		visibleButtons();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
 		try {
 			listEstados = parametroSvc.getAllParametros(new ParametroDTO(),
 					ParametroConstants.GRUPO_ESTADO_CENTRO_COSTO);
@@ -98,11 +114,13 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 		orden.setText(String.valueOf(registro.getOrden()));
 		SelectList.put(estado, listEstados, FIELD_NAME);
 		SelectList.selectItem(estado, listEstados, FIELD_NAME, registro.getEstado(), FIELD_NAME);
+		setEmpresa(registro.getEmpresa());
 	}
 
 	public void load(CentroCostoDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
+			visibleButtons();
 			loadFxml();
 			titulo.setText(i18n().get("mensaje.editing.costcenter"));
 		} else {
@@ -132,14 +150,13 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 				if (StringUtils.isNotBlank(registro.getCodigo())) {
 					centroCostoSvc.update(registro, getUsuario());
 					notificarI18n("mensaje.costcenter.have.been.update.succefull");
-					cancel();
 				} else {
 					centroCostoSvc.insert(registro, getUsuario());
 					codigo.setText(registro.getCodigo());
 					notificarI18n("mensaje.costcenter.have.been.insert.succesfull");
-					cancel();
 				}
 			}
+			visibleButtons();
 		} catch (CentroCostosException e) {
 			error(e);
 		}
@@ -147,7 +164,7 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 
 	public final void popupEmpresa() {
 		try {
-			controllerPopup(new PopupGenBean<EmpresaDTO>(EmpresaDTO.class)).load("#{CentroCostoCRUBean.empresa}");
+			controllerGenPopup(EmpresaDTO.class).load("#{CentroCostoCRUBean.empresa}");
 		} catch (Exception e) {
 			error(e);
 		}
@@ -162,6 +179,15 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 
 	public void cancel() {
 		getController(CentroCostoBean.class);
+	}
+
+	public void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, CentroCostoBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, CentroCostoBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 }

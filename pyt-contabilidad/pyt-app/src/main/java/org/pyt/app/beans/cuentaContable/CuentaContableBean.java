@@ -1,16 +1,13 @@
 package org.pyt.app.beans.cuentaContable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.ConfirmPopupBean;
-import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
-import org.pyt.common.exceptions.CuentaContableException;
+import org.pyt.common.constants.PermissionConstants;
 
 import com.pyt.service.dto.CuentaContableDTO;
 import com.pyt.service.dto.EmpresaDTO;
@@ -20,13 +17,17 @@ import com.pyt.service.interfaces.ICuentaContableSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.beans.abstracts.ABean;
-import co.com.japl.ea.utls.DataTableFXMLUtil;
-import javafx.beans.property.SimpleStringProperty;
+import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -36,7 +37,7 @@ import javafx.scene.layout.HBox;
  * @since 07/05/2018
  */
 @FXMLFile(path = "view/cuentaContable", file = "listCuentaContable.fxml")
-public class CuentaContableBean extends ABean<CuentaContableDTO> {
+public class CuentaContableBean extends AGenericInterfacesBean<CuentaContableDTO> {
 	@Inject(resource = "com.pyt.service.implement.CuentaContableSvc")
 	private ICuentaContableSvc cuentaContableSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
@@ -52,19 +53,11 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	@FXML
 	private PopupParametrizedControl tipoCuentaContables;
 	@FXML
-	private Button btnMod;
-	@FXML
-	private Button btnDel;
-	@FXML
 	private HBox paginador;
-	@FXML
-	private TableColumn<CuentaContableDTO, String> tipo;
-	@FXML
-	private TableColumn<CuentaContableDTO, String> naturaleza;
-	@FXML
-	private TableColumn<CuentaContableDTO, String> tipoCuentaContable;
-	private DataTableFXMLUtil<CuentaContableDTO, CuentaContableDTO> dt;
 	private CuentaContableDTO filter;
+	private List<ConfigGenericFieldDTO> config;
+	@FXML
+	private FlowPane buttons;
 
 	@FXML
 	public void initialize() {
@@ -81,65 +74,23 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		tipoCuentaContables.setCleanValue(() -> filter.setTipo(null));
 		tipoPlanContable.setPopupOpenAction(() -> popupTipoPlanContable());
 		tipoPlanContable.setCleanValue(() -> filter.setTipoPlanContable(null));
-		tipoCuentaContable
-				.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipoPlanContable().getNombre()));
-		tipo.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getTipo().getNombre()));
-		naturaleza.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getNaturaleza().getNombre()));
-		lazy();
-	}
-
-	/**
-	 * encargada de crear el objeto que va controlar la tabla
-	 */
-	public void lazy() {
-		dt = new DataTableFXMLUtil<CuentaContableDTO, CuentaContableDTO>(paginador, tabla) {
-			@Override
-			public List<CuentaContableDTO> getList(CuentaContableDTO filter, Integer page, Integer rows) {
-				List<CuentaContableDTO> lista = new ArrayList<CuentaContableDTO>();
-				try {
-					lista = cuentaContableSvc.getCuentaContables(filter, page - 1, rows);
-				} catch (CuentaContableException e) {
-					error(e);
-				}
-				return lista;
-			}
-
-			@Override
-			public Integer getTotalRows(CuentaContableDTO filter) {
-				Integer count = 0;
-				try {
-					count = cuentaContableSvc.getTotalRows(filter);
-				} catch (CuentaContableException e) {
-					error(e);
-				}
-				return count;
-			}
-
-			@Override
-			public CuentaContableDTO getFilter() {
-				CuentaContableDTO filtro = new CuentaContableDTO();
-				if (StringUtils.isNotBlank(nombre.getText())) {
-					filtro.setNombre(nombre.getText());
-				}
-				if (DtoUtils.haveCode(filter.getAsociado())) {
-					filtro.setAsociado(filter.getAsociado());
-				}
-				if (DtoUtils.haveCode(filter.getTipoPlanContable())) {
-					filtro.setTipoPlanContable(filter.getTipoPlanContable());
-				}
-				return filtro;
-			}
-		};
-	}
-
-	public void clickTable() {
-		btnMod.setVisible(isSelected());
-		btnDel.setVisible(isSelected());
+		config = findFields(TypeGeneric.COLUMN, CuentaContableDTO.class, CuentaContableBean.class);
+		save = new SimpleBooleanProperty();
+		edit = new SimpleBooleanProperty();
+		delete = new SimpleBooleanProperty();
+		view = new SimpleBooleanProperty();
+		loadDataModel(paginador, tabla);
+		loadColumns();
+		visibleButtons();
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+				.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();
 	}
 
 	public final void popupTipoPlanContable() {
 		try {
-			var popup = controllerPopup(new PopupGenBean<ParametroDTO>(ParametroDTO.class));
+			var popup = controllerGenPopup(ParametroDTO.class);
 			popup.setWidth(250).addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
 					ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
 			popup.load("#{CuentaContableBean.tipoPlanContable}");
@@ -193,11 +144,11 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 	}
 
 	public void search() {
-		dt.search();
+		dataTable.search();
 	}
 
 	public void set() {
-		registro = dt.getSelectedRow();
+		registro = dataTable.getSelectedRow();
 		getController(CuentaContableCRUBean.class).load(registro);
 	}
 
@@ -214,11 +165,11 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		try {
 			if (!valid)
 				return;
-			registro = dt.getSelectedRow();
+			registro = dataTable.getSelectedRow();
 			if (registro != null) {
 				cuentaContableSvc.delete(registro, getUsuario());
 				notificarI18n("mensaje.accountingaccount.have.been.deleted");
-				dt.search();
+				dataTable.search();
 			} else {
 				alertaI18n("mensaje.accountingaccount.havent.been.selected");
 			}
@@ -227,11 +178,55 @@ public class CuentaContableBean extends ABean<CuentaContableDTO> {
 		}
 	}
 
-	public Boolean isSelected() {
-		return dt.isSelected();
+	protected void visibleButtons() {
+		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, CuentaContableBean.class,
+				getUsuario().getGrupoUser());
+		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
+				CuentaContableBean.class, getUsuario().getGrupoUser());
+		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
+				CuentaContableBean.class, getUsuario().getGrupoUser());
+		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+				CuentaContableBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
+		this.delete.setValue(delete);
+		this.view.setValue(view);
+
 	}
 
-	public DataTableFXMLUtil<CuentaContableDTO, CuentaContableDTO> getDt() {
-		return dt;
+	@Override
+	public void selectedRow(MouseEvent eventHandler) {
+		visibleButtons();
 	}
+
+	@Override
+	public TableView<CuentaContableDTO> getTableView() {
+		return tabla;
+	}
+
+	@Override
+	public Integer getMaxColumns(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
+		return config;
+	}
+
+	@Override
+	public Class<CuentaContableDTO> getClazz() {
+		return CuentaContableDTO.class;
+	}
+
+	@Override
+	public GridPane getGridPane(TypeGeneric typeGeneric) {
+		return null;
+	}
+
+	@Override
+	public CuentaContableDTO getFilterToTable(CuentaContableDTO filter) {
+		return this.filter;
+	}
+
 }

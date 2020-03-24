@@ -44,9 +44,10 @@ public class LoaderServiceBean extends ABean {
 	private File fileLoad;
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configServicio;
-	@Inject(resource="com.pyt.service.implement.CargueSvc")
+	@Inject(resource = "com.pyt.service.implement.CargueSvc")
 	private ICargue loader;
 	private ConfiguracionDTO configuracion;
+
 	@FXML
 	public void initialize() {
 		configuracion = new ConfiguracionDTO();
@@ -82,7 +83,7 @@ public class LoaderServiceBean extends ABean {
 				nameFile.setText(fileLoad.getName());
 				sizeFile.setText(String.valueOf(fileLoad.getTotalSpace()));
 				typeFile.setText(Files.probeContentType(fileLoad.toPath()));
-			}else {
+			} else {
 				error("El archivo seleccionado no es valido.");
 			}
 		} catch (Exception e) {
@@ -95,7 +96,8 @@ public class LoaderServiceBean extends ABean {
 		try {
 			if (configuracion == null)
 				throw new Exception("No se encontro la configuracion, opcion invalida.");
-			if(fileLoad == null || !fileLoad.exists() || !fileLoad.isFile())throw new Exception("El archivo seleccionado no es valido");
+			if (fileLoad == null || !fileLoad.exists() || !fileLoad.isFile())
+				throw new Exception("El archivo seleccionado no es valido");
 			FileInputStream fis = new FileInputStream(fileLoad);
 			FilePOJO file = new FilePOJO();
 			byte[] b = fis.readAllBytes();
@@ -108,7 +110,7 @@ public class LoaderServiceBean extends ABean {
 			FilePOJO out = loader.cargue(configuracion.getConfiguracion(), file, getUsuario());
 			File fileo = new File(out.getNameFile());
 			FileUtils.writeByteArrayToFile(fileo, out.getByte());
-			this.notificar("Se genero el archivo de resultados en "+fileo.getAbsolutePath());
+			this.notificar("Se genero el archivo de resultados en " + fileo.getAbsolutePath());
 			cancel();
 		} catch (Exception e) {
 			error(e);
@@ -122,5 +124,11 @@ public class LoaderServiceBean extends ABean {
 		typeFile.setText("");
 		Stage stage = (Stage) window.getScene().getWindow();
 		stage.close();
+	}
+
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
 	}
 }

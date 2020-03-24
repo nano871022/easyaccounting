@@ -7,10 +7,13 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.GenericServiceException;
@@ -30,9 +33,12 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -65,6 +71,8 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	private VBox panelCentral;
 	private String codigoDocumento;
 	private GridPane gridPane;
+	@FXML
+	private HBox buttons;
 
 	@Override
 	@FXML
@@ -74,6 +82,9 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		tipoDocumento = new ParametroDTO();
 		gridPane = new GridPane();
 		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
+				.isVisible(edit).setName("fxml.btn.back").action(this::regresar).icon(Glyph.BACKWARD).build();
 	}
 
 	/**
@@ -155,6 +166,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		panelCentral = panel;
 		this.codigoDocumento = codigoDocumento;
 		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
+		visibleButtons();
 		loadField();
 	}
 
@@ -276,5 +288,15 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	@Override
 	public Class<DetalleDTO> getClazz() {
 		return DetalleDTO.class;
+	}
+
+	@Override
+	public void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_UPDATE, ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 }

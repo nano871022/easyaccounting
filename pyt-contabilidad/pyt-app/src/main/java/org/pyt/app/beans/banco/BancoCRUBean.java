@@ -1,9 +1,14 @@
 package org.pyt.app.beans.banco;
 
+import static org.pyt.common.constants.PermissionConstants.CONST_PERM_CREATE;
+import static org.pyt.common.constants.PermissionConstants.CONST_PERM_UPDATE;
+
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.ea.app.custom.PopupParametrizedControl;
 import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.BancoException;
 import org.pyt.common.validates.ValidFields;
@@ -15,11 +20,16 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 
 /**
  * Se encarga de procesar la pantalla de creacion y actualizacion de una
@@ -57,6 +67,10 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 	private Label titulo;
 	@FXML
 	private BorderPane pane;
+	@FXML
+	private HBox sectionButtons;
+	private BooleanProperty save;
+	private BooleanProperty edit;
 
 	@FXML
 	public void initialize() {
@@ -78,6 +92,13 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 			registro.setEstado(null);
 			estado.setText(null);
 		});
+
+		save = new SimpleBooleanProperty(true);
+		edit = new SimpleBooleanProperty(false);
+		visibleButtons();
+		ButtonsImpl.Stream(sectionButtons.getClass()).setLayout(sectionButtons).setName("fxml.btn.save")
+				.icon(Glyph.SAVE).isVisible(save).action(this::add).setName("fxml.btn.update").icon(Glyph.SAVE)
+				.isVisible(edit).action(this::add).setName("fxml.btn.cancel").action(this::cancel).build();
 	}
 
 	/**
@@ -116,6 +137,7 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 	public void load(BancoDTO dto) {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
+			visibleButtons();
 			loadFxml();
 			titulo.setText("Modificando Banco");
 		} else {
@@ -220,4 +242,12 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 		getController(BancoBean.class);
 	}
 
+	public void visibleButtons() {
+		save.setValue(
+				PermissionUtil.INSTANCE().havePerm(CONST_PERM_CREATE, BancoBean.class, getUsuario().getGrupoUser())
+						&& !DtoUtils.haveCode(registro));
+		edit.setValue(
+				PermissionUtil.INSTANCE().havePerm(CONST_PERM_UPDATE, BancoBean.class, getUsuario().getGrupoUser())
+						&& DtoUtils.haveCode(registro));
+	}
 }

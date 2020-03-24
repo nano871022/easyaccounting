@@ -9,21 +9,7 @@
 
 <BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.parametros.ParametrosCRUBean">
   <bottom>
-    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-      <children>
-        <Button fx:id="insert" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createBtn" text="Agregar">
-          <HBox.margin>
-            <Insets right="10.0" fx:id="x1" />
-          </HBox.margin>
-        </Button>
-        <Button fx:id="update" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyBtn" text="Actualizar" HBox.margin="$x1" />
-        <Button fx:id="delete" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteBtn" text="Eliminar" HBox.margin="$x1" />
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancelBtn" text="Cancelar" />
-      </children>
-      <padding>
-        <Insets bottom="5.0" />
-      </padding>
-    </HBox>
+    <HBox fx:id="buttons" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
   </bottom>
   <center>
     <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0" BorderPane.alignment="CENTER">

@@ -49,6 +49,8 @@ public class CacheBean extends ABean<CacheDTO> {
 	private GridPane gpRowSelected;
 	private DataTableFXMLUtil<CacheDTO, CacheDTO> dt;
 	public static final String CONST_TITTLE_NAME = "page.tittle.cached";
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -135,5 +137,11 @@ public class CacheBean extends ABean<CacheDTO> {
 
 	public DataTableFXMLUtil<CacheDTO, CacheDTO> getDt() {
 		return dt;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -6,6 +6,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.exceptions.GenericServiceException;
 
 import com.pyt.service.interfaces.IGenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
@@ -18,12 +19,12 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 		implements IGenericFields<ConfigGenericFieldDTO, F> {
 
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
+	protected IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	protected List<ConfigGenericFieldDTO> fields;
-	private Class<F> classTypeDto;
-	private MultiValuedMap<String, Node> mapFieldUseds;
+	protected Class<F> classTypeDto;
+	protected MultiValuedMap<String, Node> mapFieldUseds;
 	protected MultiValuedMap<String, Object> toChoiceBox;
 
 	@Override
@@ -32,6 +33,22 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 			mapFieldUseds = new ArrayListValuedHashMap<>();
 		}
 		return mapFieldUseds;
+	}
+
+	/**
+	 * se encarga de cargar los campos de tipo campos para ser mostrado en la
+	 * pantalla se debe llamar despues de configurar
+	 * {@link AGenericInterfacesFieldBean#classTypeDto}
+	 */
+	protected void loadFields() {
+		try {
+			var dto = new ConfigGenericFieldDTO();
+			dto.setClassPath(classTypeDto.getName().replace("Class ", ""));
+			dto.setClassPathBean(this.getClass().getName().replace("Class ", ""));
+			fields = configGenericSvc.getAll(dto);
+		} catch (GenericServiceException e) {
+			error(e);
+		}
 	}
 
 	@Override
@@ -74,4 +91,5 @@ public abstract class AGenericInterfacesFieldBean<F extends ADto> extends ABean<
 		return toChoiceBox;
 	}
 
+	protected abstract void visibleButtons();
 }

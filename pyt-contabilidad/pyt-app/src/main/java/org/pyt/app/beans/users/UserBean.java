@@ -5,8 +5,11 @@ import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IM
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.PasswordPopupBean;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.GenericServiceException;
 import org.pyt.common.validates.ValidFields;
 
@@ -17,14 +20,17 @@ import com.pyt.service.interfaces.IUsersSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.GroupUsersDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.utls.LoginUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 @FXMLFile(file = "user.fxml", path = "view/users")
 public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
@@ -49,6 +55,8 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
 	private IConfigGenericFieldSvc configGenericSvc;
 	private MultiValuedMap<String, Object> choiceBox;
+	@FXML
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -59,6 +67,10 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 			fields = configGenericSvc.getFieldToFields(this.getClass(), UsuarioDTO.class);
 			loadChoiceBox();
 			loadFields(TypeGeneric.FIELD);
+			visibleButtons();
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -81,6 +93,7 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 
 	public final void load(UsuarioDTO dto) {
 		registro = dto;
+		visibleButtons();
 		loadFields(TypeGeneric.FIELD);
 		btnAdd.setText("fxml.btn.update");
 	}
@@ -193,6 +206,16 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return choiceBox;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ListUsersBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, ListUsersBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 
 }

@@ -105,4 +105,10 @@ public class ConfirmPopupBean extends ABean {
 		Stage stage = (Stage) panel.getScene().getWindow();
 		stage.close();
 	}
+
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
+	}
 }

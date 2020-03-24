@@ -92,4 +92,10 @@ public class PopupBean extends ABean {
 		stage.close();
 		destroy();
 	}
+
+	@Override
+	protected void visibleButtons() {
+		// TODO Auto-generated method stub
+
+	}
 }

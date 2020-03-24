@@ -6,8 +6,11 @@ import java.util.Optional;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.InsertResourceConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.validates.ValidFields;
 
@@ -16,12 +19,16 @@ import com.pyt.service.interfaces.IGenericServiceSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesFieldBean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.system.LanguagesDTO;
+import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 @FXMLFile(file = "languages.fxml", path = "view/languages")
@@ -40,12 +47,11 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	public static final String CONST_FIELD_NAME_LANGUAGES_IDIOM = "idiom";
 	private boolean openedPopup;
 	private MultiValuedMap<String, Object> toChoiceBox;
+	private BooleanProperty newBtn;
 	@FXML
 	private BorderPane panel;
 	@FXML
-	private Button btnNew;
-	@FXML
-	private Button btnSave;
+	private HBox buttons;
 
 	@FXML
 	public void initialize() {
@@ -55,9 +61,16 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 			registro = new LanguagesDTO();
 			registro.setIdiom(Locale.getDefault().toString());
 			registro.setState("1");
+			newBtn = new SimpleBooleanProperty();
+			newBtn.setValue(true);
 			setClazz(LanguagesDTO.class);
-			fields = configSvc.getFieldToFields(this.getClass(), LanguagesDTO.class);
+			loadFields();
 			loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
+			visibleButtons();
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
+					.isVisible(edit).setName("fxml.btn.cancel").action(this::cancel).setName("fxml.btn.newRow")
+					.action(this::newRow).icon(Glyph.NEWSPAPER_ALT).isVisible(newBtn).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -67,14 +80,14 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 		registro = new LanguagesDTO();
 		registro.setIdiom(Locale.getDefault().toString());
 		registro.setState("1");
-		btnSave.setText(i18n().valueBundle("fxml.btn.add").get());
+		visibleButtons();
 		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
 	}
 
 	public final void load(LanguagesDTO dto) {
 		registro = dto;
+		visibleButtons();
 		loadFields(TypeGeneric.FIELD, StylesPrincipalConstant.CONST_GRID_STANDARD);
-		btnSave.setText(i18n().valueBundle("fxml.btn.edit").get());
 	}
 
 	public final void addCode(String code) {
@@ -88,7 +101,7 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 
 	public final void openPopup() {
 		openedPopup = true;
-		btnNew.setVisible(false);
+		newBtn.setValue(true);
 	}
 
 	@Override
@@ -154,5 +167,15 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	@Override
 	public MultiValuedMap<String, Object> getMapListToChoiceBox() {
 		return toChoiceBox;
+	}
+
+	@Override
+	protected void visibleButtons() {
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_CREATE, ListLanguagesBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE()
+				.havePerm(PermissionConstants.CONST_PERM_UPDATE, ListLanguagesBean.class, getUsuario().getGrupoUser());
+		this.save.setValue(save);
+		this.edit.setValue(edit);
 	}
 }
