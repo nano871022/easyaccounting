@@ -64,12 +64,12 @@ public class PersonaCRUBean extends AGenericInterfacesFieldBean<PersonaDTO> {
 		registro = new PersonaDTO();
 		fieldsConfig = new ArrayListValuedHashMap<>();
 		setClazz(PersonaDTO.class);
-		visibleButtons();
 		loadFields();
 		loadFields(TypeGeneric.FIELD);
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
-				.isVisible(save).setName("fxml.btn.save").action(this::add).icon(Glyph.EDIT).isVisible(edit)
-				.setName("fxml.btn.save").action(this::cancel).build();
+				.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
+				.setName("fxml.btn.cancel").action(this::cancel).build();
 
 	}
 
@@ -77,6 +77,7 @@ public class PersonaCRUBean extends AGenericInterfacesFieldBean<PersonaDTO> {
 		if (dto != null && dto.getCodigo() != null) {
 			registro = dto;
 			titulo.setText(i18n("fxml.personacrubean.edit"));
+			loadFields(TypeGeneric.FIELD);
 			visibleButtons();
 		} else {
 			errorI18n("err.personacrubean.person.edit.invalid");
@@ -137,7 +138,7 @@ public class PersonaCRUBean extends AGenericInterfacesFieldBean<PersonaDTO> {
 
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
-		return 4;
+		return 2;
 	}
 
 }

@@ -125,11 +125,11 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 
 	private void configFieldProperty() {
 
-		utilFx.change(chkIsColumn, registro::setIsColumn);
-		utilFx.change(chkIsFilter, registro::setIsFilter);
-		utilFx.change(chkIsRequired, registro::setIsRequired);
-		utilFx.change(chkVisible, registro::setIsVisible);
-		utilFx.change(chkGroup, value -> manejaGrupo());
+		utilFx.change(chkIsColumn, value -> registro.setIsColumn(value));
+		utilFx.change(chkIsFilter, value -> registro.setIsFilter(value));
+		utilFx.change(chkIsRequired, value -> registro.setIsRequired(value));
+		utilFx.change(chkVisible, value -> registro.setIsVisible(value));
+		utilFx.change(chkGroup, this::manejaGrupo);
 		utilFx.change(chkDefault, value -> {
 			tbDefault.setVisible(chkDefault.isSelected());
 			lbDefault.setVisible(chkDefault.isSelected());
@@ -146,27 +146,39 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				error(i18n().valueBundle("err.class.no.exists", txtClassBean.getText()));
 			}
 		});
-		utilFx.change(txtClassBean, registro::setClassPathBean);
-		utilFx.change(tbDefault, registro::setFieldShow);
-		utilFx.change(txtClassDto, registro::setClassPath);
-		utilFx.change(txtDescription, registro::setDescription);
-		utilFx.change(txtAlias, registro::setAlias);
-		utilFx.change(txtOrder, value -> registro.setOrden(validateValues.cast(value, Integer.class)));
+		utilFx.change(txtClassBean, value -> registro.setClassPathBean(value));
+		utilFx.change(tbDefault, value -> registro.setFieldShow(value));
+		utilFx.change(txtClassDto, value -> registro.setClassPath(value));
+		utilFx.change(txtDescription, value -> registro.setDescription(value));
+		utilFx.change(txtAlias, value -> registro.setAlias(value));
+		utilFx.change(txtOrder, value -> {
+			if (value != null && !value.contains("null")) {
+				registro.setOrden(validateValues.cast(value, Integer.class));
+			} else {
+				registro.setOrden(null);
+			}
+		});
 		utilFx.change(txtWidth, value -> registro.setWidth(validateValues.cast(value, Double.class)));
 		utilFx.change(txtName, value -> {
 			registro.setName(value);
-			txtDescription.setText(txtName.getText());
-			txtAlias.setText(txtName.getText().substring(0, 1).toUpperCase() + txtName.getText().substring(1));
+			txtDescription.setText(value);
+			if (value != null) {
+				txtAlias.setText(value.substring(0, 1).toUpperCase() + value.substring(1));
+			} else {
+				txtAlias.setText(null);
+			}
 			verifyChange();
 		});
 		SelectList.selectChange(cbName, change -> {
-			txtName.setText(SelectList.get(cbName));
-			txtDescription.setText(txtName.getText());
-			txtAlias.setText(txtName.getText().substring(0, 1).toUpperCase() + txtName.getText().substring(1));
+			txtName.setText(change);
+			txtDescription.setText(change);
+			txtAlias.setText(change.substring(0, 1).toUpperCase() + change.substring(1));
 			verifyChange();
 		});
-		SelectList.selectChange(chbState,
-				value -> registro.setState((Integer) ParametroConstants.mapa_estados_parametros.get(value)));
+		SelectList.selectChange(chbState, value -> {
+			var val = ParametroConstants.mapa_estados_parametros.get(value);
+			registro.setState((Integer) val);
+		});
 		SelectList.selectChange(cbGroup, change -> {
 			registro.setNameGroup(Optional.ofNullable(change).orElse(new ParametroDTO()).getNombre());
 			verifyChange();
@@ -182,8 +194,8 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				registro.setClassPath(this.registro.getClassPath());
 				registro.setState(1);
 				var count = configGenericSvc.getTotalRows(registro);
-				txtOrder.setText(String.valueOf(count));
 				this.registro.setOrden(count + 1);
+				txtOrder.setText(String.valueOf(this.registro.getOrden()));
 			}
 		} catch (Exception e) {
 			error(e);
@@ -373,9 +385,9 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		return 1;
 	}
 
-	private void manejaGrupo() {
-		cbGroup.setVisible(chkGroup.isVisible());
-		if (chkGroup.isVisible()) {
+	private void manejaGrupo(boolean useGroup) {
+		cbGroup.setVisible(useGroup);
+		if (useGroup) {
 			loadGroupParam();
 		}
 	}
@@ -394,7 +406,14 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		registro.setOrden(null);
 		registro.setFieldShow(null);
 		registro.setNameGroup(null);
+		chkGroup.setVisible(true);
+		cbGroup.setVisible(false);
+		cbField.setVisible(false);
+		lbGroup.setVisible(false);
+		lbField.setVisible(false);
 		load(registro);
+		SelectList.selectItem(cbGroup, listParam, ParametroConstants.FIELD_NAME_PARAM, registro.getNameGroup());
+		SelectList.selectItem(cbField, registro.getFieldShow());
 		countRowsBetweenBeanAndDTO();
 		verifyChange();
 		notificar(i18n().valueBundle("message.copy.generic.interface.success"));

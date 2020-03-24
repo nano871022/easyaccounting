@@ -68,14 +68,14 @@ public class ToggleBean extends AGenericInterfacesBean<ToggleDTO> {
 		filtro = new ToggleDTO();
 		gpRowSelected.setVisible(false);
 		fieldsConfig = new ArrayListValuedHashMap<>();
-		visibleButtons();
-		loadDataModel(paginator, tabla);
 		findFields(TypeGeneric.COLUMN, ToggleDTO.class, ToggleBean.class)
 				.forEach(row -> fieldsConfig.put(TypeGeneric.COLUMN, row));
 		findFields(TypeGeneric.FILTER, ToggleDTO.class, ToggleBean.class)
 				.forEach(row -> fieldsConfig.put(TypeGeneric.FILTER, row));
 		loadColumns();
 		loadFields(TypeGeneric.FILTER);
+		loadDataModel(paginator, tabla);
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.update").action(this::updateCacheSeleted)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.cancel").action(this::cancel).build();
 	}
@@ -106,6 +106,7 @@ public class ToggleBean extends AGenericInterfacesBean<ToggleDTO> {
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
+		gpRowSelected.setVisible(true);
 		visibleButtons();
 	}
 

@@ -12,10 +12,15 @@ import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 import org.pyt.common.common.I18n;
+import org.pyt.common.common.ListUtils;
 
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCharacterCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.Mnemonic;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
@@ -30,7 +35,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	private Map<String, FontAwesome.Glyph> icons;
 	private MultiValuedMap<String, Caller> actions;
 	private MultiValuedMap<String, String> styles;
-	private MultiValuedMap<String, String> commands;
+	private Map<String, String> commands;
 
 	private ButtonsImpl() {
 		buttons = new HashMap<>();
@@ -40,7 +45,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 		booleanvisibilities = new HashMap<String, Boolean>();
 		names = new ArrayList<>();
 		icons = new HashMap<>();
-		commands = new ArrayListValuedHashMap<String, String>();
+		commands = new HashMap<String, String>();
 		visibilitiesProperties = new HashMap<String, BooleanProperty>();
 	}
 
@@ -107,8 +112,8 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	}
 
 	@Override
-	public Buttons<P> setCommand(String... commands) {
-		Arrays.asList(commands).forEach(command -> this.commands.put(getLastName(), command));
+	public Buttons<P> setCommand(String command) {
+		this.commands.put(getLastName(), command);
 		return this;
 	}
 
@@ -127,18 +132,27 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 			button.getStylesheets().add("./styles/principal.css");
 			button.setStyle("-fx-margin: 10px");
 			styles.get(name).forEach(style -> button.getStyleClass().add(style));
-			if (visibilities.get(name).size() > 0) {
+			if (ListUtils.isNotBlank(visibilities.get(name))) {
 				button.setVisible(visibilities.get(name).stream().map(val -> val.get()).reduce(true,
 						(val1, val2) -> val1 &= val2));
 			}
-			if (visibilitiesProperties.get(name) != null) {
+			if (visibilitiesProperties.containsKey(name)) {
 				button.visibleProperty().bind(visibilitiesProperties.get(name));
 			}
 			if (booleanvisibilities.containsKey(name)) {
 				button.setVisible(booleanvisibilities.get(name));
 			}
-			if (icons.get(name) != null) {
+			if (icons.containsKey(name)) {
 				button.setGraphic(new Glyph("FontAwesome", icons.get(name)));
+			}
+			if (commands.get(name) != null) {
+				var kc = new KeyCharacterCombination(commands.get(name), KeyCombination.ALT_DOWN);
+				var mnemonic = new Mnemonic(button, kc);
+				button.setMnemonicParsing(true);
+				if (LoadAppFxml.loadingApp().getStage() != null
+						&& LoadAppFxml.loadingApp().getStage().getScene() != null) {
+					LoadAppFxml.loadingApp().getStage().getScene().addMnemonic(mnemonic);
+				}
 			}
 			actions.get(name).stream().forEach(action -> button.setOnAction(event -> action.call()));
 			gridPane.setHgap(10);

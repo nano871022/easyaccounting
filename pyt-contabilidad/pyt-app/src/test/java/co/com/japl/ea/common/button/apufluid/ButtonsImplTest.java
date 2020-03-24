@@ -59,7 +59,7 @@ public class ButtonsImplTest {
 		Mockito.doReturn(button1).when(((ButtonsImpl) buttons)).newButton(buttonName);
 
 		buttons.setLayout(hb).setName(buttonName).action(() -> System.out.println("clickeado")).isVisible(() -> true)
-				.setCommand("ALT+A").styleCss("buttons-disk-save").setName(buttonName2)
+				.setCommand("A").styleCss("buttons-disk-save").setName(buttonName2)
 				.action(() -> System.out.println("cancel")).setCommand("ALT+C").styleCss("button-cancel")
 				.isVisible(() -> false).build();
 

@@ -1,5 +1,6 @@
 package org.pyt.common.common;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,6 +40,10 @@ public class ListUtils {
 		return list == null || list.size() == 0;
 	}
 
+	public static <O> Boolean isBlank(Collection<O> list) {
+		return list == null || list.size() == 0;
+	}
+
 	/**
 	 * Se encarga de validar que todas las listas suministradas contengan registros
 	 * 
@@ -65,6 +70,11 @@ public class ListUtils {
 	 * @return {@link Boolean}
 	 */
 	public static <O> Boolean isNotBlank(List<O> list) {
+		return list != null && list.size() > 0;
+	}
+
+	@SuppressWarnings("null")
+	public static <O> Boolean isNotBlank(Collection<O> list) {
 		return list != null && list.size() > 0;
 	}
 

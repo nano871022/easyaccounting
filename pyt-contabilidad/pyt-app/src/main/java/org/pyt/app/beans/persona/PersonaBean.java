@@ -50,15 +50,15 @@ public class PersonaBean extends AGenericInterfacesBean<PersonaDTO> {
 		registro = new PersonaDTO();
 		filtro = new PersonaDTO();
 		fieldsConfig = new ArrayListValuedHashMap<>();
-		loadDataModel(paginador, tabla);
-		loadFields(TypeGeneric.FILTER);
-		loadColumns();
-		visibleButtons();
 		fieldsConfig = new ArrayListValuedHashMap<>();
 		findFields(TypeGeneric.FILTER, PersonaDTO.class, PersonaBean.class)
 				.forEach(row -> fieldsConfig.put(TypeGeneric.FILTER, row));
 		findFields(TypeGeneric.COLUMN, PersonaDTO.class, PersonaBean.class)
 				.forEach(row -> fieldsConfig.put(TypeGeneric.COLUMN, row));
+		loadColumns();
+		loadFields(TypeGeneric.FILTER);
+		loadDataModel(paginador, tabla);
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add).icon(Glyph.SAVE)
 				.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT).isVisible(edit)
 				.setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)

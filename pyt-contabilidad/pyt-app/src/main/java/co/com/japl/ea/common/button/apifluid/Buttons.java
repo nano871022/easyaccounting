@@ -83,7 +83,7 @@ public interface Buttons<P extends Pane> {
 	 * @param comand {String} {@link Array}
 	 * @return {@link Buttons}
 	 */
-	public Buttons<P> setCommand(String... comand);
+	public Buttons<P> setCommand(String comand);
 
 	/**
 	 * Se ingresan las configruaciones de estilos de clases creados en las hojas de

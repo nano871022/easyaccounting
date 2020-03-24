@@ -68,8 +68,8 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN).get());
 		verifyLoginRemember();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.form.button.connect").action(this::connect)
-				.icon(Glyph.SIGN_IN).setName("fxml.form.button.clear.all").action(this::clearAll).icon(Glyph.ERASER)
-				.setName("fxml.form.button.cancel").action(this::cancel).build();
+				.icon(Glyph.SIGN_IN).setCommand("G").setName("fxml.form.button.clear.all").action(this::clearAll)
+				.icon(Glyph.ERASER).setName("fxml.form.button.cancel").action(this::cancel).build();
 	}
 
 	private void verifyLoginRemember() {

@@ -325,12 +325,8 @@ public final class SelectList {
 			T val = mapa.get(key);
 			try {
 				if (vv.validate(val, value)) {
-					for (int i = 0; i < choiceBox.getItems().size(); i++) {
-						if (vv.validate(choiceBox.getItems().get(i), value)) {
-							choiceBox.getSelectionModel().select(i);
-							break;
-						}
-					}
+					choiceBox.getItems().stream().filter(vl -> vv.validate(vl, value))
+						.forEach(vl -> choiceBox.getSelectionModel().select(vl));
 					choiceBox.getSelectionModel().select(key);
 					select = true;
 					break;
@@ -385,7 +381,8 @@ public final class SelectList {
 	public final static <T> void selectChange(ChoiceBox<T> choiceBox, Consumer<T> caller) {
 		choiceBox.getSelectionModel().selectedIndexProperty()
 				.addListener((observable, oldValue, newValue) -> {
-					caller.accept(choiceBox.getSelectionModel().getSelectedItem());
+					var result = choiceBox.getItems().get((int) newValue);
+					caller.accept(result);
 				});
 	}
 }

@@ -568,6 +568,11 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		return ResourceBundle.getBundle(AppConstants.RESOURCE_BUNDLE, Locale.getDefault());
 	}
 
+	@SuppressWarnings("rawtypes")
+	public static final LoadAppFxml loadingApp() {
+		return loadApp();
+	}
+
 	@SuppressWarnings("unchecked")
 	public static final <D extends ADto, B extends ABean<D>> B getCurrentControl() {
 		return (B) loadApp().currentControlScroller;
