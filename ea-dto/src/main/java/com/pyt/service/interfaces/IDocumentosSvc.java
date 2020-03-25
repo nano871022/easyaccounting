@@ -7,6 +7,7 @@ import javax.swing.text.Document;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.ConceptoDTO;
+import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
@@ -407,5 +408,45 @@ public interface IDocumentosSvc {
 	 *             DocumentosException}
 	 */
 	public void delete(DetalleContableDTO dto, UsuarioDTO user) throws DocumentosException;
+
+	/**
+	 * Este servicio se encarga de crear un documento por pagar identico al
+	 * documento de tipo factura
+	 * 
+	 * @param documento {@link DocumentoDTO}
+	 * @param user      {@link UsuarioDTO}
+	 * @throws {@link DocumentosException}
+	 */
+	public void generarCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException;
+
+	/**
+	 * Este servicio se encarga de crear un documento por cobrar identico al
+	 * documento de tipo factura
+	 * 
+	 * @param documento {@link DocumentoDTO}
+	 * @param user      {@link UsuarioDTO}
+	 * @throws {@link DocumentosException}
+	 */
+	public void generarCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException;
+
+	/**
+	 * Este servicio se encarga de indica si la factura tiene un documento por
+	 * cobrar asociado
+	 * 
+	 * @param documento {@link DocumentoDTO}
+	 * @param user      {@link UsuarioDTO}
+	 * @throws {@link DocumentosException}
+	 */
+	public Boolean facturaHasCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException;
+
+	/**
+	 * Este servicio se encarga de indicar si la factual tiene un docuetno por pagar
+	 * asociado
+	 * 
+	 * @param documento {@link DocumentoDTO}
+	 * @param user      {@link UsuarioDTO}
+	 * @throws {@link DocumentosException}
+	 */
+	public Boolean facturaHasCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException;
 
 }

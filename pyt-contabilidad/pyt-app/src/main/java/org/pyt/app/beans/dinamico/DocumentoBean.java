@@ -31,6 +31,8 @@ import com.pyt.service.interfaces.IEmpresasSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -60,6 +62,10 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	@FXML
 	private HBox buttons;
 	private GridPane gridPane;
+	private BooleanProperty payAccount;
+	private BooleanProperty sellAccount;
+	private boolean hasPayAccount;
+	private boolean hasSellAccount;
 
 	@FXML
 	public void initialize() {
@@ -67,6 +73,8 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		gridPane = new GridPane();
 		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		valid = new ValidateValues();
+		payAccount = new SimpleBooleanProperty();
+		sellAccount = new SimpleBooleanProperty();
 		registro = new DocumentoDTO();
 		tipoDocumento = new ParametroDTO();
 		try {
@@ -77,7 +85,6 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		tipoDocumento = new ParametroDTO();
 		tipoDocumentos.onActionProperty().set(e -> loadField());
 		tipoDocumentos.setConverter(new javafx.util.StringConverter<ParametroDTO>() {
-
 			@Override
 			public String toString(ParametroDTO object) {
 				return object.getNombre();
@@ -92,9 +99,22 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		});
 		SelectList.put(tipoDocumentos, listTipoDocumento);
 		titulo.setText("");
+		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
-				.isVisible(edit).setName("fxml.btn.cancel").action(this::cancelar).build();
+				.isVisible(edit).setName("fxml.btn.create.pay.account").action(this::payAccount).icon(Glyph.PAYPAL)
+				.isVisible(payAccount).setName("fxml.btn.create.sell.account").action(this::sellAccount)
+				.icon(Glyph.BUYSELLADS).isVisible(sellAccount).setName("fxml.btn.cancel").action(this::cancelar)
+				.build();
+	}
+
+	private void verifyDocument() {
+		try {
+			hasSellAccount = documentosSvc.facturaHasCuentaPorCobrar(registro, getUsuario());
+			hasPayAccount = documentosSvc.facturaHasCuentaPorPagar(registro, getUsuario());
+		} catch (DocumentosException e) {
+			logger.logger(e);
+		}
 	}
 
 	/**
@@ -180,6 +200,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			docs.setDoctype(tipoDocumento);
 			docs.setClaseControlar(DocumentoDTO.class);
 			campos = documentosSvc.getDocumentos(docs);
+			visibleButtons();
 		} catch (DocumentosException e) {
 			error(e);
 		}
@@ -195,6 +216,8 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 				this.registro.setValor(valores);
 				documentosSvc.update(registro, getUsuario());
 			}
+			verifyDocument();
+			visibleButtons();
 		} catch (DocumentosException e) {
 			error(e);
 		}
@@ -235,6 +258,26 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		}
 	}
 
+	public final void payAccount() {
+		try {
+			documentosSvc.generarCuentaPorPagar(registro, getUsuario());
+			notificarI18n("mensaje.documentobean.account.pay.succefull");
+			hasPayAccount = true;
+		} catch (DocumentosException e) {
+			logger.logger(e);
+		}
+	}
+
+	public final void sellAccount() {
+		try {
+			documentosSvc.generarCuentaPorPagar(registro, getUsuario());
+			notificarI18n("mensaje.documentobean.account.sell.succefull");
+			hasSellAccount = true;
+		} catch (DocumentosException e) {
+			logger.logger(e);
+		}
+	}
+
 	/**
 	 * Se encarga de cancelar el almacenamiento de los datos
 	 */
@@ -263,7 +306,11 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 				getUsuario().getGrupoUser());
 		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListaDocumentosBean.class,
 				getUsuario().getGrupoUser());
+		var sell = "FACTURA".contains(registro.getTipoDocumento().getValor2().toUpperCase()) && !hasSellAccount;
+		var pay = "FACTURA".contains(registro.getTipoDocumento().getValor2().toUpperCase()) && !hasPayAccount;
 		this.save.setValue(save);
 		this.edit.setValue(edit);
+		this.sellAccount.setValue(sell && !pay);
+		this.payAccount.setValue(pay && !sell);
 	}
 }

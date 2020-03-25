@@ -438,5 +438,24 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 		}
 	}
 
+	@Override
+	public void generarCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+
+	}
+
+	@Override
+	public void generarCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+
+	}
+
+	@Override
+	public Boolean facturaHasCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+		return false;
+	}
+
+	@Override
+	public Boolean facturaHasCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+		return false;
+	}
 
 }
