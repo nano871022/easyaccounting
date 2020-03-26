@@ -4,24 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.common.ListUtils;
+import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.DocumentosException;
+import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.QueryException;
 
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
 import com.pyt.service.dto.ConceptoDTO;
+import com.pyt.service.dto.DetalleConceptoDTO;
 import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
+import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.IDocumentosSvc;
+import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class DocumentosSvc extends Services implements IDocumentosSvc {
 	@Inject(resource = "com.pyt.query.implement.QuerySvc")
 	private IQuerySvc querySvc;
+	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
+	private IParametrosSvc parametroSvc;
 
 	public List<DocumentoDTO> getAllDocumentos(DocumentoDTO dto) throws DocumentosException {
 		List<DocumentoDTO> lista = new ArrayList<DocumentoDTO>();
@@ -450,12 +460,91 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 
 	@Override
 	public Boolean facturaHasCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+		validParametersDtoUsed(documento, user);
+
 		return false;
 	}
 
 	@Override
 	public Boolean facturaHasCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+		validParametersDtoUsed(documento, user);
+		try {
+			var tipoPorPagar = new ParametroDTO();
+			tipoPorPagar.setValor2("PorPagar");
+			tipoPorPagar.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+			var tipos = parametroSvc.getAllParametros(null, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+			if (ListUtils.isBlank(tipos)) {
+				throw new DocumentosException(messageI18n("err.svc.documents.has.pay.account.search.document.type"));
+			}
+			tipoPorPagar = tipos.get(0);
+			var codeLast = documento.getCodigo();
+			documento.setCodigo(null);
+			documento.setTipoDocumento(tipoPorPagar);
+			querySvc.insert(documento, user);
+			var detail = new DetalleDTO();
+			detail.setCodigoDocumento(codeLast);
+			var details = querySvc.gets(detail);
+			if (ListUtils.isNotBlank(details)) {
+				details.forEach(detail_ -> {
+					try {
+						detail_.setCodigoDocumento(documento.getCodigo());
+						querySvc.insert(detail_, user);
+					} catch (QueryException e) {
+						throw new RuntimeException(messageI18n("err.svc.documents.has.pay.account.insert.detail"));
+					}
+				});
+			}
+			var detailAccount = new DetalleContableDTO();
+			detailAccount.setCodigoDocumento(codeLast);
+			var detailsAccount = querySvc.gets(detailAccount);
+			if (ListUtils.isNotBlank(detailsAccount)) {
+				detailsAccount.forEach(detail_ -> {
+					try {
+						detail_.setCodigoDocumento(documento.getCodigo());
+						querySvc.insert(detail_, user);
+					} catch (QueryException e) {
+						throw new RuntimeException(
+								messageI18n("err.svc.documents.has.pay.account.insert.detail.account"));
+					}
+				});
+			}
+			var detailConcept = new DetalleConceptoDTO();
+			detailConcept.setCodigoDocumento(codeLast);
+			var detailsConcept = querySvc.gets(detailConcept);
+			if (ListUtils.isNotBlank(detailsConcept)) {
+				detailsConcept.forEach(detail_ -> {
+					try {
+						detail_.setCodigoDocumento(documento.getCodigo());
+						querySvc.insert(detail_, user);
+					} catch (QueryException e) {
+						throw new RuntimeException(
+								messageI18n("err.svc.documents.has.pay.account.insert.detail.concept"));
+					}
+				});
+			}
+		} catch (QueryException | RuntimeException | ParametroException e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.has.pay.account"), e);
+		}
 		return false;
 	}
 
+	private <D extends ADto> void validParametersDtoUsed(D dto, UsuarioDTO user) throws DocumentosException {
+		if (user == null || !DtoUtils.haveCode(user)) {
+			throw new DocumentosException(messageI18n("err.svc.documents.user.empty"));
+		}
+		if (!DtoUtils.haveCode(dto)) {
+			throw new DocumentosException(
+					messageI18n("err.svc.documents.dto.code.empty", dto.getClass().getSimpleName()));
+		}
+	}
+
+	private <D extends ADto> void validParametersDtoNew(D dto, UsuarioDTO user) throws DocumentosException {
+		if (user == null || !DtoUtils.haveCode(user)) {
+			throw new DocumentosException(messageI18n("err.svc.documents.user.empty"));
+		}
+		if (DtoUtils.haveCode(dto)) {
+			throw new DocumentosException(
+					messageI18n("err.svc.documents.dto.code.empty", dto.getClass().getSimpleName()));
+		}
+	}
 }

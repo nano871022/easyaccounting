@@ -1,14 +1,10 @@
 package com.pyt.service.abstracts;
 
-import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.PostConstructor;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.reflection.Reflection;
-
-import com.pyt.service.interfaces.IGenericServiceSvc;
-import com.pyt.service.interfaces.ILanguageSvc;
 
 import co.com.japl.ea.dto.system.LanguagesDTO;
 
@@ -52,5 +48,13 @@ public abstract class Services implements Reflection {
 			loadLanguagesDB(i18n);
 		}
 		return i18n;
+	}
+
+	protected final String messageI18n(String i18n) {
+		return i18n().get(i18n);
+	}
+
+	protected final String messageI18n(String i18n, Object... values) {
+		return i18n().valueBundle(i18n, values).get();
 	}
 }
