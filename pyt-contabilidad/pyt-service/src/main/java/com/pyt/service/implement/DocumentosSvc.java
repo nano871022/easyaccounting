@@ -450,57 +450,89 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 
 	@Override
 	public void generarCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
-
+		validParametersDtoUsed(documento, user);
+		var tipoPorPagar = getTypeDocument("tipoPorPagar");
+		copyToTypeDocument(documento, user, tipoPorPagar);
 	}
 
 	@Override
 	public void generarCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
-
+		validParametersDtoUsed(documento, user);
+		var tipoPorCobrar = getTypeDocument("tipoPorCobrar");
+		copyToTypeDocument(documento,user,tipoPorCobrar);
 	}
 
 	@Override
 	public Boolean facturaHasCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
 		validParametersDtoUsed(documento, user);
-
+		
 		return false;
+	}
+	private ParametroDTO getTypeDocument(String typeDocumentName) throws DocumentosException{
+		try {
+			var tipoDocumento = new ParametroDTO();
+			tipoDocumento.setValor2(typeDocumentName);
+			tipoDocumento.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+			var tipos = parametroSvc.getAllParametros(null, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+			if (ListUtils.isBlank(tipos)) {
+				throw new DocumentosException(messageI18n("err.svc.documents.has.pay.account.search.document.type"));
+			}
+			tipoDocumento = tipos.get(0);
+			return tipoDocumento;
+		}catch(Exception e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.document.type"),e);
+		}
 	}
 
 	@Override
 	public Boolean facturaHasCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
 		validParametersDtoUsed(documento, user);
+		return false;
+	}
+	
+	private void copyToTypeDocument(DocumentoDTO documento,UsuarioDTO user,ParametroDTO tipoPorPagar)throws DocumentosException  {
 		try {
-			var tipoPorPagar = new ParametroDTO();
-			tipoPorPagar.setValor2("PorPagar");
-			tipoPorPagar.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
-			var tipos = parametroSvc.getAllParametros(null, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
-			if (ListUtils.isBlank(tipos)) {
-				throw new DocumentosException(messageI18n("err.svc.documents.has.pay.account.search.document.type"));
-			}
-			tipoPorPagar = tipos.get(0);
 			var codeLast = documento.getCodigo();
 			documento.setCodigo(null);
 			documento.setTipoDocumento(tipoPorPagar);
 			querySvc.insert(documento, user);
+			copyDetail(codeLast,documento.getCodigo(),user);
+			copyDetailAccounting(codeLast,documento.getCodigo(),user);
+			copyDetailConcept(codeLast,documento.getCodigo(),user);
+		} catch (QueryException | RuntimeException e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.has.pay.account"), e);
+		}
+	}
+
+	private void copyDetail(String codeDocumentSearch,String codeDocumentNew,UsuarioDTO user)throws DocumentosException{
+		try {
 			var detail = new DetalleDTO();
-			detail.setCodigoDocumento(codeLast);
+			detail.setCodigoDocumento(codeDocumentSearch);
 			var details = querySvc.gets(detail);
 			if (ListUtils.isNotBlank(details)) {
 				details.forEach(detail_ -> {
 					try {
-						detail_.setCodigoDocumento(documento.getCodigo());
+						detail_.setCodigoDocumento(codeDocumentNew);
 						querySvc.insert(detail_, user);
 					} catch (QueryException e) {
 						throw new RuntimeException(messageI18n("err.svc.documents.has.pay.account.insert.detail"));
 					}
 				});
 			}
+		}catch(QueryException e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.copy.detail"),e);
+		}
+	}
+	
+	private void copyDetailAccounting(String codeDocumentSearch,String codeDocumentNew,UsuarioDTO user) throws DocumentosException {
+		try {
 			var detailAccount = new DetalleContableDTO();
-			detailAccount.setCodigoDocumento(codeLast);
+			detailAccount.setCodigoDocumento(codeDocumentSearch);
 			var detailsAccount = querySvc.gets(detailAccount);
 			if (ListUtils.isNotBlank(detailsAccount)) {
 				detailsAccount.forEach(detail_ -> {
 					try {
-						detail_.setCodigoDocumento(documento.getCodigo());
+						detail_.setCodigoDocumento(codeDocumentNew);
 						querySvc.insert(detail_, user);
 					} catch (QueryException e) {
 						throw new RuntimeException(
@@ -508,24 +540,30 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 					}
 				});
 			}
+		}catch(QueryException e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.copy.detail.accounting"),e);
+		}
+	}
+	
+	private void copyDetailConcept(String codeDocumentSearch,String codeDocumentNew,UsuarioDTO user)throws DocumentosException {
+		try {
 			var detailConcept = new DetalleConceptoDTO();
-			detailConcept.setCodigoDocumento(codeLast);
+			detailConcept.setCodigoDocumento(codeDocumentSearch);
 			var detailsConcept = querySvc.gets(detailConcept);
 			if (ListUtils.isNotBlank(detailsConcept)) {
 				detailsConcept.forEach(detail_ -> {
 					try {
-						detail_.setCodigoDocumento(documento.getCodigo());
+						detail_.setCodigoDocumento(codeDocumentNew);
 						querySvc.insert(detail_, user);
 					} catch (QueryException e) {
 						throw new RuntimeException(
-								messageI18n("err.svc.documents.has.pay.account.insert.detail.concept"));
+							messageI18n("err.svc.documents.has.pay.account.insert.detail.concept"));
 					}
 				});
 			}
-		} catch (QueryException | RuntimeException | ParametroException e) {
-			throw new DocumentosException(messageI18n("err.svc.documents.has.pay.account"), e);
+		}catch(QueryException e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.copy.detail.concept"),e);
 		}
-		return false;
 	}
 
 	private <D extends ADto> void validParametersDtoUsed(D dto, UsuarioDTO user) throws DocumentosException {
