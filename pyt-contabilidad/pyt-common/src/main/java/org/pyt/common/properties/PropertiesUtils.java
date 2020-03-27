@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.Log;
+
+import co.com.japl.ea.constants.utils.EnviromentProperties;
 
 /**
  * Se encarga de cargar las propiedasd de un archivo properties y se pasan a la
@@ -24,7 +27,8 @@ public final class PropertiesUtils {
 
 	private PropertiesUtils() {
 		folderSystem = System.getProperty(FILE_SEPARATOR);
-		pathProperties = "./properties";
+		var result = EnviromentProperties.getPath();
+		pathProperties = StringUtils.isNotBlank(result)?result:"./properties";
 		nameProperties = "properties.properties";
 	}
 	/**

@@ -2,6 +2,7 @@ package co.com.japl.ea.constants.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.CacheUtil;
@@ -17,7 +18,8 @@ public final class EnviromentProperties {
 	private static Map<String, Object> maps = new HashMap<String, Object>();
 
 	public final static String getEnviromentProperty(String nameProperty) {
-		return System.getenv(nameProperty);
+		var property = Optional.ofNullable(System.getProperty(nameProperty));
+		return  property.orElse(System.getenv(nameProperty));
 	}
 	
 	private final static <T extends Object>Object searchEnviroment(String enviromentProperty,T emptyValue) {

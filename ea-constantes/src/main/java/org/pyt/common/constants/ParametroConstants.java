@@ -64,4 +64,10 @@ public class ParametroConstants {
 		MAPA_GRUPOS.put(GRUPO_IVA, GRUPO_IVA);
 		MAPA_GRUPOS.put(GRUPO_PROFESIONES, GRUPO_PROFESIONES);
 	}
+	public final static String CONST_VALOR2_FACTURA = "factura";
+	public final static String CONST_VALOR2_COTIZACION = "cotizacion";
+	public final static String CONST_VALOR2_DOCUMENTO_POR_PAGAR = "docxcobrar";
+	public final static String CONST_VALOR2_DOCUMENTO_POR_COBRAR = "docxpagar";
+	
+	
 }

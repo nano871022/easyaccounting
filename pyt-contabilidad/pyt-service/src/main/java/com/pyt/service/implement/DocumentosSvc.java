@@ -451,14 +451,14 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 	@Override
 	public void generarCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
 		validParametersDtoUsed(documento, user);
-		var tipoPorPagar = getTypeDocument("tipoPorPagar");
+		var tipoPorPagar = getTypeDocument(ParametroConstants.CONST_VALOR2_DOCUMENTO_POR_PAGAR);
 		copyToTypeDocument(documento, user, tipoPorPagar);
 	}
 
 	@Override
 	public void generarCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
 		validParametersDtoUsed(documento, user);
-		var tipoPorCobrar = getTypeDocument("tipoPorCobrar");
+		var tipoPorCobrar = getTypeDocument(ParametroConstants.CONST_VALOR2_DOCUMENTO_POR_COBRAR);
 		copyToTypeDocument(documento,user,tipoPorCobrar);
 	}
 
