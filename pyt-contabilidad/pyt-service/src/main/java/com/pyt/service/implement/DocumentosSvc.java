@@ -585,4 +585,40 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 					messageI18n("err.svc.documents.dto.code.empty", dto.getClass().getSimpleName()));
 		}
 	}
+
+	@Override
+	public <D extends ADto> void copyTo(ParametroDTO documentTypeOrigin,ParametroDTO documentType, Class<D> copy, UsuarioDTO user)
+			throws DocumentosException {
+		if(documentTypeOrigin == null) {
+			throw new DocumentosException(messageI18n("err.svc.documens.copy.document.type.origin.empty"));
+		}
+		if(documentType == null) {
+			throw new DocumentosException(messageI18n("err.svc.documens.copy.document.type.destiny.empty"));
+		}
+		if(user == null) {
+			throw new DocumentosException(messageI18n("err.svc.documens.user.empty"));
+		}
+		try {
+			var documentDestiny = new DocumentosDTO();
+			documentDestiny.setClaseControlar(copy);
+			documentDestiny.setDoctype(documentType);
+			var listDestiny = querySvc.gets(documentDestiny);
+			if(ListUtils.haveMoreOneItem(listDestiny)) {
+				throw new DocumentosException(messageI18n("err.svc.documents.copy.destiny.isnt.empty"));
+			}
+			var document = new DocumentosDTO();
+			document.setClaseControlar(copy);
+			document.setDoctype(documentTypeOrigin);
+			var list = querySvc.gets(document);
+			if(ListUtils.haveMoreOneItem(list)) {
+				for(var documento : list) {
+					documento.setCodigo(null);
+					documento.setDoctype(documentType);
+					querySvc.insert(documento, user);
+				}
+			}
+		}catch(QueryException e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.copy.documents.config"),e);
+		}
+	}
 }

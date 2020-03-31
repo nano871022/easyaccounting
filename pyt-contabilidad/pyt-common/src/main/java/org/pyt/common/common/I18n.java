@@ -26,9 +26,10 @@ public final class I18n {
 	private String bundleNoDefault;
 	private Map<String, Object> languagesDB;
 	private static I18n instances;
+	private Map<String,OptI18n> languagesNotFound;
 
 	private I18n() {
-
+		languagesNotFound = new HashMap<>();
 	}
 
 	public final static synchronized I18n instance() {
@@ -82,7 +83,7 @@ public final class I18n {
 	 * @return {@link String}
 	 */
 	public final OptI18n valueBundle(String key) {
-		return OptI18n.process(value -> {
+		return loadInMapNotFound(OptI18n.process(value -> {
 		try {
 			if (languagesDB != null && languagesDB.containsKey(key)) {
 					return ((ADto) languagesDB.get(value)).get(LanguageConstant.CONST_TEXT_BUNDLE_LANGUAGES);
@@ -98,12 +99,19 @@ public final class I18n {
 			}
 				return value;
 		}
-		}, key);
+		}, key));
+	}
+	
+	private OptI18n loadInMapNotFound(OptI18n opt) {
+		if(!opt.isFound()) {
+			languagesNotFound.put(opt.get(),opt);
+		}
+		return opt;
 	}
 	
 	public final OptI18n valueBundle(String key, Object... formats) {
 		var pattern = valueBundle(key);
-		return OptI18n.ifNullable(pattern.get(), key, formats);
+		return loadInMapNotFound(OptI18n.ifNullable(pattern.get(), key, formats));
 	}
 
 	public final void setBunde(String bundle) {
@@ -138,5 +146,9 @@ public final class I18n {
 
 	public final Boolean isEmptyDBLanguages() {
 		return languagesDB == null || languagesDB.size() == 0;
+	}
+	
+	public final Map<String,OptI18n> getListNotFound(){
+		return languagesNotFound;
 	}
 }

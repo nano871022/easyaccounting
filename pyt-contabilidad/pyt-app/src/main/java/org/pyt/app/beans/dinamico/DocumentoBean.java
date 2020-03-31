@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.AppConstants;
@@ -70,19 +71,29 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	@FXML
 	public void initialize() {
 		super.initialize();
-		gridPane = new GridPane();
-		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
-		valid = new ValidateValues();
-		payAccount = new SimpleBooleanProperty();
-		sellAccount = new SimpleBooleanProperty();
-		registro = new DocumentoDTO();
+		instanceObject();
+		loadListDocumentType();
+		loadConfigFields();
 		tipoDocumento = new ParametroDTO();
+		titulo.setText("");
+		visibleButtons();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
+				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
+				.isVisible(edit).setName("fxml.btn.create.pay.account").action(this::payAccount).icon(Glyph.PAYPAL)
+				.isVisible(payAccount).setName("fxml.btn.create.sell.account").action(this::sellAccount)
+				.icon(Glyph.BUYSELLADS).isVisible(sellAccount).setName("fxml.btn.cancel").action(this::cancelar)
+				.build();
+	}
+
+	private void loadListDocumentType() {
 		try {
 			listTipoDocumento = parametroSvc.getAllParametros(tipoDocumento, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 		} catch (ParametroException e) {
 			this.error(e);
 		}
-		tipoDocumento = new ParametroDTO();
+	}
+
+	private void loadConfigFields() {
 		tipoDocumentos.onActionProperty().set(e -> loadField());
 		tipoDocumentos.setConverter(new javafx.util.StringConverter<ParametroDTO>() {
 			@Override
@@ -98,14 +109,17 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 
 		});
 		SelectList.put(tipoDocumentos, listTipoDocumento);
-		titulo.setText("");
-		visibleButtons();
-		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
-				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
-				.isVisible(edit).setName("fxml.btn.create.pay.account").action(this::payAccount).icon(Glyph.PAYPAL)
-				.isVisible(payAccount).setName("fxml.btn.create.sell.account").action(this::sellAccount)
-				.icon(Glyph.BUYSELLADS).isVisible(sellAccount).setName("fxml.btn.cancel").action(this::cancelar)
-				.build();
+
+	}
+
+	private void instanceObject() {
+		gridPane = new GridPane();
+		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
+		valid = new ValidateValues();
+		payAccount = new SimpleBooleanProperty();
+		sellAccount = new SimpleBooleanProperty();
+		registro = new DocumentoDTO();
+		tipoDocumento = new ParametroDTO();
 	}
 
 	private void verifyDocument() {
@@ -302,12 +316,16 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 
 	@Override
 	protected void visibleButtons() {
+		var documentTypeValue2 = "";
+		if (DtoUtils.haveCode(registro.getTipoDocumento())) {
+			documentTypeValue2 = registro.getTipoDocumento().getValor2().toUpperCase();
+		}
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class,
 				getUsuario().getGrupoUser());
 		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListaDocumentosBean.class,
 				getUsuario().getGrupoUser());
-		var sell = "FACTURA".contains(registro.getTipoDocumento().getValor2().toUpperCase()) && !hasSellAccount;
-		var pay = "FACTURA".contains(registro.getTipoDocumento().getValor2().toUpperCase()) && !hasPayAccount;
+		var sell = "FACTURA".contains(documentTypeValue2) && !hasSellAccount;
+		var pay = "FACTURA".contains(documentTypeValue2) && !hasPayAccount;
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 		this.sellAccount.setValue(sell && !pay);

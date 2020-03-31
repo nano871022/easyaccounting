@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.text.Document;
 
+import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.DocumentosException;
 
 import com.pyt.service.dto.ConceptoDTO;
@@ -12,6 +13,7 @@ import com.pyt.service.dto.DetalleContableDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
+import com.pyt.service.dto.ParametroDTO;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
 
@@ -448,5 +450,15 @@ public interface IDocumentosSvc {
 	 * @throws {@link DocumentosException}
 	 */
 	public Boolean facturaHasCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException;
-
-}
+	/**
+	 * Esta funcion se encarga de realizar replicar los campos de la clase indicada para el el tipo de documento indicado, con esto se evita crear los mismos campos para tod todas las veces
+	 * @param <D> {@link ADto}
+	 * @param documentTypeOrigin {@link ParametroDTO}
+	 * @param documentType {@link ParametroDTO}
+	 * @param copy {@link Class} to {@link ADto}
+	 * @param user {@link UsuarioDTO}
+	 * @throws {@link DocumentosException}
+	 * @since 30/03/2020
+	 */
+	public <D extends ADto>void copyTo(ParametroDTO documentTypeOrigin,ParametroDTO documentType, Class<D> copy,UsuarioDTO user)throws DocumentosException;
+}	

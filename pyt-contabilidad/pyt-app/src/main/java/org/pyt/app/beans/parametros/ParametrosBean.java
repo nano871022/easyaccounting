@@ -81,7 +81,7 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 		tabla.setVisible(false);
 		lazy();
 		lazy2();
-		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::createBtn)
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::createBtn)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modifyBtn).icon(Glyph.EDIT)
 				.isVisible(edit).setName("fxml.btn.delete").action(this::deleteBtn).icon(Glyph.REMOVE).isVisible(delete)
 				.build();

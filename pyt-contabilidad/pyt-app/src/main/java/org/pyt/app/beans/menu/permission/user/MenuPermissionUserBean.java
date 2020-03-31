@@ -64,9 +64,9 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 			findChoiceBox();
 			loadFields(TypeGeneric.FIELD);
 			visibleButtons();
-			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
-					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT)
-					.isVisible(edit).setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY).isVisible(edit)
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
+					.isVisible(save).setName("fxml.btn.edit").action(this::add).icon(Glyph.EDIT).isVisible(edit)
+					.setName("fxml.btn.copy").action(this::copy).icon(Glyph.COPY).isVisible(edit)
 					.setName("fxml.btn.cancel").action(this::cancel).build();
 		} catch (Exception e) {
 			error(e);

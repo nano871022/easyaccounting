@@ -14,6 +14,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Compare;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.ParametroConstants;
+import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.ParametroException;
 
@@ -35,6 +36,7 @@ import com.pyt.service.interfaces.IParametrosSvc;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -54,6 +56,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private Button guardar;
 	@FXML
+	private Button btnCopyTo;
+	@FXML
 	private Button cancelar;
 	@FXML
 	private Button addItem;
@@ -67,6 +71,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private TableView<DocumentosDTO> tabla;
 	@FXML
 	private ChoiceBox<String> tipoDocumento;
+	@FXML
+	private ChoiceBox<String> cbCopyTo;
 	@FXML
 	private ChoiceBox<String> nombreCampo;
 	@FXML
@@ -116,6 +122,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private Label lNombreCampo;
 	@FXML
+	private Label lblCopyTo;
+	@FXML
 	private Label lBusqueda;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
@@ -132,41 +140,21 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	public void initialize() {
 		instans = false;
-		documentos = new ArrayList<DocumentosDTO>();
-		mapa_controlar = new HashMap<String, Object>();
-		claseControl();
-		mapa_nombreCampo = new HashMap<String, Object>();
-		mapa_campoAsignar = new HashMap<String, Object>();
-		mapa_claseBusqueda = new HashMap<String, Object>();
-		mapa_campoMostrar = new HashMap<String, Object>();
-		ParametroDTO grupo = new ParametroDTO();
-		grupo.setGrupo("*");
-		ParametroDTO tipoDoc = new ParametroDTO();
-		try {
-			listGrupo = parametroSvc.getAllParametros(grupo);
-			listTipoDocumento = parametroSvc.getAllParametros(tipoDoc, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
-		} catch (ParametroException e) {
-			error(e);
-		}
-		SelectList.put(this.grupo, listGrupo, FIELD_NAME);
-		SelectList.put(this.tipoDocumento, listTipoDocumento, FIELD_NAME);
-		SelectList.put(controlar, mapa_controlar);
-		controlar.getSelectionModel().selectFirst();
-		this.grupo.getSelectionModel().selectFirst();
-		this.tipoDocumento.getSelectionModel().selectFirst();
-		this.nombreCampo.getSelectionModel().selectFirst();
-		this.editable.setSelected(true);
-		tabla.onMouseClickedProperty().set(e -> tablaClick());
-		tipoDocumento.onActionProperty().set(e -> tipoDocumento());
-		controlar.onActionProperty().set(e -> controla());
-		nombreCampo.onActionProperty().set(e -> campo());
-		claseBusquedas();
-		SelectList.put(busqueda, mapa_claseBusqueda);
-		busqueda.getSelectionModel().selectFirst();
-		busqueda.onActionProperty().set(e -> busqueda());
+		loadInstances();
+		loadMapControlClass();
+		loadListDocumentType();
+		loadInList();
+		selectFirstItemChoiceBox();
+		configActionButton();
+		loadMapClaseBusquedas();
 		manejaLista();
 		manejaGrupo();
 		campo();
+		visibilityOnLoad();
+		lazy();
+	}
+
+	private void visibilityOnLoad() {
 		nombreCampo.setVisible(false);
 		etiqueta.setVisible(false);
 		lNombreCampo.setVisible(false);
@@ -177,16 +165,64 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		// cancelar.setVisible(false);
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
-		lazy();
+		lblCopyTo.setVisible(false);
+		btnCopyTo.setVisible(false);
+		cbCopyTo.setVisible(false);
 	}
 
-	private final void claseControl() {
+	private void configActionButton() {
+		tabla.onMouseClickedProperty().set(e -> tablaClick());
+		tipoDocumento.onActionProperty().set(e -> tipoDocumento());
+		controlar.onActionProperty().set(e -> controla());
+		nombreCampo.onActionProperty().set(e -> campo());
+		busqueda.getSelectionModel().selectFirst();
+		busqueda.onActionProperty().set(e -> busqueda());
+	}
+
+	private void selectFirstItemChoiceBox() {
+		controlar.getSelectionModel().selectFirst();
+		this.grupo.getSelectionModel().selectFirst();
+		this.tipoDocumento.getSelectionModel().selectFirst();
+		this.nombreCampo.getSelectionModel().selectFirst();
+		this.editable.setSelected(true);
+	}
+
+	private void loadInstances() {
+		documentos = new ArrayList<DocumentosDTO>();
+		mapa_controlar = new HashMap<String, Object>();
+		mapa_nombreCampo = new HashMap<String, Object>();
+		mapa_campoAsignar = new HashMap<String, Object>();
+		mapa_claseBusqueda = new HashMap<String, Object>();
+		mapa_campoMostrar = new HashMap<String, Object>();
+	}
+
+	private void loadListDocumentType() {
+		ParametroDTO grupo = new ParametroDTO();
+		grupo.setGrupo("*");
+		ParametroDTO tipoDoc = new ParametroDTO();
+		try {
+			listGrupo = parametroSvc.getAllParametros(grupo);
+			listTipoDocumento = parametroSvc.getAllParametros(tipoDoc, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+		} catch (ParametroException e) {
+			error(e);
+		}
+	}
+
+	private void loadInList() {
+		SelectList.put(this.grupo, listGrupo, FIELD_NAME);
+		SelectList.put(this.tipoDocumento, listTipoDocumento, FIELD_NAME);
+		SelectList.put(controlar, mapa_controlar);
+		SelectList.put(cbCopyTo, listTipoDocumento, FIELD_NAME);
+		SelectList.put(busqueda, mapa_claseBusqueda);
+	}
+
+	private final void loadMapControlClass() {
 		mapa_controlar.put("Documentos", DocumentoDTO.class);
 		mapa_controlar.put("Detalle Documento", DetalleDTO.class);
 		mapa_controlar.put("Detalle Contable", DetalleContableDTO.class);
 	}
 
-	private final void claseBusquedas() {
+	private final void loadMapClaseBusquedas() {
 		mapa_claseBusqueda.put("Parametros", ParametroDTO.class);
 		mapa_claseBusqueda.put("Banco", BancoDTO.class);
 		mapa_claseBusqueda.put("Actividad Ica", ActividadIcaDTO.class);
@@ -250,6 +286,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		lNombreCampo.setVisible(clase != null);
 		campo();
 		dataTable.search();
+		showCopyFields();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -610,6 +647,30 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		} catch (DocumentosException e) {
 			error(e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void copyTo() {
+		try {
+			var selectDocumentType = SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME);
+			var selectControl = (Class) SelectList.get(controlar, mapa_controlar);
+			var selectCopyTo = SelectList.get(cbCopyTo, listTipoDocumento, FIELD_NAME);
+			documentoSvc.copyTo(selectDocumentType, selectCopyTo, selectControl, getUsuario());
+			notificarI18n("mensaje.bean.formulario.copy.successfull");
+		} catch (DocumentosException e) {
+			error(e);
+		}
+	}
+
+	protected void showCopyFields() {
+		var havaPermission = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
+				FormularioBean.class, getUsuario().getGrupoUser());
+		var selectDocumentType = SelectList.get(tipoDocumento, listTipoDocumento, FIELD_NAME);
+		var selectControl = SelectList.get(controlar, mapa_controlar);
+		var select = havaPermission && selectDocumentType != null && selectControl != null;
+		lblCopyTo.setVisible(select);
+		btnCopyTo.setVisible(select);
+		cbCopyTo.setVisible(select);
 	}
 
 	@Override
