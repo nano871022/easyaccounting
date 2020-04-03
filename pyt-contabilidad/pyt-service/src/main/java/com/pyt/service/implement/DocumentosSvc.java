@@ -464,16 +464,23 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 
 	@Override
 	public Boolean facturaHasCuentaPorCobrar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
-		validParametersDtoUsed(documento, user);
-		
-		return false;
+		try {
+			validParametersDtoUsed(documento, user);
+			var tipoPorCobrar = getTypeDocument(ParametroConstants.CONST_VALOR2_DOCUMENTO_POR_COBRAR);
+			var doc = new DocumentoDTO();
+			doc.setNumeroNota(documento.getNumeroNota());
+			doc.setTipoDocumento(tipoPorCobrar);
+			return ListUtils.haveMoreOneItem(querySvc.gets(doc));
+		}catch(QueryException e) {
+			throw new DocumentosException(messageI18n("err.svc.documents.has.sell.from.bill"),e);
+		}
 	}
 	private ParametroDTO getTypeDocument(String typeDocumentName) throws DocumentosException{
 		try {
 			var tipoDocumento = new ParametroDTO();
 			tipoDocumento.setValor2(typeDocumentName);
 			tipoDocumento.setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
-			var tipos = parametroSvc.getAllParametros(null, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
+			var tipos = parametroSvc.getAllParametros(tipoDocumento, ParametroConstants.GRUPO_TIPO_DOCUMENTO);
 			if (ListUtils.isBlank(tipos)) {
 				throw new DocumentosException(messageI18n("err.svc.documents.has.pay.account.search.document.type"));
 			}
@@ -486,8 +493,16 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 
 	@Override
 	public Boolean facturaHasCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
-		validParametersDtoUsed(documento, user);
-		return false;
+		try {
+			validParametersDtoUsed(documento, user);
+			var tipoPorPagar = getTypeDocument(ParametroConstants.CONST_VALOR2_DOCUMENTO_POR_PAGAR);
+			var doc = new DocumentoDTO();
+			doc.setNumeroNota(documento.getNumeroNota());
+			doc.setTipoDocumento(tipoPorPagar);
+			return ListUtils.haveMoreOneItem(querySvc.gets(doc));
+		}catch(QueryException e) {
+			throw new DocumentosException(messageI18n("err.svc.dicuments.has.pay.from.bill"),e);
+		}
 	}
 	
 	private void copyToTypeDocument(DocumentoDTO documento,UsuarioDTO user,ParametroDTO tipoPorPagar)throws DocumentosException  {
@@ -512,6 +527,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 			if (ListUtils.isNotBlank(details)) {
 				details.forEach(detail_ -> {
 					try {
+						detail_.setCodigo(null);
 						detail_.setCodigoDocumento(codeDocumentNew);
 						querySvc.insert(detail_, user);
 					} catch (QueryException e) {
@@ -532,6 +548,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 			if (ListUtils.isNotBlank(detailsAccount)) {
 				detailsAccount.forEach(detail_ -> {
 					try {
+						detail_.setCodigo(null);
 						detail_.setCodigoDocumento(codeDocumentNew);
 						querySvc.insert(detail_, user);
 					} catch (QueryException e) {
@@ -553,6 +570,7 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 			if (ListUtils.isNotBlank(detailsConcept)) {
 				detailsConcept.forEach(detail_ -> {
 					try {
+						detail_.setCodigo(null);
 						detail_.setCodigoDocumento(codeDocumentNew);
 						querySvc.insert(detail_, user);
 					} catch (QueryException e) {
@@ -620,5 +638,18 @@ public class DocumentosSvc extends Services implements IDocumentosSvc {
 		}catch(QueryException e) {
 			throw new DocumentosException(messageI18n("err.svc.documents.copy.documents.config"),e);
 		}
+	}
+
+	@Override
+	public Boolean cotizacionHasFactura(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+		validParametersDtoUsed(documento, user);
+		return false;
+	}
+
+	@Override
+	public void generarFactura(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException {
+		validParametersDtoUsed(documento, user);
+		var tipoFactura = getTypeDocument(ParametroConstants.CONST_VALOR2_COTIZACION);
+		copyToTypeDocument(documento, user, tipoFactura);
 	}
 }

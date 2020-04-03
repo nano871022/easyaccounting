@@ -65,8 +65,10 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	private GridPane gridPane;
 	private BooleanProperty payAccount;
 	private BooleanProperty sellAccount;
+	private BooleanProperty bill;
 	private boolean hasPayAccount;
 	private boolean hasSellAccount;
+	private boolean hasBill;
 
 	@FXML
 	public void initialize() {
@@ -81,8 +83,8 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
 				.isVisible(edit).setName("fxml.btn.create.pay.account").action(this::payAccount).icon(Glyph.PAYPAL)
 				.isVisible(payAccount).setName("fxml.btn.create.sell.account").action(this::sellAccount)
-				.icon(Glyph.BUYSELLADS).isVisible(sellAccount).setName("fxml.btn.cancel").action(this::cancelar)
-				.build();
+				.icon(Glyph.BUYSELLADS).isVisible(sellAccount).setName("fxml.btn.create.bill").action(this::bill)
+				.icon(Glyph.FILE_TEXT).isVisible(bill).setName("fxml.btn.cancel").action(this::cancelar).build();
 	}
 
 	private void loadListDocumentType() {
@@ -118,6 +120,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		valid = new ValidateValues();
 		payAccount = new SimpleBooleanProperty();
 		sellAccount = new SimpleBooleanProperty();
+		bill = new SimpleBooleanProperty();
 		registro = new DocumentoDTO();
 		tipoDocumento = new ParametroDTO();
 	}
@@ -126,6 +129,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		try {
 			hasSellAccount = documentosSvc.facturaHasCuentaPorCobrar(registro, getUsuario());
 			hasPayAccount = documentosSvc.facturaHasCuentaPorPagar(registro, getUsuario());
+			hasBill = documentosSvc.cotizacionHasFactura(registro, getUsuario());
 		} catch (DocumentosException e) {
 			logger.logger(e);
 		}
@@ -278,15 +282,25 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			notificarI18n("mensaje.documentobean.account.pay.succefull");
 			hasPayAccount = true;
 		} catch (DocumentosException e) {
-			logger.logger(e);
+			error(e);
 		}
 	}
 
 	public final void sellAccount() {
 		try {
-			documentosSvc.generarCuentaPorPagar(registro, getUsuario());
+			documentosSvc.generarCuentaPorCobrar(registro, getUsuario());
 			notificarI18n("mensaje.documentobean.account.sell.succefull");
 			hasSellAccount = true;
+		} catch (DocumentosException e) {
+			error(e);
+		}
+	}
+
+	public final void bill() {
+		try {
+			documentosSvc.generarFactura(registro, getUsuario());
+			notificarI18n("mensaje.documentobean.account.bill.succefull");
+			hasBill = true;
 		} catch (DocumentosException e) {
 			logger.logger(e);
 		}
@@ -320,15 +334,20 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		if (DtoUtils.haveCode(registro.getTipoDocumento())) {
 			documentTypeValue2 = registro.getTipoDocumento().getValor2().toUpperCase();
 		}
-		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class,
-				getUsuario().getGrupoUser());
-		var edit = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE, ListaDocumentosBean.class,
-				getUsuario().getGrupoUser());
-		var sell = "FACTURA".contains(documentTypeValue2) && !hasSellAccount;
-		var pay = "FACTURA".contains(documentTypeValue2) && !hasPayAccount;
+		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+				PermissionConstants.CONST_PERM_UPDATE, ListaDocumentosBean.class, getUsuario().getGrupoUser());
+
 		this.save.setValue(save);
 		this.edit.setValue(edit);
-		this.sellAccount.setValue(sell && !pay);
-		this.payAccount.setValue(pay && !sell);
+		if (ParametroConstants.CONST_VALOR2_FACTURA.toUpperCase().contentEquals(documentTypeValue2) && !hasPayAccount
+				&& !hasSellAccount) {
+			this.sellAccount.setValue(true);
+			this.payAccount.setValue(true);
+		}
+		if (ParametroConstants.CONST_VALOR2_COTIZACION.toUpperCase().contentEquals(documentTypeValue2) && !hasBill) {
+			this.bill.setValue(true);
+		}
 	}
 }

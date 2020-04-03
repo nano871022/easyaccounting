@@ -451,6 +451,21 @@ public interface IDocumentosSvc {
 	 */
 	public Boolean facturaHasCuentaPorPagar(DocumentoDTO documento, UsuarioDTO user) throws DocumentosException;
 	/**
+	 * Este servicio se encarga de indicar si la cotización tiene una factura asociada
+	 * @param documento {@link DocumentoDTO}
+	 * @param user {@link UsuarioDTO}
+	 * @return {@link Boolean}
+	 * @throws {@link DocumentosException}
+	 */
+	public Boolean cotizacionHasFactura(DocumentoDTO documento,UsuarioDTO user)throws DocumentosException;
+	/**
+	 * Este servicio se encarga de generar una copia de la cotizacion y generar una de tipo factura
+	 * @param documento {@link DocumentoDTO}
+	 * @param user {@link UsuarioDTO}
+	 * @throws {@link DocumentosException}
+	 */
+	public void generarFactura(DocumentoDTO documento,UsuarioDTO user)throws DocumentosException;
+	/**
 	 * Esta funcion se encarga de realizar replicar los campos de la clase indicada para el el tipo de documento indicado, con esto se evita crear los mismos campos para tod todas las veces
 	 * @param <D> {@link ADto}
 	 * @param documentTypeOrigin {@link ParametroDTO}
