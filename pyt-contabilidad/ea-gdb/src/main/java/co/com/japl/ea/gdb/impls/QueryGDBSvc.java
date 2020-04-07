@@ -6,10 +6,12 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -31,6 +33,7 @@ import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.gdb.privates.impls.ConnectionJDBC;
 import co.com.japl.ea.gdb.privates.impls.StatementFactory;
 import co.com.japl.ea.gdb.privates.interfaces.IStatementSql;
+import co.com.japl.ea.gdb.privates.interfaces.IStatementSql.TypeAdditionalWhere;
 import co.com.japl.ea.gdb.privates.utils.StatementQuerysUtil;
 
 public class QueryGDBSvc implements IQuerySvc {
@@ -194,7 +197,6 @@ public class QueryGDBSvc implements IQuerySvc {
 		return list.get(0);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ADto> T set(T obj, UsuarioDTO user) throws QueryException {
 		var newDto = false;
@@ -300,5 +302,95 @@ public class QueryGDBSvc implements IQuerySvc {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_COUNT_ROWS).get(), e);
 		}
 		return 0;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ADto> List<T> gets(T obj, Optional<String>... addToWhere) throws QueryException {
+		List<T> list = new ArrayList<T>();
+		ResultSet rs;
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			List<String> names = obj.getNameFields();
+			var query = ssql.select(obj)+applyWhere(addToWhere);
+			rs = db.executeQuery(query);
+			while (rs.next()) {
+				list.add(getSearchResult(rs, obj, names));
+			}
+			findJoins(list);
+		} catch (SQLException | ReflectionException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
+				| StatementSqlException | ClassNotFoundException e) {
+			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_SEARCH).get(), e);
+		}
+		return list;
+	}
+	
+	private String applyWhere(Optional<String>... addToWhere) {
+		if(addToWhere.length > 0) {
+			Arrays.asList(addToWhere).stream().map(where->" AND "+where.get()).reduce(String::concat);
+		}
+		return "";
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ADto> Optional<String> filterBetween(T obj,String fieldName, String value1, String value2) throws QueryException {
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			return Optional.ofNullable(ssql.appyWhere(obj, fieldName, TypeAdditionalWhere.BETWEEN, null, null, value1,value2));
+		}catch(StatementSqlException e) {
+			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.filterBetween").get() ,e);
+		}
+	}
+
+	@Override
+	public <T extends ADto>  Optional<String> filterLess(T obj,String fieldName, String value) throws QueryException {
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			return Optional.ofNullable(ssql.appyWhere(obj, fieldName, TypeAdditionalWhere.LESS, null, null, value));
+		}catch(StatementSqlException e) {
+			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.filterless").get() ,e);
+		}
+	}
+
+	@Override
+	public  <T extends ADto> Optional<String> filterGreater(T obj,String fieldName, String value) throws QueryException {
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			return Optional.ofNullable(ssql.appyWhere(obj, fieldName, TypeAdditionalWhere.GREATER, null, null, value));
+		}catch(StatementSqlException e) {
+			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.filtergreater").get() ,e);
+		}
+	}
+
+	@Override
+	public  <T extends ADto> Optional<String> filterLessThat(T obj,String fieldName, String value) throws QueryException {
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			return Optional.ofNullable(ssql.appyWhere(obj, fieldName, TypeAdditionalWhere.LESSTHAT, null, null, value));
+		}catch(StatementSqlException e) {
+			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.filterlessthat").get() ,e);
+		}
+	}
+
+	@Override
+	public  <T extends ADto> Optional<String> filterGreaterThat(T obj,String fieldName, String value) throws QueryException {
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			return Optional.ofNullable(ssql.appyWhere(obj, fieldName, TypeAdditionalWhere.GREATERTHAT, null, null, value));
+		}catch(StatementSqlException e) {
+			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.filtergreaterthat").get() ,e);
+		}
+	}
+
+	@Override
+	public <T extends ADto,D extends ADto> Optional<String> filterSelect(T dto,String fieldName, D obj,String nameFilter) throws QueryException {
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, obj.getClass());
+			return Optional.ofNullable(ssql.appyWhere(dto, fieldName, TypeAdditionalWhere.SUBSELECT, obj, nameFilter));
+		}catch(StatementSqlException e) {
+			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.filterless").get() ,e);
+		}
 	}
 }

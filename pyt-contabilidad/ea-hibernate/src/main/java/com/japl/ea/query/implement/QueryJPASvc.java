@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -268,6 +269,48 @@ public class QueryJPASvc implements IQuerySvc {
 			throw new QueryException(i18n.valueBundle(LanguageConstant.LANGUAGE_ERROR_QUERY_INSERT_UPDATE).get(), e);
 		}
 		return false;
+	}
+
+	@Override
+	public <T extends ADto> List<T> gets(T obj, Optional<String>... addToWhere) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<String> filterBetween(String fieldName, String value1, String value2) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<String> filterLess(String fieldName, String value) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<String> filterGreater(String fieldName, String value) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<String> filterLessThat(String fieldName, String value) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<String> filterGreaterThat(String fieldName, String value) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ADto> Optional<String> filterSelect(String fieldName, T obj) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

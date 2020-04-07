@@ -95,6 +95,13 @@ public interface Buttons<P extends Pane> {
 	public Buttons<P> styleCss(String... classCss);
 
 	/**
+	 * Se utiliza para realizar la creación de un anueva fila para los botones
+	 * 
+	 * @return {@link Buttons}
+	 */
+	public Buttons<P> BR();
+
+	/**
 	 * Cuando se utiliza este metodo se finaliza la configuración y realiza la
 	 * construccion de los botones con la configuracion indicada
 	 */

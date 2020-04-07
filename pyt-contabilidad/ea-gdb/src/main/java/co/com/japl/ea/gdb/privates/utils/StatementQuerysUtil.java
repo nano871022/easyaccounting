@@ -165,6 +165,16 @@ public class StatementQuerysUtil {
 		var fields = StringUtils.join(outFields, QueryConstants.CONST_COMMA);
 		return fields;
 	}
+	
+	@SuppressWarnings("unused")
+	public final <T extends ADto> String fieldToSelect(T obj,String nameSelect) throws ReflectionException {
+		var field = getName(obj, nameSelect);
+		if (field != null || field != "null") {
+			return String.format(CONST_FIELD_ALIAS, field, nameSelect);
+		}
+		return fieldToSelect(obj);
+	}
+		
 
 	public final <T extends ADto> String fieldToInsert(T obj) throws ReflectionException {
 		List<String> names = obj.getNameFields();
@@ -268,7 +278,7 @@ public class StatementQuerysUtil {
 		return name;
 	}
 
-	private <T extends ADto> String getName(T dto, String name) {
+	public <T extends ADto> String getName(T dto, String name) {
 		var path = "";
 		Field field = null;
 		try {
@@ -289,5 +299,25 @@ public class StatementQuerysUtil {
 			value = name;
 		}
 		return (String) value;
+	}
+	
+	public <T extends ADto,O>String between(T dto,String name,O value1 , O value2){
+		return getName(dto,name)+" BETWEEN "+valueFormat(value1)+" AND "+valueFormat(value2);
+	}
+	
+	public <T extends ADto,O>String less(T dto,String name,O value){
+		return getName(dto,name)+" < "+valueFormat(value);
+	}
+	
+	public <T extends ADto,O>String lessThat(T dto,String name,O value){
+		return getName(dto,name)+" <= "+valueFormat(value);
+	}
+	
+	public <T extends ADto,O>String greater(T dto,String name,O value){
+		return getName(dto,name)+" > "+valueFormat(value);
+	}
+	
+	public <T extends ADto,O>String greaterThat(T dto,String name,O value){
+		return getName(dto,name)+" >= "+valueFormat(value);
 	}
 }

@@ -28,6 +28,13 @@ public class ListUtils {
 		}
 		return !isNotBlank(lists);
 	}
+	
+	public static <O>Boolean isBlank(O[] lists) {
+		if (lists.length == 0) {
+			return true;
+		}
+		return !isNotBlank(lists);
+	}
 
 	/**
 	 * Verifíca si la lista esta nula o es una instancia sin registros
@@ -61,6 +68,10 @@ public class ListUtils {
 		}
 		return valid;
 	}
+	
+	public static <O>Boolean isNotBlank(O[] lists) {
+		return lists.length > 0;
+	}
 
 	/**
 	 * Verifíca si la lista no se encuentra vacía
@@ -72,6 +83,7 @@ public class ListUtils {
 	public static <O> Boolean isNotBlank(List<O> list) {
 		return list != null && list.size() > 0;
 	}
+	
 
 	@SuppressWarnings("null")
 	public static <O> Boolean isNotBlank(Collection<O> list) {
@@ -89,7 +101,9 @@ public class ListUtils {
 		return list != null && list.size() == 1;
 	}
 
-
+	public static <O> Boolean haveOneItem(O[] list) {
+		return list != null && list.length == 1;
+	}
 	/**
 	 * Verifíca si la lista contiene mas de un item
 	 * 
@@ -124,6 +138,10 @@ public class ListUtils {
 	 */
 	public static <O> Boolean haveItemsEqual(List<O> list, Integer items) {
 		return list != null && list.size() == items;
+	}
+	
+	public static <O> Boolean haveItemsEqual(O[] list, Integer items) {
+		return list != null && list.length  == items;
 	}
 
 }

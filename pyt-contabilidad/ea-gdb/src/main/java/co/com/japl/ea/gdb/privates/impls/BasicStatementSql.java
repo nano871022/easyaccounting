@@ -1,6 +1,9 @@
 package co.com.japl.ea.gdb.privates.impls;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.DtoUtils;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.querys.StatementSqlException;
 
@@ -14,7 +17,7 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 	public BasicStatementSql() {
 		squ = StatementQuerysUtil.instance();
 	}
-
+	
 	@Override
 	public String select(T dto, int init, int size, boolean insertValue, boolean count) throws StatementSqlException {
 		String query = init >= 0 && size > 0 ? QueryConstants.SQL_SELECT_LIMIT
@@ -79,6 +82,39 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 			throw new StatementSqlException("Se presento problema en generacion sentencia sql update", e);
 		}
 		return query;
+	}
+
+
+	@Override
+	public <O,D extends ADto>String appyWhere(T dto, String name, TypeAdditionalWhere additionalWhere,D dto2,String nameSelect, O... values) throws StatementSqlException {
+		var real = squ.getName(dto,name);
+		switch(additionalWhere) {
+		case BETWEEN:
+					if(ListUtils.haveItemsEqual(values, 2)) {
+						return squ.between(dto, name, values[0], values[1]);
+					}
+		case LESS:
+					if(ListUtils.haveOneItem(values)) {
+						return squ.less(dto, name, values[0]);
+					}
+		case LESSTHAT:
+					if(ListUtils.haveOneItem(values)) {	
+						return squ.lessThat(dto, name, values[0]);
+					}
+		case GREATER:
+					if(ListUtils.haveOneItem(values)) {
+						return squ.greater(dto, name, values[0]);
+					}
+		case GREATERTHAT:
+				if(ListUtils.haveOneItem(values)) {
+					return squ.greaterThat(dto, name, values[0]);
+				}
+		case SUBSELECT:
+			if(ListUtils.isBlank(values) && StringUtils.isNotBlank(nameSelect) && DtoUtils.isNotBlank(dto2)) {
+				return real +" IN "+ String.format(QueryConstants.SQL_SELECT,squ.fieldToSelect(dto2, nameSelect),squ.fieldToWhere(dto2, false),squ.fieldToWhere(dto2, false));
+			}
+		}
+		return "";
 	}
 
 }

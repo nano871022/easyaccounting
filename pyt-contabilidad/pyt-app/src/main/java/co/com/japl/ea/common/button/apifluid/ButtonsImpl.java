@@ -36,6 +36,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	private MultiValuedMap<String, Caller> actions;
 	private MultiValuedMap<String, String> styles;
 	private Map<String, String> commands;
+	private Map<String, Boolean> br;
 
 	private ButtonsImpl() {
 		buttons = new HashMap<>();
@@ -47,6 +48,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 		icons = new HashMap<>();
 		commands = new HashMap<String, String>();
 		visibilitiesProperties = new HashMap<String, BooleanProperty>();
+		br = new HashMap<String, Boolean>();
 	}
 
 	public static <P extends Pane> Buttons<?> Stream(Class<P> clazz) {
@@ -123,6 +125,11 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 		return this;
 	}
 
+	public Buttons<P> BR() {
+		br.put(getLastName(), true);
+		return this;
+	}
+
 	@Override
 	public void build() {
 		var gridPane = new GridPane();
@@ -156,7 +163,11 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 			}
 			actions.get(name).stream().forEach(action -> button.setOnAction(event -> action.call()));
 			gridPane.setHgap(10);
-			gridPane.addRow(1, button);
+			var count = gridPane.getRowCount() + 1;
+			if (br.get(name) != null) {
+				count = count + 1;
+			}
+			gridPane.addRow(count, button);
 		});
 	}
 

@@ -1,6 +1,8 @@
 package com.pyt.query.interfaces;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
 
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.QueryException;
@@ -90,4 +92,64 @@ public interface IQuerySvc {
 	 * @throws {@link QueryException}
 	 */
 	public <T extends ADto> Integer countRow(T obj) throws QueryException;
+	/**
+	 * Servicio con el cual se puede realizar un query personalizado y solo se puede construir desde los servicos,
+	 * los valores pasados son optional de tipo string que son retornados por las construcciones de los filtros
+	 *
+	 * @param <T> {@link ADto}
+	 * @param obj {@link ADto}
+	 * @param addToWhere {@link Array} by {@link String}
+	 * @return {@link List} by {@link ADto}
+	 * @throws {@link QueryException}
+	 */
+	public <T extends ADto> List<T> gets(T obj,Optional<String>... addToWhere)throws QueryException;
+	/**
+	 * Esto permite crear el filtro de tipo between indicando los valores entre los cuales debe contrner el filtro
+	 * @param fieldName {@link String}
+	 * @param value1 {@link String}
+	 * @param value2 {@link String}
+	 * @return {@link Optional} by {@link String}
+	 * @throws {@link QueryException}
+	 */
+	public  <T extends ADto> Optional<String> filterBetween(T obj,String fieldName,String value1,String value2)throws QueryException;
+	/**
+	 * Esto permite crear un filtro de tipo menor a un valor dado
+	 * @param fieldName {@link String}
+	 * @param value {@link String}
+	 * @return {@link Optional} by {@link String}
+	 * @throws {@link QueryException}
+	 */
+	public  <T extends ADto> Optional<String> filterLess(T obj,String fieldName,String value)throws QueryException;
+	/**
+	 * Esto permite crear el filtro de tipo mayor a un valor dado
+	 * @param fieldName {@link String}
+	 * @param value {@link String}
+	 * @return {@link Optional} by {@link String}
+	 * @throws {@link QueryException}
+	 */
+	public  <T extends ADto> Optional<String> filterGreater(T obj,String fieldName,String value)throws QueryException;
+	/**
+	 * Esto permite crear el filtro de tipo menor que a un valor dado
+	 * @param fieldName {@link String}
+	 * @param value {@link String}
+	 * @return {@link Optional} by {@link String}
+	 * @throws {@link QueryException}
+	 */
+	public  <T extends ADto> Optional<String> filterLessThat(T obj,String fieldName,String value)throws QueryException;
+	/**
+	 * Esto permite crear el filtro de tipo mayor que a un valor dado
+	 * @param fieldName {@link String}
+	 * @param value {@link String}
+	 * @return {@link Optional} by {@link String}
+	 * @throws {@link QueryException}
+	 */
+	public  <T extends ADto> Optional<String> filterGreaterThat(T obj,String fieldName,String value)throws QueryException;
+	/**
+	 * Esto permite crear el filtro de tipo select con el objeto dato
+	 * @param fieldName {@link String}
+	 * @param obj {@link ADto}
+	 * @return {@link Optional} by {@link String}
+	 * @throws {@link QueryException}
+	 */
+	public <T extends ADto,D extends ADto> Optional<String> filterSelect(T dto,String fieldName, D obj,String nameFilter) throws QueryException;
 }
