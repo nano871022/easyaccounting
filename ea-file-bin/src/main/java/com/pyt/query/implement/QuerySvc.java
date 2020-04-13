@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -314,37 +315,55 @@ public class QuerySvc implements IQuerySvc {
 	}
 
 	@Override
-	public Optional<String> filterBetween(String fieldName, String value1, String value2) throws QueryException {
+	public <T extends ADto> Optional<String> filterBetween(T obj, String fieldName, String value1, String value2)
+			throws QueryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Optional<String> filterLess(String fieldName, String value) throws QueryException {
+	public <T extends ADto> Optional<String> filterLess(T obj, String fieldName, String value) throws QueryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Optional<String> filterGreater(String fieldName, String value) throws QueryException {
+	public <T extends ADto> Optional<String> filterGreater(T obj, String fieldName, String value)
+			throws QueryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Optional<String> filterLessThat(String fieldName, String value) throws QueryException {
+	public <T extends ADto> Optional<String> filterLessThat(T obj, String fieldName, String value)
+			throws QueryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Optional<String> filterGreaterThat(String fieldName, String value) throws QueryException {
+	public <T extends ADto> Optional<String> filterGreaterThat(T obj, String fieldName, String value)
+			throws QueryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T extends ADto> Optional<String> filterSelect(String fieldName, T obj) throws QueryException {
+	public <T extends ADto, D extends ADto> Optional<String> filterSelect(T dto, String fieldName, D obj,
+			String nameFilter) throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ADto, D extends ADto> Optional<String> order(T dto, Map<String, String> fieldOrder)
+			throws QueryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ADto> Optional<String> different(T dto, String name) throws QueryException {
 		// TODO Auto-generated method stub
 		return null;
 	}

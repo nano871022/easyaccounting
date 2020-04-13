@@ -1,0 +1,18 @@
+CREATE TABLE TBL_GENERATEQUOTE(
+ 	 scode    VARCHAR2(30)        NOT NULL
+	,screater VARCHAR2(100)       NULL
+	,sdeleter VARCHAR2(100)       NULL
+	,supdater VARCHAR2(100)       NULL
+	,dcreate  DATETIME            NOT NULL DEFAULT NOW()
+	,ddelete  DATETIME            NULL
+	,dupdate  DATETIME            NULL
+	,speriod  VARCHAR2(30)        NOT NULL
+	,sdocument VARCHAR2(30)       NOT NULL
+	,dinitial DATETIME            NOT NULL
+	,nquotes  NUMBER              NOT NULL
+	,npercent NUMBER              NOT NULL
+	,speriod  VARCHAR2(30)        NOT NULL
+);
+ALTER TABLE TBL_QUOTE ADD CONSTRAINT KY_GQ_PRIMARY PRIMARY KEY (scode);
+ALTER TABLE TBL_QUOTE ADD CONSTRAINT FK_GQ_PP_FOREING FOREIGN KEY (speriod) REFERENCES TBL_PARAMETER(scode);
+ALTER TABLE TBL_QUOTE ADD CONSTRAINT FK_GQ_D_FOREING FOREIGN KEY (sdocument) REFERENCES TBL_DOCUMENT(scode);
