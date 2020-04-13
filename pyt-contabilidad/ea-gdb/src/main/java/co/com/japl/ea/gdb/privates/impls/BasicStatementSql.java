@@ -1,5 +1,9 @@
 package co.com.japl.ea.gdb.privates.impls;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.DtoUtils;
@@ -113,8 +117,19 @@ public class BasicStatementSql<T extends ADto> implements IStatementSql<T> {
 			if(ListUtils.isBlank(values) && StringUtils.isNotBlank(nameSelect) && DtoUtils.isNotBlank(dto2)) {
 				return real +" IN "+ String.format(QueryConstants.SQL_SELECT,squ.fieldToSelect(dto2, nameSelect),squ.fieldToWhere(dto2, false),squ.fieldToWhere(dto2, false));
 			}
+		case DIFFERENT:
+			return squ.different(dto, name);
 		}
 		return "";
+	}
+	
+	public <O,D extends ADto> String order(T dto,Map<String,String> fieldOrder) throws StatementSqlException{
+		List<String> orders = new ArrayList<>(); 
+		fieldOrder.forEach((name,value)->{
+			var real = squ.getName(dto, name);
+			orders.add((orders.size()>0?",":"")+real + value);
+		});
+		return orders.parallelStream().reduce("", (valor1,valor2)->valor1+valor2);
 	}
 
 }

@@ -302,22 +302,26 @@ public class StatementQuerysUtil {
 	}
 	
 	public <T extends ADto,O>String between(T dto,String name,O value1 , O value2){
-		return getName(dto,name)+" BETWEEN "+valueFormat(value1)+" AND "+valueFormat(value2);
+		return getName(dto,name)+QueryConstants.SQL_OPERATION_BETWEEN+valueFormat(value1)+" AND "+valueFormat(value2);
 	}
 	
 	public <T extends ADto,O>String less(T dto,String name,O value){
-		return getName(dto,name)+" < "+valueFormat(value);
+		return getName(dto,name)+QueryConstants.SQL_OPERATION_LESS+valueFormat(value);
 	}
 	
 	public <T extends ADto,O>String lessThat(T dto,String name,O value){
-		return getName(dto,name)+" <= "+valueFormat(value);
+		return getName(dto,name)+QueryConstants.SQL_OPERATION_LESS_THAT+valueFormat(value);
 	}
 	
 	public <T extends ADto,O>String greater(T dto,String name,O value){
-		return getName(dto,name)+" > "+valueFormat(value);
+		return getName(dto,name)+QueryConstants.SQL_OPERATION_GREATHER+valueFormat(value);
 	}
 	
 	public <T extends ADto,O>String greaterThat(T dto,String name,O value){
-		return getName(dto,name)+" >= "+valueFormat(value);
+		return getName(dto,name)+QueryConstants.SQL_OPERATION_GREATHER_THAT+valueFormat(value);
+	}
+	
+	public <T extends ADto> String different(T dto,String name) {
+		return getName(dto,name)+QueryConstants.SQL_OPERATION_DIFFERENT+valueFormat(dto.get(name));
 	}
 }

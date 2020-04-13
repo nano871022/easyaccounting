@@ -2,6 +2,7 @@ package com.pyt.query.interfaces;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.pyt.common.abstracts.ADto;
@@ -152,4 +153,23 @@ public interface IQuerySvc {
 	 * @throws {@link QueryException}
 	 */
 	public <T extends ADto,D extends ADto> Optional<String> filterSelect(T dto,String fieldName, D obj,String nameFilter) throws QueryException;
+	/**
+	 * Esto permite crear un orden en el resultado del select creado
+	 * @param <T> {@link ADto}
+	 * @param <D> 
+	 * @param dto {@link ADto}
+	 * @param fieldOrder {@link Map} nombre campo,orden(ASC,DESC,)
+	 * @return {@link String}
+	 * @throws {@link QueryException}
+	 */
+	public <T extends ADto,D extends ADto> Optional<String> order(T dto,Map<String,String> fieldOrder)throws QueryException;
+	/**
+	 * Esto permite crear un filtro de tipo diferente al valor que se ponga en el campo del dto
+	 * @param <T>
+	 * @param dto {@link ADto}
+	 * @param name {@link String}
+	 * @return {@link Optional}
+	 * @throws {@link QueryException}
+	 */
+	public <T extends ADto> Optional<String> different(T dto,String name)throws QueryException;
 }

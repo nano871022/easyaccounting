@@ -27,6 +27,7 @@ import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.query.interfaces.IQuerySvc;
+import com.pyt.service.abstracts.Services;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;
@@ -36,7 +37,7 @@ import co.com.japl.ea.gdb.privates.interfaces.IStatementSql;
 import co.com.japl.ea.gdb.privates.interfaces.IStatementSql.TypeAdditionalWhere;
 import co.com.japl.ea.gdb.privates.utils.StatementQuerysUtil;
 
-public class QueryGDBSvc implements IQuerySvc {
+public class QueryGDBSvc extends Services implements IQuerySvc {
 
 	private ConnectionJDBC db;
 	private I18n i18n;
@@ -326,6 +327,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		return list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private String applyWhere(Optional<String>... addToWhere) {
 		if(addToWhere.length > 0) {
 			Arrays.asList(addToWhere).stream().map(where->" AND "+where.get()).reduce(String::concat);
@@ -344,6 +346,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ADto>  Optional<String> filterLess(T obj,String fieldName, String value) throws QueryException {
 		try {
@@ -354,6 +357,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public  <T extends ADto> Optional<String> filterGreater(T obj,String fieldName, String value) throws QueryException {
 		try {
@@ -364,6 +368,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public  <T extends ADto> Optional<String> filterLessThat(T obj,String fieldName, String value) throws QueryException {
 		try {
@@ -374,6 +379,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public  <T extends ADto> Optional<String> filterGreaterThat(T obj,String fieldName, String value) throws QueryException {
 		try {
@@ -384,6 +390,7 @@ public class QueryGDBSvc implements IQuerySvc {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ADto,D extends ADto> Optional<String> filterSelect(T dto,String fieldName, D obj,String nameFilter) throws QueryException {
 		try {
@@ -391,6 +398,25 @@ public class QueryGDBSvc implements IQuerySvc {
 			return Optional.ofNullable(ssql.appyWhere(dto, fieldName, TypeAdditionalWhere.SUBSELECT, obj, nameFilter));
 		}catch(StatementSqlException e) {
 			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.filterless").get() ,e);
+		}
+	}
+	
+	public <T extends ADto,D extends ADto> Optional<String> order(T dto,Map<String,String> fieldOrder)throws QueryException{
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, dto.getClass());
+			return Optional.ofNullable(ssql.order(dto, fieldOrder));
+		}catch(StatementSqlException e) {
+			throw new QueryException(i18n.valueBundle("svc.querygdbsvc.order").get() ,e);
+		}
+	}
+
+	@Override
+	public <T extends ADto> Optional<String> different(T dto, String name) throws QueryException {
+		try {
+			IStatementSql<T> ssql = (IStatementSql<T>) sfactory.getStatement(motor, dto.getClass());
+			return Optional.ofNullable(ssql.appyWhere(dto, name, TypeAdditionalWhere.DIFFERENT, null, null, null));
+		}catch(StatementSqlException e) {
+			throw new QueryException(messageI18n("err.svc.queryGDBSvc.different",name,dto.get(name)),e);
 		}
 	}
 }

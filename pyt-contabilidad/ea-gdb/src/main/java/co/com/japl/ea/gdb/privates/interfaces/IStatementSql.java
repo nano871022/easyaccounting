@@ -1,10 +1,10 @@
 package co.com.japl.ea.gdb.privates.interfaces;
 
+import java.util.Map;
+
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.querys.StatementSqlException;
 import org.pyt.common.reflection.ReflectionDto;
-
-import co.com.japl.ea.gdb.privates.interfaces.IStatementSql.TypeAdditionalWhere;
 
 /**
  * Se encarga de estandarizar las diferentes sentencias posibles de usar
@@ -14,7 +14,7 @@ import co.com.japl.ea.gdb.privates.interfaces.IStatementSql.TypeAdditionalWhere;
  * @param <T>
  */
 public interface IStatementSql<T extends ReflectionDto> {
-	public static enum TypeAdditionalWhere { LESS,GREATER,LESSTHAT,GREATERTHAT,BETWEEN,SUBSELECT}
+	public static enum TypeAdditionalWhere { LESS,GREATER,LESSTHAT,GREATERTHAT,BETWEEN,SUBSELECT,DIFFERENT}
 	
 	default String select(T dto) throws StatementSqlException {
 		return select(dto, 0, 0, false,false);
@@ -36,5 +36,7 @@ public interface IStatementSql<T extends ReflectionDto> {
 
 	public String delete(T dto) throws StatementSqlException;
 	
-	public <O,D extends ADto>String appyWhere(T dto, String name, TypeAdditionalWhere additionalWhere,D dto2,String nameSelect, O... values) throws StatementSqlException; 
+	public <O,D extends ADto>String appyWhere(T dto, String name, TypeAdditionalWhere additionalWhere,D dto2,String nameSelect, O... values) throws StatementSqlException;
+	
+	public <O,D extends ADto> String order(T dto,Map<String,String> fieldOrder) throws StatementSqlException;
 }

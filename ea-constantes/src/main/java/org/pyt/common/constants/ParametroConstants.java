@@ -36,6 +36,7 @@ public class ParametroConstants {
 		mapa_estados_parametros.put(DESC_ESTADO_PARAMETRO_ACTIVO, COD_ESTADO_PARAMETRO_ACTIVO);
 		mapa_estados_parametros.put(DESC_ESTADO_PARAMETRO_INACTIVO, COD_ESTADO_PARAMETRO_INACTIVO);
 	}
+	public final static String GRUPO_ESTADO_PAY = "GRUPO_ESTADO_PAGO";
 	public final static String GRUPO_TIPO_BANCO = "GRUPO_TIPO_BANCO";
 	public final static String GRUPO_TIPO_CUENTA = "GRUPO_TIPO_CUENTA";
 	public final static String GRUPO_NATURALEZA = "GRUPO_NATURALEZA";
@@ -63,11 +64,15 @@ public class ParametroConstants {
 		MAPA_GRUPOS.put(GRUPO_TIPO_PLAN_CONTABLE, GRUPO_TIPO_PLAN_CONTABLE);
 		MAPA_GRUPOS.put(GRUPO_IVA, GRUPO_IVA);
 		MAPA_GRUPOS.put(GRUPO_PROFESIONES, GRUPO_PROFESIONES);
+		MAPA_GRUPOS.put(GRUPO_ESTADO_PAY,GRUPO_ESTADO_PAY);
 	}
 	public final static String CONST_VALOR2_FACTURA = "factura";
 	public final static String CONST_VALOR2_COTIZACION = "cotizacion";
 	public final static String CONST_VALOR2_DOCUMENTO_POR_PAGAR = "docxcobrar";
 	public final static String CONST_VALOR2_DOCUMENTO_POR_COBRAR = "docxpagar";
 	
-	
+	public final static String CONST_VALOR2_PARTIAL_PAY = "partialpay";
+	public final static String CONST_VALOR2_PAYED = "payed";
+	public final static String CONST_VALOR2_PENDING_PAY = "pending";
+		
 }

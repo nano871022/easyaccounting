@@ -17,8 +17,16 @@ public class CuotaDTO extends ADto {
 	private BigDecimal valorPagadoNeto;
 	private Integer numeroCuota;
 	private DocumentoDTO documento;
+	private ParametroDTO periodo;
 	private ParametroDTO estado;
 	private Double iva;
+	
+	public ParametroDTO getPeriodo() {
+		return periodo;
+	}
+	public void setPeriodo(ParametroDTO periodo) {
+		this.periodo = periodo;
+	}
 	public LocalDate getFechaPago() {
 		return fechaPago;
 	}

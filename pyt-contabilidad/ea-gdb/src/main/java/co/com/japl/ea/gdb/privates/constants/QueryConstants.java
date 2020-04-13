@@ -38,4 +38,10 @@ public class QueryConstants {
 	public final static String SQL_SELECT_LIMIT = "SELECT %s FROM %s WHERE %s LIMIT %s";
 	public final static String SQL_JPA_SELECT = "SELECT t FROM %s t WHERE %s";
 	public final static String SQL_CREATE_TRIGGER = "CREATE TRIGGER tgr_%s %s %s ON %s FOR EACH ROW CALL \"com.japl.ea.query.privates.triggers.%s\"";
+	public final static String SQL_OPERATION_DIFFERENT = " <> ";
+	public final static String SQL_OPERATION_GREATHER = " > ";
+	public final static String SQL_OPERATION_GREATHER_THAT = " >= ";
+	public final static String SQL_OPERATION_LESS = " < ";
+	public final static String SQL_OPERATION_LESS_THAT = " <= ";
+	public final static String SQL_OPERATION_BETWEEN = " BETWEEN ";
 }
