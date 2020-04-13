@@ -143,5 +143,10 @@ public class ListUtils {
 	public static <O> Boolean haveItemsEqual(O[] list, Integer items) {
 		return list != null && list.length  == items;
 	}
+	
+	public static <O> O lastValue(List<O> list) {
+		if(list.size() == 0)return null;
+		return list.get(list.size()-1);
+	}
 
 }

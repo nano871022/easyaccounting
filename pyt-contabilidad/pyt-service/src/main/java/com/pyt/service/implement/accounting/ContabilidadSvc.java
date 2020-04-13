@@ -1,7 +1,11 @@
 package com.pyt.service.implement.accounting;
 
 import java.math.BigDecimal;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,18 +13,21 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.OperacionesUtil;
+import org.pyt.common.common.ValidationUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.accounting.ContabilidadException;
 
 import com.pyt.query.interfaces.IQuerySvc;
 import com.pyt.service.abstracts.Services;
+import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.ParametroDTO;
 import com.pyt.service.interfaces.contabilidad.IContabilidadSvc;
 
 import co.com.japl.ea.dto.contabilidad.CajaMayorDTO;
 import co.com.japl.ea.dto.contabilidad.CajaMenorDTO;
 import co.com.japl.ea.dto.contabilidad.CuotaDTO;
+import co.com.japl.ea.dto.contabilidad.GenerarCuotaDTO;
 import co.com.japl.ea.dto.contabilidad.PagoDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 
@@ -165,4 +172,97 @@ public class ContabilidadSvc extends Services implements IContabilidadSvc {
 		}
 		throw new QueryException(messageI18n("err.svc.accounting.getdocumenttype.not.found",valor2,ParametroConstants.GRUPO_TIPO_DOCUMENTO));
 	}
+
+	@Override
+	public void generarCuotas(GenerarCuotaDTO cuotas, UsuarioDTO user) throws ContabilidadException {
+		try {
+			if(!DtoUtils.haveCode(user)) {
+				throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.users.not.send"));
+			}
+			if(!DtoUtils.haveCode(cuotas.getDocumento())) {
+				throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.document.invalid"));
+			}
+			if(!ValidationUtils.greaterZero(cuotas.getNumeroCuotas())) {
+				throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.numberquotes.invalid"));
+			}
+			if(cuotas.getFechaInicio() == null) {
+				throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.initdate.empty"));
+			}
+			if(cuotas.getNumeroCuotas() > 1 && !DtoUtils.haveCode(cuotas.getPeriocidad())){
+				throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.period.invalid"));
+			}
+			var percent = OperacionesUtil.plus(cuotas.getPorcentaje());
+			if(percent > 1.0 && percent*100 > 100) {
+				throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.percent.max.invalid",percent));
+			}
+			cuotas.setPorcentaje(obtenerPorcentajeFaltantes(cuotas.getPorcentaje(), cuotas.getNumeroCuotas()));
+			var detalle = new DetalleDTO();
+			detalle.setCodigoDocumento(cuotas.getDocumento().getCodigo());
+			var listDetail = query.gets(detalle);
+			var valorNeto = listDetail.stream().map(detail->detail.getValorNeto()).reduce(BigDecimal.ZERO, BigDecimal::add);
+			var impuesto = listDetail.stream().map(detail->detail.getValorIva()).distinct().reduce(BigDecimal.ZERO,BigDecimal::add);
+			List<CuotaDTO> list = new ArrayList<>();
+			var statePendingPay = getEstadoCuota(ParametroConstants.CONST_VALOR2_PENDING_PAY);
+			list.add(generateQuoteOne(cuotas,valorNeto,impuesto.doubleValue(),statePendingPay));
+			for(var i = 1; i < cuotas.getNumeroCuotas();i++) {
+				list.add(generateNextQuote(ListUtils.lastValue(list), cuotas,valorNeto,impuesto.doubleValue(),statePendingPay));
+			}
+			for(var cuota : list) {
+				if(!query.insert(cuota, user)) {
+					throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.insertquote",cuota.toString()));
+				}
+			}
+			if(!query.insert(cuotas, user)) {
+				throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.insertgeneratequote"));
+			}
+		}catch(QueryException e) {
+			throw new ContabilidadException(messageI18n("err.svc.accounting.generatequotes.insertsquote",cuotas.toString()));
+		}
+	}
+	
+	private Double[] obtenerPorcentajeFaltantes(Double[] percent,Integer numeroCuotas) {
+		var list = Arrays.asList(percent);
+		var plus = OperacionesUtil.plus(percent);
+		var faltante = plus > 1D ?(100D - plus)/100D:1D-plus;
+		if(percent.length > 0 && percent.length < numeroCuotas) {
+			var diferencia = numeroCuotas - percent.length;
+			var porcentaje = faltante/diferencia;
+			for(int i = 0; i < diferencia;i++) {
+				list.add(porcentaje);
+			}
+		}
+		return (Double[]) list.stream().map(value->value>1D?value/100:value).toArray(Double[]::new);
+	}
+	
+	private CuotaDTO generateQuoteOne(GenerarCuotaDTO cuotas,BigDecimal valor,Double impuesto,ParametroDTO statePendingPay) throws QueryException{
+		var cuota = new CuotaDTO();
+		cuota.setDocumento(cuotas.getDocumento());
+		cuota.setFechaPago(cuotas.getFechaInicio());
+		cuota.setNumeroCuota(1);
+		cuota.setPeriodo(cuotas.getPeriocidad());
+		cuota.setEstado(statePendingPay);
+		cuota.setValorNeto(calcularValorNetoCuota(cuota.getNumeroCuota(),valor,cuotas.getPorcentaje()));
+		cuota.setIva(impuesto);
+		cuota.setValor(OperacionesUtil.impuesto(cuota.getValorNeto(), impuesto));
+		return cuota;
+	}
+	private BigDecimal calcularValorNetoCuota(Integer numeroCuota,BigDecimal valor,Double[] porcentage) {
+		BigDecimal valorCuota = new BigDecimal(valor.toString());
+		valorCuota = OperacionesUtil.impuesto(valor, porcentage[numeroCuota-1]);
+		return valorCuota;
+	}
+
+	private CuotaDTO generateNextQuote(CuotaDTO ultimaCuota,GenerarCuotaDTO cuotas,BigDecimal valor,Double impuesto,ParametroDTO statePendingPay) throws QueryException {
+		var cuota = new CuotaDTO();
+		cuota.setDocumento(cuotas.getDocumento());
+		cuota.setNumeroCuota(ultimaCuota.getNumeroCuota()+1);
+		cuota.setPeriodo(cuotas.getPeriocidad());
+		cuota.setEstado(statePendingPay);
+		cuota.setFechaPago(ultimaCuota.getFechaPago().plus(Period.parse(cuotas.getPeriocidad().getValor())));
+		cuota.setValorNeto(calcularValorNetoCuota(cuota.getNumeroCuota(),valor,cuotas.getPorcentaje()));
+		cuota.setIva(impuesto);
+		cuota.setValor(OperacionesUtil.impuesto(cuota.getValorNeto(), impuesto));
+		return cuota;
+	}
+	
 }
