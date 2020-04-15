@@ -164,7 +164,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 			actions.get(name).stream().forEach(action -> button.setOnAction(event -> action.call()));
 			gridPane.setHgap(10);
 			var count = gridPane.getRowCount() + 1;
-			if (br.get(name) != null) {
+			if (br.containsKey(name)) {
 				count = count + 1;
 			}
 			gridPane.addRow(count, button);

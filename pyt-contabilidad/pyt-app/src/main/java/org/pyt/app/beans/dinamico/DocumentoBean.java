@@ -19,6 +19,7 @@ import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.constants.languages.Documento;
 import org.pyt.common.exceptions.DocumentosException;
 import org.pyt.common.exceptions.EmpresasException;
+import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.validates.ValidateValues;
 
@@ -288,7 +289,8 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			documentosSvc.generarCuentaPorPagar(registro, getUsuario());
 			notificarI18n("mensaje.documentobean.account.pay.succefull");
 			hasPayAccount = true;
-		} catch (DocumentosException e) {
+			controllerPopup(GenerarCuotaBean.class).load(registro);
+		} catch (DocumentosException | LoadAppFxmlException e) {
 			error(e);
 		}
 	}
@@ -298,7 +300,8 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			documentosSvc.generarCuentaPorCobrar(registro, getUsuario());
 			notificarI18n("mensaje.documentobean.account.sell.succefull");
 			hasSellAccount = true;
-		} catch (DocumentosException e) {
+			controllerPopup(GenerarCuotaBean.class).load(registro);
+		} catch (DocumentosException | LoadAppFxmlException e) {
 			error(e);
 		}
 	}
