@@ -6,4 +6,5 @@ public final class Documento {
 	public final static String CONST_RETURN = "fxml.btn.return";
 	public final static String CONST_ERR_LOAD_LIST_DET_COUNT = "err.load.list.det.count";
 	public final static String CONST_ERR_LOAD_LIST_DETAIL = "err.load.list.detail";
+	public final static String CONST_ERR_LOAD_LIST_PAYMENT = "err.load.list.payment";
 }

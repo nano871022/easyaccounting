@@ -37,9 +37,11 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	private MultiValuedMap<String, String> styles;
 	private Map<String, String> commands;
 	private Map<String, Boolean> br;
+	private Integer[] minMaxAllBtn;
 
 	private ButtonsImpl() {
 		buttons = new HashMap<>();
+		minMaxAllBtn = null;
 		visibilities = new ArrayListValuedHashMap<String, Supplier<Boolean>>();
 		actions = new ArrayListValuedHashMap<String, Caller>();
 		styles = new ArrayListValuedHashMap<String, String>();
@@ -66,6 +68,14 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 	public Buttons<P> setName(String name) {
 		var name2 = I18n.instance().get(name);
 		configButtons(name, name2);
+		return this;
+	}
+
+	public Buttons<P> widthMinMaxAllBtn(Integer min, Integer max) {
+		Integer[] minMax = new Integer[2];
+		minMax[0] = min;
+		minMax[1] = max;
+		minMaxAllBtn = minMax;
 		return this;
 	}
 
@@ -139,6 +149,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 			button.getStylesheets().add("./styles/principal.css");
 			button.setStyle("-fx-margin: 10px");
 			styles.get(name).forEach(style -> button.getStyleClass().add(style));
+
 			if (ListUtils.isNotBlank(visibilities.get(name))) {
 				button.setVisible(visibilities.get(name).stream().map(val -> val.get()).reduce(true,
 						(val1, val2) -> val1 &= val2));
@@ -152,6 +163,10 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 			if (icons.containsKey(name)) {
 				button.setGraphic(new Glyph("FontAwesome", icons.get(name)));
 			}
+			if (minMaxAllBtn != null && minMaxAllBtn.length == 2) {
+				button.setMinWidth(minMaxAllBtn[0]);
+				button.setMaxWidth(minMaxAllBtn[1]);
+			}
 			if (commands.get(name) != null) {
 				var kc = new KeyCharacterCombination(commands.get(name), KeyCombination.ALT_DOWN);
 				var mnemonic = new Mnemonic(button, kc);
@@ -162,13 +177,21 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 				}
 			}
 			actions.get(name).stream().forEach(action -> button.setOnAction(event -> action.call()));
+			gridPane.getStyleClass().add("borderView");
 			gridPane.setHgap(10);
-			var count = gridPane.getRowCount() + 1;
-			if (br.containsKey(name)) {
-				count = count + 1;
-			}
-			gridPane.addRow(count, button);
+			gridPane.addRow(numberRow(gridPane, br.containsKey(name)), button);
 		});
+	}
+
+	private Integer numberRow(GridPane gridPane, boolean addRow) {
+		var count = gridPane.getRowCount();
+		if (addRow) {
+			return count + 1;
+		} else if (count == 0) {
+			return 0;
+		}
+		return count - 1;
+
 	}
 
 	private String getLastName() {

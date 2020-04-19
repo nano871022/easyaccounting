@@ -12,6 +12,7 @@ import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.DtoUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
@@ -231,7 +232,7 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	 * @param tipoDocumento {@link ParametroDTO}
 	 */
 	public final void load(VBox panel, ParametroDTO tipoDocumento, String codigoDocumento) throws Exception {
-		if (tipoDocumento == null || StringUtils.isBlank(tipoDocumento.getCodigo()))
+		if (DtoUtils.haveCode(tipoDocumento))
 			throw new Exception(i18n("err.documenttype.havent.been.entered"));
 		if (panel == null)
 			throw new Exception(i18n("err.panel.havent.been.entered"));

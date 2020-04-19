@@ -11,6 +11,7 @@ import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
+import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
@@ -44,6 +45,7 @@ public class ListCuotaBean extends AGenericInterfacesBean<CuotaDTO> {
 	private List<ConfigGenericFieldDTO> listColumns;
 	@FXML
 	private HBox buttons;
+	private DocumentoDTO documento;
 
 	@FXML
 	public void initialize() {
@@ -66,6 +68,11 @@ public class ListCuotaBean extends AGenericInterfacesBean<CuotaDTO> {
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	public void load(DocumentoDTO dto) {
+		this.documento = dto;
+		visibleButtons();
 	}
 
 	public final void add() {

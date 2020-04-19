@@ -95,6 +95,16 @@ public interface Buttons<P extends Pane> {
 	public Buttons<P> styleCss(String... classCss);
 
 	/**
+	 * Con esto se especifica el tamaño del boton con un minimo y un maximo para el
+	 * mismo
+	 * 
+	 * @param min {@link Integer)
+	 * @param max {@link Integer}
+	 * @return {@link Buttons}
+	 */
+	public Buttons<P> widthMinMaxAllBtn(Integer min, Integer max);
+
+	/**
 	 * Se utiliza para realizar la creación de un anueva fila para los botones
 	 * 
 	 * @return {@link Buttons}
