@@ -190,10 +190,10 @@ public class Template implements IComunicacion, Reflection {
 				LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.ERROR);
 				break;
 			case AppConstants.COMMAND_POPUP_INFO:
-				LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.INFO);
+				LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.INFO);
 				break;
 			case AppConstants.COMMAND_POPUP_WARN:
-				LoadAppFxml.loadBeanFxml(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.WARNING);
+				LoadAppFxml.loadBeanFxml2(new Stage(), PopupBean.class).load(valor, PopupBean.TIPOS.WARNING);
 				break;
 			}
 		} catch (LoadAppFxmlException e) {

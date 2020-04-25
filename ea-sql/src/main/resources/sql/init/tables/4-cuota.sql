@@ -13,7 +13,7 @@ CREATE TABLE TBL_QUOTE(
 	,ntax     NUMBER              NOT NULL
 	,ntaxpayed NUMBER             NULL
 	,npayed   NUMBER              NULL
-	,sstate   VACHAR2(30)         NOT NULL
+	,sstate   VARCHAR2(30)         NOT NULL
 	,speriod  VARCHAR2(30)        NOT NULL
 	,sdocument VARCHAR2(30)       NOT NULL
 );

@@ -8,6 +8,7 @@ import com.pyt.service.dto.BancoDTO;
 public class CajaMayorDTO extends ACajaDTO {
 	private BigDecimal valor;
 	private BancoDTO banco;
+	private String numeroCuenta;
 	public BigDecimal getValor() {
 		return valor;
 	}
@@ -19,5 +20,11 @@ public class CajaMayorDTO extends ACajaDTO {
 	}
 	public void setBanco(BancoDTO banco) {
 		this.banco = banco;
+	}
+	public String getNumeroCuenta() {
+		return numeroCuenta;
+	}
+	public void setNumeroCuenta(String numeroCuenta) {
+		this.numeroCuenta = numeroCuenta;
 	}
 }
