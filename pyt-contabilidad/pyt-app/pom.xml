@@ -151,10 +151,11 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>
-								org.ea.app.load.Main
-							</mainClass>
+							<mainClass>org.ea.app.load.Main</mainClass>
 						</manifest>
+						<manifestEntries>
+							<Class-path>.</Class-path>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>

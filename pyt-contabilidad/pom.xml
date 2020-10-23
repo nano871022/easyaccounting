@@ -47,6 +47,7 @@
 
 	</dependencies>
 	<modules>
+	<!--  -->
 		<module>../ea-constantes</module>
 		<module>../ea-anotaciones</module>
 		<module>../ea-exceptions</module>
@@ -63,6 +64,7 @@
 		<module>pyt-service</module>
 		<module>pyt-app</module>
 		<module>../ea-sql</module>
+<!--    -->
 	</modules>
 	<build>
 		<plugins>

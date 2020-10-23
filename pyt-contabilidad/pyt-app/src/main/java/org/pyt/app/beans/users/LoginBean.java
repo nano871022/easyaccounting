@@ -174,6 +174,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 			usersSvc.logout(registro, remoteAddr(), false);
 			registro = new UsuarioDTO();
 			clearAll();
+			System.exit(-1);
 		} catch (Exception e) {
 			error(e);
 		}

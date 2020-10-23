@@ -199,7 +199,7 @@ public final class ValidateValues {
 			}
 			return true;
 		} catch (Exception e) {
-			throw new ValidateValueException("Se presento error en la validacion.", e);
+			throw new ValidateValueException("Se presento error en la validacion. ("+value1+"=="+value2+")", e);
 		}
 	}
 
@@ -207,6 +207,9 @@ public final class ValidateValues {
 	public final <T extends ADto> Boolean validateDto(Object obj, Object obj2) throws ValidateValueException {
 		T dto = (T) obj;
 		T dto2 = (T) obj2;
+		if(StringUtils.isBlank(dto.getCodigo()) || StringUtils.isBlank(dto.getCodigo())) {
+			return false;
+		}
 		if (dto.getCodigo().contentEquals(dto2.getCodigo())) {
 			return true;
 		}

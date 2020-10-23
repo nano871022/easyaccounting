@@ -24,7 +24,7 @@ public final class Log {
 	private final static String NullPointerExceptionMessage = "Null pointer exception";
 	private final static String EOFExceptionMessage = "When open file throw EOF exception";
 	private final static String CONST_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	private final static String CONST_4STR_FORMAT= "%s %s : %s : %s";
+	private final static String CONST_4STR_FORMAT= "%s %5s : %s : %s";
 	private final static String CONST_3STR_FORMAT=  "%s.%s:%s";
 	private final static String CONST_EMPTY = "";
 	private String lastMessage = "";
@@ -55,7 +55,7 @@ public final class Log {
 			return;
 		lastMessage = msn;
 		if (logWriter.getModesToPrint().contains(type.toString())) {
-			String line = String.format(CONST_4STR_FORMAT, now(), nameClase, type, msn);
+			String line = String.format(CONST_4STR_FORMAT, now(), type, nameClase, msn);
 			logWriter.addImpresion(line);
 		}
 	}
@@ -93,6 +93,9 @@ public final class Log {
 			msnBuild(EOFExceptionMessage, LEVEL.ERROR);
 		}else if (error.getCause() instanceof NullPointerException || error instanceof NullPointerException) {
 			msnBuild(NullPointerExceptionMessage, LEVEL.ERROR);
+			Arrays.asList(error.getStackTrace()).stream()
+			.map( stack -> stack.getFileName()+"."+stack.getMethodName()+":"+stack.getLineNumber())
+			.forEach(msn -> msnBuild(msn,LEVEL.ERROR));
 		} else {
 			msnBuild(error.getMessage(), LEVEL.ERROR);
 		}
