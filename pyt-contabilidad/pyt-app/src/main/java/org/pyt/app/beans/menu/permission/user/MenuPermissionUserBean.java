@@ -119,11 +119,15 @@ public class MenuPermissionUserBean extends AGenericInterfacesFieldBean<MenuPerm
 				if (StringUtils.isBlank(registro.getCodigo())) {
 					menuGroupUsersSvc.insert(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.user.inserted"));
-					btnCopy.setVisible(true);
+					if (btnCopy != null) {
+						btnCopy.setVisible(true);
+					}
 				} else {
 					menuGroupUsersSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.user.updated"));
 				}
+				visibleButtons();
+				loadFields(TypeGeneric.FIELD);
 			}
 		} catch (Exception e) {
 			error(e);

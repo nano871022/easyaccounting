@@ -132,6 +132,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 						registro.getCodigo());
 			}
 		} catch (Exception e1) {
+			error(e1);
 			errorI18n(Documento.CONST_ERR_LOAD_LIST_DETAIL);
 		}
 	}

@@ -242,6 +242,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 			}
 			verifyDocument();
 			visibleButtons();
+			tipoDocumentos.setDisable(true);
 		} catch (DocumentosException e) {
 			error(e);
 		}

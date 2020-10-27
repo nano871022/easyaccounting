@@ -55,6 +55,10 @@ public class DtoUtils {
 	public static <D extends ADto> Boolean haveCode(D dto) {
 		return dto != null && StringUtils.isNotBlank(dto.getCodigo());
 	}
+	
+	public static <D extends ADto> Boolean haveNotCode(D dto) {
+		return dto == null || StringUtils.isBlank(dto.getCodigo());
+	}
 
 	public static <D extends ADto> Boolean isNotBlankFields(D dto, String... fieldsName) {
 		var vv = new ValidateValues();

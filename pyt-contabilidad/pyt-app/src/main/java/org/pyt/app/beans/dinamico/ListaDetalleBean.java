@@ -232,7 +232,7 @@ public class ListaDetalleBean extends AListGenericDinamicBean<DetalleDTO, Docume
 	 * @param tipoDocumento {@link ParametroDTO}
 	 */
 	public final void load(VBox panel, ParametroDTO tipoDocumento, String codigoDocumento) throws Exception {
-		if (DtoUtils.haveCode(tipoDocumento))
+		if (DtoUtils.haveNotCode(tipoDocumento))
 			throw new Exception(i18n("err.documenttype.havent.been.entered"));
 		if (panel == null)
 			throw new Exception(i18n("err.panel.havent.been.entered"));

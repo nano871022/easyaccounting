@@ -92,6 +92,8 @@ public class PermissionBean extends AGenericInterfacesFieldBean<PermissionDTO> {
 					permissionSvc.update(registro, getUsuario());
 					notificar(i18n().valueBundle("mensaje.group.user.updated"));
 				}
+				visibleButtons();
+				loadFields(TypeGeneric.FIELD);
 			}
 		} catch (Exception e) {
 			error(e);

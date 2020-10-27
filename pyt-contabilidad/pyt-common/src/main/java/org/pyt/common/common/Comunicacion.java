@@ -1,11 +1,14 @@
 package org.pyt.common.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Singleton;
 import org.pyt.common.interfaces.IComunicacion;
 
@@ -56,32 +59,36 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 		if (this.suscriptores == null) {
 			this.suscriptores = new HashMap<>();
 		}
-		Integer count = 0;
 		if (comandoValor != null) {
 			Set<String> comandos = comandoValor.keySet();
+			List<String> comandosWorks = new ArrayList<>();
 			if (comandos != null)
 				if (comandos.size() > 0)
-					for (String comando : comandos) {
-						IComunicacion[] suscriptores = this.suscriptores.get(comando);
-						if (suscriptores != null && suscriptores.length > 0) {
-							for (IComunicacion suscriptor : suscriptores) {
-								if (suscriptor != null) {
-									Object[] valores = comandoValor.get(comando);
-									if (valores != null && valores.length > 0) {
-										for (Object valor : valores) {
-											suscriptor.get(comando, valor);
-										}
-										count++;
-									}
+					comandos.stream()
+					.filter(comando -> StringUtils.isNotBlank(comando))
+					.forEach(comando -> {
+						AtomicInteger count = new AtomicInteger(0);
+						var result = this.suscriptores.get(comando);
+						if(ListUtils.isNotBlank(result)) {
+							Arrays.asList(result).stream()
+							.filter(subscriptor -> subscriptor != null)
+							.forEach(subscriptor -> {
+								var valores = comandoValor.get(comando);
+								if(ListUtils.isNotBlank(valores)) {
+									Arrays.asList(valores)
+									.forEach(valor->subscriptor.get(comando, valor));
+									count.incrementAndGet();
 								}
-							}
+							});
 						}
-						if (count > 0) {
-							comandoValor.remove(comando);
-							count = 0;
-							break;
+						if(count.get() > 0) {
+							comandosWorks.add(comando);
+							count.set(0);
 						}
-					}
+					});
+			if(ListUtils.isNotBlank(comandosWorks)) {
+				comandosWorks.forEach(comando->comandoValor.remove(comando));
+			}
 		}
 	}
 
@@ -100,14 +107,14 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 			comandoValor = new HashMap<>();
 		}
 		try {
-			T[] valores = (T[]) comandoValor.get(comando);
-			if (valores != null && valores.length > 0) {
-				List<T> lvalores = List.of(valores);
-				if (lvalores != null && lvalores.size() > 0) {
-
-					lvalores.add(valor);
-					comandoValor.put(comando, lvalores.toArray());
+			T[] valores = (T[])comandoValor.get(comando);
+			if (ListUtils.isNotBlank(valores )) {
+				List<T> lvalores = new ArrayList<>();
+				for(T valors : valores) {
+					lvalores.add(valors);
 				}
+				lvalores.add(valor);
+				comandoValor.put(comando, lvalores.toArray());
 			} else {
 				List<T> lvalores = new ArrayList<>();
 				lvalores.add(valor);

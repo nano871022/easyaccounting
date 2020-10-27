@@ -70,7 +70,7 @@ public class ListUtils {
 	}
 	
 	public static <O>Boolean isNotBlank(O[] lists) {
-		return lists.length > 0;
+		return lists != null && lists.length > 0;
 	}
 
 	/**
