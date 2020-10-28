@@ -11,6 +11,7 @@ import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.PermissionConstants;
@@ -84,7 +85,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
-				.isVisible(edit).setName("fxml.btn.back").action(this::regresar).icon(Glyph.BACKWARD).build();
+				.isVisible(edit).setName("fxml.btn.cancel").action(this::regresar).build();
 	}
 
 	/**
@@ -165,6 +166,8 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		tipoDocumento = tipoDoc;
 		panelCentral = panel;
 		this.codigoDocumento = codigoDocumento;
+		this.registro.setCodigoDocumento(this.codigoDocumento);
+		incrementarRenglon();
 		titulo.setText(titulo.getText() + ": " + tipoDoc.getNombre());
 		visibleButtons();
 		loadField();
@@ -182,7 +185,29 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		codigoDocumento = registro.getCodigoDocumento();
 		panelCentral = panel;
 		titulo.setText(concat(titulo.getText(), ": ", tipoDoc.getNombre()));
+		visibleButtons();
 		loadField();
+	}
+
+	private void incrementarRenglon() {
+		var renglon = 0;
+		try {
+			logger.info("Start Incrementar renglon");
+			if (registro != null && StringUtils.isBlank(registro.getCodigo())) {
+				var detail = new DetalleDTO();
+				detail.setCodigoDocumento(this.codigoDocumento);
+				var result = documentosSvc.getAllDetalles(detail);
+				logger.info("Registros " + result);
+				if (ListUtils.isNotBlank(result)) {
+					renglon = Integer.valueOf((int) result.stream().count()) + 1;
+					logger.info("Cantidad registros encontrados" + renglon);
+				}
+			}
+		} catch (Exception e) {
+			error(e);
+		}
+		logger.info("End Incrementar renglon");
+		registro.setRenglon(renglon);
 	}
 
 	/**
@@ -292,7 +317,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 
 	@Override
 	public void visibleButtons() {
-		var save = !DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
+		var save = DtoUtils.haveNotCode(registro) && PermissionUtil.INSTANCE().havePerm(
 				PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class, getUsuario().getGrupoUser());
 		var edit = DtoUtils.haveCode(registro) && PermissionUtil.INSTANCE().havePerm(
 				PermissionConstants.CONST_PERM_UPDATE, ListaDocumentosBean.class, getUsuario().getGrupoUser());

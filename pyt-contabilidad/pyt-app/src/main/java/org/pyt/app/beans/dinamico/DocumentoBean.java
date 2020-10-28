@@ -216,6 +216,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	 */
 	public final void load(ParametroDTO tipoDocumento) {
 		registro = new DocumentoDTO();
+		this.tipoDocumento = tipoDocumento;
 		registro.setTipoDocumento(tipoDocumento);
 		this.tipoDocumentos.setDisable(true);
 		SelectList.selectItem(tipoDocumentos, registro.getTipoDocumento());
@@ -323,6 +324,7 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	 * Se encarga de cancelar el almacenamiento de los datos
 	 */
 	public final void cancelar() {
+		logger.info("Cancelar: " + tipoDocumento.toStringAll());
 		getController(ListaDocumentosBean.class).loadParameters(tipoDocumento.getValor2());
 	}
 
@@ -354,8 +356,10 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 
 		this.save.setValue(save);
 		this.edit.setValue(edit);
-		if (ParametroConstants.CONST_VALOR2_FACTURA.toUpperCase().contentEquals(documentTypeValue2) && !hasPayAccount
-				&& !hasSellAccount) {
+		logger.info("TipoDocumentoBotones: " + documentTypeValue2 + " " + hasPayAccount + " " + hasSellAccount);
+		if (DtoUtils.haveCode(registro)
+				&& ParametroConstants.CONST_VALOR2_FACTURA.toUpperCase().contentEquals(documentTypeValue2)
+				&& !hasPayAccount && !hasSellAccount) {
 			this.sellAccount.setValue(true);
 			this.payAccount.setValue(true);
 		}

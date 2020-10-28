@@ -77,9 +77,9 @@ public class ListaDetalleContableBean
 		filtro = new DetalleContableDTO();
 		lazy();
 		visibleButtons();
-		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::agregar)
-				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::editar).icon(Glyph.SAVE)
-				.isVisible(edit).setName("fxml.btn.delete").action(this::eliminar).icon(Glyph.REMOVE).isVisible(delete)
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::agregar).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::editar).icon(Glyph.SAVE).isVisible(edit)
+				.setName("fxml.btn.delete").action(this::eliminar).icon(Glyph.REMOVE).isVisible(delete)
 				.setName("fxml.btn.view").action(this::editar).icon(Glyph.FILE_TEXT).isVisible(view).build();
 	}
 
