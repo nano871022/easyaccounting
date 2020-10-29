@@ -2,8 +2,13 @@
  -fx-margin: 10px;
 }
 
-button{
+.button{
  -fx-border-color : orange;
+ -fx-background-color: orange;
+}
+
+.button:hover{
+-fx-background-color: yellow;
 }
 
 .grid-standard{

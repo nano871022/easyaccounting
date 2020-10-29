@@ -11,7 +11,6 @@ import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
 
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.layout.HBox;
@@ -24,17 +23,11 @@ import javafx.scene.layout.HBox;
  * @since 18/06/2018
  */
 public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extends Table {
-	private Button btnPrimer;
-	private Button btnUltimo;
-	private Button btnSiguiente;
-	private Button btnAtras;
 	private HBox paginas;
-	private HBox nPages;
 	private Integer currentPage;
 	private Integer page;
 	private Integer total;
 	private Integer rows;
-	private Long cantidad;
 	private List<S> list;
 	private javafx.scene.control.TableView<S> table;
 	private ValidateValues validate = new ValidateValues();
@@ -76,14 +69,15 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 			div = 0;
 		}
 		Integer pages = Math.round(div);
-		if ((pagination == null || pagination.getPageCount() != pages)) {
-			this.pagination = new Pagination();
-			paginas.getChildren().clear();
-			paginas.getChildren().add(this.pagination);
-			logger.info("Cantidad Paginas: " + total + "/" + rows + "=" + pages + " (" + div + ")");
-			this.pagination.setPageCount(pages);
-			this.pagination.setPageFactory(this::createPagina);
-		}
+		if (pagination != null)
+			if ((pagination == null || (pages > 0 && pagination.getPageCount() != pages))) {
+				this.pagination = new Pagination();
+				paginas.getChildren().clear();
+				paginas.getChildren().add(this.pagination);
+				logger.info("Cantidad Paginas: " + total + "/" + rows + "=" + pages + " (" + div + ")");
+				this.pagination.setPageCount(pages);
+				this.pagination.setPageFactory(this::createPagina);
+			}
 	}
 
 	public final void selectRow(Consumer<List<S>> consumer) {
