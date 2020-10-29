@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -113,6 +115,8 @@ public class LogWriter implements Runnable {
 		return new WriteFile().file(nameLogger);
 	}
 
+	private final static String DOT = ".";
+	private final static String FORMAT_DATE_FILE = "yyyyMMdd";
 	/**
 	 * Se encarga de crear una copia del archivo con otra fecha.
 	 * 
@@ -120,16 +124,14 @@ public class LogWriter implements Runnable {
 	 */
 	private final void copyOldFile(File file) {
 		if (file.exists()) {
-			var d = new Date(file.lastModified());
-			var posDotEnd = file.getName().lastIndexOf(".");
+			var instant = new Date(file.lastModified()).toInstant();
+			var dateLatestFile = LocalDate.ofInstant(instant, ZoneId.systemDefault());
+			var posDotEnd = file.getName().lastIndexOf(DOT);
 			var ext = file.getName().substring(posDotEnd);
-			d.setTime(0);
-			var now = new Date();
-			now.setTime(0);
-			var comp = d.before(now);
-			if (comp) {
-				var sdf = new SimpleDateFormat("yyyyMMdd");
-				file.renameTo(new File(nameLoggerTrace.replace(ext, sdf.format(d) + ext)));
+			var now = LocalDate.now();
+			if (dateLatestFile.isBefore(now)) {
+				var formater = DateTimeFormatter.ofPattern(FORMAT_DATE_FILE);
+				file.renameTo(new File(nameLoggerTrace.replace(ext, DOT+dateLatestFile.format(formater) + ext)));
 			}
 		}
 	}

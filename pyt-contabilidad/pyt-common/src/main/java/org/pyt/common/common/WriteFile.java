@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -39,16 +42,14 @@ public final class WriteFile {
 	 */
 	private final void copyOldFile(File file) {
 		if (file.exists()) {
-			var d = new Date(file.lastModified());
+			var d = new Date(file.lastModified()).toInstant();
+			var dateLatest  = LocalDate.ofInstant(d, ZoneId.systemDefault());
 			var posDotEnd = file.getName().lastIndexOf(DOT);
 			var ext = file.getName().substring(posDotEnd);
-			d.setTime(0);
-			var now = new Date();
-			now.setTime(0);
-			var comp = d.before(now);
-			if (comp) {
-				var sdf = new SimpleDateFormat(FORMAT_DATE_FILE);
-				file.renameTo(new File(namefile.replace(ext, sdf.format(d) + ext)));
+			var now = LocalDate.now();
+			if (dateLatest.isBefore(now)) {
+				var formater = DateTimeFormatter.ofPattern(FORMAT_DATE_FILE);
+				file.renameTo(new File(namefile.replace(ext, DOT+dateLatest.format(formater) + ext)));
 			}
 		}
 	}
