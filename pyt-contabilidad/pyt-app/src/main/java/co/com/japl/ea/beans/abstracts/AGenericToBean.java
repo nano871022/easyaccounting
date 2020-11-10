@@ -177,6 +177,12 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		return (M) this;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <M extends AGenericToBean<T>> M addDefaultValues(String name, String value) {
+		registro.set(name, value);
+		return (M) this;
+	}
+
 	@SuppressWarnings({ "unchecked" })
 	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String nameGroup,
 			String valueKeyPrameter) {

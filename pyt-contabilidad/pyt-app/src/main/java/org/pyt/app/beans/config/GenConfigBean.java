@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.poi.docs.Bookmark;
 import org.pyt.common.poi.docs.TableBookmark;
 import org.pyt.common.poi.gen.DocxToPDFGen;
 
+import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -83,12 +86,28 @@ public class GenConfigBean extends ABean {
 		String[] nombreCampos;
 		try {
 			nombreCampos = gcs.getConfigAsociar();
-			if (nombreCampos == null || nombreCampos.length > 0) {
+			if (ListUtils.isNotBlank(nombreCampos)) {
 				Arrays.asList(nombreCampos).forEach(nombreCampo -> this.nombreCampos.add(nombreCampo));
 			}
 			loadGrid();
 		} catch (Exception e) {
 			error(e);
+		}
+	}
+
+	public void config(String nameGen) {
+		if (StringUtils.isNotBlank(nameGen)) {
+			this.nameGen.setText(nameGen);
+			nombreConfig = nameGen;
+			this.nombreCampos.clear();
+			gcs.setNombreConfiguracion(nameGen);
+		}
+	}
+
+	public void load(Map<String, Object> campos) {
+		if (MapUtils.isNotEmpty(campos)) {
+			this.campos = campos;
+			generando();
 		}
 	}
 
@@ -122,14 +141,19 @@ public class GenConfigBean extends ABean {
 		}
 		Content.setMinHeight(gridPane.getHeight() + 50);
 		gridPane.setMaxWidth(Content.getMaxWidth());
+		gridPane.setStyle("-fx-padding-bottom:30px;");
 	}
 
 	/**
 	 * Se encarga de generar
 	 */
 	public void generar() {
-		List<Object> list = new ArrayList<Object>();
 		loadValueFields();
+		generando();
+	}
+
+	private void generando() {
+		List<Object> list = new ArrayList<Object>();
 		try {// DocumentotvgÑO0
 			list = gcs.gen(nombreConfig, campos);
 			if (list.size() > 0) {
@@ -156,8 +180,8 @@ public class GenConfigBean extends ABean {
 	private void loadValueFields() {
 		campos.clear();
 		Set<String> lcampos = camposAgregados.keySet();
-		for (String campo : lcampos) {
-			campos.put(campo, getValue(campo));
+		if (ListUtils.isNotBlank(lcampos)) {
+			lcampos.stream().forEach(campo -> campos.put(campo, getValue(campo)));
 		}
 	}
 
@@ -176,6 +200,10 @@ public class GenConfigBean extends ABean {
 		String[] name_split = nameFileOrig.split(ConfigServiceConstant.SEP_BACK_DOT);
 		name_split[0] = name_split[0] + "_out";
 		return String.join(ConfigServiceConstant.SEP_DOT, name_split);
+	}
+
+	public final List<ServicioCampoBusquedaDTO> getAllFields() throws Exception {
+		return this.gcs.getServicioCampo();
 	}
 
 	/**

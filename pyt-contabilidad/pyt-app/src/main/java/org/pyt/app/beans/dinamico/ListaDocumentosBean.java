@@ -2,6 +2,7 @@ package org.pyt.app.beans.dinamico;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,10 +10,13 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
+import org.pyt.app.beans.config.GenConfigBean;
 import org.pyt.app.components.ConfirmPopupBean;
 import org.pyt.app.components.PopupBean;
+import org.pyt.app.components.PopupGenBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
@@ -21,10 +25,12 @@ import org.pyt.common.exceptions.EmpresasException;
 import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 
+import com.pyt.service.dto.ConfiguracionDTO;
 import com.pyt.service.dto.DocumentoDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
 import com.pyt.service.dto.ParametroDTO;
+import com.pyt.service.interfaces.IConfigMarcadorServicio;
 import com.pyt.service.interfaces.IDocumentosSvc;
 import com.pyt.service.interfaces.IEmpresasSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
@@ -34,6 +40,8 @@ import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
 import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -55,6 +63,8 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	private IParametrosSvc parametroSvc;
 	@Inject(resource = "com.pyt.service.implement.EmpresaSvc")
 	private IEmpresasSvc empresasSvc;
+	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
+	private IConfigMarcadorServicio configMarcadorSvc;
 	@FXML
 	private TableView<DocumentoDTO> tabla;
 	@FXML
@@ -71,19 +81,29 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
 	@FXML
 	private HBox buttons;
+	private BooleanProperty print;
+	private BooleanProperty load;
+	private List<ConfiguracionDTO> loads;
+	private List<ConfiguracionDTO> prints;
 
 	@FXML
 	public void initialize() {
 		try {
+			this.load = new SimpleBooleanProperty();
+			this.print = new SimpleBooleanProperty();
 			registro = new DocumentoDTO();
 			filter = new DocumentoDTO();
 			lazy();
 			visibleButtons();
+			loads = configMarcadorSvc.getConfiguraciones(registro.getClass(), false, this.getUsuario());
+			prints = configMarcadorSvc.getConfiguraciones(registro.getClass(), true, this.getUsuario());
+
 			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::agregar)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modificar).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.delete").action(this::eliminar).icon(Glyph.REMOVE)
 					.isVisible(delete).setName("fxml.btn.view").action(this::modificar).icon(Glyph.FILE_TEXT)
-					.isVisible(view).build();
+					.isVisible(view).setName("fxml.btn.load").action(this::load).icon(Glyph.UPLOAD).isVisible(load)
+					.setName("fxml.btn.print").action(this::print).icon(Glyph.PRINT).isVisible(print).build();
 		} catch (Exception e) {
 			error(e);
 		}
@@ -205,12 +225,49 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 				return filter;
 			}
 		};
+
 	}
 
 	public final void agregar() {
 		var documento = new DocumentoDTO();
 		documento.setTipoDocumento(tipoDocumento);
 		getController(PanelBean.class).load(documento);
+	}
+
+	public final void load() {
+
+	}
+
+	public final void print() {
+		try {
+			((PopupGenBean<ConfiguracionDTO>) controllerGenPopup(ConfiguracionDTO.class).addDefaultValues("report",
+					"true")).load("#{ListaDocumentosBean.impresion}");
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public final void setImpresion(ConfiguracionDTO config) {
+		try {
+			if (config != null) {
+				var campos = new HashMap<String, Object>();
+				var bean = controllerPopup(GenConfigBean.class);
+				bean.config(config.getConfiguracion());
+				var list = bean.getAllFields();
+				if (ListUtils.isNotBlank(list)) {
+					list.stream().filter(
+							campo -> registro.getClass().getCanonicalName().contains(campo.getCampo().split("::")[0]))
+							.forEach(campo -> campos.put(campo.getMarcador(),
+									dataTable.getSelectedRow().get(campo.getCampo().split("::")[1])));
+					bean.load(campos);
+				} else {
+					errorI18n("err.fields.not.found");
+				}
+
+			}
+		} catch (Exception e) {
+			errorI18n("err.document.havent.been.found");
+		}
 	}
 
 	public final void modificar() {
@@ -324,16 +381,21 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	protected void visibleButtons() {
 		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListaDocumentosBean.class,
 				getUsuario().getGrupoUser());
+		var load = save && ListUtils.isNotBlank(this.loads);
 		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
 				ListaDocumentosBean.class, getUsuario().getGrupoUser());
 		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
 				ListaDocumentosBean.class, getUsuario().getGrupoUser());
-		var view = !save && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
+		var readPerm = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
 				ListaDocumentosBean.class, getUsuario().getGrupoUser());
+		var view = !save && readPerm;
+		var print = readPerm && ListUtils.isNotBlank(this.prints) && dataTable.isSelected();
 		this.save.setValue(save);
 		this.edit.setValue(edit);
 		this.delete.setValue(delete);
 		this.view.setValue(view);
+		this.load.setValue(load);
+		this.print.setValue(print);
 	}
 
 }

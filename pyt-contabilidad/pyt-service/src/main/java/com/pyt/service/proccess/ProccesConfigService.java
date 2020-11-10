@@ -3,7 +3,10 @@ package com.pyt.service.proccess;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
@@ -30,21 +33,25 @@ import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProc
 public final class ProccesConfigService {
 	private Log logger = Log.Log(this.getClass());
 	private String servicePackageList;
-	
+
 	public ProccesConfigService() {
 		try {
-		servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load().getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
-		if(StringUtils.isBlank(servicePackageList)) {
-			servicePackageList = servicePackageList;
-		}
-		}catch(Exception e) {
+			servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load()
+					.getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
+			if (StringUtils.isBlank(servicePackageList)) {
+				servicePackageList = servicePackageList;
+			}
+		} catch (Exception e) {
 			logger.logger(e);
 		}
 	}
+
 	/**
-	 * Se encarga de obtener el objeto dentro de los parametros en el cual se encuentra el campo
+	 * Se encarga de obtener el objeto dentro de los parametros en el cual se
+	 * encuentra el campo
+	 * 
 	 * @param servicio {@link String}
-	 * @param campo {@link String}
+	 * @param campo    {@link String}
 	 * @return {@link ADto} extends
 	 * @throws {@link ProccesConfigServiceException}
 	 */
@@ -68,15 +75,15 @@ public final class ProccesConfigService {
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			throw new ProccesConfigServiceException("No se encontro clase.",e);
+			throw new ProccesConfigServiceException("No se encontro clase.", e);
 		} catch (InvocationTargetException e) {
-			throw new ProccesConfigServiceException("No se pudo realizar la invocacion.",e);
+			throw new ProccesConfigServiceException("No se pudo realizar la invocacion.", e);
 		} catch (IllegalAccessException e) {
-			throw new ProccesConfigServiceException("Acceso ilegar.",e);
+			throw new ProccesConfigServiceException("Acceso ilegar.", e);
 		} catch (InstantiationException e) {
-			throw new ProccesConfigServiceException("No se logra realizar la instanciacion.",e);
+			throw new ProccesConfigServiceException("No se logra realizar la instanciacion.", e);
 		} catch (NoSuchMethodException e) {
-			throw new ProccesConfigServiceException("No se encontro el metod solicitado.",e);
+			throw new ProccesConfigServiceException("No se encontro el metod solicitado.", e);
 		}
 		return null;
 	}
@@ -84,20 +91,19 @@ public final class ProccesConfigService {
 	/**
 	 * Se encargca de obtener el metod asociado al servicio con nombre indicado
 	 * 
-	 * @param servicio
-	 *            {@link String}
+	 * @param servicio {@link String}
 	 * @return {@link Method}
-	 * @throws {@link
-	 *             ProccesConfigServiceException}
+	 * @throws {@link ProccesConfigServiceException}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
 	public final Method getMetodo(String servicio) throws ProccesConfigServiceException {
 		AbstractListFromProccess<ServicePOJO> listServices;
 		try {
-			listServices = (AbstractListFromProccess) this.getClass().forName(servicePackageList)
-					.getConstructor().newInstance();
+			listServices = (AbstractListFromProccess) this.getClass().forName(servicePackageList).getConstructor()
+					.newInstance();
 			for (ServicePOJO service : listServices.getList()) {
-				if ((service.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + service.getAlias()).contains(servicio)) {
+				if ((service.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + service.getAlias())
+						.contains(servicio)) {
 					return service.getClasss().getMethod(service.getName(), getParameters(service.getParameter()));
 				}
 			}
@@ -111,11 +117,9 @@ public final class ProccesConfigService {
 	/**
 	 * Se encarga de obtener una instancia del serivico solicitado
 	 * 
-	 * @param servicio
-	 *            {@link String}
+	 * @param servicio {@link String}
 	 * @return {@link Object}
-	 * @throws {@link
-	 *             MarcadorServicioException}
+	 * @throws {@link MarcadorServicioException}
 	 */
 	@SuppressWarnings({ "static-access", "unchecked", "rawtypes" })
 	public final <T extends Object> T getService(String servicio) throws ProccesConfigServiceException {
@@ -123,31 +127,43 @@ public final class ProccesConfigService {
 			AbstractListFromProccess<ServicePOJO> listServices = (AbstractListFromProccess) this.getClass()
 					.forName(servicePackageList).getConstructor().newInstance();
 			for (ServicePOJO service : listServices.getList()) {
-				if ((service.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + service.getAlias()).contains(servicio)) {
+				if ((service.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + service.getAlias())
+						.contains(servicio)) {
 					return (T) service.getClasss().getConstructor().newInstance();
 				}
 			}
 			return null;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			throw new ProccesConfigServiceException("Problema en la obtencion del servicio.",e);
+			throw new ProccesConfigServiceException("Problema en la obtencion del servicio.", e);
 		} catch (ClassNotFoundException e) {
-			throw new ProccesConfigServiceException("No se enconetro la clase.",e);
+			throw new ProccesConfigServiceException("No se enconetro la clase.", e);
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "static-access", "unchecked" })
+	public final <D extends ADto> List<ServicePOJO> getServices(Class<D> clase) throws ProccesConfigServiceException {
+		try {
+			var listService = (AbstractListFromProccess<ServicePOJO>) this.getClass().forName(servicePackageList)
+					.getConstructor().newInstance();
+			return listService.getList().stream().filter(service -> service.getParameters().contains(clase.getCanonicalName()))
+					.collect(Collectors.toList());
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new ProccesConfigServiceException("Problema en la obtencion del servicio.", e);
+		} catch (ClassNotFoundException e) {
+			throw new ProccesConfigServiceException("No se enconetro la clase.", e);
 		}
 	}
 
 	/**
 	 * Se encarga de invocar un servicio y obtener el resultado del mismo
 	 * 
-	 * @param service
-	 *            {@link Object}
-	 * @param metodo
-	 *            {@link String}
-	 * @param dto
-	 *            {@link ADto}
+	 * @param service {@link Object}
+	 * @param metodo  {@link String}
+	 * @param dto     {@link ADto}
 	 * @return {@link Object}
-	 * @throws {@link
-	 *             MarcadorServicioException}
+	 * @throws {@link MarcadorServicioException}
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Object, L extends Object, S extends ADto> T getResultService(L service, String metodo, S dto)
@@ -167,11 +183,9 @@ public final class ProccesConfigService {
 	 * Se encarga de obtener todas las clase apartir de los canonic name
 	 * suministrado
 	 * 
-	 * @param parameters
-	 *            {@link String} {@link Arrays}
+	 * @param parameters {@link String} {@link Arrays}
 	 * @return {@link Class} {@link Arrays}
-	 * @throws {@link
-	 *             ProccesConfigServiceException}
+	 * @throws {@link ProccesConfigServiceException}
 	 */
 	@SuppressWarnings("rawtypes")
 	private Class[] getParameters(String... parameters) throws ProccesConfigServiceException {

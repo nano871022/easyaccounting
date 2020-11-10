@@ -216,8 +216,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				.isVisible(save).icon(Glyph.SAVE).build();
 		ButtonsImpl.Stream(HBox.class).setLayout(associacion2Buttons).setName("fxml.btn.delete").action(this::eliminar)
 				.isVisible(delAssociate).icon(Glyph.REMOVE).build();
-		ButtonsImpl.Stream(HBox.class).setLayout(configButtons).setName("fxml.btn.saveAll").action(this::generar)
-				.isVisible(save).icon(Glyph.SAVE).setName("fxml.btn.generate").action(this::saveAll).isVisible(true)
+		ButtonsImpl.Stream(HBox.class).setLayout(configButtons).setName("fxml.btn.saveAll").action(this::saveAll)
+				.isVisible(save).icon(Glyph.SAVE).setName("fxml.btn.generate").action(this::generar).isVisible(true)
 				.icon(Glyph.GEAR).build();
 		ButtonsImpl.Stream(HBox.class).setLayout(moveButtons).setName("fxml.btn.before").action(this::anterior)
 				.isVisible(before).icon(Glyph.ARROW_CIRCLE_O_LEFT).setName("fxml.btn.next").action(this::siguiente)

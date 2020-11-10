@@ -81,14 +81,15 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 		tipoDocumento = new ParametroDTO();
 		titulo.setText("");
 		visibleButtons();
-		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
-				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
-				.isVisible(edit).setName("fxml.btn.cancel").action(this::cancelar).setName("fxml.btn.pay").BR()
-				.action(this::pay).icon(Glyph.CC_PAYPAL).isVisible(pay).setName("fxml.btn.create.pay.account")
-				.action(this::payAccount).icon(Glyph.PAYPAL).isVisible(payAccount)
-				.setName("fxml.btn.create.sell.account").action(this::sellAccount).icon(Glyph.BUYSELLADS)
-				.isVisible(sellAccount).setName("fxml.btn.create.bill").action(this::bill).icon(Glyph.FILE_TEXT)
-				.isVisible(bill).build();
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons)
+				   .setName("fxml.btn.save").action(this::guardar).icon(Glyph.SAVE).isVisible(save)
+				   .setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT).isVisible(edit)
+				   .setName("fxml.btn.cancel").action(this::cancelar)
+				   .setName("fxml.btn.pay").BR().action(this::pay).icon(Glyph.CC_PAYPAL).isVisible(pay)
+				   .setName("fxml.btn.create.pay.account").action(this::payAccount).icon(Glyph.PAYPAL).isVisible(payAccount)
+				   .setName("fxml.btn.create.sell.account").action(this::sellAccount).icon(Glyph.BUYSELLADS).isVisible(sellAccount)
+				   .setName("fxml.btn.create.bill").action(this::bill).icon(Glyph.FILE_TEXT).isVisible(bill)
+				   .build();
 	}
 
 	private void loadListDocumentType() {

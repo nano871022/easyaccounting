@@ -283,4 +283,14 @@ public interface IConfigMarcadorServicio {
 	 */
 	public <T extends ADto, D extends ADto, S extends Object, L extends Object, N extends Object, K extends Services> N generar(
 			String nombreConfiguracion, String servicio, Map<String, Object> busqueda) throws MarcadorServicioException;
+	/**
+	 * Se realiza busqueda de las configuraciones que tengan en los datos de entrada la clase suministrada
+	 * @param <T>
+	 * @param searchInput {@link Class} extends {@link ADto}
+	 * @param report {@link boolean} 
+	 * @param user {@link UsuarioDTO}
+	 * @return {@link List} extends {@link ConfiguracionDTO}
+	 * @throws {@link MarcadorServicioException}
+	 */
+	public <T extends ADto> List<ConfiguracionDTO> getConfiguraciones(Class<T> searchInput, boolean report, UsuarioDTO user)throws MarcadorServicioException;
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.exceptions.MarcadorServicioException;
 import org.pyt.common.exceptions.ProccesConfigServiceException;
@@ -524,5 +525,31 @@ public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcad
 		} catch (Exception e) {
 			throw new MarcadorServicioException(e);
 		}
+	}
+
+	@Override
+	public <T extends ADto> List<ConfiguracionDTO> getConfiguraciones(Class<T> searchInput, boolean report,
+			UsuarioDTO user) throws MarcadorServicioException {
+		var list = new ArrayList<ConfiguracionDTO>();
+		try {
+			ProccesConfigService proccess = new ProccesConfigService();
+			var services = proccess.getServices(searchInput);
+			for (var service : services) {
+				var pair = service.getClasss().getSimpleName() + ConfigServiceConstant.SEP_2_DOT + service.getAlias();
+				var servicio = new ServicioCampoBusquedaDTO();
+				servicio.setServicio(pair);
+				var founds = query.gets(servicio);
+				if (ListUtils.isNotBlank(founds)) {
+					founds.stream()
+							.filter(found -> !list.stream().anyMatch(conf -> conf.getCodigo().contentEquals(found.getCodigo())))
+							.filter(found -> found.getConfiguracion().getReport() == report)
+							.map( found -> found.getConfiguracion())
+							.forEach(list::add);
+				}
+			}
+		} catch (Exception e) {
+			throw new MarcadorServicioException(messageI18n("err.service.getConfigurations.error"),e);
+		}
+		return list;
 	}
 }

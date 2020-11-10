@@ -2,13 +2,12 @@ package org.pyt.app.beans.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.exceptions.MarcadorServicioException;
 
 import com.pyt.service.dto.ConfiguracionDTO;
@@ -39,7 +38,7 @@ public class GenConfigServices {
 	 * @return {@link List} < {@link ServicioCampoBusquedaDTO} >
 	 * @throws {@link Exception}
 	 */
-	private final List<ServicioCampoBusquedaDTO> getServicioCampo() throws Exception {
+	public final List<ServicioCampoBusquedaDTO> getServicioCampo() throws Exception {
 		try {
 			var configuracion = new ConfiguracionDTO();
 			configuracion.setConfiguracion(nombreConfiguracion);
@@ -57,12 +56,11 @@ public class GenConfigServices {
 	 * @throws {@link Exception}
 	 */
 	public final String[] getConfigAsociar() throws Exception {
-		Set<String> campos = new HashSet<String>();
-		List<ServicioCampoBusquedaDTO> lista = getServicioCampo();
-		for (ServicioCampoBusquedaDTO dto : lista) {
-			campos.add(dto.getMarcador());
+		var lista = getServicioCampo();
+		if (ListUtils.isNotBlank(lista)) {
+			return lista.stream().map(servicio -> servicio.getMarcador()).distinct().toArray(String[]::new);
 		}
-		return campos.toArray(new String[campos.size()]);
+		return null;
 	}
 
 	/**
@@ -73,28 +71,20 @@ public class GenConfigServices {
 	 */
 	public final <T extends Object> List<Object> gen(String nombreConfig, Map<String, Object> busqueda)
 			throws Exception {
-		Map<String, Map<String, Object>> campoValorServ = new HashMap<String, Map<String, Object>>();
-		List<Object> list = new ArrayList<Object>();
-		Set<String> sets = busqueda.keySet();
+		var campoValorServ = new HashMap<String, Map<String, Object>>();
+		var list = new ArrayList<Object>();
 		var configuracion = new ConfiguracionDTO();
 		configuracion.setConfiguracion(nombreConfig);
-		List<ServicioCampoBusquedaDTO> lstServFieldSearch = configMarcadorServicio
-				.getServiciosCampoBusqueda(configuracion);
+		var lstServFieldSearch = configMarcadorServicio.getServiciosCampoBusqueda(configuracion);
 		for (ServicioCampoBusquedaDTO servFieldSearch : lstServFieldSearch) {
-			Map<String, Object> campoValor = campoValorServ.get(servFieldSearch.getServicio());
+			var campoValor = campoValorServ.get(servFieldSearch.getServicio());
 			if (campoValor == null) {
 				campoValor = new HashMap<String, Object>();
 			}
 			campoValor.put(servFieldSearch.getCampo(), busqueda.get(servFieldSearch.getMarcador()));
 			campoValorServ.put(servFieldSearch.getServicio(), campoValor);
-			/*
-			 * Optional<String> opt = sets.stream().filter(p ->
-			 * p.equalsIgnoreCase(servFieldSearch.getMarcador())) .findFirst(); if
-			 * (opt.isPresent()) { servFieldSearch.getServicio();
-			 * servFieldSearch.getCampo(); }
-			 */
 		}
-		Set<String> servicios = campoValorServ.keySet();
+		var servicios = campoValorServ.keySet();
 		for (String servicio : servicios) {
 			T bookmark = configMarcadorServicio.generar(nombreConfig, servicio, campoValorServ.get(servicio));
 			if (bookmark != null) {
@@ -118,7 +108,7 @@ public class GenConfigServices {
 			ConfiguracionDTO dto = new ConfiguracionDTO();
 			dto.setConfiguracion(nombreConfiguracion);
 			List<ConfiguracionDTO> lista = configMarcadorServicio.getConfiguraciones(dto);
-			if (lista != null && lista.size() > 0) {
+			if (ListUtils.isNotBlank(lista)) {
 				nameFiler = lista.get(0).getArchivo();
 			}
 		}

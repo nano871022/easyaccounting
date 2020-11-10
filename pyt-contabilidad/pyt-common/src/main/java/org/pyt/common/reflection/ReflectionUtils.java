@@ -11,10 +11,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.pyt.common.abstracts.ADto;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.ReflectionConstants;
+import org.pyt.common.exceptions.AExceptions;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.validates.ValidateValues;
 
@@ -251,15 +254,19 @@ public final class ReflectionUtils {
 			P... values) throws ReflectionException {
 		try {
 			Class<I> clazz = (Class<I>) instance.getClass();
-			Method method = getMethod(instance.getClass(), methodName, getParameters(values));
+			var parameters = getParameters(values);
+			Method method = getMethod(instance.getClass(), methodName, parameters);
 			R results;
 			results = (R) method.invoke(instance, values);
 			return results;
 		} catch (IllegalAccessException e) {
 			throw new ReflectionException("Acceso ilegal sobre metodo.", e);
 		} catch (IllegalArgumentException e) {
-			throw new ReflectionException("Acceso ilela sobre archumentos.", e);
+			throw new ReflectionException("Acceso ilegal sobre Argumentos.", e);
 		} catch (InvocationTargetException e) {
+			if(e.getTargetException() instanceof AExceptions) {
+				throw new ReflectionException(e.getMessage());
+			}
 			throw new ReflectionException("Problema en la invocacion del metodo.", e);
 		}
 	}
@@ -282,7 +289,8 @@ public final class ReflectionUtils {
 			throw new ReflectionException(
 					"El metodo " + methodName + " no fue enccontrado en " + clazz.getCanonicalName() + ".");
 		try {
-			method = clazz.getDeclaredMethod(methodName, getParameters(values));
+			var parameters = getParameters(values);
+			method = clazz.getDeclaredMethod(methodName, parameters);
 		} catch (NoSuchMethodException e) {
 			method = getMethod(clazz.getSuperclass(), methodName, values);
 		}
@@ -299,12 +307,12 @@ public final class ReflectionUtils {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <P extends Object> Class[] getParameters(P... values) throws ReflectionException {
-		List<Class> listClazz = new ArrayList<Class>();
-		if (values != null && values.length > 0) {
-			for (P value : values) {
-				listClazz.add(value.getClass());
+		if (ListUtils.isNotBlank(values)) {
+			var arrays = Arrays.asList(values);
+			if(arrays.stream().allMatch( dto -> dto instanceof Class)) {
+				return arrays.stream().toArray(Class[]::new);
 			}
-			return listClazz.toArray(new Class[listClazz.size()]);
+			return arrays.stream().map(value -> value.getClass()).toArray(Class[]::new);
 		}
 		return null;
 	}
