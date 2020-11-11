@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.PropertiesConstants;
@@ -96,7 +97,7 @@ public class MenuItems implements Reflection {
 
 	private final void loadMenus() {
 		var list = getMenusFromDB();
-		if (list != null && list.size() > 0) {
+		if (ListUtils.isNotBlank(list)) {
 			list.stream().forEach(menuDto -> {
 				var menus = menuDto.getUrl().split(AppConstants.SLASH);
 				var menu = getMenu(menus[0]);
@@ -118,8 +119,7 @@ public class MenuItems implements Reflection {
 			var founds = menu.getItems().stream().filter(menuFilter -> menuFilter.getText().contentEquals(nameLabel))
 					.toArray(Menu[]::new);
 			Menu found = null;
-			if (founds == null || founds.length == 0) {
-
+			if (ListUtils.isBlank(founds)) {
 				if (menusSplit.length - 1 == position + 1) {
 					var nameLabel2 = "";
 					if (nameLabel.contains("?")) {
@@ -128,8 +128,8 @@ public class MenuItems implements Reflection {
 						nameLabel2 = nameLabel;
 					}
 					var menuItem = new MenuItem(nameLabel2);
-					menu.getItems().add(menuItem);
 					menuItem.onActionProperty().set(event -> onActionProperty(classString, nameLabel));
+					menu.getItems().add(menuItem);
 					return;
 				} else {
 					found = new Menu(nameLabel);
@@ -185,7 +185,7 @@ public class MenuItems implements Reflection {
 	}
 
 	private final Menu getMenu(String key) {
-		key = nameLabel(key);
+		key = nameLabel(key).trim();
 		Menu menu = mapaMenu.get(key);
 		if (menu == null) {
 			menu = new Menu(key);
@@ -213,6 +213,7 @@ public class MenuItems implements Reflection {
 
 	private final void loadPrincipal() {
 		Menu principal = getMenu(MENU_PRINCIPAL);
+		principal.setId("1");
 		ObservableList<MenuItem> items = getItems(principal);
 		var logOut = addItem(BTN_LOGOUT, event -> {
 			try {
@@ -248,7 +249,12 @@ public class MenuItems implements Reflection {
 	public final void load() {
 		loadPrincipal();
 		loadMenus();
-		mapaMenu.entrySet().forEach(entry -> add(entry.getValue()));
+
+		mapaMenu.entrySet().stream().filter(valor -> valor.getKey().contentEquals(MENU_PRINCIPAL))
+				.map(valor -> valor.getValue()).peek(mensaje -> logger().info(mensaje.toString())).forEach(this::add);
+		mapaMenu.entrySet().stream().filter(valor -> !valor.getKey().contentEquals(MENU_PRINCIPAL))
+				.peek(mensaje -> logger().info(mensaje.toString())).map(valor -> valor.getValue()).forEach(this::add);
+		this.add(getMenu("Usuario: " + LoginUtil.getUsuarioLogin().getNombre().replace("_", " ")));
 	}
 
 	@Override

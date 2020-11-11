@@ -11,4 +11,7 @@ public class PropertiesConstants {
 	public final static String PROP_SIMPLE_SERVICE = "simple-service.properties";
 	public final static String PROP_DATA = "data.properties";
 	public final static String PROP_MENU = "menu.properties";
+	public final static String PATH_DOCS = "path.docs";
+	public final static String PATH_OUTPUT = "path.out";
+	public final static String PATH_TEMPORAL = "path.tmp";
 }

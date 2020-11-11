@@ -1,11 +1,17 @@
 package org.pyt.app.beans.config;
 
+import static org.pyt.common.constants.PropertiesConstants.PATH_DOCS;
+import static org.pyt.common.constants.PropertiesConstants.PATH_OUTPUT;
+import static org.pyt.common.constants.PropertiesConstants.PATH_TEMPORAL;
+import static org.pyt.common.constants.PropertiesConstants.PROP_DATA;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +21,7 @@ import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.poi.docs.Bookmark;
 import org.pyt.common.poi.docs.TableBookmark;
 import org.pyt.common.poi.gen.DocxToPDFGen;
+import org.pyt.common.properties.PropertiesUtils;
 
 import com.pyt.service.dto.ServicioCampoBusquedaDTO;
 import com.pyt.service.interfaces.IConfigMarcadorServicio;
@@ -59,8 +66,10 @@ public class GenConfigBean extends ABean {
 	private GenConfigServices gcs;
 	private String nombreConfig;
 	private DocxToPDFGen doc;
-	public final static String PATH_DOCS = "./docs/";
 	public Map<String, TextField> camposAgregados;
+	private String path;
+	private String pathOutput;
+	private String pathTemp;
 
 	@FXML
 	public void initialize() {
@@ -71,6 +80,14 @@ public class GenConfigBean extends ABean {
 		campos = new HashMap<String, Object>();
 		camposAgregados = new HashMap<String, TextField>();
 		Content.getChildren().add(gridPane);
+		try {
+			var prop = PropertiesUtils.getInstance().setNameProperties(PROP_DATA).load().getProperties();
+			path = prop.getProperty(PATH_DOCS);
+			pathOutput = prop.getProperty(PATH_OUTPUT);
+			pathTemp = prop.getProperty(PATH_TEMPORAL);
+		} catch (Exception e) {
+			logger.logger("Error initialze: ", e);
+		}
 	}
 
 	/**
@@ -166,8 +183,10 @@ public class GenConfigBean extends ABean {
 				}
 				String nameFile = gcs.getNameFile();
 				System.out.println("Nombre de archivo " + nameFile);
-				doc.setFileInput(PATH_DOCS + nameFile);
-				doc.setFileOutput(PATH_DOCS + fileOut(nameFile));
+				doc.setFileInput(path + nameFile);
+				String fileOut = fileOut(nameFile);
+				doc.setFileOutput(pathOutput + fileOut);
+				doc.setFileTemporal(pathTemp + fileOut);
 				String output = doc.generate();
 				cancelar();
 				notificar("Se genero " + nombreConfig + " con el nombre " + output);
@@ -198,8 +217,12 @@ public class GenConfigBean extends ABean {
 	 */
 	private String fileOut(String nameFileOrig) {
 		String[] name_split = nameFileOrig.split(ConfigServiceConstant.SEP_BACK_DOT);
-		name_split[0] = name_split[0] + "_out";
+		name_split[0] = name_split[0] + generateUUIDFile();
 		return String.join(ConfigServiceConstant.SEP_DOT, name_split);
+	}
+
+	private String generateUUIDFile() {
+		return UUID.randomUUID().toString();
 	}
 
 	public final List<ServicioCampoBusquedaDTO> getAllFields() throws Exception {

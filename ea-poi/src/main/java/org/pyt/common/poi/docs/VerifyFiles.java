@@ -3,6 +3,7 @@ package org.pyt.common.poi.docs;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.Log;
 
 /**
@@ -23,7 +24,7 @@ public abstract class VerifyFiles {
 	 *            {@link String} ruta del archivo
 	 * @return {@link Boolean}
 	 */
-	protected final Boolean validFile(String files) {
+	protected final Boolean validFile(String files,Boolean createFile) {
 		String nameFile = files;
 		String[] split = null;
 		if (files.contains(SLASH) && !SLASH.equalsIgnoreCase(separator)) {
@@ -41,7 +42,7 @@ public abstract class VerifyFiles {
 				throw e1;
 			}
 		}
-		if (split != null && split.length > 0) {
+		if (split != null && split.length > 1) {
 			StringBuilder paths = new StringBuilder();
 			File file = null;
 			try {
@@ -49,14 +50,20 @@ public abstract class VerifyFiles {
 					if (paths.length() > 0) {
 						paths.append(separator);
 					}
-					paths.append(path);
+					if(StringUtils.isNotBlank(path)) {
+						paths.append(path);
+					}else {
+						paths.append(separator);
+						continue;
+					}
+					
 					if (path.equalsIgnoreCase(DOT)) {
 						continue;
 					}
 					file = new File(paths.toString());
 					if (!file.exists() && !path.contains(DOT)) {
 						file.mkdirs();
-					} else if (!file.exists() && path.contains(DOT)) {
+					} else if (!file.exists() && path.contains(DOT) && createFile) {
 						if (file.createNewFile()) {
 							return true;
 						}

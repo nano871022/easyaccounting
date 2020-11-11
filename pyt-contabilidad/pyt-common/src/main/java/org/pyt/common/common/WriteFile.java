@@ -11,6 +11,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Se encarga de escribir un archivo de texto
  * 
@@ -36,20 +38,22 @@ public final class WriteFile {
 		this.namefile = file;
 		return this;
 	}
+
 	/**
 	 * Se encarga de crear una copia del archivo con otra fecha.
+	 * 
 	 * @param file {@link File}
 	 */
 	private final void copyOldFile(File file) {
 		if (file.exists()) {
 			var d = new Date(file.lastModified()).toInstant();
-			var dateLatest  = LocalDate.ofInstant(d, ZoneId.systemDefault());
+			var dateLatest = LocalDate.ofInstant(d, ZoneId.systemDefault());
 			var posDotEnd = file.getName().lastIndexOf(DOT);
 			var ext = file.getName().substring(posDotEnd);
 			var now = LocalDate.now();
 			if (dateLatest.isBefore(now)) {
 				var formater = DateTimeFormatter.ofPattern(FORMAT_DATE_FILE);
-				file.renameTo(new File(namefile.replace(ext, DOT+dateLatest.format(formater) + ext)));
+				file.renameTo(new File(namefile.replace(ext, DOT + dateLatest.format(formater) + ext)));
 			}
 		}
 	}
@@ -82,10 +86,15 @@ public final class WriteFile {
 		}
 		if (splits != null && splits.length > 0) {
 			for (String split : splits) {
-				if (path.length() > 0) {
+				if (path.length() > 1) {
 					path.append(separator);
 				}
-				path.append(split);
+				if (StringUtils.isNotBlank(split)) {
+					path.append(split);
+				}else {
+					path.append(separator);
+					continue;
+				}
 				if (split.equalsIgnoreCase(DOT))
 					continue;
 				f = new File(path.toString());

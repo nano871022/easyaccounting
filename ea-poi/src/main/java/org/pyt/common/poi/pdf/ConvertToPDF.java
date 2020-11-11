@@ -20,6 +20,7 @@ import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
  */
 public final class ConvertToPDF {
 	private String fileOut;
+	private String fileInput;
 	private final static String TYPE_DOCX = "docx";
 	private final static String TYPE_PDF = "pdf";
 	
@@ -29,7 +30,7 @@ public final class ConvertToPDF {
 	 * @throws {@link IOException}
 	 */
 	public final void DocxToPDF() throws IOException {
-		InputStream doc = new FileInputStream(new File(fileOut));
+		InputStream doc = new FileInputStream(new File(fileInput));
 		XWPFDocument document = new XWPFDocument(doc);
 		PdfOptions options = PdfOptions.create();
 		OutputStream out = new FileOutputStream(new File(fileOut.replace(TYPE_DOCX, TYPE_PDF)));
@@ -47,6 +48,11 @@ public final class ConvertToPDF {
 	public final void setFileNameOutput(String fileOutput) {
 		fileOut = fileOutput;
 	}
+	
+	public final void setFileNameInput(String fileInput) {
+		this.fileInput = fileInput;
+	}
+	
 	public final String getFilePdfOutput() {
 		return fileOut.replace(TYPE_DOCX, TYPE_PDF);
 	}

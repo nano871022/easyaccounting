@@ -24,6 +24,7 @@ public final class DocxToPDFGen {
 	private String fileInput;
 	private String fileOutput;
 	private Boolean delFileLast;
+	private String fileTemporal;
 
 	public DocxToPDFGen() {
 		doc = new DocX();
@@ -40,6 +41,8 @@ public final class DocxToPDFGen {
 	public final synchronized String generate() throws POIException {
 		if (StringUtils.isBlank(fileOutput))
 			throw new POIException("No se a ingresado el nombre del archivo de salida.");
+		if (StringUtils.isBlank(fileTemporal))
+			throw new POIException("No se a ingresado el nombre del archivo temporal.");
 		if (StringUtils.isBlank(fileInput))
 			throw new POIException("No se a ingresado el nombre de la platilla para generar.");
 		if (!(new File(fileInput).exists())) {
@@ -48,7 +51,8 @@ public final class DocxToPDFGen {
 		try {
 			doc.generar();
 			pdf.DocxToPDF();
-			logger.info("PDF generado " + pdf.getFilePdfOutput());
+			String pdfOutput = pdf.getFilePdfOutput();
+			logger.info("PDF generado " + pdfOutput);
 			if (delFileLast) {
 				File file = new File(fileOutput);
 				if (file.exists())
@@ -56,7 +60,7 @@ public final class DocxToPDFGen {
 				else
 					logger.error("No se logro eliminar el archivo " + fileOutput);
 			}
-			return pdf.getFilePdfOutput();
+			return pdfOutput;
 		} catch (Exception e) {
 			throw new POIException(e);
 		}
@@ -69,8 +73,15 @@ public final class DocxToPDFGen {
 
 	public final void setFileOutput(String fileOutput) {
 		this.fileOutput = fileOutput;
-		doc.setFileOut(fileOutput);
+//		doc.setFileOut(fileOutput);
 		pdf.setFileNameOutput(fileOutput);
+	}
+	
+	public final void setFileTemporal(String fileTemporal) {
+		this.fileTemporal = fileTemporal;
+		doc.setFileOut(fileTemporal);
+		pdf.setFileNameInput(fileTemporal);
+//		pdf.setFileNameOutput(fileOutput);
 	}
 
 	public final void addTableBookmark(TableBookmark tableBookmarks) {

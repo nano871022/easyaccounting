@@ -29,7 +29,7 @@ public class DocX extends TableInDocx {
 	 */
 	public final void generar() throws Exception {
 		try {
-			if (validFile(file)) {
+			if (validFile(file,true)) {
 				docx = new XWPFDocument(new FileInputStream(file));
 				for (String key : bookmarks.getBookmarks()) {
 					XWPFParagraph parrafo = searchBookmarkP(docx.getParagraphs(), key);
@@ -73,7 +73,7 @@ public class DocX extends TableInDocx {
 	 *             IOException}
 	 */
 	private final void writeFileOut() throws IOException {
-		if (!validFile(fileOut)) {
+		if (!validFile(fileOut,false)) {
 			FileOutputStream fo = new FileOutputStream(new File(fileOut));
 			docx.write(fo);
 			fo.close();
