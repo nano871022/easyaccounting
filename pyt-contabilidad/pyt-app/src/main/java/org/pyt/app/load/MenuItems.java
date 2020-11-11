@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
@@ -204,9 +205,12 @@ public class MenuItems implements Reflection {
 		return menu.getItems();
 	}
 
-	private final MenuItem addItem(String nombre, EventHandler<ActionEvent> event) {
+	private final MenuItem addItem(String nombre, EventHandler<ActionEvent> event, Glyph... log) {
 		nombre = nameLabel(nombre);
 		MenuItem item = new MenuItem(nombre);
+		if (ListUtils.isNotBlank(log)) {
+			item.setGraphic(new org.controlsfx.glyphfont.Glyph("FontAwesome", log[0]));
+		}
 		item.onActionProperty().set(event);
 		return item;
 	}
@@ -227,7 +231,7 @@ public class MenuItems implements Reflection {
 			}
 			Platform.exit();
 			System.exit(0);
-		});
+		}, Glyph.EJECT);
 		logOut.visibleProperty().bind(Bindings.createBooleanBinding(() -> LoginUtil.isRemember()));
 		items.add(logOut);
 		items.add(addItem(BTN_CERRAR, event -> {
@@ -240,7 +244,7 @@ public class MenuItems implements Reflection {
 			}
 			Platform.exit();
 			System.exit(0);
-		}));
+		}, Glyph.SIGN_OUT));
 	}
 
 	/**
@@ -254,7 +258,11 @@ public class MenuItems implements Reflection {
 				.map(valor -> valor.getValue()).peek(mensaje -> logger().info(mensaje.toString())).forEach(this::add);
 		mapaMenu.entrySet().stream().filter(valor -> !valor.getKey().contentEquals(MENU_PRINCIPAL))
 				.peek(mensaje -> logger().info(mensaje.toString())).map(valor -> valor.getValue()).forEach(this::add);
-		this.add(getMenu("Usuario: " + LoginUtil.getUsuarioLogin().getNombre().replace("_", " ")));
+
+		var usuario = getMenu(LoginUtil.getUsuarioLogin().getNombre().replace("_", " "));
+		usuario.setId("usuario");
+		usuario.setGraphic(new org.controlsfx.glyphfont.Glyph("FontAwesome", Glyph.USER_SECRET));
+		this.add(usuario);
 	}
 
 	@Override

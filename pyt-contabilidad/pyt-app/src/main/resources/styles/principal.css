@@ -53,3 +53,6 @@
 	-fx-border-color : orange;
 	-fx-border-width : 1;
 }
+#usuario{
+	-fx-text-fill:red;
+}
