@@ -94,6 +94,9 @@ public class TrabajadorCRUBean extends ABean<TrabajadorDTO> {
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.employe");
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new TrabajadorDTO();
 		registro.setPersona(new PersonaDTO());
 		try {

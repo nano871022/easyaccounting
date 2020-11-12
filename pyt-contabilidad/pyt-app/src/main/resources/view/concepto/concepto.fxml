@@ -58,7 +58,7 @@
   <top>
     <FlowPane alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
       <children>
-        <Label fx:id="titulo" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Conceptos" textAlignment="CENTER">
+        <Label fx:id="titulo" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Conceptos" textAlignment="CENTER">
           <font>
             <Font name="System Bold Italic" size="18.0" />
           </font>

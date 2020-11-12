@@ -149,6 +149,9 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.entry");
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new IngresoDTO();
 		valid = new ValidateValues();
 		docEntrada.setDisable(false);

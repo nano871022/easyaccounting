@@ -97,7 +97,7 @@
 						<Insets bottom="5.0" right="5.0" top="5.0" />
 					</GridPane.margin>
 				</TextField>
-				<Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+				<Label fx:id="titulo" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
 					text="Lista Guias de Ingresos" textAlignment="CENTER" GridPane.columnSpan="4">
 					<font>
 						<Font name="System Bold Italic" size="18.0" />

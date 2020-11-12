@@ -54,6 +54,9 @@ public class ListLanguagesBean extends AGenericInterfacesBean<LanguagesDTO> {
 		try {
 			filtro = new LanguagesDTO();
 			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.languages").get());
+			lblTitle.getStyleClass().add("titulo-page");
+			lblTitle.setGraphic(
+					new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

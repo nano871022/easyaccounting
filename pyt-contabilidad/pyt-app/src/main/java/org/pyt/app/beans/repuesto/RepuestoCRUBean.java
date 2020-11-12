@@ -82,6 +82,9 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.spartpart");
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new ResumenProductoDTO();
 		try {
 			listIva = parametrosSvc.getAllParametros(new ParametroDTO(), ParametroConstants.GRUPO_IVA);

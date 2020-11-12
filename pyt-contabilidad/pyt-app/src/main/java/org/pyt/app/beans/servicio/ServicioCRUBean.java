@@ -46,6 +46,9 @@ public class ServicioCRUBean extends AGenericInterfacesFieldBean<ServicioDTO> {
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.service");
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new ServicioDTO();
 		vv = new ValidateValues();
 		setClazz(ServicioDTO.class);

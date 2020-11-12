@@ -59,6 +59,9 @@ public class ListMenusBean extends AGenericInterfacesBean<MenuDTO> {
 		try {
 			filtro = new MenuDTO();
 			lblTitle.setText(i18n().valueBundle(CONST_FXML_LABEL_TITLE_LIST_MENUS).get());
+			lblTitle.getStyleClass().add("titulo-page");
+			lblTitle.setGraphic(
+					new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

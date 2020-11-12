@@ -89,6 +89,9 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	@FXML
 	public void initialize() {
 		try {
+			lblTitle.getStyleClass().add("titulo-page");
+			lblTitle.setGraphic(
+					new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 			this.load = new SimpleBooleanProperty();
 			this.print = new SimpleBooleanProperty();
 			registro = new DocumentoDTO();

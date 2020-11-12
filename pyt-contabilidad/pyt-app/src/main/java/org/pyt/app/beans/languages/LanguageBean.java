@@ -56,6 +56,9 @@ public class LanguageBean extends AGenericInterfacesFieldBean<LanguagesDTO> {
 	@FXML
 	public void initialize() {
 		try {
+			lblTitle.getStyleClass().add("titulo-page");
+			lblTitle.setGraphic(
+					new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 			toChoiceBox = new ArrayListValuedHashMap<>();
 			openedPopup = false;
 			registro = new LanguagesDTO();

@@ -76,6 +76,9 @@ public class BancoCRUBean extends ABean<BancoDTO> {
 	public void initialize() {
 		NombreVentana = i18n().valueBundle("fxml.title.add.bank").get();
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new BancoDTO();
 		tipoBanco.setPopupOpenAction(() -> popupOpenTipoBanco());
 		tipoBanco.setCleanValue(() -> {

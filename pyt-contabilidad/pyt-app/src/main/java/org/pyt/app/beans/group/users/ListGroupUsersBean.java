@@ -55,6 +55,9 @@ public class ListGroupUsersBean extends AGenericInterfacesBean<GroupUsersDTO> {
 		try {
 			filtro = new GroupUsersDTO();
 			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.group.users").get());
+			lblTitle.getStyleClass().add("titulo-page");
+			lblTitle.setGraphic(
+					new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

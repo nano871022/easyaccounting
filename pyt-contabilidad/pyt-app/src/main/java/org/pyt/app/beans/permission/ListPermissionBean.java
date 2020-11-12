@@ -53,6 +53,9 @@ public class ListPermissionBean extends AGenericInterfacesBean<PermissionDTO> {
 		try {
 			filtro = new PermissionDTO();
 			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.permission").get());
+			lblTitle.getStyleClass().add("titulo-page");
+			lblTitle.setGraphic(
+					new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

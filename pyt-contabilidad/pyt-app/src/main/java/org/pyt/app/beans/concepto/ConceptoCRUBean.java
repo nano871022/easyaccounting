@@ -72,6 +72,9 @@ public class ConceptoCRUBean extends ABean<ConceptoDTO> {
 	public void initialize() {
 		NombreVentana = i18n().valueBundle("fxml.title.add.new.concept").get();
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new ConceptoDTO();
 		empresa.setPopupOpenAction(() -> popupEmpresa());
 		empresa.setCleanValue(() -> registro.setEmpresa(null));

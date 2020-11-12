@@ -63,6 +63,9 @@ public class ListUsersBean extends AGenericInterfacesBean<UsuarioDTO> {
 		try {
 			filtro = new UsuarioDTO();
 			lblTitle.setText(i18n().valueBundle("fxml.lbl.title.list.users").get());
+			lblTitle.getStyleClass().add("titulo-page");
+			lblTitle.setGraphic(
+					new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 			gridPane = new GridPane();
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);

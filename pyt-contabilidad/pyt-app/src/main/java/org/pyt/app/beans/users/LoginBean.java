@@ -66,6 +66,9 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		user.setPromptText(i18n("inputtext.promp.usuario.user.name"));
 		password.setPromptText(i18n("inputtext.promp.usuario.password"));
 		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN).get());
+		title.getStyleClass().add("titulo-page");
+		title.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		verifyLoginRemember();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.form.button.connect").action(this::connect)
 				.icon(Glyph.SIGN_IN).setCommand("G").setName("fxml.form.button.clear.all").action(this::clearAll)

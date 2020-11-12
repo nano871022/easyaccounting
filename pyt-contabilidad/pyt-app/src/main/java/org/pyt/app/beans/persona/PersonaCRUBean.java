@@ -61,6 +61,9 @@ public class PersonaCRUBean extends AGenericInterfacesFieldBean<PersonaDTO> {
 	public void initialize() {
 		NombreVentana = i18n("fxml.personacrubean");
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new PersonaDTO();
 		fieldsConfig = new ArrayListValuedHashMap<>();
 		setClazz(PersonaDTO.class);

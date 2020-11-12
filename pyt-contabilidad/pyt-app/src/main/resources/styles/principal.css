@@ -11,6 +11,11 @@
 -fx-background-color: yellow;
 }
 
+.titulo-page{
+	-fx-font-size: 22px;
+	-fx-font-weight: bold; 
+}
+
 .grid-standard{
 	-fx-padding: 35;
     -fx-spacing: 30;

@@ -55,6 +55,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
 		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES).get());
+		lblTitle.getStyleClass().add("titulo-page");
 		toChoiceBox = new ArrayListValuedHashMap<>();
 		try {
 			listFieldsToFilters = configGenericFieldsSvc.getFieldToFilters(this.getClass(),

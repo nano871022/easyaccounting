@@ -45,6 +45,9 @@ public class ActividadIcaCRUBean extends AGenericInterfacesFieldBean<ActividadIc
 	public void initialize() {
 		NombreVentana = i18n().valueBundle("fxml.title.add.ica.activity").get();
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new ActividadIcaDTO();
 		save = new SimpleBooleanProperty();
 		edit = new SimpleBooleanProperty();

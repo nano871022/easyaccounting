@@ -95,6 +95,9 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	private void initialize() {
 		utilFx = new UtilControlFieldFX();
 		titulo.setText(i18n().valueBundle(LanguageConstant.FXML_LBL_TITLE_GENERIC_INTERFACES).get());
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		SelectList.put(chbState, ParametroConstants.mapa_estados_parametros);
 		registro = new ConfigGenericFieldDTO();
 		validateValues = new ValidateValues();

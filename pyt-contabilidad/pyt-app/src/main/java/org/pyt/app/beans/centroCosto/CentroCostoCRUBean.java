@@ -72,6 +72,9 @@ public class CentroCostoCRUBean extends ABean<CentroCostoDTO> {
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.centercost");
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new CentroCostoDTO();
 		empresa.setPopupOpenAction(() -> popupEmpresa());
 		empresa.setCleanValue(() -> registro.setEmpresa(null));

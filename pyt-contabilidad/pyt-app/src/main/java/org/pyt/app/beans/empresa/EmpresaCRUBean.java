@@ -76,6 +76,9 @@ public class EmpresaCRUBean extends ABean<EmpresaDTO> {
 	public void initialize() {
 		NombreVentana = i18n().get("fxml.title.add.new.enterprise");
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new EmpresaDTO();
 		save = new SimpleBooleanProperty();
 		edit = new SimpleBooleanProperty();

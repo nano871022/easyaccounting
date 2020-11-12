@@ -37,7 +37,7 @@
     </AnchorPane>
   </center>
   <top>
-    <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" text="Easy Counting By JAPL" textAlignment="RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
+    <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" text="Easy Counting By JAPL" textAlignment="RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
       <BorderPane.margin>
         <Insets left="20.0" right="20.0" />
       </BorderPane.margin>

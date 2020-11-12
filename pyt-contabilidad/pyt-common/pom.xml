@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>org.controlsfx</groupId>
 			<artifactId>controlsfx</artifactId>
-			<version>9.0.0</version>
+			<version>8.40.18</version>
 		</dependency>
 	</dependencies>
 	<repositories>

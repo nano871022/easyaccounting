@@ -72,6 +72,9 @@ public class CuentaContableCRUBean extends ABean<CuentaContableDTO> {
 		save = new SimpleBooleanProperty();
 		edit = new SimpleBooleanProperty();
 		titulo.setText(NombreVentana);
+		titulo.getStyleClass().add("titulo-page");
+		titulo.setGraphic(
+				new org.controlsfx.glyphfont.Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new CuentaContableDTO();
 		naturaleza.setPopupOpenAction(() -> popupNaturaleza());
 		naturaleza.setCleanValue(() -> registro.setNaturaleza(null));

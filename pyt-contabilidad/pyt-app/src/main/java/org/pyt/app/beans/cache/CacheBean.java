@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.Glyph;
 import org.pyt.common.common.CacheUtil;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
@@ -56,6 +57,8 @@ public class CacheBean extends ABean<CacheDTO> {
 	public void initialize() {
 		NombreVentana = i18n().valueBundle(CONST_TITTLE_NAME).get();
 		lblTittle.setText(NombreVentana);
+		lblTittle.getStyleClass().add("titulo-page");
+		lblTittle.setGraphic(new Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.TAGS));
 		registro = new CacheDTO();
 		gpRowSelected.setVisible(false);
 		tcName.setCellValueFactory(row -> new SimpleObjectProperty<>(
