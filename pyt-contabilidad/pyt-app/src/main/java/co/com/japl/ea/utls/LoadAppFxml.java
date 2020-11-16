@@ -3,7 +3,9 @@ package co.com.japl.ea.utls;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.pyt.app.components.PopupFromBean;
@@ -45,6 +47,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	private static Log logger = Log.Log(LoadAppFxml.class);
 	private static I18n i18n = I18n.instance();
 	private ABean<?> currentControlScroller;
+	private static Map<Class<?>, Stage> stages = new HashMap<>();
 
 	/**
 	 * Se encarga de contruir el objeto loadappfxml como singleton
@@ -309,6 +312,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 					Platform.exit();
 					System.exit(0);
 				});
+				stages.put(controller, primaryStage);
 				return loader.getController();
 			} else {
 				throw new LoadAppFxmlException(i18n.instance()
@@ -323,6 +327,15 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		} catch (IOException e) {
 			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
 		}
+	}
+
+	public final static <T> boolean stageClose(Class<T> controller) {
+		if (stages.containsKey(controller)) {
+			stages.get(controller).close();
+			stages.remove(controller);
+			return true;
+		}
+		return false;
 	}
 
 	/**

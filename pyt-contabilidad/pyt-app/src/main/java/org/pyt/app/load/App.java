@@ -10,6 +10,10 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		loadBean();
+	}
+
+	public static void loadBean() throws Exception {
 		var stage = new Stage();
 		var loginBean = LoadAppFxml.loadFxml(stage, LoginBean.class);
 		stage.setAlwaysOnTop(true);

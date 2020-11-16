@@ -186,21 +186,27 @@ public final class UtilControlFieldFX {
 	 * @param fontIconIkonli {@link String} icono de ikonli que se agrega al texto
 	 * @return {@link Button}
 	 */
-	public Button buttonGenericWithEventClicked(ICaller caller, String showName, FontAwesome.Glyph fontIcon) {
+	public Button buttonGenericWithEventClicked(ICaller caller, String showName, FontAwesome.Glyph fontIcon,String... styleClass) {
 		var button = new Button(showName);
 		button.onMouseClickedProperty().set((event) -> caller.caller());
 
 		Glyph fi = new Glyph("FontAwesome", fontIcon);
 		button.setGraphic(fi);
+		if(ListUtils.isNotBlank(styleClass)) {
+			button.getStyleClass().addAll(styleClass);
+		}
 		return button;
 	}
 
-	public Button buttonGenericWithEventClicked(ICaller caller, OptI18n showName, FontAwesome.Glyph fontIcon) {
+	public Button buttonGenericWithEventClicked(ICaller caller, OptI18n showName, FontAwesome.Glyph fontIcon,String... styleClass) {
 		var button = new Button(showName.get());
 		button.onMouseClickedProperty().set((event) -> caller.caller());
 
 		Glyph fi = new Glyph("FontAwesome", fontIcon);
 		button.setGraphic(fi);
+		if(ListUtils.isNotBlank(styleClass)) {
+			button.getStyleClass().addAll(styleClass);
+		}
 		return button;
 	}
 

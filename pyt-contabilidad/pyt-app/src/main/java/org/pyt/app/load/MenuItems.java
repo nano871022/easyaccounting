@@ -62,6 +62,7 @@ public class MenuItems implements Reflection {
 	private final static String MENU_PRINCIPAL = "Inicio";
 	private final static String BTN_CERRAR = "Cerrar";
 	private final static String BTN_LOGOUT = "Logout";
+	private final static String BTN_CHANGE_USER = "ChangeUser";
 	private final static String LBL_MENU = "lbl.menu.";
 	private final static String CONST_URL_INIT_PARAMS = "?";
 	private final static String CONST_URL_SPLIT_PARAMS = "&";
@@ -224,16 +225,38 @@ public class MenuItems implements Reflection {
 				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(),
 						LoginUtil.isRemember());
 				LoginUtil.deleteRemember();
+				if (LoadAppFxml.stageClose(Template.class)) {
+					App.loadBean();
+				} else {
+					Platform.exit();
+					System.exit(0);
+				}
 			} catch (UnknownHostException e) {
 				logger.logger(e);
 			} catch (Exception e) {
 				logger.logger(e);
 			}
-			Platform.exit();
-			System.exit(0);
+		}, Glyph.EJECT);
+		var changeUser = addItem(BTN_CHANGE_USER, event -> {
+			try {
+				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(),
+						LoginUtil.isRemember());
+				if (LoadAppFxml.stageClose(Template.class)) {
+					App.loadBean();
+				} else {
+					Platform.exit();
+					System.exit(0);
+				}
+			} catch (UnknownHostException e) {
+				logger.logger(e);
+			} catch (Exception e) {
+				logger.logger(e);
+			}
 		}, Glyph.EJECT);
 		logOut.visibleProperty().bind(Bindings.createBooleanBinding(() -> LoginUtil.isRemember()));
+		changeUser.visibleProperty().bind(Bindings.createBooleanBinding(() -> !LoginUtil.isRemember()));
 		items.add(logOut);
+		items.add(changeUser);
 		items.add(addItem(BTN_CERRAR, event -> {
 			try {
 				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(), false);

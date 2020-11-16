@@ -102,12 +102,12 @@ public class Template implements IComunicacion, Reflection {
 					LanguagesDTO.class);
 			visibleButtons();
 			ButtonsImpl.Stream(HBox.class).setLayout(topBodyTemplate).setReference("fxml.btn.language")
-					.action(this::language).isVisible(languageBP).icon(Glyph.LANGUAGE).setReference("fxml.btn.help")
-					.action(this::help).isVisible(helpBP).icon(Glyph.QUESTION)
-					.setReference("fxml.btn.dinamic.documents").icon(Glyph.FILE_TEXT)
-					.action(this::configDinamicDocuments).isVisible(documentsBP)
+					.action(this::language).styleCss("botton-template").isVisible(languageBP).icon(Glyph.LANGUAGE)
+					.setReference("fxml.btn.help").action(this::help).styleCss("botton-template").isVisible(helpBP)
+					.icon(Glyph.QUESTION).setReference("fxml.btn.dinamic.documents").icon(Glyph.FILE_TEXT)
+					.action(this::configDinamicDocuments).styleCss("botton-template").isVisible(documentsBP)
 					.setReference("fxml.btn.generic.interface").icon(Glyph.FILE_TEXT_ALT)
-					.action(this::configGenericInterface).isVisible(genericBP).build();
+					.action(this::configGenericInterface).styleCss("botton-template").isVisible(genericBP).build();
 		} catch (ReflectionException e1) {
 			logger.logger(e1);
 		}

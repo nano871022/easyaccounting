@@ -3,12 +3,45 @@
 }
 
 .button{
- -fx-border-color : orange;
- -fx-background-color: orange;
+ /*-fx-border-color : orange;*/
+ /*-fx-background-color: orange;*/
 }
 
+.button-search{
+ -fx-background-color: #02C155;
+ -fx-text-color: black;
+}
+.button-search:hover{
+  -fx-background-color: #B3F7B1;
+  -fx-text-color: white;
+}
+
+.button-search:pressed{
+  -fx-background-color: #72AB71;
+  -fx-text-fill: white;
+}
+
+.button-clean{
+ -fx-background-color: #E7AA51;
+ -fx-text-color: black;
+
+}
+.button-clean:hover{
+ -fx-background-color: #FFD79C;
+ -fx-text-color: black;
+
+}
+
+}
+.button-clean:pressed{
+ -fx-background-color: #C08200;
+ -fx-text-fill: white;
+
+}
+
+
 .button:hover{
--fx-background-color: yellow;
+/*-fx-background-color: yellow;*/
 }
 
 .titulo-page{
@@ -55,9 +88,30 @@
 }
 
 .borderView{
-	-fx-border-color : orange;
+	/*-fx-border-color : orange;
 	-fx-border-width : 1;
+	*/
 }
 #usuario{
 	-fx-text-fill:red;
+}
+
+.botton-template{
+	-fx-border-radius: 4px;
+}
+
+.botton-template:hover{
+	-fx-border-color:#02C155;
+	-fx-border-size : 1px;
+}
+
+.botton-template:pressed{
+	-fx-border-color:#72AB71;
+	-fx-border-size : 1px;
+}
+
+.botton-template:focused{
+	-fx-border-color:#02C155;
+	-fx-border-size : 2px;
+	-fx-effect: dropshadow(three-pass-box,#02C155,10,0,0,0);
 }

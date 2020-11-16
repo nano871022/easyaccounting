@@ -235,9 +235,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					((IGenericColumns<L, F>) this).getTable().search();
 				} catch (Exception e) {
 				}
-			}, i18n().valueBundle(CONST_FXML_BTN_SEARCH), Glyph.FONT.SEARCH), 0, ++index.row);
+			}, i18n().valueBundle(CONST_FXML_BTN_SEARCH), Glyph.FONT.SEARCH, "button-search"), 0, ++index.row);
 			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> clearFields(typeGeneric),
-					i18n().valueBundle(CONST_FXML_BTN_CLEAN), Glyph.FONT.GAVEL), 1, index.row);
+					i18n().valueBundle(CONST_FXML_BTN_CLEAN), Glyph.FONT.GAVEL, "button-clean"), 1, index.row);
 
 		}
 	}

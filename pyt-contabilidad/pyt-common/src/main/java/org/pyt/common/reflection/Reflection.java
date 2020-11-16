@@ -13,6 +13,7 @@ import org.pyt.common.annotations.Singleton;
 import org.pyt.common.annotations.SubcribcionesToComunicacion;
 import org.pyt.common.annotations.SubcribirToComunicacion;
 import org.pyt.common.common.Comunicacion;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ReflectionConstants;
@@ -242,13 +243,13 @@ public interface Reflection {
 			return;
 		Field fieldsSubs[] = getAnnotedField(clase, SubcribcionesToComunicacion.class),
 				fieldsSub[] = getAnnotedField(clase, SubcribirToComunicacion.class);
-		if (fieldsSubs != null && fieldsSubs.length > 0) {
+		if (ListUtils.isNotBlank(fieldsSubs )) {
 			Arrays.asList(fieldsSubs).stream().forEach(field -> {
 				SubcribcionesToComunicacion subs = field.getAnnotation(SubcribcionesToComunicacion.class);
 				if (subs != null) {
 					L obj;
 					obj = get(this, field);
-					if (obj != null && (this) instanceof IComunicacion) {
+					if (obj != null && (this) instanceof IComunicacion && ListUtils.isNotBlank(subs.value())) {
 						Arrays.asList(subs.value()).forEach(sub -> obj.subscriber((N) instance, sub.comando()));
 					} else {
 						logger().error("El objeto " + clase.getName() + " no tiene la implementacion de "
@@ -257,7 +258,7 @@ public interface Reflection {
 				}
 			});
 		}
-		if(fieldsSub != null && fieldsSub.length >  0) {
+		if(ListUtils.isNotBlank(fieldsSub)) {
 			Arrays.asList(fieldsSub).stream().forEach(field -> {
 				SubcribirToComunicacion sub = field.getAnnotation(SubcribirToComunicacion.class);
 				if (sub != null) {

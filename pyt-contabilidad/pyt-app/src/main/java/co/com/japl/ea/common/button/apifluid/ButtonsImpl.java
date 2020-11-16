@@ -147,7 +147,7 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 		names.stream().forEach(name -> {
 			var button = buttons.get(name);
 			button.getStylesheets().add("styles/principal.css");
-			button.setStyle("-fx-margin: 10px");
+			button.getStyleClass().add("button-bottom");
 			styles.get(name).forEach(style -> button.getStyleClass().add(style));
 
 			if (ListUtils.isNotBlank(visibilities.get(name))) {
