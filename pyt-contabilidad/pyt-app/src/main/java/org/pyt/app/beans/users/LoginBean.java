@@ -72,7 +72,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		verifyLoginRemember();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.form.button.connect").action(this::connect)
 				.icon(Glyph.SIGN_IN).setCommand("G").setName("fxml.form.button.clear.all").action(this::clearAll)
-				.icon(Glyph.ERASER).setName("fxml.form.button.cancel").action(this::cancel).build();
+				.icon(Glyph.ERASER).setName("fxml.form.button.getout").icon(Glyph.CLOSE).action(this::cancel).build();
 	}
 
 	private void verifyLoginRemember() {

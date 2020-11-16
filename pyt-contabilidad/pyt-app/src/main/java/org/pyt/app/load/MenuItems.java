@@ -252,7 +252,7 @@ public class MenuItems implements Reflection {
 			} catch (Exception e) {
 				logger.logger(e);
 			}
-		}, Glyph.EJECT);
+		}, Glyph.REFRESH);
 		logOut.visibleProperty().bind(Bindings.createBooleanBinding(() -> LoginUtil.isRemember()));
 		changeUser.visibleProperty().bind(Bindings.createBooleanBinding(() -> !LoginUtil.isRemember()));
 		items.add(logOut);
