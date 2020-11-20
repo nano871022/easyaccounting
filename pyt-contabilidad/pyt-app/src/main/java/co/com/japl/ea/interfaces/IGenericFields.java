@@ -46,6 +46,7 @@ import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -209,6 +210,10 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					var nameField = factory.getNameField();
 					var typeField = getInstanceDto(typeGeneric).getType(nameField);
 					getMapFields(typeGeneric).put(nameField, fieldControl);
+					if (fieldControl instanceof TextField) {
+//						var formatter = new TextFormatter(valueConverter);
+//						((TextField) fieldControl).setTextFormatter(formatter);
+					}
 					loadValuesInChoiceBox(typeGeneric, typeField, factory, fieldControl, nameField);
 					loadValuesFormToDTO(typeGeneric, fieldControl, typeField, nameField);
 					getGridPane(typeGeneric).add(label, index.column, index.row);

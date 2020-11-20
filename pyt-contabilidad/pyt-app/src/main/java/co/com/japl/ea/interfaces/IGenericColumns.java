@@ -4,7 +4,10 @@ import static org.pyt.common.constants.AppConstants.CONST_FIELD_ORDER;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_NOT_FOUND_PROCCES;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_ORDER_VALIDATION;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -93,6 +96,16 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 						if (result != null) {
 							sop.setValue(validateValuesUtils.cast(((ParametroDTO) result).getNombre(), String.class));
 						} else {
+							var format = factory.getFormat();
+							if (StringUtils.isNotBlank(format)) {
+								if (valueField instanceof Number && format.contains("#")) {
+									valueField = new DecimalFormat(format).format(valueField);
+								} else if (valueField instanceof Date) {
+									valueField = new SimpleDateFormat(format).format(valueField);
+								} else {
+									valueField = String.format(format, valueField);
+								}
+							}
 							sop.setValue(validateValuesUtils.cast(valueField, String.class));
 						}
 					}

@@ -96,4 +96,8 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 	public Integer getOrder() {
 		return 0;
 	}
+
+	public String getFormat() {
+		return field.getFormat();
+	}
 }

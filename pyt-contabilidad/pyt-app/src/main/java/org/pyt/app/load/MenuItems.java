@@ -116,7 +116,8 @@ public class MenuItems implements Reflection {
 
 	private final <T extends ADto, B extends ABean<T>> void processMenu(Menu menu, String classString, Integer position,
 			String... menusSplit) {
-		var nameLabel = nameLabel(menusSplit[position + 1]);
+		var origenActionName = menusSplit[position + 1];
+		var nameLabel = nameLabel(origenActionName);
 		if (menusSplit.length > position) {
 			var founds = menu.getItems().stream().filter(menuFilter -> menuFilter.getText().contentEquals(nameLabel))
 					.toArray(Menu[]::new);
@@ -130,7 +131,8 @@ public class MenuItems implements Reflection {
 						nameLabel2 = nameLabel;
 					}
 					var menuItem = new MenuItem(nameLabel2);
-					menuItem.onActionProperty().set(event -> onActionProperty(classString, nameLabel));
+					menuItem.onActionProperty()
+							.set(event -> onActionProperty(classString, nameLabel, origenActionName));
 					menu.getItems().add(menuItem);
 					return;
 				} else {
@@ -148,11 +150,12 @@ public class MenuItems implements Reflection {
 	}
 
 	@SuppressWarnings("unchecked")
-	private final <B extends ABean<T>, T extends ADto> void onActionProperty(String classString, String nameLabel) {
+	private final <B extends ABean<T>, T extends ADto> void onActionProperty(String classString, String nameLabel,
+			String origenName) {
 		try {
 			Class<B> beanToLoad = (Class<B>) Class.forName(classString);
 			var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, beanToLoad);
-			invokeLoadParameters(nameLabel, beanFxml);
+			invokeLoadParameters(origenName, beanFxml);
 		} catch (LoadAppFxmlException | ClassNotFoundException | SecurityException | IllegalArgumentException e) {
 			logger.logger(e);
 		}

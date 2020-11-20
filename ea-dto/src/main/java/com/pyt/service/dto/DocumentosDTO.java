@@ -30,6 +30,19 @@ public class DocumentosDTO extends ADto {
 	private Boolean fieldHasDefaultValue;
 	private Boolean fieldIsVisible;
 	private String  fieldDefaultValue;
+	private String format;
+	
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 	public String getPutNameShow() {
 		return putNameShow;

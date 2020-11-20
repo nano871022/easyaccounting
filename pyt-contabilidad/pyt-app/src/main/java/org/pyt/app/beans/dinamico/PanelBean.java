@@ -31,6 +31,7 @@ import co.com.japl.ea.dto.contabilidad.CuotaDTO;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -85,10 +86,21 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 		if (registro != null && StringUtils.isNotBlank(registro.getCodigo())) {
 			loadType();
 			getController(central, DocumentoBean.class).load(registro);
+			putTitle();
 			validQuotes();
 			visibleButtons();
 		} else if (registro == null || StringUtils.isBlank(registro.getCodigo())) {
+			putTitle();
 			getController(central, DocumentoBean.class).load(registro.getTipoDocumento());
+		}
+	}
+
+	private void putTitle() {
+		if (registro != null && registro.getTipoDocumento() != null) {
+			var label = new Label(registro.getTipoDocumento().getNombre());
+			label.setGraphic(new org.controlsfx.glyphfont.Glyph("FontAwesome", Glyph.TAGS));
+			label.getStyleClass().add("titulo-page");
+			superior.getChildren().add(label);
 		}
 	}
 

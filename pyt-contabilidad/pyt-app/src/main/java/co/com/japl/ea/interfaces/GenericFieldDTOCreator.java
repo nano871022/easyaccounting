@@ -106,4 +106,8 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	public Integer getOrder() {
 		return Optional.ofNullable(field.getOrden()).orElse(0);
 	}
+
+	public String getFormat() {
+		return null;
+	}
 }

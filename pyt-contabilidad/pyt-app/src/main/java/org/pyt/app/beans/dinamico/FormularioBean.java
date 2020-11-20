@@ -125,6 +125,10 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Label lblCopyTo;
 	@FXML
 	private Label lBusqueda;
+	@FXML
+	private Label labelFormat;
+	@FXML
+	private TextField fieldFormat;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
 	private List<ParametroDTO> listGrupo;
@@ -168,6 +172,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		lblCopyTo.setVisible(false);
 		btnCopyTo.setVisible(false);
 		cbCopyTo.setVisible(false);
+		labelFormat.setVisible(false);
+		fieldFormat.setVisible(false);
 	}
 
 	private void configActionButton() {
@@ -243,6 +249,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			fieldFilter.setSelected(docs.getFieldFilter());
 			fieldColumn.setSelected(docs.getFieldColumn());
 			fieldDefaultValue.setText(docs.getFieldDefaultValue());
+			fieldFormat.setText(docs.getFormat());
 			fieldHasDefaultValue.setSelected(Optional.ofNullable(docs.getFieldHasDefaultValue()).orElse(false));
 			fieldIsVisible.setSelected(Optional.ofNullable(docs.getFieldIsVisible()).orElse(true));
 			SelectList.selectItem(busqueda, mapa_claseBusqueda, docs.getObjectSearchDto());
@@ -372,6 +379,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		clearItem.setVisible(true);
 		fieldHasDefaultValue.setVisible(true);
 		labelDefaultValue.setVisible(true);
+		labelFormat.setVisible(true);
+		fieldFormat.setVisible(true);
 	}
 
 	private final void showFieldWhenValorDefecto() {
@@ -400,6 +409,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
 		labelDefaultValue.setVisible(false);
+		labelFormat.setVisible(false);
+		fieldFormat.setVisible(false);
 	}
 
 	public final void tipoDocumento() {
@@ -516,6 +527,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dto.setFieldHasDefaultValue(fieldHasDefaultValue.isSelected());
 		dto.setFieldIsVisible(fieldIsVisible.isSelected());
 		dto.setFieldDefaultValue(fieldDefaultValue.getText());
+		dto.setFormat(fieldFormat.getText());
 		if (grupo.isVisible()) {
 			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
 		}
