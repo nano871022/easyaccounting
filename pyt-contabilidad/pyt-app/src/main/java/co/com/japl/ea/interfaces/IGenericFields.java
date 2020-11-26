@@ -203,7 +203,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			try {
 				var factory = LoadFieldsFactory.getInstance(field);
 				assignDefaultValue(typeGeneric, factory);
-				if (factory.isVisible()) {
+				if (factory != null && factory.isVisible()) {
 					var label = genericFormsUtils.createLabel(factory.getLabelText(),
 							event -> loadPopupLanguages(factory), factory.getToolTip());
 					var fieldControl = factory.create();

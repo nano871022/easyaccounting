@@ -231,19 +231,27 @@ public class IngresosCRUBean extends ABean<IngresoDTO> {
 		try {
 			codigo.setText(registro.getCodigo());
 			placa.setText(registro.getPlacaVehiculo());
-			conductorEntrada.setText(registro.getConductorEntrada().getNombres());
-			conductorSalida.setText(registro.getConductorSalida().getNombres());
+			if (registro.getConductorEntrada() != null) {
+				conductorEntrada.setText(registro.getConductorEntrada().getNombres());
+				docEntrada.setText(registro.getConductorEntrada().getDocumento());
+			}
+			if (registro.getConductorSalida() != null) {
+				conductorSalida.setText(registro.getConductorSalida().getNombres());
+				docSalida.setText(registro.getConductorSalida().getDocumento());
+			}
 			descripcion.setText(registro.getDescripcion());
-			docEntrada.setText(registro.getConductorEntrada().getDocumento());
-			docSalida.setText(registro.getConductorSalida().getDocumento());
 			fechaEntrada.setValue(valid.cast(registro.getFechaEntrada(), LocalDate.class));
 			fechaSalida.setValue(valid.cast(registro.getFechaSalida(), LocalDate.class));
 			propietario.setText(registro.getPropietario().getNombres());
 			telContacto.setText(registro.getTelefonoContacto());
 			tiempoEstimado.setText(valid.cast(registro.getTiempoEstimado(), String.class));
 			tiempoTrabajo.setText(valid.cast(registro.getTiempoTrabajado(), String.class));
-			trabajador.setText(registro.getTrabajador().getPersona().getNombres());
-			empresa.setText(registro.getEmpresa().getNombre());
+			if (registro.getTrabajador() != null && registro.getTrabajador().getPersona() != null) {
+				trabajador.setText(registro.getTrabajador().getPersona().getNombres());
+			}
+			if (registro.getEmpresa() != null && registro.getEmpresa().getNombre() != null) {
+				empresa.setText(registro.getEmpresa().getNombre());
+			}
 
 			Table.put(tablaRepuesto, listRepuestos);
 			Table.put(tablaServicio, listServicios);

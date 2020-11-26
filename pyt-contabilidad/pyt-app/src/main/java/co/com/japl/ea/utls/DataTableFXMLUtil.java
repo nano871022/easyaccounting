@@ -69,15 +69,17 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 			div = 0;
 		}
 		Integer pages = Math.round(div);
-		if (pagination != null)
-			if ((pagination == null || (pages > 0 && pagination.getPageCount() != pages))) {
-				this.pagination = new Pagination();
-				paginas.getChildren().clear();
-				paginas.getChildren().add(this.pagination);
-				logger.info("Cantidad Paginas: " + total + "/" + rows + "=" + pages + " (" + div + ")");
-				this.pagination.setPageCount(pages);
-				this.pagination.setPageFactory(this::createPagina);
-			}
+		if ((pagination == null || (pages > 0 && pagination.getPageCount() != pages))) {
+			this.pagination = new Pagination();
+			paginas.getChildren().clear();
+			paginas.getChildren().add(this.pagination);
+			logger.info("Cantidad Paginas: " + total + "/" + rows + "=" + pages + " (" + div + ")");
+			this.pagination.setPageCount(pages);
+			this.pagination.setPageFactory(this::createPagina);
+			pagination.setVisible(true);
+		} else if (!(pagination != null && pages > 0 && pagination.getPageCount() > 0)) {
+			pagination.setVisible(false);
+		}
 	}
 
 	public final void selectRow(Consumer<List<S>> consumer) {

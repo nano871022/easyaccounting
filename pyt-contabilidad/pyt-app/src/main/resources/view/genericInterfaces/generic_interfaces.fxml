@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="411.0" prefWidth="533.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.pyt.app.beans.generic.interfaces.GenericInterfacesBean">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="411.0" prefWidth="533.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.beans.generic.interfaces.GenericInterfacesBean">
   <bottom>
-    <HBox fx:id="buttons" alignment="CENTER"  prefHeight="29.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
+    <HBox fx:id="buttons" alignment="CENTER" prefHeight="29.0" prefWidth="489.0" BorderPane.alignment="CENTER" />
   </bottom>
   <center>
     <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="258.0" prefWidth="513.0" vgap="5.0" BorderPane.alignment="CENTER">
@@ -60,6 +60,12 @@
         <ChoiceBox fx:id="cbField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="8" />
         <Label fx:id="lbField" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.field" GridPane.columnIndex="0" GridPane.rowIndex="8" />
         <CheckBox fx:id="chkGroup" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.group" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="\%fxml.lbl.format" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8" />
+            <TextField fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets top="2.0" />
+               </GridPane.margin>
+            </TextField>
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="110.0" />

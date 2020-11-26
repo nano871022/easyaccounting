@@ -29,6 +29,7 @@ public class ConfigGenericFieldDTO extends ADto {
 	private Integer orden;
 	private String fieldShow;
 	private String nameGroup;
+	private String format;
 	private String valueDefault;
 	private Boolean isVisible;
 	@DefaultFieldToGeneric(use = Uses.FILTER, simpleNameClazzBean = "ListGenericInterfacesBean")
@@ -152,5 +153,13 @@ public class ConfigGenericFieldDTO extends ADto {
 
 	public void setIsVisible(Boolean isVisible) {
 		this.isVisible = isVisible;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
 	}
 }

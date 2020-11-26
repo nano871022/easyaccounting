@@ -373,14 +373,15 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		obligatorio.setVisible(true);
 		fieldFilter.setVisible(true);
 		fieldColumn.setVisible(true);
-		addItem.setVisible(true);
-		modifyItem.setVisible(true);
-		delItem.setVisible(true);
-		clearItem.setVisible(true);
 		fieldHasDefaultValue.setVisible(true);
 		labelDefaultValue.setVisible(true);
 		labelFormat.setVisible(true);
 		fieldFormat.setVisible(true);
+		addItem.setVisible(true);
+		delItem.setVisible(true);
+		modifyItem.setVisible(true);
+		clearItem.setVisible(true);
+
 	}
 
 	private final void showFieldWhenValorDefecto() {

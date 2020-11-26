@@ -108,6 +108,6 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 	}
 
 	public String getFormat() {
-		return null;
+		return field.getFormat();
 	}
 }

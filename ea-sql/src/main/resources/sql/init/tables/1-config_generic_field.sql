@@ -21,6 +21,7 @@ CREATE TABLE TBL_CONFIG_GENERIC_FIELD (
 	,bfield    NUMBER             NULL DEFAULT 0
 	,brequired NUMBER	       NULL DEFAULT 0
 	,nstate    NUMBER             NULL DEFAULT 0
+	,sformat   VARCHAR2(300)      NULL
 );
 ALTER TABLE TBL_CONFIG_GENERIC_FIELD ADD CONSTRAINT K_confgenfield_PRIMARY PRIMARY KEY (scode);
 ALTER TABLE TBL_CONFIG_GENERIC_FIELD ADD CONSTRAINT u_confgenfield_unique UNIQUE (sname,sclasspath,sclasspathbean,bfield,bcolumn);

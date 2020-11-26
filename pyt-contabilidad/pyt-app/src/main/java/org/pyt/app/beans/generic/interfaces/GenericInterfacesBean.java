@@ -44,6 +44,8 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 	@FXML
 	private TextField txtName;
 	@FXML
+	private TextField format;
+	@FXML
 	private ChoiceBox<String> cbName;
 	@FXML
 	private TextField txtDescription;
@@ -172,6 +174,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			}
 			verifyChange();
 		});
+		utilFx.change(format, registro::setFormat);
 		SelectList.selectChange(cbName, change -> {
 			txtName.setText(change);
 			txtDescription.setText(change);
@@ -232,6 +235,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		txtDescription.setText(registro.getDescription());
 		txtClassDto.setText(registro.getClassPath());
 		txtClassBean.setText(registro.getClassPathBean());
+		format.setText(registro.getFormat());
 		if (registro.getWidth() != null) {
 			txtWidth.setText(registro.getWidth().toString());
 		}
@@ -254,6 +258,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 			tbDefault.setText(registro.getValueDefault());
 			chkDefault.setSelected(true);
 		}
+
 		SelectList.selectItem(chbState, ParametroConstants.mapa_estados_parametros, registro.getState());
 		loadGroupParam();
 		if (StringUtils.isNotBlank(registro.getNameGroup())) {
@@ -409,6 +414,7 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 		registro.setOrden(null);
 		registro.setFieldShow(null);
 		registro.setNameGroup(null);
+		registro.setFormat(null);
 		chkGroup.setVisible(true);
 		cbGroup.setVisible(false);
 		cbField.setVisible(false);
