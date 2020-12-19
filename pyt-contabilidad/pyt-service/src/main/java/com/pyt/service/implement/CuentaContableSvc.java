@@ -68,7 +68,80 @@ public class CuentaContableSvc extends Services implements ICuentaContableSvc {
 			throw new CuentaContableException(e);
 		}
 	}
-
+	
+	private void asociado(CuentaContableDTO dto)throws QueryException{
+		try {
+			if (dto.getAsociado() != null && StringUtils.isNotBlank(dto.getAsociado().getCodigoCuenta())) {
+				dto.setAsociado(querySvc.get(dto.getAsociado()));
+			}
+		}catch(QueryException e) {
+			throw new QueryException("asociado:"+e.getMessage());
+		}
+	}
+	
+	private void empresa(CuentaContableDTO dto)throws QueryException{
+		try {
+			if (dto.getEmpresa() != null && StringUtils.isNotBlank(dto.getEmpresa().getNombre())) {
+				dto.getEmpresa().setNit(dto.getEmpresa().getNombre());
+				dto.getEmpresa().setNombre(null);
+				dto.setEmpresa(querySvc.get(dto.getEmpresa()));
+			}
+		}catch(QueryException e) {
+			throw new QueryException("empresa:"+e.getMessage());
+		}
+	}
+	
+	private void tipoContable(CuentaContableDTO dto)throws QueryException{
+		try {
+			if (dto.getTipoPlanContable() != null && StringUtils.isNotBlank(dto.getTipoPlanContable().getNombre())) {
+				var grupo = new ParametroGrupoDTO();
+				grupo.setGrupo(ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
+				grupo = querySvc.get(grupo);
+				dto.getTipoPlanContable().setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				dto.getTipoPlanContable().setGrupo(grupo.getParametro());
+				dto.getTipoPlanContable().setValor(dto.getTipoPlanContable().getNombre());
+				dto.getTipoPlanContable().setNombre(null);
+				dto.setTipoPlanContable(querySvc.get(dto.getTipoPlanContable()));
+			}
+		}catch(QueryException e) {
+			throw new QueryException("tipoContable:"+e.getMessage());
+		}
+	}
+	
+	private void naturaleza(CuentaContableDTO dto)throws QueryException{
+		try {
+			if (dto.getNaturaleza() != null && StringUtils.isNotBlank(dto.getNaturaleza().getNombre())) {
+				var grupo = new ParametroGrupoDTO();
+				grupo.setGrupo(ParametroConstants.GRUPO_NATURALEZA);
+				grupo = querySvc.get(grupo);
+				dto.getNaturaleza().setValor(dto.getNaturaleza().getNombre());
+				dto.getNaturaleza().setNombre(null);
+				dto.getNaturaleza().setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				dto.getNaturaleza().setGrupo(grupo.getParametro());
+				dto.setNaturaleza(querySvc.get(dto.getNaturaleza()));
+			}
+		}catch(QueryException e) {
+			throw new QueryException("naturaleza:"+e.getMessage());
+		}
+	}
+	
+	private void tipo(CuentaContableDTO dto)throws QueryException{
+		try {
+			if (dto.getTipo() != null && StringUtils.isNotBlank(dto.getTipo().getNombre())) {
+				var grupo = new ParametroGrupoDTO();
+				grupo.setGrupo(ParametroConstants.GRUPO_TIPO);
+				grupo = querySvc.get(grupo);
+				dto.getTipo().setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
+				dto.getTipo().setGrupo(grupo.getParametro());
+				dto.getTipo().setValor(dto.getTipo().getNombre());
+				dto.getTipo().setNombre(null);
+				dto.setTipo(querySvc.get(dto.getTipo()));
+			}
+		}catch(QueryException e) {
+			throw new QueryException("tipo:"+e.getMessage());
+		}
+	}
+	
 	@co.com.arquitectura.annotation.proccessor.Services(alcance = scope.EJB, alias = "Ingreso cuenta contable", descripcion = "Ingreso de servicios de cuenta contables", tipo = kind.PUBLIC, type = Type.CREATE)
 	@Override
 	public CuentaContableDTO insertService(CuentaContableDTO dto, UsuarioDTO user) throws CuentaContableException {
@@ -79,36 +152,11 @@ public class CuentaContableSvc extends Services implements ICuentaContableSvc {
 		if (StringUtils.isNotBlank(dto.getCodigo()))
 			throw new CuentaContableException("El codigo de la cuenta contable existe.");
 		try {
-			if (dto.getAsociado() != null && StringUtils.isNotBlank(dto.getAsociado().getCodigoCuenta())) {
-				dto.setAsociado(querySvc.get(dto.getAsociado()));
-			}
-			if (dto.getEmpresa() != null && StringUtils.isNotBlank(dto.getEmpresa().getNombre())) {
-				dto.setEmpresa(querySvc.get(dto.getEmpresa()));
-			}
-			if (dto.getTipoPlanContable() != null && StringUtils.isNotBlank(dto.getTipoPlanContable().getNombre())) {
-				var grupo = new ParametroGrupoDTO();
-				grupo.setGrupo(ParametroConstants.GRUPO_TIPO_PLAN_CONTABLE);
-				grupo = querySvc.get(grupo);
-				dto.getTipoPlanContable().setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
-				dto.getTipoPlanContable().setGrupo(grupo.getParametro());
-				dto.setTipoPlanContable(querySvc.get(dto.getTipoPlanContable()));
-			}
-			if (dto.getNaturaleza() != null && StringUtils.isNotBlank(dto.getNaturaleza().getNombre())) {
-				var grupo = new ParametroGrupoDTO();
-				grupo.setGrupo(ParametroConstants.GRUPO_NATURALEZA);
-				grupo = querySvc.get(grupo);
-				dto.getNaturaleza().setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
-				dto.getNaturaleza().setGrupo(grupo.getParametro());
-				dto.setNaturaleza(querySvc.get(dto.getNaturaleza()));
-			}
-			if (dto.getTipo() != null && StringUtils.isNotBlank(dto.getTipo().getNombre())) {
-				var grupo = new ParametroGrupoDTO();
-				grupo.setGrupo(ParametroConstants.GRUPO_TIPO);
-				grupo = querySvc.get(grupo);
-				dto.getTipo().setEstado(ParametroConstants.COD_ESTADO_PARAMETRO_ACTIVO_STR);
-				dto.getTipo().setGrupo(grupo.getParametro());
-				dto.setTipo(querySvc.get(dto.getTipo()));
-			}
+			asociado(dto);
+			empresa(dto);
+			tipoContable(dto); 
+			naturaleza(dto);
+			tipo(dto);
 			return querySvc.set(dto, user);
 		} catch (QueryException e) {
 			throw new CuentaContableException(e);

@@ -222,9 +222,20 @@ public class StatementQuerysUtil {
 		sb.append(getDateOfString());
 		var quantity = getQuantity(size, sb.length());
 		var generateLetter = generateLetterToCompleteCode(sb.length(), quantity.length());
-		sb.append(generateLetter);
-		sb.append(quantity);
-		return sb.toString();
+		return code(sb.toString(),generateLetter,quantity);
+	}
+	
+	private final String code(String valor,String generateLetter,String quentity) {
+		var sb = new StringBuilder();
+		sb.append(valor).append(generateLetter);
+		var sizeFree = 30-quentity.length();
+		if(sb.length() >= sizeFree) {
+			logger.info("tamaño OK"+sizeFree);
+			return sb.append(quentity).toString();
+		}else{
+			logger.info("tamaño Short "+sizeFree);
+			return sb.substring(0, sizeFree-2).toString()+quentity;
+		}
 	}
 
 	private final String getQuantity(Integer size, Integer quantityCode) {

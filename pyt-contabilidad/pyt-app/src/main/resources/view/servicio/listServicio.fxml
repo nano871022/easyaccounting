@@ -10,20 +10,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-	style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
-	fx:controller="org.pyt.app.beans.servicio.ServicioBean">
+<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.pyt.app.beans.servicio.ServicioBean">
 	<bottom>
-		<HBox fx:id="buttons" alignment="CENTER" BorderPane.alignment="CENTER"/>
+		<HBox fx:id="buttons" alignment="CENTER" prefHeight="50.0" BorderPane.alignment="CENTER" />
 	</bottom>
 	<center>
-		<BorderPane prefHeight="200.0" prefWidth="200.0">
+		<BorderPane prefHeight="50.0" prefWidth="200.0">
 			<bottom>
-				<GridPane alignment="CENTER" gridLinesVisible="false" maxWidth="-1.0" minWidth="-1.0" padding="$x1" prefWidth="-1.0"
-					BorderPane.alignment="CENTER">
+				<GridPane alignment="CENTER" gridLinesVisible="false" maxWidth="-1.0" minWidth="-1.0" padding="$x1" prefHeight="50.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
 					<children>
-						<HBox fx:id="paginador" alignment="CENTER" maxWidth="-1.0" prefHeight="40.0" prefWidth="400.0" GridPane.columnIndex="1"
-							GridPane.rowIndex="0">
+						<HBox fx:id="paginador" alignment="CENTER" maxWidth="-1.0" prefHeight="30.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
 							<GridPane.margin>
 								<Insets top="10.0" fx:id="x1" />
 							</GridPane.margin>
@@ -40,13 +36,11 @@
 				</GridPane>
 			</bottom>
 			<center>
-				<TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity"
-					minWidth="-Infinity" prefWidth="406.0" tableMenuButtonVisible="false" BorderPane.alignment="CENTER"/>
+				<TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="406.0" tableMenuButtonVisible="false" BorderPane.alignment="CENTER" />
 			</center>
 		</BorderPane>
 	</center>
 	<top>
-		<GridPane fx:id="filter" cache="false" depthTest="INHERIT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-			mouseTransparent="false" pickOnBounds="true" prefWidth="512.0" BorderPane.alignment="CENTER"/>
+		<GridPane fx:id="filter" cache="false" depthTest="INHERIT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefWidth="512.0" BorderPane.alignment="CENTER" />
 	</top>
 </BorderPane>

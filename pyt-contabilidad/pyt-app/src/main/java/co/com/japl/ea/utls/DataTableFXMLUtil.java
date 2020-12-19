@@ -70,7 +70,9 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 		}
 		Integer pages = Math.round(div);
 		if ((pagination == null || (pages > 0 && pagination.getPageCount() != pages))) {
+			this.paginas.setVisible(true);
 			this.pagination = new Pagination();
+			this.paginas.setPrefHeight(this.paginas.getPrefHeight() + 30);
 			paginas.getChildren().clear();
 			paginas.getChildren().add(this.pagination);
 			logger.info("Cantidad Paginas: " + total + "/" + rows + "=" + pages + " (" + div + ")");
@@ -79,6 +81,7 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 			pagination.setVisible(true);
 		} else if (!(pagination != null && pages > 0 && pagination.getPageCount() > 0)) {
 			pagination.setVisible(false);
+			this.paginas.setVisible(false);
 		}
 	}
 

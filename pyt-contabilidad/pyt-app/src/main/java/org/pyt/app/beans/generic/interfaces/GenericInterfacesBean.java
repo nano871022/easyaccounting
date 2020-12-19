@@ -289,6 +289,19 @@ public class GenericInterfacesBean extends ABean<ConfigGenericFieldDTO> {
 				i18n().valueBundle("msn.form.field.error.class.dto.not.exists"));
 		valid &= ValidFields.valid(validClass(registro.getClassPathBean()), txtClassDto, true, null, null,
 				i18n().valueBundle("msn.form.field.error.class.bean.not.exists"));
+		if (registro.getIsColumn() == null) {
+			registro.setIsColumn(false);
+		}
+		if (registro.getIsFilter() == null) {
+			registro.setIsFilter(false);
+		}
+		if (registro.getIsRequired() == null) {
+			registro.setIsRequired(false);
+		}
+		if (registro.getIsVisible() == null) {
+			registro.setIsVisible(false);
+		}
+
 		return valid;
 	}
 
