@@ -125,6 +125,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		this.destroy();
 		if (Optional.ofNullable(stage).isPresent()) {
 			stage.hide();
+			stage = null;
 		}
 		LoadAppFxml.loadFxml(new Stage(), Template.class);
 	}

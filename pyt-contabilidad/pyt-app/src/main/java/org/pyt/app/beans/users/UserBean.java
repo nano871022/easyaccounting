@@ -95,7 +95,9 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 		registro = dto;
 		visibleButtons();
 		loadFields(TypeGeneric.FIELD);
-		btnAdd.setText("fxml.btn.update");
+		if (btnAdd != null) {
+			btnAdd.setText("fxml.btn.update");
+		}
 	}
 
 	@Override

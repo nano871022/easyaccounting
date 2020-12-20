@@ -142,6 +142,10 @@ public class LoginUtil {
 		}
 	}
 
+	public static final void cleanUsuarioLogin() {
+		usuarioSystem = null;
+	}
+
 	public static final Boolean isRemember() {
 		return Optional.ofNullable(remember).orElse(false);
 	}

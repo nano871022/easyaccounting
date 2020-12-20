@@ -50,6 +50,7 @@ public abstract class ABean<T extends ADto> implements IBean<T> {
 			configBooleanProperties();
 			inject();
 			LocatorController.getInstance().setClass(this.getClass()).putLoadInController(this);
+			i18n();
 		} catch (ReflectionException e) {
 			logger.logger("Reflection: ", e);
 		} catch (RuntimeException e) {

@@ -192,7 +192,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	}
 
 	private void instanceBooleanProperties() {
-		addMark = new SimpleBooleanProperty();
+		addMark = new SimpleBooleanProperty(true);
 		updMark = new SimpleBooleanProperty();
 		delMark = new SimpleBooleanProperty();
 		cleanMark = new SimpleBooleanProperty();
@@ -242,6 +242,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	private void configButtons() {
 		updMark.setValue(false);
 		cleanMark.setValue(false);
+		delMark.setValue(false);
 	}
 
 	private void configRadioButton() {
@@ -341,7 +342,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		delAssociate.setValue(delete.get() && tbMarcador.isSelected());
 		updMark.setValue(edit.get() && tbMarcador.isSelected());
 		var mark = tbMarcador.getSelectedRow();
-		orderMarcador.setText(String.valueOf(mark.getOrden()));
+		if (orderMarcador != null && mark != null && mark.getOrden() != null) {
+			orderMarcador.setText(String.valueOf(mark.getOrden()));
+		}
 		nameMarcador.setText(mark.getMarcador());
 		if (mark.getTipoInOut().contains(rbCargues.getText())) {
 			rbCargues.setSelected(true);
@@ -351,6 +354,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			rbReportes.setSelected(true);
 		}
 		addMark.setValue(false);
+		delMark.setValue(true);
 		cleanMark.setValue(true);
 	}
 
@@ -672,6 +676,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			nameMarcador.clear();
 			tbMarcador.search();
 			cleanMark.setValue(false);
+			delMark.setValue(false);
 			orderMarcador.setText(String.valueOf(tbMarcador.getTotal() + 1));
 		}
 	}
@@ -700,6 +705,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 			addMark.setValue(save.get());
 			updMark.setValue(false);
 			cleanMark.setValue(false);
+			delMark.setValue(false);
 			tbMarcador.search();
 		} catch (MarcadorServicioException e) {
 			error(e);
@@ -713,6 +719,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		addMark.setValue(save.get());
 		updMark.setValue(false);
 		cleanMark.setValue(false);
+		delMark.setValue(false);
 	}
 
 	public void delMarcador() {

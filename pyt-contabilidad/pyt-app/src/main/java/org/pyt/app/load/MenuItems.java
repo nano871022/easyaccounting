@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
+import org.pyt.app.beans.users.UserBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
@@ -36,6 +37,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -244,6 +246,9 @@ public class MenuItems implements Reflection {
 			try {
 				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(),
 						LoginUtil.isRemember());
+				LoginUtil.deleteRemember();
+				LoginUtil.cleanUsuarioLogin();
+				scroll = null;
 				if (LoadAppFxml.stageClose(Template.class)) {
 					App.loadBean();
 				} else {
@@ -285,9 +290,19 @@ public class MenuItems implements Reflection {
 		mapaMenu.entrySet().stream().filter(valor -> !valor.getKey().contentEquals(MENU_PRINCIPAL))
 				.peek(mensaje -> logger().info(mensaje.toString())).map(valor -> valor.getValue()).forEach(this::add);
 
-		var usuario = getMenu(LoginUtil.getUsuarioLogin().getNombre().replace("_", " "));
+		var labelUsuario = new Label(LoginUtil.getUsuarioLogin().getNombre().replace("_", " "));
+		labelUsuario.setGraphic(new org.controlsfx.glyphfont.Glyph("FontAwesome", Glyph.USER_SECRET));
+		labelUsuario.setOnMouseClicked(event -> {
+			try {
+				var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, UserBean.class);
+				beanFxml.load(LoginUtil.getUsuarioLogin());
+			} catch (LoadAppFxmlException | SecurityException | IllegalArgumentException e) {
+				logger.logger(e);
+			}
+		});
+		var usuario = new Menu();
 		usuario.setId("usuario");
-		usuario.setGraphic(new org.controlsfx.glyphfont.Glyph("FontAwesome", Glyph.USER_SECRET));
+		usuario.setGraphic(labelUsuario);
 		this.add(usuario);
 	}
 

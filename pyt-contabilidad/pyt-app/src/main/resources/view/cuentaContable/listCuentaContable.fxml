@@ -15,7 +15,7 @@
 	style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
 	fx:controller="org.pyt.app.beans.cuentaContable.CuentaContableBean">
 	<bottom>
-		<FlowPane fx:id="buttons" alignment="CENTER" BorderPane.alignment="CENTER" prefHeight="80.0/>
+		<FlowPane fx:id="buttons" alignment="CENTER" BorderPane.alignment="CENTER" prefHeight="80.0"/>
 	</bottom>
 	<center>
 		<BorderPane prefHeight="80.0" prefWidth="200.0">

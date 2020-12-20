@@ -229,12 +229,12 @@ public class StatementQuerysUtil {
 		var sb = new StringBuilder();
 		sb.append(valor).append(generateLetter);
 		var sizeFree = 30-quentity.length();
-		if(sb.length() >= sizeFree) {
+		if(sb.length() <= sizeFree) {
 			logger.info("tamaño OK"+sizeFree);
 			return sb.append(quentity).toString();
 		}else{
 			logger.info("tamaño Short "+sizeFree);
-			return sb.substring(0, sizeFree-2).toString()+quentity;
+			return sb.substring(0, sizeFree).toString()+quentity;
 		}
 	}
 

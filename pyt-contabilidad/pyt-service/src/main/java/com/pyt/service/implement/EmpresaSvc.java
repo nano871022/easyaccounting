@@ -82,7 +82,7 @@ public class EmpresaSvc extends Services implements IEmpresasSvc {
 	public void delete(EmpresaDTO dto, UsuarioDTO user) throws EmpresasException {
 		if (dto == null)
 			throw new EmpresasException("El objeto empresa se encuentra vacio.");
-		if (StringUtils.isNotBlank(dto.getCodigo()))
+		if (StringUtils.isBlank(dto.getCodigo()))
 			throw new EmpresasException("El codigo empresa se encuentra vacio.");
 		try {
 			querySvc.del(dto, user);

@@ -333,6 +333,8 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 		if (stages.containsKey(controller)) {
 			stages.get(controller).close();
 			stages.remove(controller);
+			app.cleanStage();
+			app = null;
 			return true;
 		}
 		return false;

@@ -62,7 +62,7 @@ public class EmpresaBean extends AGenericInterfacesBean<EmpresaDTO> {
 		visibleButtons();
 		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
-				.isVisible(edit).setName("fxml.btn.delete").action(this::add).icon(Glyph.REMOVE).isVisible(delete)
+				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
 				.setName("fxml.btn.view").action(this::add).icon(Glyph.FILE_TEXT).isVisible(view).build();
 
 		findFields(TypeGeneric.FILTER, EmpresaDTO.class, EmpresaBean.class)
