@@ -66,8 +66,7 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 	 * 
 	 * @param nombreCampo {@link String}
 	 */
-	@SuppressWarnings("unused")
-	private final <S extends Object> void operacion(String nombreCampo) {
+	public final void operacion(String nombreCampo) {
 		Field field;
 		try {
 			field = registro.getClass().getDeclaredField(nombreCampo);
@@ -92,11 +91,10 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 	 * @param nombreCampo {@link String}
 	 * @param operacion   {@link Operacion}
 	 */
-	private final <M extends Object, N extends Object, S extends Object, R extends Object> void operar(
-			String nombreCampo, Operacion operacion) {
+	private final <M, N, O, R> void operar(String nombreCampo, Operacion operacion) {
 		M value = null;
 		N value1 = null;
-		S value2 = null;
+		O value2 = null;
 		R result = null;
 		try {
 			if (operacion == null)

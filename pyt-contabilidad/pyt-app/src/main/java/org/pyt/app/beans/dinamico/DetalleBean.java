@@ -23,6 +23,7 @@ import org.pyt.common.exceptions.validates.ValidateValueException;
 
 import com.pyt.service.dto.ActividadIcaDTO;
 import com.pyt.service.dto.CentroCostoDTO;
+import com.pyt.service.dto.ConceptoDTO;
 import com.pyt.service.dto.DetalleDTO;
 import com.pyt.service.dto.DocumentosDTO;
 import com.pyt.service.dto.EmpresaDTO;
@@ -64,6 +65,8 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	private IGenericServiceSvc<ServicioDTO> servicioSvc;
 	@Inject
 	private IGenericServiceSvc<CentroCostoDTO> centroCostoSvc;
+	@Inject
+	private IGenericServiceSvc<ConceptoDTO> conceptoSvc;
 	@FXML
 	private VBox central;
 	@FXML
@@ -251,6 +254,8 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 			getField("valorConsumo");
 			getField("valorBruto");
 			getField("porcentajeIva");
+			getField("valorUnidad");
+			getField("cantidad");
 			Double iVa = null;
 			Double cons = null;
 			if (registro.getValorIva() == null) {
@@ -287,9 +292,17 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 				registro.setValorNeto(
 						registro.getValorConsumo().add(registro.getValorIva().add(registro.getValorBruto())));
 			}
+			if (registro.getConcepto() != null && registro.getConcepto().getValorManoObra() != null) {
+				registro.setValorUnidad(new BigDecimal(registro.getConcepto().getValorManoObra()));
+			}
+			if (registro.getValorUnidad() != null && registro.getCantidad() != null) {
+				registro.setValorNeto(registro.getValorUnidad().multiply(new BigDecimal(registro.getCantidad())));
+			}
 			loadValueIntoForm(TypeGeneric.FIELD, "valorIva");
 			loadValueIntoForm(TypeGeneric.FIELD, "valorConsumo");
 			loadValueIntoForm(TypeGeneric.FIELD, "valorNeto");
+			loadValueIntoForm(TypeGeneric.FIELD, "valorUnidad");
+			loadValueIntoForm(TypeGeneric.FIELD, "cantidad");
 		} catch (ValidateValueException e) {
 			error(e);
 		}

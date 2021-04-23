@@ -3,10 +3,13 @@ package org.ea.app.load;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.pyt.common.constants.AppConstants;
+
 import com.pyt.query.interfaces.IVerifyStructuredDB;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -18,11 +21,14 @@ public class ControllerSplash implements Initializable, Runnable {
 	private ProgressBar progress;
 	@FXML
 	private TextField percentage;
+	@FXML
+	private Label byAdd;
 	private IVerifyStructuredDB verify;
 	private Boolean runningSplash = true;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		byAdd.setText(byAdd.getText() + AppConstants.VERSION_DATABASE);
 		new Thread(this).start();
 	}
 

@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.Log;
@@ -166,9 +167,16 @@ public final class ReflectionUtils {
 	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
-	public final static <T, S> S getValueField(T object, String fieldName) throws ReflectionException {
+	public final static <T, S, N> S getValueField(T object, String fieldName) throws ReflectionException {
 		try {
 			Class<T> clase = (Class<T>) object.getClass();
+			if (fieldName.contains(".")) {
+				List<String> fields = Arrays.asList(fieldName.split("\\."));
+				var result = getValueField(object, fields.get(0));
+				var nexFields = fields.subList(1, fields.size()).stream().reduce("",
+						(val1, val2) -> (StringUtils.isNotBlank(val1) ? val1 + "." : "") + val2);
+				return getValueField(result, nexFields);
+			}
 			if (ReflectionDto.class.isInstance(object)) {
 				var metodoGetGeneric = ReflectionDto.class.getDeclaredMethod("get", String.class);
 				return (S) metodoGetGeneric.invoke(object, fieldName);
@@ -264,7 +272,28 @@ public final class ReflectionUtils {
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionException("Acceso ilegal sobre Argumentos.", e);
 		} catch (InvocationTargetException e) {
-			if(e.getTargetException() instanceof AExceptions) {
+			if (e.getTargetException() instanceof AExceptions) {
+				throw new ReflectionException(e.getMessage());
+			}
+			throw new ReflectionException("Problema en la invocacion del metodo.", e);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	public final <I, R, P> R invoke(Class<I> classe, I instance, String methodName, P... values)
+			throws ReflectionException {
+		try {
+			var parameters = getParameters(values);
+			Method method = getMethod(classe, methodName, parameters);
+			R results;
+			results = (R) method.invoke(instance, values);
+			return results;
+		} catch (IllegalAccessException e) {
+			throw new ReflectionException("Acceso ilegal sobre metodo.", e);
+		} catch (IllegalArgumentException e) {
+			throw new ReflectionException("Acceso ilegal sobre Argumentos.", e);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof AExceptions) {
 				throw new ReflectionException(e.getMessage());
 			}
 			throw new ReflectionException("Problema en la invocacion del metodo.", e);
@@ -309,7 +338,7 @@ public final class ReflectionUtils {
 	private final <P extends Object> Class[] getParameters(P... values) throws ReflectionException {
 		if (ListUtils.isNotBlank(values)) {
 			var arrays = Arrays.asList(values);
-			if(arrays.stream().allMatch( dto -> dto instanceof Class)) {
+			if (arrays.stream().allMatch(dto -> dto instanceof Class)) {
 				return arrays.stream().toArray(Class[]::new);
 			}
 			return arrays.stream().map(value -> value.getClass()).toArray(Class[]::new);

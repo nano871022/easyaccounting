@@ -196,6 +196,10 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 		((TextField) getMapFields(TypeGeneric.FIELD).get("password").stream().findAny().get()).setText(null);
 	}
 
+	public final void setSaveUpdate() {
+		error(i18n().valueBundle("mensaje.not.found.last.password"));
+	}
+
 	public final void cancel() {
 		getController(ListUsersBean.class);
 	}

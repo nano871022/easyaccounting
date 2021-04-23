@@ -16,6 +16,7 @@ import static org.pyt.common.constants.LanguageConstant.CONST_ERR_USER_NOT_SUBMI
 import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_MACHINE_EMPTY;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_PUBLIC_EMPTY;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_USER_EMPTY;
+import co.com.japl.ea.constants.utils.CacheConstants;
 
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.CacheUtil;
 import org.pyt.common.exceptions.QueryException;
 
 import com.pyt.query.interfaces.IQuerySvc;
@@ -151,9 +153,7 @@ public class UserSvc extends Services implements IUsersSvc {
 			String ipPublic = LoginUtil.remoteAddr();
 			List<LoginDTO> listLogins = searchAllLogins(found, ipMachine, ipPublic, remember);
 
-			if (listLogins.size() > 0
-					&& login.getPassword() == null && StringUtils.isNotBlank(login
-							.getCodigo())
+			if (listLogins.size() > 0 && login.getPassword() == null && StringUtils.isNotBlank(login.getCodigo())
 					&& listLogins.stream().filter(row -> Optional.ofNullable(row.getFechaInicio()).isPresent()
 							&& row.getFechaInicio().compareTo(LocalDate.now()) <= 0).count() > 0) {
 				if (listLogins.stream().filter(row -> Optional.ofNullable(row.getFechaFin()).isPresent()).count() > 0) {
@@ -211,7 +211,7 @@ public class UserSvc extends Services implements IUsersSvc {
 			var foundUser = querySvc.get(user);
 			loginRemember = validRemember(user, foundUser, ipMachine, remember);
 			if ((!loginRemember && validPassword(pass.orElse(""), foundUser))
-					||(loginRemember && Optional.ofNullable(foundUser).isPresent())) {
+					|| (loginRemember && Optional.ofNullable(foundUser).isPresent())) {
 				foundUser.setPassword(null);
 				found = foundUser;
 			}
@@ -219,10 +219,14 @@ public class UserSvc extends Services implements IUsersSvc {
 		if (Optional.ofNullable(found).isPresent()) {
 			var ipPublic = LoginUtil.remoteAddr();
 			List<LoginDTO> list = searchAllLogins(user, ipMachine, ipPublic, remember).stream()
-					.filter(row -> !Optional.ofNullable(row.getFechaFin()).isPresent()|| row.getFechaFin().compareTo(LocalDate.now()) >= 0)
+					.filter(row -> !Optional.ofNullable(row.getFechaFin()).isPresent()
+							|| row.getFechaFin().compareTo(LocalDate.now()) >= 0)
 					.collect(Collectors.toList());
 			if (list.size() > 0) {
-				list.forEach(row -> {updateLogin(row, user);LoginUtil.INSTANCE().loadLogin(row);});
+				list.forEach(row -> {
+					updateLogin(row, user);
+					LoginUtil.INSTANCE().loadLogin(row);
+				});
 			} else {
 				createLogin(found, ipMachine, ipPublic, remember);
 			}
@@ -231,7 +235,7 @@ public class UserSvc extends Services implements IUsersSvc {
 	}
 
 	@Override
-	public void logout(UsuarioDTO user, String ipMachine,Boolean remember) throws Exception {
+	public void logout(UsuarioDTO user, String ipMachine, Boolean remember) throws Exception {
 		if (!Optional.ofNullable(user).isPresent()) {
 			throw new Exception(CONST_ERR_USER_NOT_SUBMIT);
 		}
@@ -240,7 +244,10 @@ public class UserSvc extends Services implements IUsersSvc {
 		}
 		var ipPublic = LoginUtil.remoteAddr();
 		var founds = searchAllLogins(user, ipMachine, ipPublic, remember);
-		founds.forEach(row -> {unEnabledLogin(row, user);LoginUtil.INSTANCE().removeLogin(row);});
+		founds.forEach(row -> {
+			unEnabledLogin(row, user);
+			LoginUtil.INSTANCE().removeLogin(row);
+		});
 	}
 
 	@Override
@@ -254,7 +261,8 @@ public class UserSvc extends Services implements IUsersSvc {
 			throw new Exception("err.msn.svc.change.password.new.old.equals");
 		}
 		var foundUser = querySvc.get(user);
-		if ((StringUtils.isBlank(oldPassword) && StringUtils.isBlank(foundUser.getPassword()))
+
+		if (validCacheLogin() || (StringUtils.isBlank(oldPassword) && StringUtils.isBlank(foundUser.getPassword()))
 				|| validPassword(oldPassword, foundUser)
 				|| (StringUtils.isNotBlank(oldPassword) && StringUtils.isBlank(foundUser.getPassword()))) {
 			var decode = decodePassword(newPassword).split("\\|")[0].replace(foundUser.getNombre(), "");
@@ -268,6 +276,20 @@ public class UserSvc extends Services implements IUsersSvc {
 			throw new Exception(CONST_ERR_OLD_PASS_USER_DIFERENT);
 		}
 
+	}
+
+	private boolean validCacheLogin() {
+		try {
+			var map = CacheUtil.INSTANCE().getAll();
+			if (map.containsKey(CacheConstants.cachePasswordLogin)) {
+				return !map.get(CacheConstants.cachePasswordLogin);
+			}
+			return false;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			CacheUtil.INSTANCE().load(CacheConstants.cachePasswordLogin);
+		}
 	}
 
 	private List<LoginDTO> searchAllLogins(UsuarioDTO usuario, String ipMachine, String ipPublic, Boolean recordar)
@@ -308,7 +330,7 @@ public class UserSvc extends Services implements IUsersSvc {
 
 	private void updateLogin(LoginDTO login, UsuarioDTO usuario) throws RuntimeException {
 		try {
-			if(!Optional.ofNullable(login.getFechaInicio()).isPresent()) {
+			if (!Optional.ofNullable(login.getFechaInicio()).isPresent()) {
 				login.setFechaInicio(LocalDate.now());
 			}
 			login.setFechaFin(LocalDate.now().plusDays(8));

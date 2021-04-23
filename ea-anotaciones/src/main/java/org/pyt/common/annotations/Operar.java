@@ -5,4 +5,5 @@ public enum Operar {
 	,SUMA
 	,DIVIDIR
 	,RESTAR
+	,IGUAL
 }

@@ -12,6 +12,7 @@ import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_IN_PARA
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_IN_REFLECTION;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_VALID_VALUES;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -28,6 +29,7 @@ import org.pyt.app.beans.languages.LanguageBean;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
+import org.pyt.common.common.AnnotationsOperacionUtil;
 import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
@@ -37,6 +39,7 @@ import org.pyt.common.exceptions.LoadAppFxmlException;
 import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.exceptions.ReflectionException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
+import org.pyt.common.reflection.ReflectionUtils;
 import org.pyt.common.validates.ValidFields;
 
 import com.pyt.service.dto.ParametroDTO;
@@ -280,8 +283,8 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			if (!getMapFields(typeGeneric).containsKey(fieldName)) {
 				throw new RuntimeException(i18n().valueBundle(CONST_ERR_CONFIG_FIELD_NOT_FOUND_).get());
 			}
-			var field = getInstanceDto(typeGeneric);
-			var factory = LoadFieldsFactory.getInstance(field);
+			var clazz = getInstanceDto(typeGeneric);
+			var factory = LoadFieldsFactory.getInstance(clazz);
 			var typeField = getInstanceDto(typeGeneric).getType(fieldName);
 			var nodes = getMapFields(typeGeneric).get(fieldName);
 			nodes.forEach(node -> {
@@ -304,13 +307,16 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		genericFormsUtils.inputListenerToAssingValue(fieldControl, value -> {
 			try {
 				getInstanceDto(typeGeneric).set(nameField, validateValuesUtils.cast(value, typeField));
-			} catch (ReflectionException e) {
+
+				ReflectionUtils.instanciar().invoke((Class) this.getClass().getSuperclass(), this, "operacion",
+						nameField);
+				assignOperation(typeGeneric, nameField);
+			} catch (ReflectionException | SecurityException | IllegalArgumentException e) {
 				logger().DEBUG(i18n().valueBundle(CONST_ERR_GET_FIELD), e);
 			} catch (ValidateValueException e) {
 				logger().DEBUG(i18n().valueBundle(CONST_ERR_VALID_VALUES), e);
 			}
 		});
-
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -422,6 +428,16 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					});
 				});
 		return dto;
+	}
+
+	private void assignOperation(TypeGeneric typeGeneric, String nameField) {
+		var dto = getInstanceDto(typeGeneric);
+		var clazz = dto.getClass();
+		var field = ReflectionUtils.instanciar().getField(clazz, nameField);
+		if (field != null) {
+			new AnnotationsOperacionUtil(dto, (Field) field).process();
+			loadValueIntoForm(typeGeneric, nameField);
+		}
 	}
 
 	default Boolean validFields() {

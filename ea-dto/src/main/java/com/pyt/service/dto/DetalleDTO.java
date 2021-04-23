@@ -27,6 +27,7 @@ public class DetalleDTO extends ADto {
 	private ServicioDTO concepto;
 	private CentroCostoDTO centroCosto;
 	private ParametroDTO categoriaGasto;
+	@Operacion(valor1="valorUnidad", valor2="cantidad", operacion=Operar.MULTIPLICAR)
 	private BigDecimal valorBruto;
 	@NoEdit
 	@Operacion(valor1 = "valorBruto", valor2 = "valorIva", operacion = Operar.SUMA)
@@ -48,6 +49,9 @@ public class DetalleDTO extends ADto {
 	private String observaciones;
 	private String descripcion;
 	private EmpresaDTO tercero;
+	@Operacion(valor1="concepto.valorManoObra",operacion=Operar.IGUAL)
+	private BigDecimal valorUnidad;
+	private Integer cantidad;
 
 	public Long getPorcentajeDescuento() {
 		return porcentajeDescuento;
@@ -207,6 +211,22 @@ public class DetalleDTO extends ADto {
 
 	public void setActividadIca(ActividadIcaDTO actividadIca) {
 		this.actividadIca = actividadIca;
+	}
+
+	public BigDecimal getValorUnidad() {
+		return valorUnidad;
+	}
+
+	public void setValorUnidad(BigDecimal valorUnidad) {
+		this.valorUnidad = valorUnidad;
+	}
+
+	public Integer getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(Integer cantidad) {
+		this.cantidad = cantidad;
 	}
 
 }

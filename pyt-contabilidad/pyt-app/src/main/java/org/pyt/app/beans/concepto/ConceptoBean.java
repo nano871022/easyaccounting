@@ -84,9 +84,9 @@ public class ConceptoBean extends AGenericInterfacesBean<ConceptoDTO> {
 		loadDataModel(paginador, tabla);
 		loadColumns();
 		visibleButtons();
-		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
-				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
-				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.new").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE).isVisible(edit)
+				.setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
 				.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();
 	}
 

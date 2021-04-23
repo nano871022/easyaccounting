@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Compare;
@@ -35,8 +36,10 @@ import com.pyt.service.interfaces.IParametrosSvc;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
 import co.com.japl.ea.utls.PermissionUtil;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -53,12 +56,6 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
 	private IParametrosSvc parametroSvc;
 	private DataTableFXMLUtil<DocumentosDTO, DocumentosDTO> dataTable;
-	@FXML
-	private Button guardar;
-	@FXML
-	private Button btnCopyTo;
-	@FXML
-	private Button cancelar;
 	@FXML
 	private Button addItem;
 	@FXML
@@ -129,6 +126,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Label labelFormat;
 	@FXML
 	private TextField fieldFormat;
+	@FXML
+	private HBox buttons;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
 	private List<ParametroDTO> listGrupo;
@@ -140,10 +139,14 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Boolean instans;
 	private final static String FIELD_NAME = "nombre";
 	private ParametroDTO tipoDeDocumento;
+	private SimpleBooleanProperty saveBool;
+	private SimpleBooleanProperty copyBool;
+	private SimpleBooleanProperty cancelBool;
 
 	@FXML
 	public void initialize() {
 		instans = false;
+		buttons();
 		loadInstances();
 		loadMapControlClass();
 		loadListDocumentType();
@@ -158,6 +161,19 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		lazy();
 	}
 
+	private void buttons() {
+		saveBool = new SimpleBooleanProperty(false);
+		copyBool = new SimpleBooleanProperty(false);
+		cancelBool = new SimpleBooleanProperty(false);
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.button.save").action(this::guardar)
+				.icon(Glyph.SAVE).isVisible(saveBool)./*
+														 * setName("fxml.button.copy").action(this::copyTo).icon(Glyph.
+														 * COPY) .isVisible(copyBool).
+														 */setName("fxml.button.cacel").action(this::cancelar)
+				.isVisible(cancelBool).build();
+
+	}
+
 	private void visibilityOnLoad() {
 		nombreCampo.setVisible(false);
 		etiqueta.setVisible(false);
@@ -170,7 +186,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
 		lblCopyTo.setVisible(false);
-		btnCopyTo.setVisible(false);
+		copyBool.setValue(false);
 		cbCopyTo.setVisible(false);
 		labelFormat.setVisible(false);
 		fieldFormat.setVisible(false);
@@ -582,8 +598,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		if (validItem(dto)) {
 			if (StringUtils.isBlank(dto.getCodigo())) {
 				documentos.add(dto);
-				guardar.setVisible(true);
-				cancelar.setVisible(true);
+				saveBool.setValue(true);
+				cancelBool.setValue(true);
 			}
 			notificarI18n("mensaje.document.have.been.inserted");
 			cleanItem();
@@ -649,8 +665,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 						}
 					} // end for
 					if (documentos.size() == 0) {
-						guardar.setVisible(false);
-						cancelar.setVisible(false);
+						saveBool.setValue(false);
+						cancelBool.setValue(false);
 					}
 				}
 				notificarI18n("mensaje.document.have.been.deleted");
@@ -682,7 +698,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		var selectControl = SelectList.get(controlar, mapa_controlar);
 		var select = havaPermission && selectDocumentType != null && selectControl != null;
 		lblCopyTo.setVisible(select);
-		btnCopyTo.setVisible(select);
+		copyBool.setValue(select);
 		cbCopyTo.setVisible(select);
 	}
 
