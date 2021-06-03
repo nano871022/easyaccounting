@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="411.0" prefWidth="533.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="co.com.japl.ea.app.beans.generic.interfaces.GenericInterfacesBean">
+  <bottom>
+    <HBox fx:id="buttons" alignment="CENTER"  prefHeight="29.0" prefWidth="489.0" BorderPane.alignment="CENTER"/>
+  </bottom>
+  <center>
+    <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="258.0" prefWidth="513.0" vgap="5.0" BorderPane.alignment="CENTER">
+      <children>
+        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="33.0" prefWidth="88.0" text="%fxml.lbl.name" />
+        <TextField fx:id="txtName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1">
+          <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+          </GridPane.margin>
+        </TextField>
+        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="70.0" text="%fxml.lbl.description" textAlignment="CENTER" GridPane.columnIndex="2" />
+        <TextField fx:id="txtDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" />
+        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="%fxml.lbl.alias" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="txtAlias" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="1" />
+        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="%fxml.lbl.dto.class" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        <TextField fx:id="txtClassDto" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="1" />
+        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="%fxml.lbl.bean.class" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField fx:id="txtClassBean" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="2" />
+        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="90.0" text="%fxml.lbl.character.number" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        <TextField fx:id="txtWidth" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="2" />
+        <CheckBox fx:id="chkIsFilter" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.filter" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+        <CheckBox fx:id="chkIsColumn" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.column" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+        <CheckBox fx:id="chkIsRequired" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.required" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+        <Label alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.state" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+        <ChoiceBox fx:id="chbState" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.margin="$x1" GridPane.rowIndex="4" />
+        <TextField fx:id="txtOrder" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="6" />
+        <Label alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.order" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <Label fx:id="lbGroup" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.group" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+        <ChoiceBox fx:id="cbGroup" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="7">
+          <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+          </GridPane.margin>
+        </ChoiceBox>
+        <CheckBox fx:id="chkVisible" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.visible" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5">
+          <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+          </GridPane.margin>
+        </CheckBox>
+        <Label fx:id="lbDefault" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.default" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+        <TextField id="txtOrder" fx:id="tbDefault" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="6">
+          <GridPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" fx:id="x1" />
+          </GridPane.margin>
+        </TextField>
+        <CheckBox fx:id="chkDefault" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.default" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+        <ChoiceBox fx:id="cbName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <ChoiceBox fx:id="cbField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="8" />
+        <Label fx:id="lbField" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.field" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <CheckBox fx:id="chkGroup" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%fxml.lbl.is.group" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="110.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="175.0" minWidth="10.0" prefWidth="131.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="10.0" prefWidth="123.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.0" minWidth="10.0" prefWidth="134.0" />
+      </columnConstraints>
+      <padding>
+        <Insets bottom="10.0" />
+      </padding>
+      <rowConstraints>
+        <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="59.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="65.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="32.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <BorderPane.margin>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </BorderPane.margin>
+    </GridPane>
+  </center>
+  <padding>
+    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+  </padding>
+  <top>
+    <FlowPane alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+      <children>
+        <Label fx:id="titulo" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.generic.interfaces" textAlignment="CENTER">
+          <font>
+            <Font name="System Bold Italic" size="18.0" />
+          </font>
+        </Label>
+      </children>
+      <BorderPane.margin>
+        <Insets bottom="5.0" top="5.0" />
+      </BorderPane.margin>
+    </FlowPane>
+  </top>
+</BorderPane>

@@ -1,0 +1,23 @@
+package co.com.japl.ea.exceptions.querys;
+
+import co.com.japl.ea.exceptions.AExceptions;
+
+/**
+ * Se encarga de controlar las excepciones del servicio de empleados
+ * @author alejandro parra
+ * @since 06/05/2018
+ */
+public class StatementSqlException extends AExceptions {
+	private static final long serialVersionUID = 5682846993312424378L;
+
+	public StatementSqlException(String mensaje, Throwable e) {
+		super(mensaje, e);
+		setMensage(mensaje);
+		setE(e);
+	}
+	public StatementSqlException(String mensaje) {
+		super(mensaje);
+		setMensage(mensaje);
+	}
+
+}

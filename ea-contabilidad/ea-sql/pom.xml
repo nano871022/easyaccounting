@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>co.com.japl.ea</groupId>
+		<artifactId>ea-contabilidad</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<groupId>co.com.japl.ea</groupId>
+	<artifactId>ea-sql</artifactId>
+	<version>${project.version}</version>
+	<description>Projecto creado solo para contener las consultas sql que usara la aplicacion ytener todas los script versionados</description>
+	<dependencies>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-constantes</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

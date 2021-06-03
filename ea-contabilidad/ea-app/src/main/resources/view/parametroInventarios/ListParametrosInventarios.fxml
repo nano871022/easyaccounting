@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="567.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.com.japl.ea.app.beans.parametroInventario.ParametrosInventariosBean">
+	<bottom>
+		<HBox fx:id="buttons" alignment="CENTER" depthTest="INHERIT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
+	</bottom>
+	<center>
+		<BorderPane prefHeight="200.0" prefWidth="200.0">
+			<bottom>
+				<GridPane alignment="CENTER" gridLinesVisible="false" maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
+					<children>
+						<HBox fx:id="paginador" maxWidth="-1.0" prefHeight="40.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+							<GridPane.margin>
+								<Insets top="10.0" />
+							</GridPane.margin>
+						</HBox>
+					</children>
+					<columnConstraints>
+						<ColumnConstraints hgrow="SOMETIMES" maxWidth="76.0" minWidth="10.0" prefWidth="76.0" />
+						<ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="10.0" prefWidth="220.0" />
+						<ColumnConstraints hgrow="SOMETIMES" maxWidth="76.0" minWidth="10.0" prefWidth="76.0" />
+					</columnConstraints>
+					<rowConstraints>
+						<RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
+					</rowConstraints>
+				</GridPane>
+			</bottom>
+			<center>
+				<TableView fx:id="tabla" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#clickTable" tableMenuButtonVisible="false" BorderPane.alignment="CENTER">
+					<columns>
+						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Nombre">
+							<cellValueFactory>
+								<PropertyValueFactory property="nombre" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="125.0" text="Descripcion">
+							<cellValueFactory>
+								<PropertyValueFactory property="descripcion" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn prefWidth="75.0" text="Orden">
+							<cellValueFactory>
+								<PropertyValueFactory property="orden" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn prefWidth="75.0" text="Estado">
+							<cellValueFactory>
+								<PropertyValueFactory property="estado" />
+							</cellValueFactory>
+						</TableColumn>
+					</columns>
+				</TableView>
+			</center>
+         <top>
+      		<GridPane alignment="CENTER" cache="false" depthTest="INHERIT" hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="false" pickOnBounds="true" prefWidth="-1.0" vgap="5.0" BorderPane.alignment="CENTER">
+      			<children>
+      				<Label text="Nombre" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+      				<Label text="Descripcion" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+      				<Label text="Estado" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+      				<Label text="Grupo" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+      				<TextField fx:id="nombre" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+      				<TextField fx:id="descripcion" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+      				<ChoiceBox fx:id="estado" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      				<ChoiceBox fx:id="grupo" maxWidth="1.7976931348623157E308" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+      				<Button mnemonicParsing="false" onAction="#searchBtn" text="Buscar" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+      			</children>
+      			<columnConstraints>
+      				<ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="61.0" />
+      				<ColumnConstraints hgrow="SOMETIMES" maxWidth="139.0" minWidth="10.0" prefWidth="139.0" />
+      				<ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="86.0" />
+      				<ColumnConstraints hgrow="SOMETIMES" maxWidth="114.0" minWidth="10.0" prefWidth="114.0" />
+      			</columnConstraints>
+      			<rowConstraints>
+      				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      			</rowConstraints>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+      		</GridPane>
+         </top>
+		</BorderPane>
+	</center>
+	<left>
+		<VBox alignment="TOP_CENTER" prefHeight="410.0" prefWidth="114.0">
+			<children>
+				<TextField fx:id="filtroGrupo" prefWidth="200.0">
+					<VBox.margin>
+						<Insets right="3.0" />
+					</VBox.margin>
+				</TextField>
+				<HBox fx:id="addGroup" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" spacing="5.0"/>
+				<TableView fx:id="filtrar" maxWidth="1.7976931348623157E308" minHeight="300" minWidth="205" onMouseClicked="#clickTableFiltrar" prefHeight="200.0" prefWidth="-1.0">
+					<columns>
+						<TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="200.0" text="Nombre">
+							<cellValueFactory>
+								<PropertyValueFactory property="nombre" />
+							</cellValueFactory>
+						</TableColumn>
+					</columns>
+					<VBox.margin>
+						<Insets bottom="10.0" right="3.0" top="10.0" />
+					</VBox.margin>
+				</TableView>
+				<HBox fx:id="paginador2" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="-1.0" />
+				<HBox fx:id="modifyGroup" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="-1.0" />
+			</children>
+		</VBox>
+	</left>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</BorderPane>

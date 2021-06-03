@@ -1,0 +1,44 @@
+Tipo Banco;Tipo de bando;;;;1;*
+Naturaleza;Tipo de cuenta;;;;1;*
+Estado Empleado;Estado del empleado;;;;1;*
+Estado Banco;Estado de habilitación del banco;;;;1;*
+Profesiones;Profesiones del empleado;;;;1;*
+Tipo de Cuenta;Tipo de cuenta bancaria;;;;1;*
+Iva;Diferentes valores de iva;;;;1;*
+Estado Concepto;Estado del habilitación del concepto;;;;1;*
+Tipo ;tipo;;;;1;*
+Tipo Pago;formas de pago;;;;1;*
+Estado Centro Costo;Estado Centro de costo;;;;1;*
+Tipo Plan Contable;Tipo de plan contable;;;;1;*
+Activo;Estado activo del banco;1;1;;1;Estado Banco
+Inactivo;Estado inactivo del banco;2;1;;1;Estado Banco
+Activo;Estado activo del concepto;1;1;;1;Estado Concepto
+Inactivo;Estado inactivo del concepto;2;1;;1;Estado Concepto
+Activo;Estado activo del centro de costo;1;1;;1;Estado Centro Costo
+Inactivo;Estado inactivo del centro de costo;2;1;;1;Estado Centro Costo
+Crédito ;cuenta de crédito;1;1;;1;Naturaleza
+Ahorro;cuenta de ahorros;2;1;;1;Naturaleza
+Corriente;tipo de cuenta corriente;1;1;;1;Tipo de Cuenta
+Ahorro;tipo de cuenta de ahorros;2;1;;1;Tipo de Cuenta
+Servicios;Tipo de plan contable de servicios;1;1;;1;Tipo Plan Contable
+Comercial;tipo de plan contable comercial;2;1;;1;Tipo Plan Contable
+Empresas Extractivas;tipo de plan contable de empresas extractibas;3;1;;1;Tipo Plan Contable
+Industrial;tipo de plan contable industrial;4;1;;1;Tipo Plan Contable
+Banco;tipo de banco;1;1;;1;Tipo Banco
+Crédito ;tipo de pago;1;1;;1;Tipo Pago
+De contado;tipo de pago;2;1;;1;Tipo Pago
+A plazos;tipo de pago;3;1;;1;Tipo Pago
+%19;Iva;1;1;;1;Iva
+%16;Iva 2017;2;1;;0;Iva
+%8;Impuesto Consumo;3;1;;1;Iva
+Activo;Estado de empleado activo;1;1;;1;Estado Empleado
+Inactivo;Estado de empleado inactivo;2;1;;1;Estado Empleado
+Vacaciones;Estado de empleado vacaciones;3;1;;1;Estado Empleado
+Incapacidad;Estado de empleado Incapacidad;4;1;;1;Estado Empleado
+Maternidad;Estado de empleado en maternidad;5;1;;1;Estado Empleado
+Paternidad;Estado de empleado en paternidad;6;1;;1;Estado Empleado
+Ingeniero sistemas;Profesión ingeniero de sistemas;1;1;;1;Profesiones
+Ingeniero industrial;Profesión ingeniero industrial;2;1;;1;Profesiones
+Economista;Profesión economista;3;1;;1;Profesiones
+Contabilidad;Profesión contabilidad;4;1;;1;Profesiones
+Administrador de empresas;Profesión administrado de empresas;5;1;;1;Profesiones

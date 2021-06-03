@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.*?>
+<?import org.controlsfx.glyphfont.Glyph?>
+
+<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml">  
+    <TextField fx:id="value"  />
+	<Button fx:id="btnOpen"  mnemonicParsing="false" onAction="#openPopup"   >
+		<graphic>
+			<Glyph fontFamily="FontAwesome" icon="SEARCH" />
+		</graphic>
+	</Button>
+	<Button fx:id="btnClean" mnemonicParsing="false" onAction="#cleanValue">
+		<graphic>
+			<Glyph fontFamily="FontAwesome" icon="REMOVE" />
+		</graphic>
+	</Button>
+</fx:root>
