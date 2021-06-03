@@ -12,7 +12,7 @@
 	<name>ea-dto</name>
 	<dependencies>
 		<dependency>
-			<groupId>co.com.arquitectura.proccessor</groupId>
+			<groupId>co.com.japl.arquitectura</groupId>
 			<artifactId>arquitectura-proccessor</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
@@ -24,8 +24,8 @@
 			<!-- <scope>${project.scope}</scope> -->
 		</dependency>
 		<dependency>
-			<groupId>co.com.arquitectura.anotaciones</groupId>
-			<artifactId>arquitetura-anotaciones</artifactId>
+			<groupId>co.com.japl.arquitectura</groupId>
+			<artifactId>arquitectura-anotaciones</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>

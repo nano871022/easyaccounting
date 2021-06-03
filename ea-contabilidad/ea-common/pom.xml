@@ -34,8 +34,8 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>co.com.arquitectura.anotaciones</groupId>
-			<artifactId>arquitetura-anotaciones</artifactId>
+			<groupId>co.com.japl.arquitectura</groupId>
+			<artifactId>arquitectura-anotaciones</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.poi.xwpf.converter.pdf -->
@@ -50,8 +50,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>co.com.arquitectura.librerias</groupId>
-			<artifactId>arquitecrura-librerias</artifactId>
+			<groupId>co.com.japl.arquitectura</groupId>
+			<artifactId>arquitectura-librerias</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
