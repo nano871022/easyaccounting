@@ -183,7 +183,7 @@
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 							<mainClass>
-								org.ea.app.load.Main
+								co.com.japl.ea.app.load.Main
 							</mainClass>
 						</manifest>
 					</archive>
