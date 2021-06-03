@@ -12,8 +12,8 @@
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>
-			<groupId>co.com.pyt</groupId>
-			<artifactId>pyt-common</artifactId>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

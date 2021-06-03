@@ -6,7 +6,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.pyt.common.abstracts.ADto;
+import co.com.japl.ea.common.abstracts.ADto;
 
 /**
  * Se encarga de controlar los campos que se muestran y se configuran por el

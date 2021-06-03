@@ -1,4 +1,4 @@
-package com.pyt.service.proccess;
+package co.com.japl.ea.service.proccess;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,20 +6,20 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.constants.DataPropertiesConstants;
 import org.pyt.common.constants.PropertiesConstants;
-import org.pyt.common.exceptions.MarcadorServicioException;
-import org.pyt.common.exceptions.ProccesConfigServiceException;
-import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.properties.PropertiesUtils;
-import org.pyt.common.reflection.ReflectionUtils;
 
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.common.properties.PropertiesUtils;
+import co.com.japl.ea.common.reflection.ReflectionUtils;
+import co.com.japl.ea.exceptions.MarcadorServicioException;
+import co.com.japl.ea.exceptions.ProccesConfigServiceException;
+import co.com.japl.ea.exceptions.ReflectionException;
 
 /**
  * Se encarga de realizar el procesamiento de los servicios

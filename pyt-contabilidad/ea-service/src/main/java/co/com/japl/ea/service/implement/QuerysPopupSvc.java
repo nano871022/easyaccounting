@@ -1,4 +1,4 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import static org.pyt.common.constants.LanguageConstant.CONST_EXC_QUERYS_COUNT_CANT_LESS_0;
 import static org.pyt.common.constants.LanguageConstant.CONST_EXC_QUERYS_COUNT_REG_CANT_0;
@@ -11,16 +11,15 @@ import static org.pyt.common.constants.LanguageConstant.CONST_EXC_QUERYS_VAL_REG
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.QueryException;
-import org.pyt.common.exceptions.QuerysPopupException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.interfaces.IQuerysPopup;
-
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.interfaces.IQuerysPopup;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.QueryException;
+import co.com.japl.ea.exceptions.QuerysPopupException;
 
 public class QuerysPopupSvc extends Services implements IQuerysPopup {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

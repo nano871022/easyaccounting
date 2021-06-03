@@ -1,19 +1,18 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.ConfigGenericFieldException;
-import org.pyt.common.exceptions.GenericServiceException;
 
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.interfaces.IConfigGenericFieldSvc;
-import com.pyt.service.interfaces.IGenericServiceSvc;
-
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.interfaces.IConfigGenericFieldSvc;
+import co.com.japl.ea.dto.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.exceptions.ConfigGenericFieldException;
+import co.com.japl.ea.exceptions.GenericServiceException;
 
 public class ConfigGenericFieldSvc extends Services implements IConfigGenericFieldSvc {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")

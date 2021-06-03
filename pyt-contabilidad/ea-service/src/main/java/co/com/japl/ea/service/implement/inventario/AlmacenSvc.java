@@ -1,20 +1,19 @@
-package com.pyt.service.implement.inventario;
+package co.com.japl.ea.service.implement.inventario;
 
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.QueryException;
-import org.pyt.common.exceptions.inventario.AlmacenException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.inventario.AlmacenDTO;
-import com.pyt.service.dto.inventario.ProductoUbicacionDTO;
-import com.pyt.service.dto.inventario.UbicacionDTO;
-import com.pyt.service.interfaces.inventarios.IAlmacenSvc;
-
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.dto.inventario.AlmacenDTO;
+import co.com.japl.ea.dto.dto.inventario.ProductoUbicacionDTO;
+import co.com.japl.ea.dto.dto.inventario.UbicacionDTO;
+import co.com.japl.ea.dto.interfaces.inventarios.IAlmacenSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.QueryException;
+import co.com.japl.ea.exceptions.inventario.AlmacenException;
 
 public class AlmacenSvc extends Services implements IAlmacenSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

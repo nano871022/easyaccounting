@@ -2,9 +2,8 @@ package co.com.japl.ea.dto.dto.upds;
 
 import java.time.LocalDateTime;
 
-import org.pyt.common.interfaces.IUpdClass;
-
-import com.pyt.service.dto.ParametroDTO;
+import co.com.japl.ea.common.interfaces.IUpdClass;
+import co.com.japl.ea.dto.dto.ParametroDTO;
 
 public class ParametroUpdDTO extends ParametroDTO implements IUpdClass{
 	private static final long serialVersionUID = 1L;

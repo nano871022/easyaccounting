@@ -1,7 +1,6 @@
 package co.com.japl.ea.gdb.privates.impls;
 
-import org.pyt.common.abstracts.ADto;
-
+import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.gdb.privates.interfaces.IStatementSql;
 
 /**

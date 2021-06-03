@@ -1,19 +1,18 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.EmpleadoException;
-import org.pyt.common.exceptions.QueryException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.PersonaDTO;
-import com.pyt.service.dto.TrabajadorDTO;
-import com.pyt.service.interfaces.IEmpleadosSvc;
-
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.dto.PersonaDTO;
+import co.com.japl.ea.dto.dto.TrabajadorDTO;
+import co.com.japl.ea.dto.interfaces.IEmpleadosSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.EmpleadoException;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class EmpleadosSvc extends Services implements IEmpleadosSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

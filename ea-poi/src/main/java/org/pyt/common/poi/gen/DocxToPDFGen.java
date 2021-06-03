@@ -4,11 +4,12 @@ import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.Log;
-import org.pyt.common.exceptions.POIException;
 import org.pyt.common.poi.docs.Bookmark;
 import org.pyt.common.poi.docs.DocX;
 import org.pyt.common.poi.docs.TableBookmark;
 import org.pyt.common.poi.pdf.ConvertToPDF;
+
+import co.com.japl.ea.exceptions.POIException;
 
 /**
  * Se encarga de generar un archivo docx segun los bookmark de tablas como de

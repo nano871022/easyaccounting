@@ -2,10 +2,10 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.pyt.service.dto.departamento">
+<mapper namespace="co.com.japl.ea.dto.dto.departamento">
 
 	<insert id="insert"
-		parameterType="com.pyt.service.dto.DepartamentoDTO">
+		parameterType="co.com.japl.ea.dto.dto.DepartamentoDTO">
 		INSERT INTO TBL_DEPARTAMENT
 		(scode
 		,sname
@@ -29,7 +29,7 @@
 	</insert>
 
 	<select id="select"
-		parameterType="com.pyt.service.dto.DepartamentoDTO"
+		parameterType="co.com.japl.ea.dto.dto.DepartamentoDTO"
 		resultMap="departametoResult">
 		SELECT
 		 a.scode as codigo
@@ -46,13 +46,13 @@
 		<include refid="depwhere" ></include>
 	</select>
 	
-	<resultMap type="com.pyt.service.dto.DepartamentoDTO" id="departametoResult">
+	<resultMap type="co.com.japl.ea.dto.dto.DepartamentoDTO" id="departametoResult">
 		<id column="scode" property="codigo"/>
 		
 	</resultMap>
 
 	<select id="update"
-		parameterType="com.pyt.service.dto.DepartamentoDTO">
+		parameterType="co.com.japl.ea.dto.dto.DepartamentoDTO">
 		UPDATE TBL_DEPARTAMENT
 		SET
 		scode = #{codigo}
@@ -68,7 +68,7 @@
 	</select>
 
 	<select id="select_count"
-		parameterType="com.pyt.service.dto.DepartamentoDTO"
+		parameterType="co.com.japl.ea.dto.dto.DepartamentoDTO"
 		resultType="Integer">
 		SELECT
 		count(scode)

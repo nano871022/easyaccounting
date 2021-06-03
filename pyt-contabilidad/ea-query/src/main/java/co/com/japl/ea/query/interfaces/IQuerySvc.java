@@ -2,8 +2,8 @@ package co.com.japl.ea.query.interfaces;
 
 import java.util.List;
 
-import org.pyt.common.abstracts.ADto;
-import org.pyt.common.exceptions.QueryException;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.exceptions.QueryException;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
 

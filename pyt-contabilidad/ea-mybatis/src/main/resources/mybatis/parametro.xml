@@ -2,10 +2,10 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.pyt.service.dto.parametro">
+<mapper namespace="co.com.japl.ea.dto.dto.parametro">
 
 	<insert id="insert"
-		parameterType="com.pyt.service.dto.ParametroDTO">
+		parameterType="co.com.japl.ea.dto.dto.ParametroDTO">
 		INSERT INTO TBL_PARAMETER
 		(scode
 		,sname
@@ -39,8 +39,8 @@
 	</insert>
 
 	<select id="select"
-		parameterType="com.pyt.service.dto.ParametroDTO"
-		resultType="com.pyt.service.dto.ParametroDTO">
+		parameterType="co.com.japl.ea.dto.dto.ParametroDTO"
+		resultType="co.com.japl.ea.dto.dto.ParametroDTO">
 		SELECT
 		scode as codigo
 		,sname as nombre
@@ -63,7 +63,7 @@
 	</select>
 
 	<select id="update"
-		parameterType="com.pyt.service.dto.ParametroDTO">
+		parameterType="co.com.japl.ea.dto.dto.ParametroDTO">
 		UPDATE TBL_PARAMETER
 		SET
 		scode = #{codigo}
@@ -84,7 +84,7 @@
 	</select>
 
 	<select id="select_count"
-		parameterType="com.pyt.service.dto.ParametroDTO" resultType="Integer">
+		parameterType="co.com.japl.ea.dto.dto.ParametroDTO" resultType="Integer">
 		SELECT
 		count(scode)
 		FROM TBL_PARAMETER

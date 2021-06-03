@@ -9,7 +9,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.pyt.common.common.Log;
-import org.pyt.common.exceptions.validates.ValidateValueException;
+
+import co.com.japl.ea.exceptions.validates.ValidateValueException;
 
 /**
  * Se ecarga de llenar los marcadores dentro de un archivo de word docx

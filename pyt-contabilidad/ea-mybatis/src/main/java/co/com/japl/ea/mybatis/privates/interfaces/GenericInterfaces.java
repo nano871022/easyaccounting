@@ -2,9 +2,8 @@ package co.com.japl.ea.mybatis.privates.interfaces;
 
 import java.util.List;
 
-import org.pyt.common.abstracts.ADto;
-
-import com.pyt.service.dto.ParametroGrupoDTO;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.dto.dto.ParametroGrupoDTO;
 
 public interface  GenericInterfaces {
 	

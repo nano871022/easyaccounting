@@ -3,7 +3,7 @@ package co.com.japl.ea.query.utils;
 import java.time.LocalDateTime;
 import java.util.Random;
 
-import org.pyt.common.abstracts.ADto;
+import co.com.japl.ea.common.abstracts.ADto;
 
 public class StatementQuerysUtil {
 	private final static String CONST_DTO = "DTO";

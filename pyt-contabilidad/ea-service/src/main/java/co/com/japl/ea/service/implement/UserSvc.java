@@ -1,4 +1,4 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_COUNT_USER_EMPTY;
 import static org.pyt.common.constants.LanguageConstant.CONST_ERR_CREATE_USER_CODE_NOT_EMPTY;
@@ -30,16 +30,14 @@ import java.util.stream.Collectors;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.QueryException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.services.privates.utils.LoginUtil;
-
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.interfaces.IUsersSvc;
-
+import co.com.japl.ea.services.privates.utils.LoginUtil;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.interfaces.IUsersSvc;
 import co.com.japl.ea.dto.system.LoginDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class UserSvc extends Services implements IUsersSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

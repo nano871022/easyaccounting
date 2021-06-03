@@ -1,6 +1,6 @@
 package co.com.japl.ea.dto.system;
 
-import org.pyt.common.abstracts.ADto;
+import co.com.japl.ea.common.abstracts.ADto;
 
 public class MenuPermUsersDTO extends ADto {
 	private static final long serialVersionUID = 1L;

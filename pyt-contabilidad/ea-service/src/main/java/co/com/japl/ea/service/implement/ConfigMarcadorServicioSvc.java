@@ -1,4 +1,4 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,26 +7,24 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ConfigServiceConstant;
-import org.pyt.common.exceptions.MarcadorServicioException;
-import org.pyt.common.exceptions.ProccesConfigServiceException;
-import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.poi.docs.Bookmark;
 import org.pyt.common.poi.docs.TableBookmark;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.proccess.ProccesConfigService;
-
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.ConfiguracionDTO;
-import com.pyt.service.dto.MarcadorDTO;
-import com.pyt.service.dto.MarcadorServicioDTO;
-import com.pyt.service.dto.ServicioCampoBusquedaDTO;
-import com.pyt.service.interfaces.IConfigMarcadorServicio;
-
+import co.com.japl.ea.service.proccess.ProccesConfigService;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.dto.ConfiguracionDTO;
+import co.com.japl.ea.dto.dto.MarcadorDTO;
+import co.com.japl.ea.dto.dto.MarcadorServicioDTO;
+import co.com.japl.ea.dto.dto.ServicioCampoBusquedaDTO;
+import co.com.japl.ea.dto.interfaces.IConfigMarcadorServicio;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.MarcadorServicioException;
+import co.com.japl.ea.exceptions.ProccesConfigServiceException;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcadorServicio {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

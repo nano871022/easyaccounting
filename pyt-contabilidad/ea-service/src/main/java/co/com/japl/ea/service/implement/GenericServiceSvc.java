@@ -1,20 +1,19 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
-import org.pyt.common.exceptions.GenericServiceException;
-import org.pyt.common.exceptions.QueryException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.interfaces.IGenericServiceSvc;
-
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.GenericServiceException;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class GenericServiceSvc<T extends ADto> extends Services implements IGenericServiceSvc<T> {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

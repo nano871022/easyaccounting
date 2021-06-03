@@ -3,8 +3,8 @@ package co.com.japl.ea.query.interfaces;
 import java.sql.ResultSet;
 import java.util.ServiceLoader;
 
-import org.pyt.common.abstracts.ADto;
-import org.pyt.common.exceptions.QueryException;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.exceptions.QueryException;
 /**
  * Conteiene script para realizar consultas de administracion sobre la base de datos
  * @author Alejandro Parra 

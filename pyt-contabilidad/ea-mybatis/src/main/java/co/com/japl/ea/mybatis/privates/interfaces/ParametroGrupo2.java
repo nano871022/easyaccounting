@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
-import com.pyt.service.dto.ParametroGrupoDTO;
+import co.com.japl.ea.dto.dto.ParametroGrupoDTO;
 
 public interface ParametroGrupo2 extends GenericInterfaces {
 	

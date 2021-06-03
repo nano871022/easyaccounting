@@ -4,11 +4,11 @@ package co.com.japl.ea.query.implement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pyt.common.abstracts.ABin;
-import org.pyt.common.abstracts.ADto;
-import org.pyt.common.binario.ReadBin;
-import org.pyt.common.binario.WriteBin;
-import org.pyt.common.exceptions.FileBinException;
+import co.com.japl.ea.common.abstracts.ABin;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.common.binario.ReadBin;
+import co.com.japl.ea.common.binario.WriteBin;
+import co.com.japl.ea.exceptions.FileBinException;
 
 /**
  * Se encarga de leer y escribir archivos binarios con objetos dto

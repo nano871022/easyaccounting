@@ -2,8 +2,7 @@ package co.com.japl.ea.gdb.privates.utils;
 
 import java.util.Properties;
 
-import org.pyt.common.properties.PropertiesUtils;
-
+import co.com.japl.ea.common.properties.PropertiesUtils;
 import co.com.japl.ea.constants.utils.EnviromentProperties;
 import co.com.japl.ea.gdb.privates.constants.ConnectionPropertiesConstant;
 

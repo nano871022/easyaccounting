@@ -14,3 +14,37 @@ Error presentado en printTrace::./logger/stracTrace.log (No existe el archivo o 
 2021-06-02 17:38:25 com.pyt.service.implement.GenericServiceSvc : ERROR : co.com.japl.ea.query.implement.QuerySvc
 2021-06-02 17:38:25 org.pyt.app.beans.users.LoginBean : ERROR : Null pointer exception
 2021-06-02 17:38:25 org.pyt.app.beans.users.LoginBean : ERROR : When open file throw EOF exception
+2021-06-02 22:20:37 co.com.japl.ea.gdb.privates.impls.ConnectionJDBC : ERROR : No se encontro el archivo de properties .//connection-jdbc.properties en ./ en path /home/alejo/git/pyt/pyt-contabilidad/./connection-jdbc.properties
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : Reflection: 
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : com.pyt.service.implement.UserSvc
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : Reflection.java.inject:59
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : ABean.java.<init>:51
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : LoginBean.java.<init>:44
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : NativeConstructorAccessorImpl.java.newInstance0:-2
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : NativeConstructorAccessorImpl.java.newInstance:78
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : DelegatingConstructorAccessorImpl.java.newInstance:45
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : Constructor.java.newInstanceWithCaller:499
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : ReflectAccess.java.newInstance:128
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : ReflectionFactory.java.newInstance:350
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : Class.java.newInstance:642
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.processAttribute:938
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.processAttribute:982
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.processStartElement:229
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.processStartElement:754
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.processStartElement:2808
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.loadImpl:2634
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.loadImpl:2548
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : FXMLLoader.java.load:2517
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : LoadAppFxml.java.loadFxml:300
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : App.java.start:14
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : LauncherImpl.java.lambda$launchApplication1$9:846
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : PlatformImpl.java.lambda$runAndWait$12:474
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : PlatformImpl.java.lambda$runLater$10:447
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : AccessController.java.doPrivileged:391
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : PlatformImpl.java.lambda$runLater$11:446
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : InvokeLaterDispatcher.java.run:96
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : GtkApplication.java._runLoop:-2
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : GtkApplication.java.lambda$runLoop$11:277
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : Thread.java.run:831
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : Null pointer exception
+2021-06-02 22:20:37 org.pyt.app.beans.users.LoginBean : ERROR : When open file throw EOF exception

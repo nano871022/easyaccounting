@@ -1,7 +1,7 @@
 package co.com.japl.ea.gdb.privates.interfaces;
 
-import org.pyt.common.exceptions.querys.StatementSqlException;
-import org.pyt.common.reflection.ReflectionDto;
+import co.com.japl.ea.common.reflection.ReflectionDto;
+import co.com.japl.ea.exceptions.querys.StatementSqlException;
 
 /**
  * Se encarga de estandarizar las diferentes sentencias posibles de usar

@@ -15,12 +15,12 @@
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-constantes</artifactId>
-			<version>1.2.1-BETA</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>co.com.pyt</groupId>
-			<artifactId>pyt-common</artifactId>
-			<version>1.2.1-BETA</version>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-common</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

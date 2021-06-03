@@ -13,8 +13,8 @@
 	<name>ea-query</name>
 	<dependencies>
 		<dependency>
-			<groupId>co.com.pyt</groupId>
-			<artifactId>pyt-common</artifactId>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-common</artifactId>
 			<version>${project.version}</version>
 			<scope>${project.scope}</scope>
 		</dependency>

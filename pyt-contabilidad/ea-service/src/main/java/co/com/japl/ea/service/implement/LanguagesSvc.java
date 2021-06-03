@@ -1,4 +1,4 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,18 +7,17 @@ import java.util.stream.Collectors;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.ListUtils;
-import org.pyt.common.exceptions.GenericServiceException;
-import org.pyt.common.exceptions.QueryException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.interfaces.ILanguageSvc;
-
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.interfaces.ILanguageSvc;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.GenericServiceException;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class LanguagesSvc extends Services implements ILanguageSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

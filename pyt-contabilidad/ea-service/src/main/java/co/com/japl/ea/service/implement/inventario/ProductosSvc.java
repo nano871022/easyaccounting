@@ -1,23 +1,22 @@
-package com.pyt.service.implement.inventario;
+package co.com.japl.ea.service.implement.inventario;
 
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.QueryException;
-import org.pyt.common.exceptions.inventario.ProductosException;
-import org.pyt.common.exceptions.inventario.ResumenProductoException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.inventario.ProductoDTO;
-import com.pyt.service.dto.inventario.ResumenProductoDTO;
-import com.pyt.service.interfaces.inventarios.IProductosSvc;
-
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.dto.inventario.ProductoDTO;
+import co.com.japl.ea.dto.dto.inventario.ResumenProductoDTO;
+import co.com.japl.ea.dto.interfaces.inventarios.IProductosSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.QueryException;
+import co.com.japl.ea.exceptions.inventario.ProductosException;
+import co.com.japl.ea.exceptions.inventario.ResumenProductoException;
 
 public class ProductosSvc extends Services implements IProductosSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

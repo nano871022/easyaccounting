@@ -2,7 +2,7 @@ package co.com.japl.ea.dto.system;
 
 import java.time.LocalDate;
 
-import org.pyt.common.abstracts.ADto;
+import co.com.japl.ea.common.abstracts.ADto;
 
 public class LoginDTO extends ADto {
 	private LocalDate fechaInicio;

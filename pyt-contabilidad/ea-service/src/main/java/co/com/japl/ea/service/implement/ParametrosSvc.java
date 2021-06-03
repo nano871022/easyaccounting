@@ -1,4 +1,4 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,19 +6,18 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
-import org.pyt.common.exceptions.ParametroException;
-import org.pyt.common.exceptions.QueryException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.dto.ParametroGrupoDTO;
-import com.pyt.service.interfaces.IParametrosSvc;
-
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.dto.ParametroDTO;
+import co.com.japl.ea.dto.dto.ParametroGrupoDTO;
+import co.com.japl.ea.dto.interfaces.IParametrosSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.ParametroException;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

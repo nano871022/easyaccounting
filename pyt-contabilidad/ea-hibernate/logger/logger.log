@@ -37,30 +37,30 @@ Error presentado en printTrace::.\logger\stracTrace.log (El sistema no puede enc
 2019-05-23 16:28:54 com.japl.ea.query.implement.QuerySvc : INFO : SELECT orden, nombre, descripcion, valor, valor2, grupo, estado, codigo, fechaCreacion, fechaActualizacion, fechaEliminacion, creador, actualizador, eliminador FROM MEM_Parametro WHERE nombre='test1' LIMIT 0,2
 2019-05-23 16:31:33 com.japl.ea.query.implement.QuerySvc : INFO : SELECT orden, nombre, descripcion, valor, valor2, grupo, estado, codigo, fechaCreacion, fechaActualizacion, fechaEliminacion, creador, actualizador, eliminador FROM MEM_Parametro WHERE nombre='test1' LIMIT 0,2
 2019-05-23 16:33:45 com.japl.ea.query.implement.QuerySvc : INFO : SELECT orden, nombre, descripcion, valor, valor2, grupo, estado, codigo, fechaCreacion, fechaActualizacion, fechaEliminacion, creador, actualizador, eliminador FROM MEM_Parametro WHERE nombre='test1' LIMIT 0,2
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
-2019-05-24 10:18:18 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
-2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
-2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
-2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
-2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
-2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
-2019-05-24 10:24:28 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:18:18 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 10:24:28 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 10:24:28 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 10:24:28 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 10:24:28 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 10:24:28 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 10:24:28 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
 2019-05-24 10:51:06 com.japl.ea.query.implement.QuerySvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre='test1'
 2019-05-24 11:16:56 com.japl.ea.query.implement.QuerySvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=t.'test1'
 2019-05-24 11:17:49 com.japl.ea.query.implement.QuerySvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE t.nombre='test1'
@@ -86,18 +86,18 @@ Error presentado en printTrace::.\logger\stracTrace.log (El sistema no puede enc
 2019-05-24 13:06:52 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
 2019-05-24 13:07:08 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
 2019-05-24 13:07:30 com.japl.ea.query.implement.QueryJPASvc : INFO : SELECT t FROM MEM_PARAMETRO t WHERE nombre=:nombre
-2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
-2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
-2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
-2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
-2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
-2019-05-24 13:08:06 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
+2019-05-24 13:08:06 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaCreacion()
+2019-05-24 13:08:06 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaActualizacion()
+2019-05-24 13:08:06 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getFechaEliminacion()
+2019-05-24 13:08:06 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getCreador()
+2019-05-24 13:08:06 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getActualizador()
+2019-05-24 13:08:06 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encontro el metodo com.japl.ea.query.privates.jpa.ParametroJPA.getEliminador()
 2019-05-24 13:11:13 com.japl.ea.query.implement.QueryJPASvc : INFO : nombre::'test1'
 2019-05-24 13:11:13 com.japl.ea.query.implement.QueryJPASvc : INFO : nombre::'test1'
-2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo codigo
-2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaCreacion
-2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaActualizacion
-2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaEliminacion
-2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo creador
-2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo actualizador
-2019-05-24 14:17:41 org.pyt.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo eliminador
+2019-05-24 14:17:41 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo codigo
+2019-05-24 14:17:41 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaCreacion
+2019-05-24 14:17:41 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaActualizacion
+2019-05-24 14:17:41 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo fechaEliminacion
+2019-05-24 14:17:41 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo creador
+2019-05-24 14:17:41 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo actualizador
+2019-05-24 14:17:41 co.com.japl.ea.common.reflection.ReflectionUtils : ERROR : No se encuentro el campo eliminador

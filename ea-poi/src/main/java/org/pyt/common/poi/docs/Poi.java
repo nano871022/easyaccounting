@@ -1,6 +1,6 @@
 package org.pyt.common.poi.docs;
 
-import org.pyt.common.validates.ValidateValues;
+import co.com.japl.ea.common.validates.ValidateValues;
 
 /**
  * Se encarga dde contener los metodos y propiedades para ser generico el uso del poi

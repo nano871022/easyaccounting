@@ -1,9 +1,8 @@
 package co.com.japl.ea.gdb.privates.impls;
 
-import org.pyt.common.abstracts.ADto;
-import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.exceptions.querys.StatementSqlException;
-
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.exceptions.ReflectionException;
+import co.com.japl.ea.exceptions.querys.StatementSqlException;
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.gdb.privates.interfaces.IStatementSql;
 import co.com.japl.ea.gdb.privates.utils.StatementQuerysUtil;

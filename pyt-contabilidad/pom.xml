@@ -52,7 +52,7 @@
 		<module>../ea-exceptions</module>
 		<module>../ea-dto</module>
 		<module>../ea-poi</module>
-		<module>pyt-common</module>
+		<module>ea-common</module>
 		<module>ea-query</module>
 		<module>ea-hibernate</module>
 		<module>../ea-file-bin</module>
@@ -61,7 +61,7 @@
 		<module>ea-mybatis</module>
 		<module>ea-gdb</module>
 		<module>ea-service</module>
-		<module>pyt-app</module>
+		<module>ea-app</module>
 		<module>../ea-sql</module>
 	</modules>
 	<build>

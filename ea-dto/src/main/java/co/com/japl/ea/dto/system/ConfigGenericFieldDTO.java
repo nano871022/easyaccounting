@@ -1,8 +1,9 @@
 package co.com.japl.ea.dto.system;
 
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric.Uses;
+
+import co.com.japl.ea.common.abstracts.ADto;
 
 public class ConfigGenericFieldDTO extends ADto {
 	private static final long serialVersionUID = 1L;

@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pyt.common.binario.ReadBin;
-import org.pyt.common.binario.WriteBin;
 import org.pyt.common.constants.AppConstants;
-import org.pyt.common.exceptions.FileBinException;
 
+import co.com.japl.ea.common.binario.ReadBin;
+import co.com.japl.ea.common.binario.WriteBin;
+import co.com.japl.ea.exceptions.FileBinException;
 import co.com.japl.ea.sql.privates.Constants;
 
 /**

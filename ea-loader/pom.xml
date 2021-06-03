@@ -9,7 +9,7 @@
 	<groupId>co.com.japl.ea</groupId>
 	<artifactId>ea-loader</artifactId>
 	<version>${project.version}</version>
-	<name>loader </name>
+	<name>ea-loader </name>
 	<build>
 		<plugins>
 			<plugin>

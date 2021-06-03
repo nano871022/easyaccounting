@@ -8,7 +8,7 @@
   <groupId>co.com.japl.ea</groupId>
   <artifactId>ea-file-bin</artifactId>
   <version>${project.version}</version>
-  <name>Archivos Binarios</name>
+  <name>ea-file-bin</name>
   <description>Sistma de almacenamiento por medio de archivos binarios</description>
   <dependencies>
   	<dependency>
@@ -17,8 +17,8 @@
   		 <version>${project.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>co.com.pyt</groupId>
-  		<artifactId>pyt-common</artifactId>
+  		<groupId>co.com.japl.ea</groupId>
+  		<artifactId>ea-common</artifactId>
   		 <version>${project.version}</version>
   	</dependency>
   	<dependency>

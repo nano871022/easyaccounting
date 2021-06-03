@@ -2,10 +2,10 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.pyt.service.dto.pais">
+<mapper namespace="co.com.japl.ea.dto.dto.pais">
 
 	<insert id="insert"
-		parameterType="com.pyt.service.dto.PaisDTO">
+		parameterType="co.com.japl.ea.dto.dto.PaisDTO">
 		INSERT INTO TBL_COUNTRY
 		(scode
 		,sname
@@ -29,8 +29,8 @@
 	</insert>
 
 	<select id="select"
-		parameterType="com.pyt.service.dto.PaisDTO"
-		resultType="com.pyt.service.dto.PaisDTO">
+		parameterType="co.com.japl.ea.dto.dto.PaisDTO"
+		resultType="co.com.japl.ea.dto.dto.PaisDTO">
 		SELECT
 		scode as codigo
 		,sname as nombre
@@ -48,7 +48,7 @@
 	</select>
 
 	<select id="update"
-		parameterType="com.pyt.service.dto.PaisDTO">
+		parameterType="co.com.japl.ea.dto.dto.PaisDTO">
 		UPDATE TBL_COUNTRY
 		SET
 		scode = #{codigo}
@@ -64,7 +64,7 @@
 	</select>
 
 	<select id="select_count"
-		parameterType="com.pyt.service.dto.PaisDTO"
+		parameterType="co.com.japl.ea.dto.dto.PaisDTO"
 		resultType="Integer">
 		SELECT
 		count(scode)

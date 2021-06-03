@@ -1,19 +1,18 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.IngresoException;
-import org.pyt.common.exceptions.QueryException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.IngresoDTO;
-import com.pyt.service.interfaces.IIngresosSvc;
-
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.dto.IngresoDTO;
+import co.com.japl.ea.dto.interfaces.IIngresosSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.IngresoException;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class IngresosSvc extends Services implements IIngresosSvc{
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

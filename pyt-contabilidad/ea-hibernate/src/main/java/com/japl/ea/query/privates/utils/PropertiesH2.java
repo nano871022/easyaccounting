@@ -2,10 +2,9 @@ package com.japl.ea.query.privates.utils;
 
 import java.util.Properties;
 
-import org.pyt.common.properties.PropertiesUtils;
-
 import com.japl.ea.query.constants.H2PropertiesConstant;
 
+import co.com.japl.ea.common.properties.PropertiesUtils;
 import co.com.japl.ea.constants.utils.EnviromentProperties;
 
 

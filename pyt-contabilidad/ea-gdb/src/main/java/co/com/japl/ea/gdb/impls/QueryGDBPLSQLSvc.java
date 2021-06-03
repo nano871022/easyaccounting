@@ -6,14 +6,13 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
 import org.pyt.common.constants.LanguageConstant;
-import org.pyt.common.exceptions.QueryException;
-import org.pyt.common.exceptions.ReflectionException;
 
 import co.com.japl.ea.query.interfaces.IAdvanceQuerySvc;
-
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.exceptions.QueryException;
+import co.com.japl.ea.exceptions.ReflectionException;
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.gdb.privates.impls.ConnectionJDBC;
 import co.com.japl.ea.gdb.privates.utils.StatementQuerysUtil;

@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.pyt.common.abstracts.ADto;
-import org.pyt.common.exceptions.ReflectionException;
-
 import com.japl.ea.query.privates.Constants.QueryConstants;
+
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.exceptions.ReflectionException;
 import co.com.japl.ea.query.interfaces.IAdvanceQuerySvc.triggerAction;
 import co.com.japl.ea.query.interfaces.IAdvanceQuerySvc.triggerOption;
 

@@ -6,20 +6,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.I18n;
 import org.pyt.common.constants.LanguageConstant;
-import org.pyt.common.exceptions.QueryException;
-import org.pyt.common.exceptions.ReflectionException;
-import org.pyt.common.reflection.ReflectionUtils;
 
 import com.japl.ea.query.privates.H2Connect;
 import com.japl.ea.query.privates.Constants.QueryConstants;
 import com.japl.ea.query.privates.utils.StatementQuerysUtil;
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.dto.ParametroDTO;
-
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.common.reflection.ReflectionUtils;
+import co.com.japl.ea.dto.dto.ParametroDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.QueryException;
+import co.com.japl.ea.exceptions.ReflectionException;
 
 public class QueryJPASvc implements IQuerySvc {
 

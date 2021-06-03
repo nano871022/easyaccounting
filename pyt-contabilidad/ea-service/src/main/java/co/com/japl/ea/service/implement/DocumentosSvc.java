@@ -1,23 +1,22 @@
-package com.pyt.service.implement;
+package co.com.japl.ea.service.implement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
-import org.pyt.common.exceptions.DocumentosException;
-import org.pyt.common.exceptions.QueryException;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
-import com.pyt.service.abstracts.Services;
-import com.pyt.service.dto.ConceptoDTO;
-import com.pyt.service.dto.DetalleContableDTO;
-import com.pyt.service.dto.DetalleDTO;
-import com.pyt.service.dto.DocumentoDTO;
-import com.pyt.service.dto.DocumentosDTO;
-import com.pyt.service.interfaces.IDocumentosSvc;
-
+import co.com.japl.ea.dto.abstracts.Services;
+import co.com.japl.ea.dto.dto.ConceptoDTO;
+import co.com.japl.ea.dto.dto.DetalleContableDTO;
+import co.com.japl.ea.dto.dto.DetalleDTO;
+import co.com.japl.ea.dto.dto.DocumentoDTO;
+import co.com.japl.ea.dto.dto.DocumentosDTO;
+import co.com.japl.ea.dto.interfaces.IDocumentosSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.DocumentosException;
+import co.com.japl.ea.exceptions.QueryException;
 
 public class DocumentosSvc extends Services implements IDocumentosSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")

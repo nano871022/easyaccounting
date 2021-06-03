@@ -5,18 +5,17 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import org.h2.jdbc.JdbcSQLSyntaxErrorException;
-import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
 
 import co.com.japl.ea.query.interfaces.IVerifyStructuredDB;
-
+import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.sql.impl.ScriptSql;
 
 public class VerifyDB implements IVerifyStructuredDB {
 	private ConnectionJDBC connectJDBC = null;
 	private Log log = Log.Log(this.getClass());
-	private final static String CONST_PACKAGE = "com.pyt.service.dto";
+	private final static String CONST_PACKAGE = "co.com.japl.ea.dto.dto";
 	private final static String[] CONST_SUB_PACKAGES = { CONST_PACKAGE, CONST_PACKAGE + ".dels",
 			CONST_PACKAGE + ".inventario", CONST_PACKAGE + ".upds", "co.com.japl.ea.dto.system" };
 	private final static String CONST_DOT = ".";

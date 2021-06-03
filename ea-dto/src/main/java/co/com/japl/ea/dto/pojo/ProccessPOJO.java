@@ -7,10 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pyt.common.abstracts.ADto;
-import org.pyt.common.reflection.ReflectionUtils;
-
-import com.pyt.service.abstracts.Services;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.common.reflection.ReflectionUtils;
+import co.com.japl.ea.dto.abstracts.Services;
 
 /**
  * Se encargo de almacenar el grupo de procesos con parameteros

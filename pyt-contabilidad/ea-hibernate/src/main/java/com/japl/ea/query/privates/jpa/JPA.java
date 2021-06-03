@@ -10,7 +10,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 
-import org.pyt.common.reflection.ReflectionDto;
+import co.com.japl.ea.common.reflection.ReflectionDto;
 
 @MappedSuperclass
 public class JPA extends ReflectionDto implements Serializable{

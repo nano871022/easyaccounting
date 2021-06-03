@@ -2,9 +2,8 @@ package co.com.japl.ea.dto.dto.dels;
 
 import java.time.LocalDateTime;
 
-import org.pyt.common.interfaces.IDelClass;
-
-import com.pyt.service.dto.ParametroDTO;
+import co.com.japl.ea.common.interfaces.IDelClass;
+import co.com.japl.ea.dto.dto.ParametroDTO;
 public class ParametroDelDTO extends ParametroDTO implements IDelClass{
 	private static final long serialVersionUID = -6072273771164489849L;
 	private LocalDateTime fechaElimina;

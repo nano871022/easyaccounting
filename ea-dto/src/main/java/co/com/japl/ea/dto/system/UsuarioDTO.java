@@ -2,9 +2,8 @@ package co.com.japl.ea.dto.system;
 
 import java.util.Date;
 
-import org.pyt.common.abstracts.ADto;
-
-import com.pyt.service.dto.PersonaDTO;
+import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.dto.dto.PersonaDTO;
 /**
  * Se encarga de almacena rel suaurio que se encuentra en sesion en la aplicacion
  * @author alejandro parra

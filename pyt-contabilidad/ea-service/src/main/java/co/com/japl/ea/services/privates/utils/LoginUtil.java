@@ -1,4 +1,4 @@
-package com.pyt.services.privates.utils;
+package co.com.japl.ea.services.privates.utils;
 
 import static org.pyt.common.constants.languages.Login.CONST_LOGIN_NOT_FOUND;
 
@@ -12,13 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.InsertResourceConstants;
-import org.pyt.common.exceptions.GenericServiceException;
-import org.pyt.common.reflection.Reflection;
 
-import com.pyt.service.interfaces.IGenericServiceSvc;
-
+import co.com.japl.ea.common.reflection.Reflection;
+import co.com.japl.ea.dto.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.dto.system.LoginDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.exceptions.GenericServiceException;
 
 public final class LoginUtil implements Reflection{
 	private final Log logger = Log.Log(LoginUtil.class);
