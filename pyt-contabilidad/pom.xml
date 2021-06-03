@@ -47,22 +47,22 @@
 
 	</dependencies>
 	<modules>
-		<module>../ea-constantes</module>
-		<module>../ea-anotaciones</module>
-		<module>../ea-exceptions</module>
-		<module>../ea-dto</module>
-		<module>../ea-poi</module>
+		<module>ea-constantes</module>
+		<module>ea-anotaciones</module>
+		<module>ea-exceptions</module>
+		<module>ea-dto</module>
+		<module>ea-poi</module>
 		<module>ea-common</module>
 		<module>ea-query</module>
 		<module>ea-hibernate</module>
-		<module>../ea-file-bin</module>
-		<module>../ea-loader</module>
-		<module>../ea-write-logger</module>
+		<module>ea-file-bin</module>
+		<module>ea-loader</module>
+		<module>ea-write-logger</module>
 		<module>ea-mybatis</module>
 		<module>ea-gdb</module>
 		<module>ea-service</module>
 		<module>ea-app</module>
-		<module>../ea-sql</module>
+		<module>ea-sql</module>
 	</modules>
 	<build>
 		<plugins>
