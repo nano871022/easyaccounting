@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.Log;
 
 /**
@@ -73,7 +74,9 @@ public final class PropertiesUtils {
 	
 	public final PropertiesUtils setPathProperties(String pathProperties) {
 		logger.DEBUG("setPathProperties:: "+pathProperties);
-		this.pathProperties = pathProperties;
+		if(StringUtils.isNotBlank(pathProperties)) {
+			this.pathProperties = pathProperties;
+		}
 		return this;
 	}
 	

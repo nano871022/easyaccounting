@@ -1,5 +1,4 @@
 package co.com.japl.ea.common.properties;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -14,7 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.WriteFile;
 import org.pyt.common.constants.PropertiesConstants;
 
-import co.com.japl.ea.constants.utils.EnviromentProperties;
+import static co.com.japl.ea.constants.utils.EnviromentProperties.getPath;
+import static co.com.japl.ea.constants.utils.EnviromentProperties.getConsolePrint;
 
 
 
@@ -42,7 +42,7 @@ public class LogWriter implements Runnable {
 	private LogWriter() {
 		impresiones = new ArrayList<String>();
 		excepciones = new ArrayList<Exception>();
-		this.consolePrint = EnviromentProperties.getConsolePrint();
+		this.consolePrint = getConsolePrint();
 	}
 	
 	public String getModesToPrint() {
@@ -81,7 +81,7 @@ public class LogWriter implements Runnable {
 	 */
 	private void loadProperties() {
 		try {
-			Properties properties = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_LOG).load()
+			Properties properties = PropertiesUtils.getInstance().setPathProperties(getPath()).setNameProperties(PropertiesConstants.PROP_LOG).load()
 					.getProperties();
 			String valor = properties.getProperty(NAME_PATH_PROPERTIES);
 			if (StringUtils.isNotBlank(valor)) {
