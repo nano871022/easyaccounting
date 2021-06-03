@@ -50,7 +50,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.japl.ea</groupId>
+			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-sql</artifactId>
 			<version>${project.version}</version>
 		</dependency>
