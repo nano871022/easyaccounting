@@ -3,8 +3,8 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>co.com.pyt</groupId>
-		<artifactId>pyt-contabilidad</artifactId>
+		<groupId>co.com.japl.ea</groupId>
+		<artifactId>ea-contabilidad</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>co.com.japl.ea</groupId>
