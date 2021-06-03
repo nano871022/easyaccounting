@@ -12,7 +12,7 @@ import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.exceptions.QueryException;
 import org.pyt.common.exceptions.ReflectionException;
 
-import com.pyt.query.interfaces.IAdvanceQuerySvc;
+import co.com.japl.ea.query.interfaces.IAdvanceQuerySvc;
 
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.gdb.privates.impls.ConnectionJDBC;

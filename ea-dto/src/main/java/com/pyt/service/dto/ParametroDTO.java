@@ -5,8 +5,8 @@ import org.pyt.common.annotation.generics.AssingValue;
 import org.pyt.common.annotation.generics.DefaultFieldToGeneric;
 import org.pyt.common.constants.ParametroConstants;
 
-import com.pyt.service.dto.dels.ParametroDelDTO;
-import com.pyt.service.dto.upds.ParametroUpdDTO;
+import co.com.japl.ea.dto.dto.dels.ParametroDelDTO;
+import co.com.japl.ea.dto.dto.upds.ParametroUpdDTO;
 
 import co.com.arquitectura.annotation.proccessor.DelClass;
 import co.com.arquitectura.annotation.proccessor.UpdClass;

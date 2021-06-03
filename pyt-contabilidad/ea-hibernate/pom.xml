@@ -12,14 +12,14 @@
 	<version>${project.version}</version>
 	<dependencies>
 		<dependency>
-			<groupId>co.com.pyt</groupId>
-			<artifactId>pyt-query</artifactId>
-			<version>1.2.1-BETA</version>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-query</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>co.com.pyt</groupId>
 			<artifactId>pyt-common</artifactId>
-			<version>1.2.1-BETA</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -29,12 +29,12 @@
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-dto</artifactId>
-			<version>1.2.1-BETA</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>
 			<artifactId>ea-constantes</artifactId>
-			<version>1.2.1-BETA</version>
+			<version>${project.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
 		<dependency>
@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>com.japl.ea</groupId>
 			<artifactId>ea-sql</artifactId>
-			<version>1.2.1-BETA</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

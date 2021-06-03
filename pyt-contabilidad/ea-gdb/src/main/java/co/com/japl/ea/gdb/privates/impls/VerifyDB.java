@@ -8,7 +8,7 @@ import org.h2.jdbc.JdbcSQLSyntaxErrorException;
 import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
 
-import com.pyt.query.interfaces.IVerifyStructuredDB;
+import co.com.japl.ea.query.interfaces.IVerifyStructuredDB;
 
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.sql.impl.ScriptSql;

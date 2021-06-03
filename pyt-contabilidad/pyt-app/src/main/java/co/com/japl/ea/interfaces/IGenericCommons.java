@@ -10,8 +10,9 @@ import org.pyt.common.exceptions.ParametroException;
 import org.pyt.common.validates.ValidateValues;
 
 import com.pyt.service.dto.ParametroDTO;
-import com.pyt.service.implement.GenericServiceSvc;
 import com.pyt.service.interfaces.IParametrosSvc;
+
+import co.com.japl.ea.service.implement.GenericServiceSvc;
 
 /**
  * Este es la interface generica la cual se usara por los diferentes

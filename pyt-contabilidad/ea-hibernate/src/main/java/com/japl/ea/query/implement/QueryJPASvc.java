@@ -16,7 +16,7 @@ import org.pyt.common.reflection.ReflectionUtils;
 import com.japl.ea.query.privates.H2Connect;
 import com.japl.ea.query.privates.Constants.QueryConstants;
 import com.japl.ea.query.privates.utils.StatementQuerysUtil;
-import com.pyt.query.interfaces.IQuerySvc;
+import co.com.japl.ea.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.ParametroDTO;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;

@@ -14,7 +14,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.compile.version>10</project.build.compile.version>
+		<project.build.compile.version>16</project.build.compile.version>
 		<project.version>1.2.1-BETA</project.version>
 		<!-- <project.version>0.0.1-SNAPSHOT</project.version> -->
 		<!-- <project.scope>runtime</project.scope> -->
@@ -53,14 +53,14 @@
 		<module>../ea-dto</module>
 		<module>../ea-poi</module>
 		<module>pyt-common</module>
-		<module>pyt-query</module>
+		<module>ea-query</module>
 		<module>ea-hibernate</module>
 		<module>../ea-file-bin</module>
 		<module>../ea-loader</module>
 		<module>../ea-write-logger</module>
 		<module>ea-mybatis</module>
 		<module>ea-gdb</module>
-		<module>pyt-service</module>
+		<module>ea-service</module>
 		<module>pyt-app</module>
 		<module>../ea-sql</module>
 	</modules>

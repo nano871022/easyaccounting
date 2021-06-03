@@ -23,9 +23,9 @@ public abstract class AListGenericDinamicBean<T extends ADto, S extends ADto, F 
 	protected List<S> genericFields;
 	protected List<S> genericColumns;
 	private MultiValuedMap<String, Node> configFields;
-	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
+	@Inject(resource = "co.com.japl.ea.query.implement.GenericServiceSvc")
 	private IGenericServiceSvc<S> querySvc;
-	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
+	@Inject(resource = "co.com.japl.ea.query.implement.ParametrosSvc")
 	private IParametrosSvc parametrosSvc;
 	protected BooleanProperty save;
 	protected BooleanProperty edit;

@@ -42,14 +42,14 @@ public abstract class DinamicoBean<S extends ADto, F extends ADto> extends ABean
 		implements IGenericFields<DocumentosDTO, F> {
 	@Inject(resource = "com.pyt.service.implement.DocumentosSvc")
 	protected IDocumentosSvc documentosSvc;
-	@Inject(resource = "com.pyt.query.implement.GenericServiceSvc")
+	@Inject(resource = "co.com.japl.ea.query.implement.GenericServiceSvc")
 	private IGenericServiceSvc<S> querySvc;
 	private Map<String, Object> listas;
 	private MultiValuedMap<String, Node> fields;
 	protected List<DocumentosDTO> campos;
 	public final static String FIELD_NAME = "nombre";
 	private ValidateValues validateValue;
-	@Inject(resource = "com.pyt.query.implement.ParametrosSvc")
+	@Inject(resource = "co.com.japl.ea.query.implement.ParametrosSvc")
 	protected IParametrosSvc parametroSvc;
 	protected MultiValuedMap<String, Object> mapListSelects;
 

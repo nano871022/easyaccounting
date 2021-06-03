@@ -3,7 +3,7 @@ package org.ea.app.load;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.pyt.query.interfaces.IVerifyStructuredDB;
+import co.com.japl.ea.query.interfaces.IVerifyStructuredDB;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

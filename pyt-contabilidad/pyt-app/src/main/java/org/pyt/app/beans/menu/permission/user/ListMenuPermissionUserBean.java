@@ -11,7 +11,6 @@ import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.exceptions.GenericServiceException;
 
-import com.pyt.service.implement.UserSvc;
 import com.pyt.service.interfaces.IConfigGenericFieldSvc;
 import com.pyt.service.interfaces.IGenericServiceSvc;
 
@@ -24,6 +23,7 @@ import co.com.japl.ea.dto.system.MenuDTO;
 import co.com.japl.ea.dto.system.MenuPermUsersDTO;
 import co.com.japl.ea.dto.system.PermissionDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
+import co.com.japl.ea.service.implement.UserSvc;
 import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

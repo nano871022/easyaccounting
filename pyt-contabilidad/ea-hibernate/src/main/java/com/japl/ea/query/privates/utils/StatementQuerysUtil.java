@@ -14,8 +14,8 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.exceptions.ReflectionException;
 
 import com.japl.ea.query.privates.Constants.QueryConstants;
-import com.pyt.query.interfaces.IAdvanceQuerySvc.triggerAction;
-import com.pyt.query.interfaces.IAdvanceQuerySvc.triggerOption;
+import co.com.japl.ea.query.interfaces.IAdvanceQuerySvc.triggerAction;
+import co.com.japl.ea.query.interfaces.IAdvanceQuerySvc.triggerOption;
 
 public class StatementQuerysUtil {
 	private final static String CONST_DTO = "DTO";

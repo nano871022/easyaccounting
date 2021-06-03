@@ -2,7 +2,7 @@ package co.com.japl.ea.gdb.privates;
 
 import java.time.LocalDate;
 
-import com.pyt.query.interfaces.IQuerySvc;
+import co.com.japl.ea.query.interfaces.IQuerySvc;
 import com.pyt.service.dto.BancoDTO;
 import com.pyt.service.dto.ParametroDTO;
 

@@ -24,7 +24,7 @@ import org.pyt.common.exceptions.querys.StatementSqlException;
 import org.pyt.common.exceptions.validates.ValidateValueException;
 import org.pyt.common.validates.ValidateValues;
 
-import com.pyt.query.interfaces.IQuerySvc;
+import co.com.japl.ea.query.interfaces.IQuerySvc;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.gdb.privates.constants.QueryConstants;

@@ -2,7 +2,7 @@ package org.ea.app.load;
 
 import java.lang.reflect.InvocationTargetException;
 
-import com.pyt.query.interfaces.IVerifyStructuredDB;
+import co.com.japl.ea.query.interfaces.IVerifyStructuredDB;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Preloader;

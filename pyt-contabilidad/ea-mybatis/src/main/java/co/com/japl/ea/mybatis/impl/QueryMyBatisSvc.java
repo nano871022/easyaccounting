@@ -16,8 +16,8 @@ import org.pyt.common.abstracts.ADto;
 import org.pyt.common.common.Log;
 import org.pyt.common.exceptions.QueryException;
 
-import com.pyt.query.interfaces.IQuerySvc;
-import com.pyt.query.utils.StatementQuerysUtil;
+import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.japl.ea.query.utils.StatementQuerysUtil;
 
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.mybatis.privates.ConnectionMyBatis;

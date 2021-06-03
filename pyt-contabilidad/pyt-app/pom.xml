@@ -25,8 +25,8 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
-			<groupId>co.com.pyt</groupId>
-			<artifactId>pyt-service</artifactId>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-service</artifactId>
 			<version>${project.version}</version>
 			<!-- <scope>${project.scope}</scope> -->
 		</dependency>
@@ -42,8 +42,8 @@
 			<!-- <scope>${project.scope}</scope> -->
 		</dependency>
 		<dependency>
-			<groupId>co.com.pyt</groupId>
-			<artifactId>pyt-query</artifactId>
+			<groupId>co.com.japl.ea</groupId>
+			<artifactId>ea-query</artifactId>
 			<version>${project.version}</version>
 			<!-- <scope>${project.scope}</scope> -->
 		</dependency>
@@ -100,6 +100,37 @@
 			<groupId>org.controlsfx</groupId>
 			<artifactId>controlsfx</artifactId>
 			<version>9.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-base</artifactId>
+			<version>16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-web</artifactId>
+			<version>16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx</artifactId>
+			<version>16</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-swing</artifactId>
+			<version>16</version>
 		</dependency>
 		<dependency>
 			<groupId>co.com.japl.ea</groupId>

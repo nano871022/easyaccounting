@@ -12,8 +12,8 @@
   <description>Sistma de almacenamiento por medio de archivos binarios</description>
   <dependencies>
   	<dependency>
-  		<groupId>co.com.pyt</groupId>
-  		<artifactId>pyt-query</artifactId>
+  		<groupId>co.com.japl.ea</groupId>
+  		<artifactId>ea-query</artifactId>
   		 <version>${project.version}</version>
   	</dependency>
   	<dependency>
