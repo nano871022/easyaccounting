@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,7 @@ import org.pyt.common.constants.ReflectionConstants;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.common.interfaces.IComunicacion;
 import co.com.japl.ea.common.properties.CacheInjects;
+import co.com.japl.ea.common.properties.CacheServiceInject;
 import co.com.japl.ea.common.properties.EjbHome;
 import co.com.japl.ea.common.properties.EjbRemote;
 import co.com.japl.ea.common.properties.ServiceSimple;
@@ -115,20 +117,23 @@ public interface Reflection {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private <T, S extends Object> void inject(S object, Class<S> clase) throws Exception {
+	private <T, S> void inject(S object, Class<S> clase) throws Exception {
 		if (object != null && clase != Object.class && clase != Reflection.class) {
 			Field[] fields = getAnnotedField(clase,Inject.class);
 				Arrays.asList(fields).stream().forEach(field->{
 					try {
 					Inject inject = field.getAnnotation(Inject.class);
-					T obj = CacheInjects.instance().getInjectCache(field);
-					obj = searchInjectFileParameterizeds(obj,field,inject);
-					if (obj != null) {
-						CacheInjects.instance().addInjectToCache(obj, field);
-						if (!CacheInjects.instance().invokeConstructorAnnotatedCache(obj)) {
-							postConstructor(obj, obj.getClass());
+					var obj = CacheServiceInject.instance().implement(field.getType());
+					if(obj.isEmpty()) {
+						obj = CacheInjects.instance().getInjectCache(field);
+						obj = searchInjectFileParameterizeds(obj,field,inject);
+					}
+					if (obj.isPresent()) {
+						CacheInjects.instance().addInjectToCache(obj.get(), field);
+						if (!CacheInjects.instance().invokeConstructorAnnotatedCache(obj.get())) {
+							postConstructor(obj.get(), obj.get().getClass());
 						}
-						put(object, field, obj);
+						put(object, field, obj.get());
 					}
 					} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException
 							| InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -144,53 +149,53 @@ public interface Reflection {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> T searchInjectFileParameterizeds(T obj,Field field,Inject inject) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		if (obj == null) {
+	private <T> Optional<T> searchInjectFileParameterizeds(Optional<T> obj,Field field,Inject inject) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		if (obj.isEmpty()) {
 			obj = locatorServices(field);
-			if (obj == null && StringUtils.isNotBlank(inject.resource())) {
+			if (obj.isEmpty() && StringUtils.isNotBlank(inject.resource())) {
 				var resource = inject.resource();
 				var clazz = Class.forName(resource);
-				return (T) clazz.getConstructor().newInstance();
-			} else if (obj == null) {
+				return Optional.of((T) clazz.getConstructor().newInstance());
+			} else if (obj.isEmpty()) {
 				return getSingletonAnnotated(inject.resource(), field);
 			}
 		}
-		return obj != null ? obj : null;
+		return obj;
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> T locatorServices(Field field) {
+	private <T> Optional<T> locatorServices(Field field) {
 		var service = ServiceLoader.load(field.getType());
 		if (service != null && service.findFirst() != null && service.findFirst().isPresent()) {
-			return (T) service.findFirst().get();
+			return Optional.of((T) service.findFirst().get());
 		} else {
 			try {
-				return (T) EjbRemote.getInstance().getEjb(field.getType());
+				return Optional.of((T) EjbRemote.getInstance().getEjb(field.getType()));
 			} catch (Exception e) {
 				try {
-					return (T) EjbHome.getInstance().getEjb(field.getType());
+					return Optional.of((T) EjbHome.getInstance().getEjb(field.getType()));
 				} catch (Exception e1) {
 					try {
-						return (T) ServiceSimple.getInstance().getService(field.getType());
+						return Optional.of((T) ServiceSimple.getInstance().getService(field.getType()));
 					} catch (Exception e2) {
 					}
 				}
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> T getSingletonAnnotated(String resource, Field field) throws NoSuchMethodException, SecurityException,
+	private <T> Optional<T> getSingletonAnnotated(String resource, Field field) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
 		if (StringUtils.isBlank(resource)) {
 			Class<T> classe = (Class<T>) field.getType();
 			Singleton singleton = classe.getAnnotation(Singleton.class);
 			if (singleton != null) {
 				var method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
-				return (T) method.invoke(classe);
+				return Optional.of((T) method.invoke(classe));
 			} else {
-				return (T) field.getType().getConstructor().newInstance();
+				return Optional.of((T) field.getType().getConstructor().newInstance());
 			}
 		}
 		return null;

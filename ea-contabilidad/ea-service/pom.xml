@@ -98,6 +98,9 @@
 						<annotationProcessor>
 							co.com.arquitectura.proccessor.implement.ServiceProccessor
 						</annotationProcessor>
+						<annotationProcessor>
+							co.com.arquitectura.proccessor.implement.ImplementsProccessor
+						</annotationProcessor>
 					</annotationProcessors>
 				</configuration>
 			</plugin>

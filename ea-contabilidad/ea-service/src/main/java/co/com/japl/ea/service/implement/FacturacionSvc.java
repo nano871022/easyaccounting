@@ -6,6 +6,7 @@ import java.util.List;
 import org.pyt.common.annotations.Inject;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.dto.DetalleDTO;
 import co.com.japl.ea.dto.dto.FacturaDTO;
@@ -13,7 +14,7 @@ import co.com.japl.ea.dto.interfaces.IFacturacionSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.FacturacionException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class FacturacionSvc extends Services implements IFacturacionSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc querySvc;

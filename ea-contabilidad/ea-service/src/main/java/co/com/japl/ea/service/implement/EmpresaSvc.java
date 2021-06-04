@@ -7,13 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.dto.EmpresaDTO;
 import co.com.japl.ea.dto.interfaces.IEmpresasSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.EmpresasException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class EmpresaSvc extends Services implements IEmpresasSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc querySvc;

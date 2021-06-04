@@ -7,6 +7,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
@@ -17,7 +18,7 @@ import co.com.japl.ea.dto.interfaces.ICuentaContableSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.CuentaContableException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class CuentaContableSvc extends Services implements ICuentaContableSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc querySvc;

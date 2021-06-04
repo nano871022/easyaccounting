@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.pyt.common.common.CacheUtil;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.constants.RefreshCodeConstant;
 
 
@@ -31,7 +33,7 @@ public final class CacheInjects {
 	}
 
 	@SuppressWarnings("unchecked")
-	public synchronized final <T> T getInjectCache(Field field) throws InstantiationException, IllegalAccessException,
+	public synchronized final <T> Optional<T> getInjectCache(Field field) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		cleanCache();
 		if (mapInjects.containsKey(field.getType())) {
@@ -41,11 +43,11 @@ public final class CacheInjects {
 				var constructor = type.getDeclaredConstructor();
 				var modifiers = constructor.getModifiers();
 				if (!Modifier.isPrivate(modifiers)) {
-					return (T) type.getConstructor().newInstance();
+					return Optional.of((T) type.getConstructor().newInstance());
 				}
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	public synchronized final <T> void addInjectToCache(T obj, Field field) {

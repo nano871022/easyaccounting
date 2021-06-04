@@ -9,6 +9,7 @@ import org.pyt.common.common.DtoUtils;
 import org.pyt.common.common.ListUtils;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
@@ -18,7 +19,7 @@ import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.GenericServiceException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class LanguagesSvc extends Services implements ILanguageSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc querySvc;

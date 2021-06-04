@@ -8,13 +8,14 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.GenericServiceException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class GenericServiceSvc<T extends ADto> extends Services implements IGenericServiceSvc<T> {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc querySvc;

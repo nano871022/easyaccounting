@@ -8,6 +8,7 @@ import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.ParametroConstants;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
@@ -18,7 +19,7 @@ import co.com.japl.ea.dto.interfaces.IParametrosSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.ParametroException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class ParametrosSvc extends Services implements IParametrosSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	protected IQuerySvc querySvc;

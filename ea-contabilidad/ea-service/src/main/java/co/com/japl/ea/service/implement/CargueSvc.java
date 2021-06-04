@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.reflection.ReflectionUtils;
 import co.com.japl.ea.dto.abstracts.Services;
@@ -32,7 +33,7 @@ import co.com.japl.ea.loader.interfaces.IFileLoader;
 import co.com.japl.ea.loader.pojo.FilePOJO;
 import co.com.japl.ea.service.proccess.AnalizedAnnotationProcces;
 import co.com.japl.ea.service.proccess.ProccesConfigService;
-
+@Implements
 public class CargueSvc extends Services implements ICargue {
 	@Inject(resource = "com.pyt.service.implement.ConfigMarcadorServicioSvc")
 	private IConfigMarcadorServicio configMarkService;

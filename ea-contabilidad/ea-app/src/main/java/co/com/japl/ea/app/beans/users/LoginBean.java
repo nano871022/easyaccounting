@@ -42,7 +42,7 @@ import javafx.stage.Stage;
 @FXMLFile(path = "view/users", file = "login.fxml")
 public class LoginBean extends ABean<UsuarioDTO> {
 
-	@Inject(resource = "com.pyt.service.implement.UserSvc")
+	@Inject
 	private IUsersSvc usersSvc;
 	@FXML
 	private TextField user;

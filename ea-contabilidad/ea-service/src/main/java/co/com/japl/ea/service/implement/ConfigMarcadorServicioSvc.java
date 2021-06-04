@@ -14,6 +14,7 @@ import org.pyt.common.poi.docs.TableBookmark;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
 import co.com.japl.ea.service.proccess.ProccesConfigService;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.dto.ConfiguracionDTO;
@@ -25,7 +26,7 @@ import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.MarcadorServicioException;
 import co.com.japl.ea.exceptions.ProccesConfigServiceException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class ConfigMarcadorServicioSvc extends Services implements IConfigMarcadorServicio {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc query;

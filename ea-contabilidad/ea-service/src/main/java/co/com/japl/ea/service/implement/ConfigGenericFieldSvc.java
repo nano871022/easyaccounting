@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.pyt.common.annotations.Inject;
 
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.interfaces.IConfigGenericFieldSvc;
@@ -13,7 +14,7 @@ import co.com.japl.ea.dto.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
 import co.com.japl.ea.exceptions.ConfigGenericFieldException;
 import co.com.japl.ea.exceptions.GenericServiceException;
-
+@Implements
 public class ConfigGenericFieldSvc extends Services implements IConfigGenericFieldSvc {
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	private IGenericServiceSvc<ConfigGenericFieldDTO> servicesSvc;

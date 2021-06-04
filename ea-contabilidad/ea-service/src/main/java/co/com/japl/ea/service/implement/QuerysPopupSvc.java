@@ -14,13 +14,14 @@ import java.util.List;
 import org.pyt.common.annotations.Inject;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.interfaces.IQuerysPopup;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.QueryException;
 import co.com.japl.ea.exceptions.QuerysPopupException;
-
+@Implements
 public class QuerysPopupSvc extends Services implements IQuerysPopup {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc querys;
