@@ -1,13 +1,10 @@
 package co.com.japl.ea.dto.abstracts;
 
-import org.pyt.common.annotations.Inject;
 import org.pyt.common.annotations.PostConstructor;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 
 import co.com.japl.ea.common.reflection.Reflection;
-import co.com.japl.ea.dto.interfaces.IGenericServiceSvc;
-import co.com.japl.ea.dto.interfaces.ILanguageSvc;
 import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.exceptions.ReflectionException;
 

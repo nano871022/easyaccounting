@@ -2,10 +2,12 @@ package co.com.japl.ea.common.properties;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.apache.poi.ss.formula.functions.T;
+import org.pyt.common.common.InjectUtil;
 
 public class CacheServiceInject {
 	private static CacheServiceInject instance ;
@@ -21,6 +23,7 @@ public class CacheServiceInject {
 		return instance;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T> Optional<T> implement(Class<?> interfaces){
 		try {
 			if(this.clazz.containsKey(interfaces)) {
@@ -36,20 +39,38 @@ public class CacheServiceInject {
 	
 	private void load() {
 		try {
-			Class<?> clazz = Class.forName("co.com.japl.ea.service.create.ServiceList");
-			var serviceList = clazz.getConstructors()[0].newInstance();
-			var response = clazz.getDeclaredMethods()[0].invoke(serviceList);
-			if(response instanceof Class[]) {
-				Arrays.asList((Class[])response).forEach(value->{
-					if(this.clazz == null) {
-						this.clazz = new HashMap<>();
-					}
+			var response = getServicesImplements();
+			if(response instanceof List<Class<?>>) {
+				if(this.clazz == null) {
+					this.clazz = new HashMap<>();
+				}
+				response.forEach(value->{
 					this.clazz.put(value.getInterfaces()[0],value);
 				});
 			}
 		}catch(Exception e) {
 			
 		}
+	}
+	
+	@SuppressWarnings("unused")
+	private List<Class<?>> getServicesImplements()throws Exception{
+		Class<?> clazz = Class.forName("co.com.japl.ea.implement.inject.create.ServiceList");
+		var list = InjectUtil.instance().getList();
+		var clazzList = list.stream().map(value->{
+			try {
+				var method = value.getDeclaredMethod("list");
+				var field = value.getDeclaredField("instance");
+				field.setAccessible(true);
+				var instance = field.get(null);
+				return (Class<?>[])method.invoke(instance);
+			}catch(Exception e) {
+				System.err.println(e.getMessage());
+			}
+			return null;
+		}).flatMap(value->Arrays.asList(value).stream())
+				.collect(Collectors.toList());
+		return clazzList;
 	}
 	
 }

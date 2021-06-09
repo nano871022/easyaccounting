@@ -48,15 +48,20 @@ public class LoginUtil {
 		}
 	}
 
-	public final static UsuarioDTO loadLogin() throws IOException, ClassNotFoundException {
+	public final static Optional<UsuarioDTO> loadLogin() throws IOException, ClassNotFoundException {
 		Path path = Paths.get(CONST_PATH_SAVES, CONST_FILE_REMEMBER);
 		if (!Files.exists(path)) {
 			Files.createFile(path);
 		}
-		try (var is = Files.newInputStream(path); var file = new ObjectInputStream(is)) {
-			var read = (UsuarioDTO) file.readObject();
-			return read;
+		try (var is = Files.newInputStream(path)) {
+			if (is.available() > 0) {
+				var file = new ObjectInputStream(is);
+				var read = (UsuarioDTO) file.readObject();
+				file.close();
+				return Optional.of(read);
+			}
 		}
+		return Optional.empty();
 	}
 
 	public final static void writeRemember(UsuarioDTO remember) throws IOException {

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -239,6 +240,7 @@ public final class ValidateValues {
 			if (numbers != null) {
 				return numbers;
 			}
+			
 
 			clase = convertFromPrimitive(clase);
 			if (value.getClass() == clase) {
@@ -248,6 +250,10 @@ public final class ValidateValues {
 			var valueReturn = stringToClass(value, clase);
 			if (valueReturn != null) {
 				return (T) valueReturn;
+			}
+			var numberToString = numerToString(value, clase);
+			if(numberToString != null) {
+				return (T) numberToString;
 			}
 
 			valueReturn = convertValueToClassMethodStatic(value, clase, originClass);
@@ -303,16 +309,16 @@ public final class ValidateValues {
 			if (value.getClass() == Date.class) {
 				return (T) LocalDate.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault());
 			}
-			if(value.getClass() == Timestamp.class) {
-				return (T)LocalDate.ofInstant(((Timestamp)value).toInstant(),ZoneId.systemDefault());
+			if (value.getClass() == Timestamp.class) {
+				return (T) LocalDate.ofInstant(((Timestamp) value).toInstant(), ZoneId.systemDefault());
 			}
 		}
-		if(clazz == LocalDateTime.class) {
+		if (clazz == LocalDateTime.class) {
 			if (value.getClass() == Date.class) {
 				return (T) LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault());
 			}
-			if(value.getClass() == Timestamp.class) {
-				return (T)LocalDateTime.ofInstant(((Timestamp)value).toInstant(),ZoneId.systemDefault());
+			if (value.getClass() == Timestamp.class) {
+				return (T) LocalDateTime.ofInstant(((Timestamp) value).toInstant(), ZoneId.systemDefault());
 			}
 		}
 		return null;
@@ -359,6 +365,31 @@ public final class ValidateValues {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private final <T, S> T numerToString(S value, Class<T> clazz) {
+		if ( value == null) {
+			return null;
+		}
+		if (isNumber(value.getClass())){
+			if (value.getClass() == Integer.class) {
+				return (T) ((Integer) value).toString();
+			}
+			if (value.getClass() == Double.class) {
+				return (T) String.valueOf((Double) value);
+			}
+			if (value.getClass() == Long.class) {
+				return (T) String.valueOf((Long) value);
+			}
+			if (value.getClass() == Short.class) {
+				return (T) String.valueOf((Short) value);
+			}
+			if (value.getClass() == BigDecimal.class) {
+				return (T) ((BigDecimal)value).toString();
+			}
+		}
+		return null;
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <T, S> T getValueFromMethod(S value, Class clazz, Class originClass) throws ValidateValueException {
@@ -382,30 +413,58 @@ public final class ValidateValues {
 		return null;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private final <T, S> T convertValueToClassMethodStatic(S value, Class clazz, Class originClass)
 			throws ValidateValueException {
+		if (value instanceof String && StringUtils.isBlank((String) value))
+			return null;
+		var metodos = clazz.getDeclaredMethods();
+		if (metodos != null && metodos.length > 0) {
+			var response = Arrays.asList(metodos).stream().filter(method -> Modifier.isStatic(method.getModifiers()))
+					.filter(method -> method.getReturnType() == clazz || method.getReturnType() == originClass)
+					.filter(method -> method.getParameterCount() == 1)
+					.map(method -> methodPrincipal(method,value,originClass))
+					.findAny();
+			if(response.isPresent()) {
+				return (T) response.get();
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private final <T, S> T methodPrincipal(Method method, S value, Class<?> originClass) {
 		try {
-			if (value instanceof String && StringUtils.isBlank((String) value))
-				return null;
-			var metodos = clazz.getDeclaredMethods();
-			for (Method metodo : metodos) {
-				if (Modifier.isStatic(metodo.getModifiers())
-						&& (metodo.getReturnType() == clazz || metodo.getReturnType() == originClass)
-						&& metodo.getParameterCount() == 1) {
-					var clases = metodo.getParameterTypes()[0];
-					if (clases == value.getClass()) {
-						list.add(new MethodToValue(metodo, value.getClass(), originClass, true));
-						return (T) metodo.invoke(null, value);
-					} else if (isCast(value, clases)) {
-						T val = (T) cast(value, clases);
-						list.add(new MethodToValue(metodo, val.getClass(), originClass, true));
-						return (T) metodo.invoke(null, val);
-					}
-				}
+			var types = Arrays.asList(method.getParameterTypes()).stream().filter(type -> type == value.getClass())
+					.findAny();
+			if (types.isPresent()) {
+				var methodValue = new MethodToValue(method, value.getClass(), originClass, true);
+				list.add(methodValue);
+				return (T) method.invoke(null, value);
+			} else {
+				return castingValue(method, value, originClass);
 			}
 		} catch (Exception e) {
-			throw new ValidateValueException("No se logra obtener la conversion de metodo estatico.", e);
+			logger.logger(e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private final <T, S> T castingValue(Method method, S value, Class<?> originClass) {
+		try {
+			var types = Arrays.asList(method.getParameterTypes()).stream().filter(type -> isCast(value, type))
+					.findAny();
+			if (types.isPresent()) {
+				var castValue = cast(value, types.get());
+				var methodValue = new MethodToValue(method, castValue.getClass(), originClass, true);
+				list.add(methodValue);
+				return (T) method.invoke(null, castValue);
+			}else if(isCast(value,originClass)) {
+				return (T) cast(value, originClass);
+			}
+		} catch (Exception e) {
+			logger.logger(e);
 		}
 		return null;
 	}
@@ -456,12 +515,14 @@ public final class ValidateValues {
 			return false;
 		}
 	}
-	
-	public final Boolean isNumber( Class clazz) {
-		return clazz == int.class || clazz == long.class || clazz == double.class || clazz == float.class || clazz == BigDecimal.class || clazz == Integer.class || clazz == BigInteger.class || clazz == Double.class || clazz == Long.class || clazz == Short.class|| clazz == Number.class;
-		
+
+	public final Boolean isNumber(Class clazz) {
+		return clazz == int.class || clazz == long.class || clazz == double.class || clazz == float.class
+				|| clazz == BigDecimal.class || clazz == Integer.class || clazz == BigInteger.class
+				|| clazz == Double.class || clazz == Long.class || clazz == Short.class || clazz == Number.class;
+
 	}
-	
+
 	public final <M, N, V> Boolean numericBetween(M value, N value2, V value3) {
 		Boolean valid = true;
 		var r1 = compareNumbers(value, value2);
@@ -472,11 +533,11 @@ public final class ValidateValues {
 	}
 
 	public final Boolean isDate(Class clazz) {
-		return clazz == Date.class || clazz == LocalDate.class || clazz == LocalDateTime.class; 
+		return clazz == Date.class || clazz == LocalDate.class || clazz == LocalDateTime.class;
 	}
-	
+
 	public final Boolean isString(Class clazz) {
-		return clazz == String.class  || clazz == Character.class;
+		return clazz == String.class || clazz == Character.class;
 	}
 
 	private final <V, T> Boolean isString(V value, Class<T> clazz) {
@@ -521,31 +582,31 @@ public final class ValidateValues {
 
 	private final <V, T> Boolean isNumber(V value, Class<T> clazz) {
 		try {
-		if (clazz == BigDecimal.class) {
-			if (value instanceof BigInteger || value instanceof Long || value instanceof Double) {
-				return true;
-			} else if (value instanceof String) {
-				return Optional.ofNullable(new BigDecimal((String) value)).isPresent();
-			}
-		} else if (clazz == Integer.class) {
+			if (clazz == BigDecimal.class) {
+				if (value instanceof BigInteger || value instanceof Long || value instanceof Double) {
+					return true;
+				} else if (value instanceof String) {
+					return Optional.ofNullable(new BigDecimal((String) value)).isPresent();
+				}
+			} else if (clazz == Integer.class) {
 				if (value instanceof Integer) {
 					return true;
 				} else if (value instanceof String) {
 					return Optional.ofNullable(Integer.valueOf((String) value)).isPresent();
 				}
-		} else if (clazz == BigInteger.class) {
+			} else if (clazz == BigInteger.class) {
 				if (value instanceof Long || value instanceof Integer) {
 					return true;
 				} else if (value instanceof String) {
 					return Optional.ofNullable(new BigInteger((String) value)).isPresent();
 				}
-		} else if (clazz == Double.class) {
+			} else if (clazz == Double.class) {
 				if (value instanceof Double) {
 					return true;
 				} else if (value instanceof String) {
 					return Optional.ofNullable(Double.valueOf((String) value)).isPresent();
 				}
-		} else if (clazz == Long.class) {
+			} else if (clazz == Long.class) {
 				if (value instanceof Long) {
 					return true;
 				} else if (value instanceof String) {
@@ -557,9 +618,9 @@ public final class ValidateValues {
 				} else if (value instanceof String) {
 					return Optional.ofNullable(Short.valueOf((String) value)).isPresent();
 				}
-		} else if ( clazz == Number.class && value instanceof Number) {
+			} else if (clazz == Number.class && value instanceof Number) {
 				return true;
-		}
+			}
 		} catch (ClassCastException e) {
 			logger.DEBUG(e);
 		}

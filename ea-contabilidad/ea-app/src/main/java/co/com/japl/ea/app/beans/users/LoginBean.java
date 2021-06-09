@@ -73,25 +73,35 @@ public class LoginBean extends ABean<UsuarioDTO> {
 
 	private void verifyLoginRemember() {
 		try {
-			var login = LoginUtil.loadLogin();
-			if (login != null) {
+			var loadLogin = LoginUtil.loadLogin();
+			loadLogin.ifPresent(value -> {
 				remember.setSelected(true);
-				LoginUtil.validUsuarioRememberFails(login);
-				var found = usersSvc.login(login, remoteAddr(), remember.isSelected());
-				if (found != null) {
-					LoginUtil.compareUsuariosRememberAndFound(found, login);
-					LoginUtil.writeRemember(found);
-					setUsuario(found);
-					this.login = true;
-				}
-			}
+				LoginUtil.validUsuarioRememberFails(value);
+				findLogin(value);
+			});
 		} catch (IOException e) {
 			error(e);
 		} catch (ClassNotFoundException e) {
 			error(e);
 		} catch (RuntimeException e) {
 			error(e);
-		} catch (LoadAppFxmlException e) {
+		} catch (Exception e) {
+			error(e);
+		}
+
+	}
+
+	private void findLogin(UsuarioDTO value) {
+		try {
+			UsuarioDTO found;
+			found = usersSvc.login(value, remoteAddr(), remember.isSelected());
+			if (found != null) {
+				LoginUtil.compareUsuariosRememberAndFound(found, value);
+				LoginUtil.writeRemember(found);
+				setUsuario(found);
+				this.login = true;
+			}
+		} catch (UnknownHostException e) {
 			error(e);
 		} catch (Exception e) {
 			error(e);

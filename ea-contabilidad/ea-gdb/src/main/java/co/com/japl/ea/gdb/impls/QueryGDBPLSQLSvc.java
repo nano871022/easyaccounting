@@ -10,6 +10,7 @@ import org.pyt.common.common.I18n;
 import org.pyt.common.constants.LanguageConstant;
 
 import co.com.japl.ea.query.interfaces.IAdvanceQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.exceptions.QueryException;
 import co.com.japl.ea.exceptions.ReflectionException;
@@ -17,6 +18,7 @@ import co.com.japl.ea.gdb.privates.constants.QueryConstants;
 import co.com.japl.ea.gdb.privates.impls.ConnectionJDBC;
 import co.com.japl.ea.gdb.privates.utils.StatementQuerysUtil;
 
+@Implements
 public class QueryGDBPLSQLSvc implements IAdvanceQuerySvc {
 	private StatementQuerysUtil squ;
 	private I18n i18n;

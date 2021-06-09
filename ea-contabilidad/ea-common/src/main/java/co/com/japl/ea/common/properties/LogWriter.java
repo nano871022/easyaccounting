@@ -140,6 +140,7 @@ public class LogWriter implements Runnable {
 			copyOldFile(file);
 			OutputStream out = new FileOutputStream(file, file.exists());
 			PrintStream s = new PrintStream(out);
+			s.println(excepcion.getMessage());
 			excepcion.printStackTrace(s);
 			s.close();
 			out.close();
@@ -157,7 +158,8 @@ public class LogWriter implements Runnable {
 			}
 			if (impresiones.size() > 0) {
 				String linea = impresiones.get(0);
-				loadWriter().writer(linea);
+				var writer = loadWriter();
+				writer.writer(linea);
 				if (consolePrint) {
 					System.out.println(linea);
 				}

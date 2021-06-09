@@ -1,5 +1,6 @@
 package org.pyt.common.common;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,6 +63,14 @@ public class ListUtils {
 		return valid;
 	}
 
+	public static <T> Boolean isNotBlank(T[] lists) {
+		if (lists == null || lists.length == 0) {
+			return false;
+		}
+		return Arrays.asList(lists).stream().allMatch(value->value != null);
+	}
+
+	
 	/**
 	 * Verifíca si la lista no se encuentra vacía
 	 * 

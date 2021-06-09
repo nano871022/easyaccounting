@@ -1,1 +1,1 @@
-INSERT INTO TBL_COUNTRY (scode,dcreate,sname,sstate) VALUES ('pais20190607000001','2019-06-07','Colombia','parametro2019060700005');
+INSERT INTO TBL_COUNTRY (scode,sname,sstate) VALUES ('pais20190607000001','Colombia','parametro2019060700005');

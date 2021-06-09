@@ -18,7 +18,7 @@ import org.pyt.common.common.Log;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.RefreshCodeConstant;
 
-import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.validates.ValidateValues;
 import co.com.japl.ea.dto.system.UsuarioDTO;
@@ -31,7 +31,9 @@ import co.com.japl.ea.gdb.privates.impls.ConnectionJDBC;
 import co.com.japl.ea.gdb.privates.impls.StatementFactory;
 import co.com.japl.ea.gdb.privates.interfaces.IStatementSql;
 import co.com.japl.ea.gdb.privates.utils.StatementQuerysUtil;
+import co.com.japl.ea.query.interfaces.IQuerySvc;
 
+@Implements
 public class QueryGDBSvc implements IQuerySvc {
 
 	private ConnectionJDBC db;
