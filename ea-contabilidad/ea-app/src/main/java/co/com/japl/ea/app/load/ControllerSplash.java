@@ -1,14 +1,19 @@
 package co.com.japl.ea.app.load;
 
+import static org.pyt.common.constants.PropertiesConstants.PROP_APP_POM;
+
 import java.net.URL;
+import java.time.Duration;
 import java.util.ResourceBundle;
 
+import co.com.japl.ea.common.properties.CachePropertiesPOM;
 import co.com.japl.ea.query.interfaces.IVerifyStructuredDB;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class ControllerSplash implements Initializable, Runnable {
@@ -18,11 +23,17 @@ public class ControllerSplash implements Initializable, Runnable {
 	private ProgressBar progress;
 	@FXML
 	private TextField percentage;
+	@FXML
+	private Label version;
 	private IVerifyStructuredDB verify;
 	private Boolean runningSplash = true;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		CachePropertiesPOM.instance().load(getClass(), PROP_APP_POM).get("project.version")
+				.ifPresent(value -> version.setText(value));
+		var image = new Image("@../../images/logo_ea.jpg");
+		fondo.setImage(image);
 		new Thread(this).start();
 	}
 
@@ -53,6 +64,11 @@ public class ControllerSplash implements Initializable, Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		try {
+			Thread.sleep(Duration.ofSeconds(10).toMillis());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

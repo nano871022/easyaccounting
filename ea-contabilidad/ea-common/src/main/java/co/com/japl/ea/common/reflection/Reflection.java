@@ -47,7 +47,7 @@ public interface Reflection {
 	 * 
 	 * @return {@link Object}
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default <L extends Comunicacion, N, T, S extends Object, M extends IComunicacion> void inject()
 			throws ReflectionException {
 		try {

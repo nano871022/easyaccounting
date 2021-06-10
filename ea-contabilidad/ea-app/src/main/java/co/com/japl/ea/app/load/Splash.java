@@ -3,7 +3,6 @@ package co.com.japl.ea.app.load;
 import java.lang.reflect.InvocationTargetException;
 
 import co.com.japl.ea.query.interfaces.IVerifyStructuredDB;
-
 import javafx.animation.FadeTransition;
 import javafx.application.Preloader;
 import javafx.application.Preloader.StateChangeNotification.Type;
@@ -58,7 +57,7 @@ public class Splash extends Preloader {
 			}
 		}
 		if (stateChangeNotification.getType() == Type.BEFORE_START) {
-			var ft = new FadeTransition(Duration.seconds(1), root);
+			var ft = new FadeTransition(Duration.seconds(3), root);
 			ft.setFromValue(1);
 			ft.setToValue(0);
 			ft.setCycleCount(1);

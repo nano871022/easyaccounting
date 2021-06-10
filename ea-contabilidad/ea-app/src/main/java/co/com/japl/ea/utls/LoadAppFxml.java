@@ -3,13 +3,16 @@ package co.com.japl.ea.utls;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.CSSConstant;
+import org.pyt.common.constants.PropertiesConstants;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.app.components.PopupFromBean;
@@ -18,6 +21,7 @@ import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.beans.abstracts.AGenericToBean;
 import co.com.japl.ea.beans.abstracts.APopupFromBean;
 import co.com.japl.ea.common.abstracts.ADto;
+import co.com.japl.ea.common.properties.CachePropertiesPOM;
 import co.com.japl.ea.exceptions.LoadAppFxmlException;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -292,6 +296,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 
 				file = fxml.path() + AppConstants.SLASH + fxml.file();
 				title = fxml.nombreVentana();
+				loadTitleWindow(primaryStage, title);
 				if (file.substring(0, 1).compareTo(AppConstants.SLASH) != 0) {
 					file = AppConstants.SLASH + file;
 				}
@@ -301,7 +306,6 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 				root.autosize();
 				Scene scene = new Scene(root);
 				scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
-				loadApp().getStage().setTitle(title);
 				loadApp().getStage().setScene(scene);
 				loadApp().getStage().sizeToScene();
 				loadApp().getStage().show();
@@ -576,5 +580,21 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	@SuppressWarnings("unchecked")
 	public static final <D extends ADto, B extends ABean<D>> B getCurrentControl() {
 		return (B) loadApp().currentControlScroller;
+	}
+
+	private static final void loadTitleWindow(Stage stage, String... title) {
+		var titleAdd = Arrays.asList(title).stream().reduce((val1, val2) -> val1 + "/" + val2);
+		var profile = CachePropertiesPOM.instance().load(LoadAppFxml.class, PropertiesConstants.PROP_APP_POM)
+				.get("profile").filter(value -> value.contentEquals("dev"));
+		String titleBar = "";
+		if (profile.isPresent()) {
+			titleBar += " -- Warning is DEVELOP Mode -- ";
+		}
+		if (titleAdd.isPresent() && StringUtils.isNotBlank(titleAdd.get())) {
+			titleBar += titleAdd.get();
+		}
+		if (StringUtils.isNotBlank(titleBar)) {
+			stage.setTitle(titleBar);
+		}
 	}
 }

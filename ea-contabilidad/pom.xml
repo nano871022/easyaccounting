@@ -28,6 +28,26 @@
 		<project.connect.model>ea-gdb</project.connect.model>
 		<project.connect.version>${project.version}</project.connect.version>
 	</properties>
+	<profiles>
+		<profile>
+			<id>develop</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<profile>dev</profile>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<profile>prod</profile>
+			</properties>
+		</profile>
+	</profiles>
 	<dependencies>
    <dependency>
             <groupId>org.mockito</groupId>
