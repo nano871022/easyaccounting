@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="354.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="co.com.japl.ea.app.load.ControllerSplash">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="354.0" prefWidth="600.0" style="-fx-background-color: #39120d;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.com.japl.ea.app.load.ControllerSplash">
   <bottom>
-    <AnchorPane depthTest="INHERIT" focusTraversable="false" minHeight="16.0" prefHeight="29.0" prefWidth="600.0" snapToPixel="true" BorderPane.alignment="CENTER">
+    <AnchorPane depthTest="INHERIT" focusTraversable="false" minHeight="16.0" prefHeight="29.0" prefWidth="600.0" snapToPixel="true" style="-fx-background-color: #39120d;" BorderPane.alignment="CENTER">
       <children>
-        <HBox layoutX="178.0" layoutY="11.0" prefHeight="16.0" prefWidth="322.0">
+        <HBox layoutX="119.0" prefHeight="16.0" prefWidth="417.0" scaleZ="2.0" translateZ="2.0">
           <children>
-            <ProgressBar fx:id="progress" prefHeight="16.0" prefWidth="336.0" progress="0.0" />
-            <TextField fx:id="percentage" editable="false" prefHeight="16.0" prefWidth="90.0" />
+            <ProgressBar fx:id="progress" prefHeight="23.0" prefWidth="271.0" progress="0.0">
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding></ProgressBar>
+            <TextField fx:id="percentage" editable="false" opacity="0.99" prefWidth="142.0" promptText="pages" style="-fx-background-color: #39120d;">
+                     <padding>
+                        <Insets top="2.0" />
+                     </padding></TextField>
           </children>
         </HBox>
       </children>
     </AnchorPane>
   </bottom>
   <center>
-    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
+    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="335.0" prefWidth="600.0" BorderPane.alignment="CENTER">
       <children>
-        <ImageView fx:id="fondo" fitHeight="304.0" fitWidth="600.0" layoutX="0.0" layoutY="14.0" opacity="1.0" pickOnBounds="true">
+        <ImageView fx:id="fondo" fitHeight="328.0" fitWidth="612.0" layoutX="-1.0" layoutY="-41.0" opacity="1.0" pickOnBounds="true">
           <image>
             <Image url="@../../images/logo_ea.jpg" />
           </image>
@@ -36,16 +40,20 @@
       </children>
     </AnchorPane>
   </center>
-  <top>
-    <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" text="Easy Counting By JAPL" textAlignment="RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
-      <BorderPane.margin>
-        <Insets left="20.0" right="20.0" />
-      </BorderPane.margin>
-    </Label>
-    <Label fx:id="version" alignment="CENTER_LEFT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" text="v1.0.0.0" textAlignment="LEFT" BorderPane.alignment="BOTTOM_LEFT">
-      <BorderPane.margin>
-        <Insets left="20.0" right="20.0" />
-      </BorderPane.margin>
-    </Label>
-  </top>
+   <top>
+      <HBox prefHeight="39.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+          <Label contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="392.0" text="Easy Counting By JAPL" textAlignment="CENTER" textFill="#ffffffc1">
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+          </Label>
+          <Label fx:id="version" alignment="CENTER_RIGHT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="202.0" text="v1.0.0.0" textAlignment="RIGHT" textFill="#ffffffe7">
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
+          </Label>
+         </children>
+      </HBox>
+   </top>
 </BorderPane>

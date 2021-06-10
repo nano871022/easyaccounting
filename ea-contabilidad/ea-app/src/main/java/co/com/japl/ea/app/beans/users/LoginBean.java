@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.LanguageConstant;
@@ -24,6 +25,8 @@ import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.LoadAppFxmlException;
 import co.com.japl.ea.utls.LoadAppFxml;
 import co.com.japl.ea.utls.LoginUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -58,17 +61,50 @@ public class LoginBean extends ABean<UsuarioDTO> {
 	private HBox buttons;
 	private Stage stage;
 	private Boolean login = false;
+	private BooleanProperty connect;
+	private BooleanProperty clear;
 
 	@FXML
 	public void initialize() {
+		connect = new SimpleBooleanProperty(false);
+		clear = new SimpleBooleanProperty(false);
 		registro = new UsuarioDTO();
-		user.setPromptText(i18n("inputtext.promp.usuario.user.name"));
-		password.setPromptText(i18n("inputtext.promp.usuario.password"));
+		configFields();
 		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN).get());
 		verifyLoginRemember();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.form.button.connect").action(this::connect)
-				.icon(Glyph.SIGN_IN).setCommand("G").setName("fxml.form.button.clear.all").action(this::clearAll)
-				.icon(Glyph.ERASER).setName("fxml.form.button.cancel").action(this::cancel).build();
+				.icon(Glyph.SIGN_IN).setCommand("G").isVisible(connect).setName("fxml.form.button.clear.all")
+				.action(this::clearAll).icon(Glyph.ERASER).isVisible(clear).setName("fxml.form.button.cancel")
+				.action(this::cancel).build();
+	}
+
+	private void configFields() {
+		user.setPromptText(i18n("inputtext.promp.usuario.user.name"));
+		password.setPromptText(i18n("inputtext.promp.usuario.password"));
+		user.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (StringUtils.isNotBlank(password.getText()) || StringUtils.isNotBlank(newValue)) {
+				clear.set(true);
+			} else {
+				clear.set(false);
+			}
+			if (StringUtils.isNotBlank(password.getText()) && StringUtils.isNotBlank(newValue)) {
+				connect.set(true);
+			} else {
+				connect.set(false);
+			}
+		});
+		password.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (StringUtils.isNotBlank(user.getText()) || StringUtils.isNotBlank(newValue)) {
+				clear.set(true);
+			} else {
+				clear.set(false);
+			}
+			if (StringUtils.isNotBlank(user.getText()) && StringUtils.isNotBlank(newValue)) {
+				connect.set(true);
+			} else {
+				connect.set(false);
+			}
+		});
 	}
 
 	private void verifyLoginRemember() {
@@ -181,9 +217,6 @@ public class LoginBean extends ABean<UsuarioDTO> {
 	public void cancel() {
 		try {
 			System.exit(0);
-//			usersSvc.logout(registro, remoteAddr(), false);
-//			registro = new UsuarioDTO();
-//			clearAll();
 		} catch (Exception e) {
 			error(e);
 		}
