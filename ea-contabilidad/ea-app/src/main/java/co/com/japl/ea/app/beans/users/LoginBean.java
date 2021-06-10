@@ -180,9 +180,10 @@ public class LoginBean extends ABean<UsuarioDTO> {
 
 	public void cancel() {
 		try {
-			usersSvc.logout(registro, remoteAddr(), false);
-			registro = new UsuarioDTO();
-			clearAll();
+			System.exit(0);
+//			usersSvc.logout(registro, remoteAddr(), false);
+//			registro = new UsuarioDTO();
+//			clearAll();
 		} catch (Exception e) {
 			error(e);
 		}
