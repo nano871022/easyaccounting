@@ -8,10 +8,21 @@ public class MenuDTO extends ADto {
 	private String classPath;
 	private String iconPath;
 	private String iconCss;
+	private String shortcut;
 	private Integer state;
 
 	public MenuDTO() {
 	}
+
+	public String getShortcut() {
+		return shortcut;
+	}
+
+
+	public void setShortcut(String shortcut) {
+		this.shortcut = shortcut;
+	}
+
 
 	public MenuDTO(String url, String value) {
 		this.url = url;

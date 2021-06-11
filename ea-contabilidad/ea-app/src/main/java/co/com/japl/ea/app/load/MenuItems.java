@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.PropertiesConstants;
 
+import co.com.japl.ea.app.beans.users.LoginBean;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.properties.PropertiesUtils;
@@ -37,6 +39,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCharacterCombination;
+import javafx.scene.input.KeyCombination;
 
 /**
  * Se encarga de tener todos las pantallas a mostrar
@@ -99,19 +103,19 @@ public class MenuItems implements Reflection {
 			list.stream().forEach(menuDto -> {
 				var menus = menuDto.getUrl().split(AppConstants.SLASH);
 				var menu = getMenu(menus[0]);
-				processMenu(menu, menuDto.getClassPath(), 0, menus);//
+				processMenu(menu, menuDto.getClassPath(), menuDto.getShortcut(), 0, menus);//
 			});
 		} else {
 			propertiesMenu.keySet().forEach(key -> {
 				var menus = ((String) key).split(AppConstants.SLASH);
 				var menu = getMenu(menus[0]);
-				processMenu(menu, (String) propertiesMenu.get(key), 0, menus);
+				processMenu(menu, (String) propertiesMenu.get(key), null, 0, menus);
 			});
 		}
 	}
 
-	private final <T extends ADto, B extends ABean<T>> void processMenu(Menu menu, String classString, Integer position,
-			String... menusSplit) {
+	private final <T extends ADto, B extends ABean<T>> void processMenu(Menu menu, String classString, String shortcut,
+			Integer position, String... menusSplit) {
 		var nameLabel = nameLabel(menusSplit[position + 1]);
 		if (menusSplit.length > position) {
 			var founds = menu.getItems().stream().filter(menuFilter -> menuFilter.getText().contentEquals(nameLabel))
@@ -127,7 +131,11 @@ public class MenuItems implements Reflection {
 						nameLabel2 = nameLabel;
 					}
 					var menuItem = new MenuItem(nameLabel2);
+
 					menu.getItems().add(menuItem);
+					if (StringUtils.isNotBlank(shortcut)) {
+						menuItem.setAccelerator(new KeyCharacterCombination(shortcut, KeyCombination.ALT_DOWN));
+					}
 					menuItem.onActionProperty().set(event -> onActionProperty(classString, nameLabel));
 					return;
 				} else {
@@ -139,7 +147,7 @@ public class MenuItems implements Reflection {
 				found = founds[0];
 			}
 			if (found != null) {
-				processMenu(found, classString, position + 1, menusSplit);
+				processMenu(found, classString, shortcut, position + 1, menusSplit);
 			}
 		}
 	}
@@ -218,17 +226,18 @@ public class MenuItems implements Reflection {
 				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(),
 						LoginUtil.isRemember());
 				LoginUtil.deleteRemember();
+				LoadAppFxml.loadingApp().getStage().hide();
+				LoadAppFxml.loadBeanFxml(LoginBean.class).load(LoadAppFxml.loadingApp().getStage());
 			} catch (UnknownHostException e) {
 				logger.logger(e);
 			} catch (Exception e) {
 				logger.logger(e);
 			}
-			Platform.exit();
-			System.exit(0);
 		});
+		logOut.setAccelerator(new KeyCharacterCombination("O", KeyCombination.ALT_DOWN));
 		logOut.visibleProperty().bind(Bindings.createBooleanBinding(() -> LoginUtil.isRemember()));
 		items.add(logOut);
-		items.add(addItem(BTN_CERRAR, event -> {
+		var close = addItem(BTN_CERRAR, event -> {
 			try {
 				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(), false);
 			} catch (UnknownHostException e) {
@@ -238,7 +247,9 @@ public class MenuItems implements Reflection {
 			}
 			Platform.exit();
 			System.exit(0);
-		}));
+		});
+		close.setAccelerator(new KeyCharacterCombination("C", KeyCombination.ALT_DOWN));
+		items.add(close);
 	}
 
 	/**

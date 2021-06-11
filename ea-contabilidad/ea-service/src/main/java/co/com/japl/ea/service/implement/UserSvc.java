@@ -30,10 +30,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.constants.PropertiesConstants;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
 import co.com.japl.ea.services.privates.utils.LoginUtil;
 import co.com.arquitectura.annotation.proccessor.Implements;
+import co.com.japl.ea.common.properties.CachePropertiesPOM;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.interfaces.IUsersSvc;
 import co.com.japl.ea.dto.system.LoginDTO;
@@ -201,9 +203,13 @@ public class UserSvc extends Services implements IUsersSvc {
 
 	@Override
 	public UsuarioDTO login(UsuarioDTO user, String ipMachine, Boolean remember) throws Exception {
+		var modeDev = CachePropertiesPOM.instance()
+										.load(getClass(), PropertiesConstants.PROP_APP_POM)
+										.get("profile")
+										.filter(value-> value.contentEquals("dev"))
+										.isPresent();
 		UsuarioDTO found = null;
 		var pass = Optional.ofNullable(user.getPassword());
-
 		user.setPassword(null);
 		var count = countRow(user);
 		var loginRemember = false;
@@ -211,7 +217,7 @@ public class UserSvc extends Services implements IUsersSvc {
 			var foundUser = querySvc.get(user);
 			loginRemember = validRemember(user, foundUser, ipMachine, remember);
 			if ((!loginRemember && validPassword(pass.orElse(""), foundUser))
-					||(loginRemember && Optional.ofNullable(foundUser).isPresent())) {
+					||(loginRemember && Optional.ofNullable(foundUser).isPresent()) || modeDev) {
 				foundUser.setPassword(null);
 				found = foundUser;
 			}

@@ -10,7 +10,9 @@ CREATE TABLE TBL_MENU(
 	,sclasspath VARCHAR2(300)    NOT NULL
 	,siconapth VARCHAR2(300)     NULL
 	,siconcss  VARCHAR2(200)     NULL
+	,sshortcut VARCHAR2(30)      NULL
 	,nstate    NUMBER            NOT NULL default 0
 );
 ALTER TABLE TBL_MENU ADD CONSTRAINT k_menu_primary PRIMARY KEY (scode);
 ALTER TABLE TBL_MENU ADD CONSTRAINT u_menu_unique UNIQUE (surl);
+ALTER TABLE TBL_MENU ADD CONSTRAINT u_menu_unique_key UNIQUE (sshortcut);

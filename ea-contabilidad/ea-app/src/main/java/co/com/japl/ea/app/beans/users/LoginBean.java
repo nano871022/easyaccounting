@@ -72,10 +72,13 @@ public class LoginBean extends ABean<UsuarioDTO> {
 		configFields();
 		title.setText(i18n().valueBundle(CONST_TITLE_LOGIN).get());
 		verifyLoginRemember();
+	}
+
+	private void configButtons() {
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.form.button.connect").action(this::connect)
 				.icon(Glyph.SIGN_IN).setCommand("G").isVisible(connect).setName("fxml.form.button.clear.all")
-				.action(this::clearAll).icon(Glyph.ERASER).isVisible(clear).setName("fxml.form.button.cancel")
-				.action(this::cancel).build();
+				.action(this::clearAll).icon(Glyph.ERASER).setCommand("L").isVisible(clear)
+				.setName("fxml.form.button.cancel").action(this::cancel).setCommand("C").build();
 	}
 
 	private void configFields() {
@@ -147,6 +150,7 @@ public class LoginBean extends ABean<UsuarioDTO> {
 
 	public void load(Stage stage) {
 		this.stage = stage;
+		configButtons();
 		if (login) {
 			try {
 				loadTemplate();

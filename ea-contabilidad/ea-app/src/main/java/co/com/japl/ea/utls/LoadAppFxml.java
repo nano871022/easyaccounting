@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import co.com.japl.ea.beans.abstracts.AGenericToBean;
 import co.com.japl.ea.beans.abstracts.APopupFromBean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.properties.CachePropertiesPOM;
+import co.com.japl.ea.common.reflection.ReflectionUtils;
 import co.com.japl.ea.exceptions.LoadAppFxmlException;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -313,6 +315,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 					Platform.exit();
 					System.exit(0);
 				});
+				callPostLoad(loader.getController());
 				return loader.getController();
 			} else {
 				throw new LoadAppFxmlException(i18n.instance()
@@ -326,6 +329,14 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			throw new LoadAppFxmlException(i18n.instance().get("err.security.problem"), e);
 		} catch (IOException e) {
 			throw new LoadAppFxmlException(i18n.valueBundle("err.io.exception").get(), e);
+		}
+	}
+
+	private static <T> void callPostLoad(T controller) {
+		try {
+			ReflectionUtils.instanciar().invoke(controller, "postLoad");
+		} catch (Exception e) {
+			logger.DEBUG(controller.getClass().getTypeName() + "::" + e.getMessage());
 		}
 	}
 
@@ -501,10 +512,22 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 	}
 
 	public static final void addCommands(KeyCombination keyboard, Runnable runnable) {
-		if (loadApp().getLastContro() != null && loadApp().getLastContro().getScene() != null) {
-			var accelerator = loadApp().getLastContro().getScene().getAccelerators();
+		var scene = getScene();
+		if (scene.isPresent()) {
+			var accelerator = scene.get().getAccelerators();
 			accelerator.put(keyboard, runnable);
 		}
+	}
+
+	@SuppressWarnings("static-access")
+	private static final Optional<Scene> getScene() {
+		var lastControl = loadApp().getLastControl();
+		if (lastControl != null && lastControl.getScene() != null) {
+			return Optional.of(lastControl.getScene());
+		} else if (loadApp().getStage() != null && loadApp().getStage().getScene() != null) {
+			return Optional.of(loadApp().getStage().getScene());
+		}
+		return Optional.empty();
 	}
 
 	public static final <D extends ADto> void addCommandsToPopup(KeyCombination keyboard, Class<D> dto) {
@@ -512,6 +535,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> {
 			try {
 				var popupBean = new PopupGenBean<D>(dto);
 				loadBeanFX(popupBean);
+				popupBean.load("");
 			} catch (Exception e) {
 				logger.logger(e);
 			}

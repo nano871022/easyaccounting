@@ -1,10 +1,13 @@
 package org.pyt.common.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.pyt.common.annotations.Singleton;
 
@@ -144,7 +147,7 @@ public class Comunicacion<IC extends IComunicacion> implements Runnable {
 					T[] ss = (T[]) lSubscribers.toArray(new IComunicacion[0]);
 					suscriptores.put(comando, (IC[]) ss);
 				} else if (subscribers != null || subscribers.length > 0) {
-					List<T> lSubscribers = List.of(subscribers);
+					List<T> lSubscribers = new ArrayList<>(Arrays.asList(subscribers));
 					lSubscribers.add(subscriber);
 					suscriptores.put(comando, (IC[]) lSubscribers.toArray(new IComunicacion[0]));
 				}

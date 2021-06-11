@@ -85,6 +85,8 @@ public class PermissionUtil implements Reflection {
 			}
 		} catch (GenericServiceException e) {
 			logger.logger(e);
+		} catch (RuntimeException e) {
+			logger.DEBUG(e);
 		}
 		return false;
 	}

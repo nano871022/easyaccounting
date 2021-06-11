@@ -146,15 +146,38 @@ public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 				button.setGraphic(new Glyph("FontAwesome", icons.get(name)));
 			}
 			if (commands.get(name) != null) {
-				var kc = new KeyCharacterCombination(commands.get(name), KeyCombination.ALT_DOWN);
+				var kc = new KeyCharacterCombination(commands.get(name), KeyCombination.CONTROL_DOWN);
 				var mnemonic = new Mnemonic(button, kc);
 				button.setMnemonicParsing(true);
 				if (LoadAppFxml.loadingApp().getStage() != null
 						&& LoadAppFxml.loadingApp().getStage().getScene() != null) {
-					LoadAppFxml.loadingApp().getStage().getScene().addMnemonic(mnemonic);
+//					LoadAppFxml.loadingApp().getStage().getScene().addMnemonic(mnemonic);
+					LoadAppFxml.loadingApp().getStage().getScene().getAccelerators().put(kc, () -> button.fire());
 				}
 			}
-			actions.get(name).stream().forEach(action -> button.setOnAction(event -> action.call()));
+			try {
+				actions.get(name).stream().forEach(action -> {
+					try {
+						button.setOnAction(event -> {
+							try {
+								action.call();
+							} catch (RuntimeException e) {
+								System.err.println(e);
+							} catch (Exception e) {
+								System.err.println(e);
+							}
+						});
+					} catch (RuntimeException e) {
+						System.err.println(e);
+					} catch (Exception e) {
+						System.err.println(e);
+					}
+				});
+			} catch (RuntimeException e) {
+				System.err.println(e);
+			} catch (Exception e) {
+				System.err.println(e);
+			}
 			gridPane.setHgap(10);
 			gridPane.addRow(1, button);
 		});

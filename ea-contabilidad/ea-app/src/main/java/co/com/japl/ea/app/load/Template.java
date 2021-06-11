@@ -88,29 +88,42 @@ public class Template implements IComunicacion, Reflection {
 	public void initialize() {
 		try {
 			inject();
-			languageBP = new SimpleBooleanProperty(true);
-			helpBP = new SimpleBooleanProperty(true);
-			documentsBP = new SimpleBooleanProperty(true);
-			genericBP = new SimpleBooleanProperty(true);
-			rightMessage.setText("");
-			leftMessage.setText("");
-			centerMessage.setText("");
-			progressBar.setProgress(0.0);
+			instanceButtonsVisibility();
+			cleanMessage();
 			new MenuItems(menu, scroller).load();
 			logger.DEBUG("Cargando ventana principal");
-			LoadAppFxml.addCommandsToPopup(new KeyCodeCombination(KeyCode.I, KeyCombination.ALT_DOWN),
-					LanguagesDTO.class);
 			visibleButtons();
-			ButtonsImpl.Stream(HBox.class).setLayout(topBodyTemplate).setReference("fxml.btn.language")
-					.action(this::language).isVisible(languageBP).icon(Glyph.LANGUAGE).setReference("fxml.btn.help")
-					.action(this::help).isVisible(helpBP).icon(Glyph.QUESTION)
-					.setReference("fxml.btn.dinamic.documents").icon(Glyph.FILE_TEXT)
-					.action(this::configDinamicDocuments).isVisible(documentsBP)
-					.setReference("fxml.btn.generic.interface").icon(Glyph.FILE_TEXT_ALT)
-					.action(this::configGenericInterface).isVisible(genericBP).build();
 		} catch (ReflectionException e1) {
 			logger.logger(e1);
 		}
+	}
+
+	public void postLoad() {
+		LoadAppFxml.addCommandsToPopup(new KeyCodeCombination(KeyCode.I, KeyCombination.ALT_DOWN), LanguagesDTO.class);
+		configButtons();
+	}
+
+	private void configButtons() {
+		ButtonsImpl.Stream(HBox.class).setLayout(topBodyTemplate).setReference("fxml.btn.language")
+				.action(this::language).isVisible(languageBP).icon(Glyph.LANGUAGE).setReference("fxml.btn.help")
+				.action(this::help).isVisible(helpBP).icon(Glyph.QUESTION).setReference("fxml.btn.dinamic.documents")
+				.icon(Glyph.FILE_TEXT).action(this::configDinamicDocuments).isVisible(documentsBP)
+				.setReference("fxml.btn.generic.interface").icon(Glyph.FILE_TEXT_ALT)
+				.action(this::configGenericInterface).isVisible(genericBP).build();
+	}
+
+	private void cleanMessage() {
+		rightMessage.setText("");
+		leftMessage.setText("");
+		centerMessage.setText("");
+		progressBar.setProgress(0.0);
+	}
+
+	private void instanceButtonsVisibility() {
+		languageBP = new SimpleBooleanProperty(false);
+		helpBP = new SimpleBooleanProperty(false);
+		documentsBP = new SimpleBooleanProperty(false);
+		genericBP = new SimpleBooleanProperty(false);
 	}
 
 	private void language() {
@@ -153,15 +166,19 @@ public class Template implements IComunicacion, Reflection {
 	}
 
 	private void visibleButtons() {
-		var language = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
-				ListLanguagesBean.class, LoginUtil.getUsuarioLogin().getGrupoUser());
-		var generic = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
-				ListGenericInterfacesBean.class, LoginUtil.getUsuarioLogin().getGrupoUser());
-		var formulario = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, FormularioBean.class,
-				LoginUtil.getUsuarioLogin().getGrupoUser());
-		this.languageBP.setValue(language);
-		this.genericBP.setValue(generic);
-		this.documentsBP.setValue(formulario);
+		try {
+			var language = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
+					ListLanguagesBean.class, LoginUtil.getUsuarioLogin().getGrupoUser());
+			var generic = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
+					ListGenericInterfacesBean.class, LoginUtil.getUsuarioLogin().getGrupoUser());
+			var formulario = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
+					FormularioBean.class, LoginUtil.getUsuarioLogin().getGrupoUser());
+			this.languageBP.setValue(language);
+			this.genericBP.setValue(generic);
+			this.documentsBP.setValue(formulario);
+		} catch (RuntimeException e) {
+			logger().logger(e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
