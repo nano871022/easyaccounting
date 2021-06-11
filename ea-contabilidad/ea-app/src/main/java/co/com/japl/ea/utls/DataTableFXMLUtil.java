@@ -1,11 +1,6 @@
 package co.com.japl.ea.utls;
 
-import static org.pyt.common.constants.css.DataTable.CONST_CSS_CURSOR_HAND;
-import static org.pyt.common.constants.css.DataTable.CONST_CSS_TEXT_LINK;
-import static org.pyt.common.constants.css.DataTable.CONST_CSS_TEXT_NO_LINK;
-
 import java.math.BigDecimal;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -16,11 +11,10 @@ import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.validates.ValidateValues;
 import co.com.japl.ea.exceptions.ReflectionException;
 import co.com.japl.ea.exceptions.validates.ValidateValueException;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.Pagination;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -31,31 +25,28 @@ import javafx.scene.layout.HBox;
  * @since 18/06/2018
  */
 public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extends Table {
-	private Button btnPrimer;
-	private Button btnUltimo;
-	private Button btnSiguiente;
-	private Button btnAtras;
 	private HBox paginas;
-	private HBox nPages;
 	private Integer currentPage;
-	private Integer page;
+	private Integer pages;
 	private Integer total;
 	private Integer rows;
-	private Long cantidad;
 	private List<S> list;
 	private javafx.scene.control.TableView<S> table;
 	private ValidateValues validate = new ValidateValues();
 	private Log logger = Log.Log(this.getClass());
 	private Boolean firstSearch;
+	private Pagination pagination;
+	private BooleanProperty visiblePaginator;
 
 	Consumer<List<S>> predicateSelected;
 
-	public DataTableFXMLUtil() {
-		currentPage = 1;
+	private DataTableFXMLUtil() {
+		currentPage = 0;
 		rows = 10;
 		total = 5;
-		page = 1;
+		pages = 1;
 		firstSearch = true;
+		visiblePaginator = new SimpleBooleanProperty(false);
 	}
 
 	public DataTableFXMLUtil(HBox paginas, javafx.scene.control.TableView<S> table) {
@@ -71,24 +62,21 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 		this.firstSearch = firstSearch;
 		this.paginas = paginas;
 		this.table = table;
-		loadPaginator();
 		search();
+		loadPaginator();
 	}
 
 	private final void loadPaginator() {
 		if (paginas != null) {
-			paginas.getChildren().add(0, btnPrimer = new Button("<<"));
-			paginas.getChildren().add(1, btnAtras = new Button("<"));
-			paginas.getChildren().add(2, nPages = new HBox());
-			paginas.getChildren().add(paginas.getChildren().size(), btnSiguiente = new Button(">"));
-			paginas.getChildren().add(paginas.getChildren().size(), btnUltimo = new Button(">>"));
-			btnUltimo.setMinWidth(40);
-			btnPrimer.setMinWidth(40);
-			btnPrimer.onActionProperty().set(e -> first());
-			btnAtras.onActionProperty().set(e -> before());
-			btnSiguiente.onActionProperty().set(e -> next());
-			btnUltimo.onActionProperty().set(e -> last());
-			btnPaginatorHidden();
+			pagination = new Pagination();
+			pagination.setMaxPageIndicatorCount(20);
+			pagination.visibleProperty().bind(visiblePaginator);
+			pagination.setPageFactory((init) -> {
+				currentPage = init;
+				search();
+				return new GridPane();
+			});
+			paginas.getChildren().add(pagination);
 		}
 	}
 
@@ -106,46 +94,20 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 		if (table.isVisible() && firstSearch) {
 			T filter = getFilter();
 			Integer init = currentPage;
-			if (init > 1) {
-				init = (currentPage - 1) * rows;
-			} else if (init == 1) {
-				init = 0;
+			if (init >= 1) {
+				init = currentPage * rows;
 			}
 			list = getList(filter, init, rows);
 			total = getTotalRows(filter);
+			pages = (int) Math.round((Double.valueOf(total) / Double.valueOf(rows)) + 0.4);
+			if (pagination.getPageCount() != pages) {
+				pagination.setPageCount(pages);
+				visiblePaginator.setValue(pages > 1);
+			}
 			Table.put(table, list);
-			loadPages();
 		} else if (table.isVisible()) {
 			firstSearch = true;
 		}
-	}
-
-	/**
-	 * Se encargad e recargar los hijos de la paginacion
-	 */
-	private final void reloadPages() {
-		Iterator<Node> ite = nPages.getChildren().iterator();
-		while (ite.hasNext()) {
-			Node node = ite.next();
-			if (((Label) node).getText().contentEquals(String.valueOf(currentPage))) {
-				((Label) node).setStyle(CONST_CSS_TEXT_LINK);
-			} else {
-				((Label) node).setStyle(CONST_CSS_TEXT_NO_LINK);
-			}
-		}
-		search();
-	}
-
-	/**
-	 * Se encargaa de cambiar de pagina a la primera
-	 */
-	public final void first() {
-		currentPage = 1;
-		reloadPages();
-		btnSiguiente.setVisible(true);
-		btnUltimo.setVisible(true);
-		btnAtras.setVisible(false);
-		btnPrimer.setVisible(false);
 	}
 
 	public final BigDecimal sumatoria(List<T> list, String nombreCampo) {
@@ -162,97 +124,6 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 			}
 		}
 		return cant;
-	}
-
-	/**
-	 * Se encarga de cambiar a la pagina anteriore
-	 */
-	public final void before() {
-		currentPage--;
-		reloadPages();
-		if (currentPage == 1) {
-			btnAtras.setVisible(false);
-			btnPrimer.setVisible(false);
-		} else {
-			btnAtras.setVisible(true);
-			btnPrimer.setVisible(true);
-		}
-		btnSiguiente.setVisible(true);
-		btnUltimo.setVisible(true);
-	}
-
-	/**
-	 * Se encarga dde cambiar a la siguiente pagina
-	 */
-	public final void next() {
-		currentPage++;
-		reloadPages();
-		if (currentPage == cantidad.intValue()) {
-			btnSiguiente.setVisible(false);
-			btnUltimo.setVisible(false);
-		} else {
-			btnSiguiente.setVisible(true);
-			btnUltimo.setVisible(true);
-		}
-		btnAtras.setVisible(true);
-		btnPrimer.setVisible(true);
-
-	}
-
-	/**
-	 * Se encarga de cambiar a la ultima pagina encontrada
-	 */
-	public final void last() {
-		currentPage = cantidad.intValue();
-		reloadPages();
-		btnSiguiente.setVisible(false);
-		btnUltimo.setVisible(false);
-		btnAtras.setVisible(true);
-		btnPrimer.setVisible(true);
-	}
-
-	/**
-	 * Se encarga de cargar el numero de paginas
-	 */
-	public final void loadPages() {
-		nPages.getChildren().clear();
-		Double d = (double) 0.9;
-		if (total > rows) {
-			d = (double) (total / rows);
-		}
-		cantidad = (long) Math.round(d + 0.5);
-		if (cantidad > 1) {
-			for (int i = 0; i < cantidad; i++) {
-				Label page = new Label(String.valueOf(i + 1));
-				page.setPadding(new Insets(5));
-				page.setStyle(CONST_CSS_CURSOR_HAND);
-				if (i == 0) {
-					page.setStyle(CONST_CSS_TEXT_LINK);
-				}
-				page.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-					Iterator<Node> ite = nPages.getChildren().iterator();
-					while (ite.hasNext()) {
-						Node node = ite.next();
-						((Label) node).setStyle(CONST_CSS_TEXT_NO_LINK);
-					}
-					page.setStyle(CONST_CSS_TEXT_LINK);
-					currentPage = Integer.valueOf(page.getText());
-					search();
-				});
-				nPages.getChildren().add(page);
-				btnAtras.setVisible(false);
-				btnPrimer.setVisible(false);
-			}
-		} else {
-			btnPaginatorHidden();
-		}
-	}
-
-	private void btnPaginatorHidden() {
-		btnAtras.setVisible(false);
-		btnPrimer.setVisible(false);
-		btnSiguiente.setVisible(false);
-		btnUltimo.setVisible(false);
 	}
 
 	/**
@@ -310,7 +181,7 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 		return list;
 	}
 
-	public final Integer getPage() {
-		return page;
+	public final Integer getPages() {
+		return pages;
 	}
 }
