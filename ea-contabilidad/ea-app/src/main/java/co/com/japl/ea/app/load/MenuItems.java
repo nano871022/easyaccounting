@@ -227,6 +227,7 @@ public class MenuItems implements Reflection {
 						LoginUtil.isRemember());
 				LoginUtil.deleteRemember();
 				LoadAppFxml.loadingApp().getStage().hide();
+				LoadAppFxml.clean();
 				LoadAppFxml.loadBeanFxml(LoginBean.class).load(LoadAppFxml.loadingApp().getStage());
 			} catch (UnknownHostException e) {
 				logger.logger(e);

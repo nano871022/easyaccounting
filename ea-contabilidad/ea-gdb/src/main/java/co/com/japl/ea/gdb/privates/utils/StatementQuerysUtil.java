@@ -285,7 +285,7 @@ public class StatementQuerysUtil {
 		}
 		var value = namesSql.getValue(path);
 		if (value == null) {
-			value = name;
+			value = name.toLowerCase();
 		}
 		return (String) value;
 	}

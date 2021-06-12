@@ -202,11 +202,11 @@ public interface Reflection {
 			if (singleton != null) {
 				var method = classe.getDeclaredMethod(AppConstants.ANNOT_SINGLETON);
 				return Optional.of((T) method.invoke(classe));
-			} else {
+			} else if(!classe.isInterface()){
 				return Optional.of((T) field.getType().getConstructor().newInstance());
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**

@@ -26,7 +26,7 @@ public class CacheServiceInject {
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> implement(Class<?> interfaces){
 		try {
-			if(this.clazz.containsKey(interfaces)) {
+			if(this.clazz != null && this.clazz.containsKey(interfaces)) {
 				var clazz = this.clazz.get(interfaces);
 				var instance = clazz.getConstructor().newInstance();
 				return Optional.of((T)instance);
