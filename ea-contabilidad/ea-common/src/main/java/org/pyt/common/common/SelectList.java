@@ -364,7 +364,7 @@ public final class SelectList {
 				name = new StringBuilder();
 				for (String campo : campos) {
 					try {
-						name.append(ReflectionUtils.getValueField(object, campo).toString());
+						name.append(ReflectionUtils.getValueField(object, campo).orElse("").toString());
 					} catch (ReflectionException e) {
 					}
 				}

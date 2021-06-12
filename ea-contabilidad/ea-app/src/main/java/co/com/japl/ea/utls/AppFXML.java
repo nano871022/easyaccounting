@@ -37,6 +37,7 @@ public abstract class AppFXML<P extends Pane, C extends Control> {
 	protected P lastLayout;
 	protected C lastContro;
 	protected ABean<?> currentControlScroller;
+	protected Stage stageTemplate;
 
 	public static final void clean() {
 		loadApp().currentControlScroller = null;
@@ -195,6 +196,10 @@ public abstract class AppFXML<P extends Pane, C extends Control> {
 
 	public final Stage getStage() {
 		return stage;
+	}
+
+	public final Stage getStageTemplate() {
+		return stageTemplate;
 	}
 
 	public final Boolean isStage() {

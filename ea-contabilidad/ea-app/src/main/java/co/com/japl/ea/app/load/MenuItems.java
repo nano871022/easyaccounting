@@ -226,7 +226,7 @@ public class MenuItems implements Reflection {
 				loginSvc.logout(LoginUtil.getUsuarioLogin(), InetAddress.getLocalHost().getHostAddress(),
 						LoginUtil.isRemember());
 				LoginUtil.deleteRemember();
-				LoadAppFxml.loadingApp().getStage().hide();
+				LoadAppFxml.loadingApp().getStageTemplate().hide();
 				LoadAppFxml.clean();
 				LoadAppFxml.loadBeanFxml(LoginBean.class).load(LoadAppFxml.loadingApp().getStage());
 			} catch (UnknownHostException e) {

@@ -105,11 +105,12 @@ public class Template implements IComunicacion, Reflection {
 
 	private void configButtons() {
 		ButtonsImpl.Stream(HBox.class).setLayout(topBodyTemplate).setReference("fxml.btn.language")
-				.action(this::language).isVisible(languageBP).icon(Glyph.LANGUAGE).setReference("fxml.btn.help")
-				.action(this::help).isVisible(helpBP).icon(Glyph.QUESTION).setReference("fxml.btn.dinamic.documents")
-				.icon(Glyph.FILE_TEXT).action(this::configDinamicDocuments).isVisible(documentsBP)
-				.setReference("fxml.btn.generic.interface").icon(Glyph.FILE_TEXT_ALT)
-				.action(this::configGenericInterface).isVisible(genericBP).build();
+				.action(this::language).isVisible(languageBP).icon(Glyph.LANGUAGE).setCommand("L")
+				.setReference("fxml.btn.help").action(this::help).isVisible(helpBP).icon(Glyph.QUESTION).setCommand("H")
+				.setReference("fxml.btn.dinamic.documents").icon(Glyph.FILE_TEXT).action(this::configDinamicDocuments)
+				.isVisible(documentsBP).setCommand("D").setReference("fxml.btn.generic.interface")
+				.icon(Glyph.FILE_TEXT_ALT).action(this::configGenericInterface).isVisible(genericBP).setCommand("G")
+				.build();
 	}
 
 	private void cleanMessage() {

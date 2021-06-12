@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.ReflectionConstants;
@@ -78,7 +79,7 @@ public final class ReflectionUtils {
 			List<String> campos = out.getNameFields();
 			campos.forEach(campo -> {
 				try {
-					out.set(campo, getValueField(origen, campo));
+					out.set(campo, getValueField(origen, campo).get());
 				} catch (ReflectionException e) {
 					logger.logger(e);
 				}
@@ -164,18 +165,21 @@ public final class ReflectionUtils {
 	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
-	public final static <T, S> S getValueField(T object, String fieldName) throws ReflectionException {
+	public final static <T, S> Optional<S> getValueField(T object, String fieldName) throws ReflectionException {
 		try {
+			if(object == null) {
+				return Optional.empty();
+			}
 			Class<T> clase = (Class<T>) object.getClass();
 			if (ReflectionDto.class.isInstance(object)) {
 				var metodoGetGeneric = ReflectionDto.class.getDeclaredMethod("get", String.class);
-				return (S) metodoGetGeneric.invoke(object, fieldName);
+				return Optional.ofNullable( (S) metodoGetGeneric.invoke(object, fieldName) );
 			}
 			Field field = clase.getDeclaredField(fieldName);
 			String nombre = field.getName();
 			nombre = nombre.substring(0, 1).toUpperCase() + nombre.substring(1);
 			Method metodo = clase.getDeclaredMethod("get" + nombre);
-			return (S) metodo.invoke(object);
+			return Optional.ofNullable( (S) metodo.invoke(object));
 		} catch (NoSuchFieldException e) {
 			throw new ReflectionException("No se encuentro el campo " + e.getMessage(), e);
 		} catch (SecurityException e) {
@@ -185,12 +189,12 @@ public final class ReflectionUtils {
 				Class<T> clase = (Class<T>) object.getClass();
 				Field field = clase.getDeclaredField(fieldName);
 				if (field.canAccess(object)) {
-					return (S) field.get(object);
+					return Optional.ofNullable( (S) field.get(object));
 				} else {
 					String nombre = field.getName();
 					nombre = nombre.substring(0, 1).toUpperCase() + nombre.substring(1);
 					Method metodo = clase.getDeclaredMethod("get" + nombre);
-					return (S) metodo.invoke(object);
+					return Optional.ofNullable( (S) metodo.invoke(object) );
 				}
 			} catch (Exception e1) {
 				throw new ReflectionException("No se encontro el metodo " + e.getMessage(), e);
@@ -214,12 +218,12 @@ public final class ReflectionUtils {
 	 * @throws {@link ReflectionException}
 	 */
 	@SuppressWarnings("unchecked")
-	public final static <T, S, V> S setValueField(T object, String fieldName, V value) throws ReflectionException {
+	public final static <T, S, V> S setValueField(T object, String fieldName, Optional<V> value) throws ReflectionException {
 		try {
 			Class<T> clase = (Class<T>) object.getClass();
 			if (ReflectionDto.class.isInstance(object)) {
 				var metodoGetGeneric = ReflectionDto.class.getDeclaredMethod("set", String.class, Object.class);
-				return (S) metodoGetGeneric.invoke(object, fieldName, value);
+				return (S) metodoGetGeneric.invoke(object, fieldName, value.get());
 			}
 			return null;
 			// } catch (NoSuchFieldException e) {

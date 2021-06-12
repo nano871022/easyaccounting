@@ -10,6 +10,7 @@ import org.pyt.common.constants.CSSConstant;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.app.components.PopupFromBean;
 import co.com.japl.ea.app.components.PopupGenBean;
+import co.com.japl.ea.app.load.Template;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.beans.abstracts.AGenericToBean;
 import co.com.japl.ea.beans.abstracts.APopupFromBean;
@@ -154,6 +155,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> extends AppFXM
 		loadApp().setStage(primaryStage);
 		if (!loadApp().isStage()) {
 			throw new LoadAppFxmlException(i18n.instance().get("err.stage.wasnt.entered"));
+		}
+		if (controller == Template.class) {
+			loadApp().stageTemplate = primaryStage;
 		}
 		try {
 			var fxml = controller.getAnnotation(FXMLFile.class);
