@@ -28,18 +28,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
 
+import co.com.japl.ea.common.properties.AppProperties;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 
 public class LoginUtil {
 	private static Boolean remember = false;
 	private static UsuarioDTO usuarioSystem;
 	public static final String CONST_FILE_REMEMBER = "rememberme.bin";
-	public static final String CONST_PATH_SAVES = "./";
 	private static final Log LOGGER = Log.Log(LoginUtil.class);
 
 	public final static void deleteRemember() {
 		try {
-			Path path = Paths.get(CONST_PATH_SAVES, CONST_FILE_REMEMBER);
+			Path path = Paths.get(getPath(), CONST_FILE_REMEMBER);
 			Files.deleteIfExists(path);
 			usuarioSystem = null;
 			remember = null;
@@ -49,7 +49,7 @@ public class LoginUtil {
 	}
 
 	public final static Optional<UsuarioDTO> loadLogin() throws IOException, ClassNotFoundException {
-		Path path = Paths.get(CONST_PATH_SAVES, CONST_FILE_REMEMBER);
+		Path path = Paths.get(getPath(), CONST_FILE_REMEMBER);
 		if (!Files.exists(path)) {
 			Files.createFile(path);
 		}
@@ -65,7 +65,7 @@ public class LoginUtil {
 	}
 
 	public final static void writeRemember(UsuarioDTO remember) throws IOException {
-		Path path = Paths.get(CONST_PATH_SAVES, CONST_FILE_REMEMBER);
+		Path path = Paths.get(getPath(), CONST_FILE_REMEMBER);
 		try (var os = Files.newOutputStream(path); var file = new ObjectOutputStream(os)) {
 			file.writeObject(remember);
 			usuarioSystem = remember;
@@ -162,5 +162,9 @@ public class LoginUtil {
 				.append("|").append(host).toString();
 		password = Base64.getEncoder().encodeToString(password.getBytes());
 		return password;
+	}
+
+	public final static String getPath() {
+		return AppProperties.instance().load().get("path.rememberme");
 	}
 }

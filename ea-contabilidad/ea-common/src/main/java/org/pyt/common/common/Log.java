@@ -30,12 +30,12 @@ public final class Log {
 	private String lastMessage = "";
 	private LogWriter logWriter;
 
-	private Log(Class clase) {
+	private Log(Class <?> clase) {
 		nameClase = clase.getName();
 		logWriter = LogWriter.getInstance();
 	}
 
-	public final static Log Log(Class clase) {
+	public final static Log Log(Class<?> clase) {
 		return new Log(clase);
 	}
 

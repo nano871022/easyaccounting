@@ -14,12 +14,11 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.constants.DataPropertiesConstants;
 import org.pyt.common.constants.DtoConstants;
-import org.pyt.common.constants.PropertiesConstants;
 
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 import co.com.japl.ea.common.abstracts.ADto;
-import co.com.japl.ea.common.properties.PropertiesUtils;
+import co.com.japl.ea.common.properties.AppProperties;
 import co.com.japl.ea.common.reflection.ReflectionUtils;
 import co.com.japl.ea.exceptions.ReflectionException;
 import co.com.japl.ea.exceptions.SearchServicesException;
@@ -45,11 +44,7 @@ public class SearchService {
 	private SearchService() throws SearchServicesException {
 		campos = new ArrayList<String>();
 		excludeUsuarioDTO = true;
-		try {
-		servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load().getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
-		}catch(Exception e) {
-			logger.logger(e);
-		}
+		servicePackageList = AppProperties.instance().load().get(DataPropertiesConstants.CONST_SERVICES_LIST);
 		try {
 			var serviceList = StringUtils.isNotBlank(servicePackageList)?servicePackageList:AppConstants.PATH_LIST_SERVICE;
 			listServices = (AbstractListFromProccess) this.getClass().forName(serviceList)

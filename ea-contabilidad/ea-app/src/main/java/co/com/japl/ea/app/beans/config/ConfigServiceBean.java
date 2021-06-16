@@ -14,7 +14,6 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.constants.DataPropertiesConstants;
 import org.pyt.common.constants.PermissionConstants;
-import org.pyt.common.constants.PropertiesConstants;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.arquitectura.annotation.proccessor.Services;
@@ -23,7 +22,7 @@ import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProc
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
-import co.com.japl.ea.common.properties.PropertiesUtils;
+import co.com.japl.ea.common.properties.AppProperties;
 import co.com.japl.ea.dto.dto.AsociacionArchivoDTO;
 import co.com.japl.ea.dto.dto.ConfiguracionDTO;
 import co.com.japl.ea.dto.dto.MarcadorDTO;
@@ -249,8 +248,8 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 
 	private void loadProperties() {
 		try {
-			servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load()
-					.getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
+
+			servicePackageList = AppProperties.instance().load().get(DataPropertiesConstants.CONST_SERVICES_LIST);
 		} catch (Exception e) {
 			logger.logger(e);
 		}

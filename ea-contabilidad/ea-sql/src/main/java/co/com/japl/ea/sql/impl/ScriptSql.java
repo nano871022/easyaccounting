@@ -12,6 +12,7 @@ import org.pyt.common.constants.AppConstants;
 
 import co.com.japl.ea.common.binario.ReadBin;
 import co.com.japl.ea.common.binario.WriteBin;
+import co.com.japl.ea.common.properties.AppProperties;
 import co.com.japl.ea.exceptions.FileBinException;
 import co.com.japl.ea.sql.privates.Constants;
 
@@ -36,7 +37,7 @@ public class ScriptSql {
 		readBin = new ReadBin();
 		loadVersion = true;
 		try {
-			versions = readBin.read(CONST_FILE_VERSION_RUNNER);
+			versions = readBin.read(getPath()+CONST_FILE_VERSION_RUNNER);
 			if (versions != null) {
 				loadVersion = !versions.contains(AppConstants.VERSION_DATABASE);
 			}
@@ -112,7 +113,7 @@ public class ScriptSql {
 						versions = new ArrayList<String>();
 					}
 					versions.add(version);
-					new WriteBin().write(CONST_FILE_VERSION_RUNNER, versions);
+					new WriteBin().write(getPath()+CONST_FILE_VERSION_RUNNER, versions);
 				} catch (FileBinException e) {
 					e.printStackTrace();
 				}
@@ -194,6 +195,10 @@ public class ScriptSql {
 		if (!map.containsKey(number)) {
 			map.put(number, subMap);
 		}
+	}
+	
+	private final String getPath() {
+		return AppProperties.instance().load().get("path.versionrunner");
 	}
 
 	private final Boolean getHotReload() {

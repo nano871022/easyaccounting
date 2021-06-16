@@ -5,17 +5,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
-import org.apache.commons.lang3.StringUtils;
-import org.pyt.common.common.Log;
-import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ConfigServiceConstant;
 import org.pyt.common.constants.DataPropertiesConstants;
-import org.pyt.common.constants.PropertiesConstants;
 
 import co.com.arquitectura.librerias.implement.Services.ServicePOJO;
 import co.com.arquitectura.librerias.implement.listProccess.AbstractListFromProccess;
 import co.com.japl.ea.common.abstracts.ADto;
-import co.com.japl.ea.common.properties.PropertiesUtils;
+import co.com.japl.ea.common.properties.AppProperties;
 import co.com.japl.ea.common.reflection.ReflectionUtils;
 import co.com.japl.ea.exceptions.MarcadorServicioException;
 import co.com.japl.ea.exceptions.ProccesConfigServiceException;
@@ -28,18 +24,10 @@ import co.com.japl.ea.exceptions.ReflectionException;
  * @since 19/11/2018
  */
 public final class ProccesConfigService {
-	private Log logger = Log.Log(this.getClass());
 	private String servicePackageList;
 	
 	public ProccesConfigService() {
-		try {
-		servicePackageList = PropertiesUtils.getInstance().setNameProperties(PropertiesConstants.PROP_DATA).load().getProperties().getProperty(DataPropertiesConstants.CONST_SERVICES_LIST);
-		if(StringUtils.isBlank(servicePackageList)) {
-			servicePackageList = servicePackageList;
-		}
-		}catch(Exception e) {
-			logger.logger(e);
-		}
+		servicePackageList = AppProperties.instance().load().get(DataPropertiesConstants.CONST_SERVICES_LIST);
 	}
 	/**
 	 * Se encarga de obtener el objeto dentro de los parametros en el cual se encuentra el campo

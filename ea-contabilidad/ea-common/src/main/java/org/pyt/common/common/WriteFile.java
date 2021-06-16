@@ -1,10 +1,12 @@
 package org.pyt.common.common;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,8 +35,10 @@ public final class WriteFile {
 		this.namefile = file;
 		return this;
 	}
+
 	/**
 	 * Se encarga de crear una copia del archivo con otra fecha.
+	 * 
 	 * @param file {@link File}
 	 */
 	private final void copyOldFile(File file) {
@@ -54,59 +58,23 @@ public final class WriteFile {
 	}
 
 	public final void writer(String msn) {
-		OutputStream os = null;
-		if (validFile()) {
-			File file = new File(namefile);
-			copyOldFile(file);
-			try {
-				msn += LINE_JUMP;
-				os = new FileOutputStream(file, true);
-				os.write(msn.getBytes());
-				os.close();
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {
+		try {
+			var pathFile = Paths.get(namefile).normalize().toAbsolutePath();
+			OutputStream os = null;
+			if (pathFile.toFile().exists()) {
+				copyOldFile(pathFile.toFile());
 			}
-		}
-	}
-
-	private final Boolean validFile() {
-		File f = null;
-		String[] splits = null;
-		StringBuilder path = new StringBuilder();
-		if (namefile.contains(SLASH)) {
-			splits = namefile.split(SLASH);
-		}
-		if (namefile.contains(DOUBLE_BACKSLASH)) {
-			splits = namefile.split(DOUBLE_BACKSLASH);
-		}
-		if (splits != null && splits.length > 0) {
-			for (String split : splits) {
-				if (path.length() > 0) {
-					path.append(separator);
-				}
-				path.append(split);
-				if (split.equalsIgnoreCase(DOT))
-					continue;
-				f = new File(path.toString());
-				if (!f.exists()) {
-					if (!path.toString().contains(DOT_LOG)) {
-						f.mkdirs();
-//						System.out.println("Ruta log::"+f.getAbsolutePath());
-					} else {
-						try {
-							OutputStream os = new FileOutputStream(f);
-							os.write(EMPTY.getBytes());
-							os.flush();
-							os.close();
-						} catch (IOException e) {
-							return false;
-						}
-					}
-				}
+			if(pathFile.toFile().exists()) {
+				os = new  FileOutputStream(pathFile.toFile(),true);
+			}else {
+				os = Files.newOutputStream(pathFile,StandardOpenOption.CREATE_NEW);
 			}
-		} else {
-			return false;
+			msn += LINE_JUMP;
+//			os = new FileOutputStream(file, true);
+			os.write(msn.getBytes());
+			os.close();
+		} catch (IOException e) {
+			System.err.println(e);
 		}
-		return true;
 	}
 }

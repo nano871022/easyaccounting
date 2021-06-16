@@ -1,20 +1,21 @@
 package co.com.japl.ea.common.properties;
+import static co.com.japl.ea.common.properties.LogProperties.instance;
+import static co.com.japl.ea.constants.utils.EnviromentProperties.getConsolePrint;
+import static co.com.japl.ea.constants.utils.EnviromentProperties.getPath;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.WriteFile;
-import org.pyt.common.constants.PropertiesConstants;
-
-import static co.com.japl.ea.constants.utils.EnviromentProperties.getPath;
-import static co.com.japl.ea.constants.utils.EnviromentProperties.getConsolePrint;
 
 
 
@@ -25,8 +26,8 @@ import static co.com.japl.ea.constants.utils.EnviromentProperties.getConsolePrin
  *
  */
 public class LogWriter implements Runnable {
-	private String nameLogger = "./logger/logger.log";
-	private String nameLoggerTrace = "./logger/stracTrace.log";
+	private String nameLogger = "logger/logger.log";
+	private String nameLoggerTrace = "logger/stracTrace.log";
 	private final static String NAME_PATH_PROPERTIES = "path-log";
 	private final static String TRACT_PATH_PROPERTIES = "path-trace";
 	private final static String CONST_PROP_MODES = "modes";
@@ -81,21 +82,15 @@ public class LogWriter implements Runnable {
 	 */
 	private void loadProperties() {
 		try {
-			Properties properties = PropertiesUtils.getInstance().setPathProperties(getPath()).setNameProperties(PropertiesConstants.PROP_LOG).load()
-					.getProperties();
-			String valor = properties.getProperty(NAME_PATH_PROPERTIES);
+			String valor = instance().load().get(NAME_PATH_PROPERTIES);
 			if (StringUtils.isNotBlank(valor)) {
 				nameLogger = valor;
-			} else {
-				System.out.println("Se esta tomando el path por defecto " + nameLogger);
-			}
-			String trace = properties.getProperty(TRACT_PATH_PROPERTIES);
+			} 
+			String trace = instance().load().get(TRACT_PATH_PROPERTIES);
 			if (StringUtils.isNotBlank(trace)) {
 				nameLoggerTrace = trace;
-			} else {
-				System.out.println("Se esta tomando el path por defecto " + nameLoggerTrace);
-			}
-			String mode = properties.getProperty(CONST_PROP_MODES);
+			} 
+			String mode = instance().load().get(CONST_PROP_MODES);
 			if(StringUtils.isNotBlank(mode)) {
 				modes = mode;
 			}
@@ -110,7 +105,7 @@ public class LogWriter implements Runnable {
 	 * @return
 	 */
 	private WriteFile loadWriter() {
-		return new WriteFile().file(nameLogger);
+		return new WriteFile().file(getPath()+ nameLogger);
 	}
 
 	/**
@@ -136,7 +131,7 @@ public class LogWriter implements Runnable {
 
 	private final <T extends Exception> void printTrace(T excepcion) {
 		try {
-			File file = new File(nameLoggerTrace);
+			File file = new File(getPath()+nameLoggerTrace);
 			copyOldFile(file);
 			OutputStream out = new FileOutputStream(file, file.exists());
 			PrintStream s = new PrintStream(out);
