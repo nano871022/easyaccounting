@@ -35,15 +35,18 @@ public abstract class ReflectionDto {
 
 	@SuppressWarnings("unchecked")
 	private <S extends ADto> Field searchField(Class<S> clazz, String name) {
-		try {
-			return clazz.getDeclaredField(name);
-		} catch (NoSuchFieldException e) {
+		if (clazz != null) {
 			try {
-				return searchField((Class<S>) clazz.getSuperclass(), name);
-			} catch (ClassCastException e2) {
-				return null;
+				return clazz.getDeclaredField(name);
+			} catch (NoSuchFieldException e) {
+				try {
+					return searchField((Class<S>) clazz.getSuperclass(), name);
+				} catch (ClassCastException e2) {
+					return null;
+				}
 			}
 		}
+		return null;
 	}
 
 	/**
@@ -60,11 +63,11 @@ public abstract class ReflectionDto {
 		String nameMethod;
 		Field field = null;
 		try {
-			if(value == null) {
+			if (value == null) {
 				var campo = searchField(clase, nombreCampo);
 				if (campo != null && campo.trySetAccessible()) {
 					campo.set(this, null);
-				}else {
+				} else {
 					return;
 				}
 			}

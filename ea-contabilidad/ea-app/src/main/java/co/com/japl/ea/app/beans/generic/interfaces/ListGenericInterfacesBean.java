@@ -66,7 +66,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 		loadDataModel(paginador, tableGeneric);
 		load();
 		visibleButtons();
-		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
+		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.create").action(this::add).icon(Glyph.SAVE)
 				.isVisible(save).setName("fxml.btn.copy").action(this::copy).icon(Glyph.SAVE).isVisible(save)
 				.setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT).isVisible(edit).setName("fxml.btn.delete")
 				.action(this::del).icon(Glyph.REMOVE).isVisible(delete).setName("fxml.btn.view").action(this::set)

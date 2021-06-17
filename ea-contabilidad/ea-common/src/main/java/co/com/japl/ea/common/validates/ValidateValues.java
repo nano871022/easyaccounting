@@ -240,7 +240,6 @@ public final class ValidateValues {
 			if (numbers != null) {
 				return numbers;
 			}
-			
 
 			clase = convertFromPrimitive(clase);
 			if (value.getClass() == clase) {
@@ -252,7 +251,7 @@ public final class ValidateValues {
 				return (T) valueReturn;
 			}
 			var numberToString = numerToString(value, clase);
-			if(numberToString != null) {
+			if (numberToString != null) {
 				return (T) numberToString;
 			}
 
@@ -271,7 +270,10 @@ public final class ValidateValues {
 
 		} catch (IllegalArgumentException e) {
 			throw new ValidateValueException("ERR convert " + value + " to " + clase.getSimpleName(), e);
+		} catch(Exception e) {
+			throw new ValidateValueException("ERR convert " + value + " to " + clase.getSimpleName(), e);
 		}
+		
 		return null;
 	}
 
@@ -362,16 +364,20 @@ public final class ValidateValues {
 			if (clazz == BigDecimal.class) {
 				return (T) new BigDecimal((String) value);
 			}
+		}else if(clazz == String.class) {
+			if(value.getClass() == Boolean.class) {
+				return (T) String.valueOf((Boolean)value);
+			}
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final <T, S> T numerToString(S value, Class<T> clazz) {
-		if ( value == null) {
+		if (value == null) {
 			return null;
 		}
-		if (isNumber(value.getClass())){
+		if (isNumber(value.getClass())) {
 			if (value.getClass() == Integer.class) {
 				return (T) ((Integer) value).toString();
 			}
@@ -385,7 +391,7 @@ public final class ValidateValues {
 				return (T) String.valueOf((Short) value);
 			}
 			if (value.getClass() == BigDecimal.class) {
-				return (T) ((BigDecimal)value).toString();
+				return (T) ((BigDecimal) value).toString();
 			}
 		}
 		return null;
@@ -420,13 +426,17 @@ public final class ValidateValues {
 			return null;
 		var metodos = clazz.getDeclaredMethods();
 		if (metodos != null && metodos.length > 0) {
-			var response = Arrays.asList(metodos).stream().filter(method -> Modifier.isStatic(method.getModifiers()))
-					.filter(method -> method.getReturnType() == clazz || method.getReturnType() == originClass)
-					.filter(method -> method.getParameterCount() == 1)
-					.map(method -> methodPrincipal(method,value,originClass))
-					.findAny();
-			if(response.isPresent()) {
-				return (T) response.get();
+			try {
+				var response = Arrays.asList(metodos).stream()
+						.filter(method -> Modifier.isStatic(method.getModifiers()))
+						.filter(method -> method.getReturnType() == clazz || method.getReturnType() == originClass)
+						.filter(method -> method.getParameterCount() == 1)
+						.map(method -> methodPrincipal(method, value, originClass)).findAny();
+				if (response.isPresent()) {
+					return (T) response.get();
+				}
+			} catch (Exception e) {
+				return null;
 			}
 		}
 		return null;
@@ -460,7 +470,7 @@ public final class ValidateValues {
 				var methodValue = new MethodToValue(method, castValue.getClass(), originClass, true);
 				list.add(methodValue);
 				return (T) method.invoke(null, castValue);
-			}else if(isCast(value,originClass)) {
+			} else if (isCast(value, originClass)) {
 				return (T) cast(value, originClass);
 			}
 		} catch (Exception e) {

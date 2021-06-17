@@ -91,7 +91,7 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 	 * de registros encontrados
 	 */
 	public final void search() {
-		if (table.isVisible() && firstSearch) {
+		if (firstSearch) {
 			T filter = getFilter();
 			Integer init = currentPage;
 			if (init >= 1) {
@@ -105,8 +105,11 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 				visiblePaginator.setValue(pages > 1);
 			}
 			Table.put(table, list);
-		} else if (table.isVisible()) {
-			firstSearch = true;
+			if (total == 0) {
+				table.setVisible(false);
+			} else {
+				table.setVisible(true);
+			}
 		}
 	}
 

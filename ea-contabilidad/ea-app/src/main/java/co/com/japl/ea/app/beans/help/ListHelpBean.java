@@ -61,7 +61,7 @@ public class ListHelpBean extends AGenericInterfacesBean<HelpDTO> {
 			loadFields(TypeGeneric.FILTER);
 			loadColumns();
 			visibleButtons();
-			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
+			ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.create").action(this::add)
 					.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.EDIT)
 					.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
 					.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view).build();

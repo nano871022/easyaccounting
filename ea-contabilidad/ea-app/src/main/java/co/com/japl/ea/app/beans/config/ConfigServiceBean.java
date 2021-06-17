@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
+import org.pyt.common.common.ListUtils;
 import org.pyt.common.common.SearchService;
 import org.pyt.common.common.SelectList;
 import org.pyt.common.constants.AppConstants;
@@ -506,7 +508,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				@Override
 				public String toString(ServicePOJO object) {
 					try {
-						return object.getAlias() + ConfigServiceConstant.SEP_2_DOT + object.getDescription();
+						if (object != null) {
+							return object.getAlias() + ConfigServiceConstant.SEP_2_DOT + object.getDescription();
+						}
 					} catch (Exception e) {
 						error(e);
 					}
@@ -516,10 +520,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				@Override
 				public ServicePOJO fromString(String string) {
 					try {
-						for (ServicePOJO service : listServices.getList()) {
-							if ((service.getAlias() + ConfigServiceConstant.SEP_2_DOT + service.getDescription())
-									.equalsIgnoreCase(string)) {
-								return service;
+						if (listServices != null && ListUtils.isNotBlank(listServices.getList())) {
+							for (ServicePOJO service : listServices.getList()) {
+								if ((service.getAlias() + ConfigServiceConstant.SEP_2_DOT + service.getDescription())
+										.equalsIgnoreCase(string)) {
+									return service;
+								}
 							}
 						}
 					} catch (Exception e) {
@@ -544,6 +550,16 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	 * @throws Exception
 	 */
 	private final List<ServicePOJO> listFilter() throws Exception {
+		if (listServices != null) {
+			Services.Type type = getType();
+			List<ServicePOJO> list = listServices.getList().stream().filter(value -> value.getType() == type)
+					.collect(Collectors.toList());
+			return list;
+		}
+		return new ArrayList<>();
+	}
+
+	private final Services.Type getType() {
 		Services.Type type = null;
 		if (rbCargues.isSelected()) {
 			type = Services.Type.CREATE;
@@ -552,15 +568,7 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 		} else {
 			type = Services.Type.UPLOAD;
 		}
-		List<ServicePOJO> listOut = new ArrayList<ServicePOJO>();
-		List<ServicePOJO> list = listServices.getList();
-		for (ServicePOJO sp : list) {
-			// logger.info(type + " " + sp.getType());
-			if (sp.getType() == type) {
-				listOut.add(sp);
-			}
-		}
-		return listOut;
+		return type;
 	}
 
 	private void configColmn() {
@@ -608,11 +616,9 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 	/** Se encarga de configurar la carga del tab del servicio de busqueda **/
 	private void loadTabServicioBusqueda() {
 		try {
-			List<MarcadorDTO> markout = new ArrayList<MarcadorDTO>();
-			for (MarcadorDTO dto : tbMarcador.getList()) {
-				if (dto.getTipoInOut().equalsIgnoreCase(ConfigServiceConstant.TYPE_IN))
-					markout.add(dto);
-			}
+			List<MarcadorDTO> markout = tbMarcador.getList().stream()
+					.filter(dto -> dto.getTipoInOut().equalsIgnoreCase(ConfigServiceConstant.TYPE_IN))
+					.collect(Collectors.toList());
 			SelectList.put(lstMarcadorIn, markout, ConfigServiceConstant.MARK);
 			SelectList.put(lstServicios, listFilter());
 		} catch (Exception e) {

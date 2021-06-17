@@ -68,9 +68,9 @@ public class ListConfigBean extends AGenericInterfacesBean<ConfiguracionDTO> {
 		loadFields(TypeGeneric.FILTER);
 		loadColumns();
 		visibleButtons();
-		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.save").action(this::add)
-				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE)
-				.isVisible(edit).setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
+		ButtonsImpl.Stream(FlowPane.class).setLayout(buttons).setName("fxml.btn.add").action(this::add).icon(Glyph.SAVE)
+				.isVisible(save).setName("fxml.btn.edit").action(this::set).icon(Glyph.SAVE).isVisible(edit)
+				.setName("fxml.btn.delete").action(this::del).icon(Glyph.REMOVE).isVisible(delete)
 				.setName("fxml.btn.view").action(this::set).icon(Glyph.FILE_TEXT).isVisible(view)
 				.setName("fxml.btn.carge").action(this::cargue).icon(Glyph.FILE_ARCHIVE_ALT).isVisible(cargue)
 				.setName("fxml.btn.report").action(this::reporte).icon(Glyph.FILE_PDF_ALT).isVisible(report).build();

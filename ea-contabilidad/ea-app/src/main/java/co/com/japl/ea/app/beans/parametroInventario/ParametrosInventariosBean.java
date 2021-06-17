@@ -37,7 +37,7 @@ import javafx.scene.layout.HBox;
 @FXMLFile(path = "view/parametroInventarios", file = "ListParametrosInventarios.fxml", nombreVentana = "Parametros del Sistema de inventarios")
 public class ParametrosInventariosBean extends AListBasicBean<ParametroInventarioDTO, ParametroInventarioDTO>
 		implements ListCRUDBean {
-	@Inject(resource = "com.pyt.service.implement.inventario.ParametroInventariosSvc")
+	@Inject()
 	private IParametroInventariosSvc parametrosSvc;
 	@FXML
 	private TextField nombre;
@@ -169,7 +169,7 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 				if (StringUtils.isNotBlank(estado.getValue())) {
 					filtro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
 				}
-				if (StringUtils.isNotBlank(seleccionFiltro.getCodigo())) {
+				if (seleccionFiltro != null && StringUtils.isNotBlank(seleccionFiltro.getCodigo())) {
 					filtro.setGrupo(seleccionFiltro.getCodigo());
 				}
 				return filtro;

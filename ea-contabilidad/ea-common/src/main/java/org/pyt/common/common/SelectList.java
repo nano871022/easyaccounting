@@ -43,17 +43,9 @@ public final class SelectList {
 		choiceBox.getItems().clear();
 		ObservableList<S> observable = choiceBox.getItems();
 		observable.add((S) AppConstants.SELECCIONE);
-		if (lista != null) {
-			lista.stream().filter(obj -> obj != null).forEach(obj -> {
-				try {
-					S v = obj.get(campoDto);
-					if (v != null) {
-						observable.add(v);
-					}
-				} catch (ReflectionException e) {
-					logger.DEBUG(e);
-				}
-			});
+		if (ListUtils.isNotBlank(lista)) {
+			lista.stream().filter(obj -> obj != null).map(value->value.get(campoDto)).
+			filter(value->value != null).forEach(value->observable.add((S) value));
 		}
 		try {
 			choiceBox.getSelectionModel().selectFirst();
