@@ -1,28 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="574.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="co.com.japl.ea.app.beans.dinamico.FormularioBean">
+<BorderPane maxWidth="1.7976931348623157E308" prefHeight="740.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.com.japl.ea.app.beans.dinamico.FormularioBean">
   <bottom>
-    <HBox fx:id="buttons" alignment="CENTER" maxHeight="1.7976931348623157E308" minHeight="16.0" prefHeight="36.0" prefWidth="554.0"/>
+    <HBox fx:id="buttons" alignment="CENTER" maxHeight="1.7976931348623157E308" minHeight="16.0" prefHeight="36.0" prefWidth="554.0" />
   </bottom>
   <center>
-    <GridPane alignment="CENTER" hgap="5.0" prefHeight="614.0" prefWidth="554.0" vgap="5.0">
+    <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0">
       <children>
         <Label maxWidth="1.7976931348623157E308" text="Tipo de Documento" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <ChoiceBox fx:id="tipoDocumento" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Controlar" GridPane.columnIndex="2" GridPane.rowIndex="0" />
         <ChoiceBox fx:id="controlar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-        <TableView fx:id="tabla" prefHeight="315.0" prefWidth="545.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="1">
+        <TableView fx:id="tabla" maxWidth="1.7976931348623157E308" prefHeight="300.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="1">
           <columns>
+          <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="125.0" text="%fxml.table.column.position">
+              <cellValueFactory>
+                <PropertyValueFactory property="position" />
+              </cellValueFactory>
+            </TableColumn>
             <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="125.0" text="Nombre Campo">
               <cellValueFactory>
                 <PropertyValueFactory property="fieldName" />
@@ -71,17 +82,17 @@
           </columns>
         </TableView>
         <HBox fx:id="paginator" prefHeight="31.0" prefWidth="500.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="2" />
-        <GridPane fx:id="row6" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="208.0" prefWidth="545.0" vgap="5.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="3">
+        <GridPane fx:id="row6" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="208.0" vgap="5.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="3">
           <children>
-            <Label fx:id="lNombreCampo" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Nombre Campo" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Label fx:id="lNombreCampo" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Nombre Campo" GridPane.columnIndex="0" GridPane.rowIndex="1">
               <GridPane.margin>
                 <Insets left="10.0" fx:id="x1" />
               </GridPane.margin>
             </Label>
-            <ChoiceBox fx:id="nombreCampo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-            <CheckBox fx:id="editable" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Editable" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.margin="$x1" GridPane.rowIndex="1" />
-            <CheckBox fx:id="obligatorio" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Obligatorio" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.margin="$x1" GridPane.rowIndex="1" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="7">
+            <ChoiceBox fx:id="nombreCampo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <CheckBox fx:id="editable" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Editable" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.margin="$x1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="obligatorio" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Obligatorio" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.margin="$x1" GridPane.rowIndex="2" />
+            <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="100.0" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="8">
               <children>
                 <Button fx:id="addItem" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#agregarItem" text="Agregar Item" />
                 <Button fx:id="modifyItem" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarItem" text="Modificar Item">
@@ -97,28 +108,38 @@
                 <Button fx:id="clearItem" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearItem" text="Limpiar Item" />
               </children>
             </HBox>
-            <CheckBox fx:id="manejaLista" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#manejaLista" text="Maneja Lista" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="2" />
-            <Label fx:id="lBusqueda" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Busqueda" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="2" />
-            <ChoiceBox fx:id="busqueda" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-            <ChoiceBox fx:id="grupo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <Label fx:id="lGrupo" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Grupo" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="3" />
-            <CheckBox fx:id="manejaGrupo" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#manejaGrupo" text="Maneja  Grupo" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.margin="$x1" GridPane.rowIndex="3" />
-            <Label fx:id="lCampoMostrar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Campo Mostrar" GridPane.columnIndex="0" GridPane.margin="$x1" GridPane.rowIndex="4" />
-            <Label fx:id="lCampoAsignar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Campo Asignar" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="4" />
-            <ChoiceBox fx:id="campoMostrar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <ChoiceBox fx:id="campoAsignar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <Label fx:id="etiqueta" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Etiqueta" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="0" />
-            <TextField fx:id="fieldLabel" maxHeight="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-            <CheckBox fx:id="fieldFilter" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Filtro" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="5" />
-            <CheckBox fx:id="fieldColumn" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Columna" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="5" />
-            <CheckBox fx:id="fieldHasDefaultValue" alignment="CENTER_LEFT" contentDisplay="CENTER" disable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#manejaDefault"  mnemonicParsing="false" text="Tiene defecto" visible="true" GridPane.columnIndex="0" GridPane.rowIndex="6">
+            <CheckBox fx:id="manejaLista" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#manejaLista" text="Maneja Lista" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="3" />
+            <Label fx:id="lBusqueda" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Busqueda" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="3" />
+            <ChoiceBox fx:id="busqueda" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <ChoiceBox fx:id="grupo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Label fx:id="lGrupo" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Grupo" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="4" />
+            <CheckBox fx:id="manejaGrupo" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#manejaGrupo" text="Maneja  Grupo" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.margin="$x1" GridPane.rowIndex="4" />
+            <Label fx:id="lCampoMostrar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Campo Mostrar" GridPane.columnIndex="0" GridPane.margin="$x1" GridPane.rowIndex="5" />
+            <Label fx:id="lCampoAsignar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Campo Asignar" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="5" />
+            <ChoiceBox fx:id="campoMostrar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <ChoiceBox fx:id="campoAsignar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <Label fx:id="etiqueta" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Etiqueta" GridPane.columnIndex="2" GridPane.margin="$x1" GridPane.rowIndex="1" />
+            <TextField fx:id="fieldLabel" maxHeight="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <CheckBox fx:id="fieldFilter" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Filtro" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="6" />
+            <CheckBox fx:id="fieldColumn" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Columna" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.margin="$x1" GridPane.rowIndex="6" />
+            <CheckBox fx:id="fieldHasDefaultValue" alignment="CENTER_LEFT" contentDisplay="CENTER" disable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#manejaDefault" text="Tiene defecto" visible="true" GridPane.columnIndex="0" GridPane.rowIndex="7">
               <GridPane.margin>
                 <Insets left="10.0" fx:id="x1" />
               </GridPane.margin>
             </CheckBox>
-            <TextField  fx:id="fieldDefaultValue" maxHeight="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-            <Label  fx:id="labelDefaultValue" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Valor por defecto" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-            <CheckBox fx:id="fieldIsVisible" alignment="CENTER_LEFT" contentDisplay="CENTER" disable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Es visible" visible="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <TextField fx:id="fieldDefaultValue" maxHeight="1.7976931348623157E308" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+            <Label fx:id="labelDefaultValue" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Valor por defecto" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <CheckBox fx:id="fieldIsVisible" alignment="CENTER_LEFT" contentDisplay="CENTER" disable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Es visible" visible="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                  <Label fx:id="labelPosition" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%fxml.lbl.position">
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <TextField fx:id="position" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1">
+                     <GridPane.margin>
+                        <Insets left="30.0" right="30.0" />
+                     </GridPane.margin>
+                  </TextField>
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="122.0" minWidth="10.0" prefWidth="122.0" />
@@ -127,7 +148,8 @@
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="10.0" prefWidth="131.0" />
           </columnConstraints>
           <rowConstraints>
-            <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="22.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="38.0" minHeight="0.0" prefHeight="20.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="19.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="84.0" minHeight="8.0" prefHeight="21.0" vgrow="SOMETIMES" />
@@ -145,10 +167,10 @@
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.0" minWidth="10.0" prefWidth="90.0" />
       </columnConstraints>
       <rowConstraints>
-        <RowConstraints maxHeight="255.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="401.0" minHeight="10.0" prefHeight="344.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="261.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="261.0" minHeight="10.0" prefHeight="211.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="255.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="401.0" minHeight="10.0" prefHeight="382.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="261.0" minHeight="10.0" prefHeight="21.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="261.0" minHeight="10.0" prefHeight="214.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
   </center>

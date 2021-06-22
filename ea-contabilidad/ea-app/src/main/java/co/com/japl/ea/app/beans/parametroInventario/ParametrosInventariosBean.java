@@ -56,7 +56,6 @@ public class ParametrosInventariosBean extends AListBasicBean<ParametroInventari
 	@FXML
 	private TableView<ParametroInventarioDTO> tabla;
 	private DataTableFXMLUtil<ParametroInventarioDTO, ParametroInventarioDTO> lazyFiltrar;
-	private ParametroInventarioDTO filtrarGrupo;
 	private ParametroInventarioDTO seleccionFiltro;
 	@FXML
 	private TextField filtroGrupo;

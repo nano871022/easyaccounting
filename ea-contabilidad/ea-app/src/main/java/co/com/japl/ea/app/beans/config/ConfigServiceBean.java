@@ -422,7 +422,12 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 				try {
 					cantidad = configMarcadorServicio.cantidadMarcadorServicio(filter.getConfiguracion());
 					cantidad += marcadoresServicios.size();
-					totalAsociar.setText("Total: " + cantidad);
+					totalServicio.setText("Total: " + cantidad);
+					if (cantidad == 0) {
+						totalServicio.setVisible(false);
+					} else {
+						totalServicio.setVisible(true);
+					}
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}
@@ -463,6 +468,11 @@ public class ConfigServiceBean extends ABean<AsociacionArchivoDTO> {
 					cantidad = configMarcadorServicio.cantidadMarcador(filter.getConfiguracion());
 					cantidad += marcadores.size();
 					totalMarcador.setText("Total: " + cantidad);
+					if (cantidad == 0) {
+						totalMarcador.setVisible(false);
+					} else {
+						totalMarcador.setVisible(true);
+					}
 				} catch (MarcadorServicioException e) {
 					error(e);
 				}

@@ -83,6 +83,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private TextField fieldDefaultValue;
 	@FXML
+	private TextField position;
+	@FXML
 	private CheckBox editable;
 	@FXML
 	private CheckBox obligatorio;
@@ -116,6 +118,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Label lNombreCampo;
 	@FXML
 	private Label lBusqueda;
+	@FXML
+	private Label labelPosition;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
 	private List<ParametroDTO> listGrupo;
@@ -126,18 +130,42 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Map<String, Object> mapa_claseBusqueda;
 	private Boolean instans;
 	private final static String FIELD_NAME = "nombre";
-	private ParametroDTO tipoDeDocumento;
 
 	@FXML
 	public void initialize() {
 		instans = false;
 		documentos = new ArrayList<DocumentosDTO>();
-		mapa_controlar = new HashMap<String, Object>();
+		loadMapInit();
 		claseControl();
+		loadSelectInit();
+		actionControlsInit();
+		claseBusquedas();
+		manejaLista();
+		manejaGrupo();
+		campo();
+		hiddenFieldInit();
+		lazy();
+	}
+
+	private void actionControlsInit() {
+		tipoDocumento.onActionProperty().set(e -> tipoDocumento());
+		controlar.onActionProperty().set(e -> controla());
+		nombreCampo.onActionProperty().set(e -> campo());
+		busqueda.getSelectionModel().selectFirst();
+		busqueda.onActionProperty().set(e -> busqueda());
+		tabla.onMouseClickedProperty().set(e -> tablaClick());
+	}
+
+	private void loadMapInit() {
+		mapa_controlar = new HashMap<String, Object>();
 		mapa_nombreCampo = new HashMap<String, Object>();
 		mapa_campoAsignar = new HashMap<String, Object>();
 		mapa_claseBusqueda = new HashMap<String, Object>();
 		mapa_campoMostrar = new HashMap<String, Object>();
+	}
+
+	private void loadSelectInit() {
+		SelectList.put(busqueda, mapa_claseBusqueda);
 		ParametroDTO grupo = new ParametroDTO();
 		grupo.setGrupo("*");
 		ParametroDTO tipoDoc = new ParametroDTO();
@@ -154,29 +182,21 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		this.grupo.getSelectionModel().selectFirst();
 		this.tipoDocumento.getSelectionModel().selectFirst();
 		this.nombreCampo.getSelectionModel().selectFirst();
-		this.editable.setSelected(true);
-		tabla.onMouseClickedProperty().set(e -> tablaClick());
-		tipoDocumento.onActionProperty().set(e -> tipoDocumento());
-		controlar.onActionProperty().set(e -> controla());
-		nombreCampo.onActionProperty().set(e -> campo());
-		claseBusquedas();
-		SelectList.put(busqueda, mapa_claseBusqueda);
-		busqueda.getSelectionModel().selectFirst();
-		busqueda.onActionProperty().set(e -> busqueda());
-		manejaLista();
-		manejaGrupo();
-		campo();
+
+	}
+
+	private void hiddenFieldInit() {
 		nombreCampo.setVisible(false);
 		etiqueta.setVisible(false);
 		lNombreCampo.setVisible(false);
 		fieldColumn.setVisible(false);
 		fieldFilter.setVisible(false);
 		fieldLabel.setVisible(false);
-		// guardar.setVisible(false);
-		// cancelar.setVisible(false);
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
-		lazy();
+		position.setVisible(false);
+		labelPosition.setVisible(false);
+
 	}
 
 	private final void claseControl() {
@@ -206,6 +226,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			fieldFilter.setSelected(docs.getFieldFilter());
 			fieldColumn.setSelected(docs.getFieldColumn());
 			fieldDefaultValue.setText(docs.getFieldDefaultValue());
+			position.setText(docs.getPosition().toString());
 			fieldHasDefaultValue.setSelected(Optional.ofNullable(docs.getFieldHasDefaultValue()).orElse(false));
 			fieldIsVisible.setSelected(Optional.ofNullable(docs.getFieldIsVisible()).orElse(true));
 			SelectList.selectItem(busqueda, mapa_claseBusqueda, docs.getObjectSearchDto());
@@ -247,6 +268,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldLabel.setVisible(clase != null);
 		etiqueta.setVisible(clase != null);
 		lNombreCampo.setVisible(clase != null);
+		position.setVisible(clase != null);
+		labelPosition.setVisible(clase != null);
 		campo();
 		dataTable.search();
 	}
@@ -334,6 +357,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		clearItem.setVisible(true);
 		fieldHasDefaultValue.setVisible(true);
 		labelDefaultValue.setVisible(true);
+		position.setVisible(true);
+		labelPosition.setVisible(true);
 	}
 
 	private final void showFieldWhenValorDefecto() {
@@ -362,6 +387,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
 		labelDefaultValue.setVisible(false);
+//		position.setVisible(false);
+//		labelPosition.setVisible(false);
 	}
 
 	public final void tipoDocumento() {
@@ -478,6 +505,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dto.setFieldHasDefaultValue(fieldHasDefaultValue.isSelected());
 		dto.setFieldIsVisible(fieldIsVisible.isSelected());
 		dto.setFieldDefaultValue(fieldDefaultValue.getText());
+		dto.setPosition(Integer.valueOf(position.getText()));
 		if (grupo.isVisible()) {
 			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
 		}
@@ -501,6 +529,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		Boolean valid = true;
 		valid &= dto.getDoctype() != null;
 		valid &= StringUtils.isNotBlank(dto.getFieldName());
+		valid &= dto.getPosition() != null;
 		return valid;
 	}
 
@@ -553,9 +582,12 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		this.campoAsignar.getSelectionModel().selectFirst();
 		this.campoMostrar.getSelectionModel().selectFirst();
 		this.fieldLabel.setText("");
+		this.position.setText("");
 		fieldFilter.setSelected(false);
 		fieldColumn.setSelected(false);
 		fieldHasDefaultValue.setSelected(false);
+		labelPosition.setVisible(true);
+		position.setVisible(true);
 	}
 
 	public void modificarItem() {

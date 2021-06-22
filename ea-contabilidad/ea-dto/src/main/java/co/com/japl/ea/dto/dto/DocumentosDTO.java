@@ -12,6 +12,7 @@ import co.com.japl.ea.common.abstracts.ADto;
 
 public class DocumentosDTO extends ADto {
 	private static final long serialVersionUID = -8417260332275892148L;
+	private Integer position;
 	private String fieldLabel;
 	private String fieldName;
 	private ParametroDTO doctype;
@@ -160,5 +161,13 @@ public class DocumentosDTO extends ADto {
 
 	public void setFieldDefaultValue(String fieldDefaultValue) {
 		this.fieldDefaultValue = fieldDefaultValue;
+	}
+
+	public Integer getPosition() {
+		return position;
+	}
+
+	public void setPosition(Integer position) {
+		this.position = position;
 	}
 }
