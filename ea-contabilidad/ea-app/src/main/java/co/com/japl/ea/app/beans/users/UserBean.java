@@ -25,7 +25,6 @@ import co.com.japl.ea.exceptions.GenericServiceException;
 import co.com.japl.ea.utls.LoginUtil;
 import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -43,8 +42,6 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 	private GridPane gridPane;
 	@FXML
 	private Label lblTitle;
-	@FXML
-	private Button btnAdd;
 	public static final String CONST_FIELD_NAME_USERS_NAME = "nombre";
 	public static final String CONST_FIELD_NAME_USERS_PASSWORD = "password";
 	public static final String CONST_FIELD_NAME_USERS_STATE = "state";
@@ -87,14 +84,12 @@ public class UserBean extends AGenericInterfacesFieldBean<UsuarioDTO> {
 	public final void load() {
 		registro = new UsuarioDTO();
 		loadFields(TypeGeneric.FIELD);
-		btnAdd.setText("fxml.btn.create");
 	}
 
 	public final void load(UsuarioDTO dto) {
 		registro = dto;
 		visibleButtons();
 		loadFields(TypeGeneric.FIELD);
-		btnAdd.setText("fxml.btn.update");
 	}
 
 	@Override

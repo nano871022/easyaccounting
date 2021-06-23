@@ -42,7 +42,6 @@ import co.com.japl.ea.exceptions.ParametroException;
 import co.com.japl.ea.exceptions.ReflectionException;
 import co.com.japl.ea.exceptions.validates.ValidateValueException;
 import co.com.japl.ea.utls.LoadAppFxml;
-import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.GridPane;
@@ -175,7 +174,8 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadPopupLanguages(IFieldsCreator factory) {
-		var popup = new co.com.japl.ea.app.components.PopupFromBean(co.com.japl.ea.app.beans.languages.LanguageBean.class);
+		var popup = new co.com.japl.ea.app.components.PopupFromBean(
+				co.com.japl.ea.app.beans.languages.LanguageBean.class);
 		try {
 			LoadAppFxml.loadBeanFX(popup);
 			LanguageBean bean = (LanguageBean) popup.getBean();
@@ -197,6 +197,12 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		var index = new Index();
 		assingValueAnnotations(typeGeneric);
 		genericFormsUtils.configGridPane(getGridPane(typeGeneric));
+		try {
+			list.sort(
+					(value1, value2) -> ((Integer) value1.get("position")).compareTo((Integer) value2.get("position")));
+		} catch (Exception e) {
+			logger().DEBUG(e);
+		}
 		list.forEach(field -> {
 			try {
 				var factory = LoadFieldsFactory.getInstance(field);
@@ -312,8 +318,6 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			Node fieldControl, String nameField) throws ParametroException {
 		if (genericFormsUtils.isChoiceBox(fieldControl)) {
 			var list = getSelectedListToChoiceBox(typeGeneric, nameField, typeField, factory);
-			((ChoiceBox) fieldControl).valueProperty()
-					.bind(Bindings.createObjectBinding(() -> getInstanceDto(typeGeneric).get(nameField)));
 			var nameShow = StringUtils.isNotBlank(factory.getNameFieldToShowInComboBox())
 					? factory.getNameFieldToShowInComboBox()
 					: ParametroConstants.FIELD_NAME_PARAM;

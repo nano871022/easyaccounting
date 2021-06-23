@@ -3,6 +3,7 @@ package co.com.japl.ea.app.beans.dinamico;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private Button delItem;
 	@FXML
+	private Button btnCopy;
+	@FXML
 	private TableView<DocumentosDTO> tabla;
 	@FXML
 	private ChoiceBox<String> tipoDocumento;
@@ -78,6 +81,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private ChoiceBox<String> campoAsignar;
 	@FXML
 	private ChoiceBox<String> controlar;
+	@FXML
+	private ChoiceBox<String> selectToCopy;
 	@FXML
 	private TextField fieldLabel;
 	@FXML
@@ -120,6 +125,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Label lBusqueda;
 	@FXML
 	private Label labelPosition;
+	@FXML
+	private Label labelCopyTo;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
 	private List<ParametroDTO> listGrupo;
@@ -153,6 +160,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		nombreCampo.onActionProperty().set(e -> campo());
 		busqueda.getSelectionModel().selectFirst();
 		busqueda.onActionProperty().set(e -> busqueda());
+		selectToCopy.onActionProperty().set(e -> copyTo());
+		btnCopy.onActionProperty().set(e -> copy());
 		tabla.onMouseClickedProperty().set(e -> tablaClick());
 	}
 
@@ -178,6 +187,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		SelectList.put(this.grupo, listGrupo, FIELD_NAME);
 		SelectList.put(this.tipoDocumento, listTipoDocumento, FIELD_NAME);
 		SelectList.put(controlar, mapa_controlar);
+		SelectList.put(selectToCopy, listTipoDocumento, FIELD_NAME);
+		selectToCopy.getSelectionModel().selectFirst();
 		controlar.getSelectionModel().selectFirst();
 		this.grupo.getSelectionModel().selectFirst();
 		this.tipoDocumento.getSelectionModel().selectFirst();
@@ -196,6 +207,9 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldIsVisible.setVisible(false);
 		position.setVisible(false);
 		labelPosition.setVisible(false);
+		labelCopyTo.setVisible(false);
+		selectToCopy.setVisible(false);
+		btnCopy.setVisible(false);
 
 	}
 
@@ -270,8 +284,15 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		lNombreCampo.setVisible(clase != null);
 		position.setVisible(clase != null);
 		labelPosition.setVisible(clase != null);
+		labelCopyTo.setVisible(clase != null);
+		selectToCopy.setVisible(clase != null);
 		campo();
 		dataTable.search();
+	}
+
+	public final <T extends ADto> void copyTo() {
+		ParametroDTO tipoDocumento = SelectList.get(selectToCopy, listTipoDocumento, FIELD_NAME);
+		btnCopy.setVisible(tipoDocumento != null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -387,8 +408,6 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldDefaultValue.setVisible(false);
 		fieldIsVisible.setVisible(false);
 		labelDefaultValue.setVisible(false);
-//		position.setVisible(false);
-//		labelPosition.setVisible(false);
 	}
 
 	public final void tipoDocumento() {
@@ -403,11 +422,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		if (clase != null) {
 			Field[] fields = clase.getDeclaredFields();
 			mapa_nombreCampo.clear();
-			for (Field field : fields) {
-				if (!Modifier.isStatic(field.getModifiers())) {
-					mapa_nombreCampo.put(field.getName(), field.getName());
-				}
-			}
+			Arrays.asList(fields).stream().filter(field -> !Modifier.isStatic(field.getModifiers()))
+					.forEach(field -> mapa_nombreCampo.put(field.getName(), field.getName()));
 		}
 	}
 
@@ -423,12 +439,10 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		Field[] fields = clase.getDeclaredFields();
 		mapa_campoAsignar.clear();
 		mapa_campoAsignar.clear();
-		for (Field field : fields) {
-			if (!Modifier.isStatic(field.getModifiers())) {
-				mapa_campoMostrar.put(field.getName(), field.getName());
-				mapa_campoAsignar.put(field.getName(), field.getName());
-			}
-		}
+		Arrays.asList(fields).stream().filter(field -> !Modifier.isStatic(field.getModifiers())).forEach(field -> {
+			mapa_campoMostrar.put(field.getName(), field.getName());
+			mapa_campoAsignar.put(field.getName(), field.getName());
+		});
 	}
 
 	public void lazy() {
@@ -449,6 +463,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 				List<DocumentosDTO> lista = new ArrayList<DocumentosDTO>();
 				try {
 					lista = documentoSvc.getDocumentos(filter, page - 1, rows);
+					lista.sort((value1, value2) -> value1.getPosition().compareTo(value2.getPosition()));
 					lista.addAll(documentos);
 					if (lista.size() > 0) {
 						loadControl(lista.get(0));
@@ -507,7 +522,10 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dto.setFieldDefaultValue(fieldDefaultValue.getText());
 		dto.setPosition(Integer.valueOf(position.getText()));
 		if (grupo.isVisible()) {
-			dto.setSelectNameGroup(SelectList.get(grupo, listGrupo, FIELD_NAME).getCodigo());
+			var valueName = SelectList.get(grupo, listGrupo, FIELD_NAME);
+			if (valueName != null) {
+				dto.setSelectNameGroup(valueName.getCodigo());
+			}
 		}
 		if (busqueda.isVisible()) {
 			dto.setObjectSearchDto((Class) SelectList.get(busqueda, mapa_claseBusqueda));
@@ -546,6 +564,29 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 				notificarI18n("mensaje.rows.have.been.inserted.successfull");
 			}
 		} catch (DocumentosException e) {
+			error(e);
+		}
+	}
+
+	public final <T extends ADto> void copy() {
+		try {
+			ParametroDTO tipoDocumento = SelectList.get(selectToCopy, listTipoDocumento, FIELD_NAME);
+			dataTable.search();
+			List<DocumentosDTO> list = dataTable.getList();
+			list.stream().forEach(value -> {
+				try {
+					value.setCodigo(null);
+					value.setDoctype(tipoDocumento);
+					documentoSvc.insert(value, getUsuario());
+				} catch (Exception e) {
+					logger().DEBUG(e);
+				}
+			});
+			SelectList.selectItem(this.tipoDocumento, listTipoDocumento, FIELD_NAME, tipoDocumento);
+			selectToCopy.getSelectionModel().selectFirst();
+			cleanItem();
+			dataTable.search();
+		} catch (Exception e) {
 			error(e);
 		}
 	}

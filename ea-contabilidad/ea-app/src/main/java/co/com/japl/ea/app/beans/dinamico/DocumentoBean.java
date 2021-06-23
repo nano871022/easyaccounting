@@ -79,7 +79,10 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 
 			@Override
 			public String toString(ParametroDTO object) {
-				return object.getNombre();
+				if (object != null) {
+					return object.getNombre();
+				}
+				return "";
 			}
 
 			@Override
