@@ -1,5 +1,6 @@
 package co.com.japl.ea.interfaces;
 
+import static org.pyt.common.constants.AppConstants.CONST_FIELD_ORDEN;
 import static org.pyt.common.constants.AppConstants.CONST_FIELD_ORDER;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_NOT_FOUND_PROCCES;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_ORDER_VALIDATION;
@@ -69,6 +70,11 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 				Object order1;
 				order1 = object1.get(CONST_FIELD_ORDER);
 				var order2 = object2.get(CONST_FIELD_ORDER);
+				if (order1 != null && order2 != null) {
+					return validateValuesUtils.compareNumbers(order1, order2);
+				}
+				order1 = object1.get(CONST_FIELD_ORDEN);
+				order2 = object2.get(CONST_FIELD_ORDEN);
 				if (order1 != null && order2 != null) {
 					return validateValuesUtils.compareNumbers(order1, order2);
 				}
