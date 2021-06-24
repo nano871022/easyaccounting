@@ -92,7 +92,10 @@ public class RepuestoCRUBean extends ABean<ResumenProductoDTO> {
 		choiceBoxIva.converterProperty().set(new StringConverter<ParametroDTO>() {
 			@Override
 			public String toString(ParametroDTO object) {
-				return object.getNombre();
+				if (object != null) {
+					return object.getNombre();
+				}
+				return null;
 			}
 
 			@Override

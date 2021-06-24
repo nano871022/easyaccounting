@@ -1,5 +1,5 @@
 package co.com.japl.ea.service.implement.inventario;
-
+import static org.pyt.common.common.StringUtils.contentEquals;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.japl.ea.dto.abstracts.Services;
 import co.com.japl.ea.dto.dto.inventario.ParametroGrupoInventarioDTO;
 import co.com.japl.ea.dto.dto.inventario.ParametroInventarioDTO;
@@ -14,7 +15,7 @@ import co.com.japl.ea.dto.interfaces.inventarios.IParametroInventariosSvc;
 import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.ParametroException;
 import co.com.japl.ea.exceptions.QueryException;
-
+@Implements
 public class ParametroInventariosSvc extends Services implements IParametroInventariosSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	protected IQuerySvc querySvc;
@@ -27,9 +28,9 @@ public class ParametroInventariosSvc extends Services implements IParametroInven
 			throw new ParametroException("El objeto empresa se encuentra vacio.");
 		try {
 			lista = querySvc.gets(dto, init, end);
-			if (dto.getGrupo().equalsIgnoreCase("*")) {
+			if (contentEquals(dto.getGrupo(),"*")) {
 				for (ParametroInventarioDTO dt : lista) {
-					if (dt.getGrupo() != null && dt.getGrupo().equalsIgnoreCase("*")) {
+					if (dt.getGrupo() != null && contentEquals(dt.getGrupo(),"*")) {
 						lista2.add(dt);
 					}
 				}

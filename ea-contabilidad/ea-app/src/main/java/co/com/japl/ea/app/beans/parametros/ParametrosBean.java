@@ -78,8 +78,8 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 		addGroup.setVisible(true);
 		modifyGroup.setVisible(false);
 		tabla.setVisible(false);
-		lazy();
 		lazy2();
+		lazy();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::createBtn)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::modifyBtn).icon(Glyph.EDIT)
 				.isVisible(edit).setName("fxml.btn.delete").action(this::deleteBtn).icon(Glyph.REMOVE).isVisible(delete)
@@ -167,7 +167,8 @@ public class ParametrosBean extends AListBasicBean<ParametroDTO, ParametroDTO> i
 				if (StringUtils.isNotBlank(estado.getValue())) {
 					filtro.setEstado((String) ParametroConstants.mapa_estados_parametros.get(estado.getValue()));
 				}
-				if (StringUtils.isNotBlank(lazyFiltrar.getSelectedRow().getCodigo())) {
+				if (lazyFiltrar != null && lazyFiltrar.getSelectedRow() != null
+						&& StringUtils.isNotBlank(lazyFiltrar.getSelectedRow().getCodigo())) {
 					filtro.setGrupo(lazyFiltrar.getSelectedRow().getCodigo());
 				}
 				return filtro;

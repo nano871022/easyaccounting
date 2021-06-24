@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 
 import co.com.japl.ea.query.interfaces.IQuerySvc;
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
@@ -17,7 +18,7 @@ import co.com.japl.ea.dto.system.UsuarioDTO;
 import co.com.japl.ea.exceptions.QueryException;
 import co.com.japl.ea.exceptions.inventario.ProductosException;
 import co.com.japl.ea.exceptions.inventario.ResumenProductoException;
-
+@Implements
 public class ProductosSvc extends Services implements IProductosSvc {
 	@Inject(resource = "co.com.japl.ea.query.implement.QuerySvc")
 	private IQuerySvc querySvc;

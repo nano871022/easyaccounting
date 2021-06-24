@@ -11,6 +11,7 @@ import org.pyt.common.common.ListUtils;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.ParametroInventarioConstants;
 
+import co.com.arquitectura.annotation.proccessor.Implements;
 import co.com.arquitectura.annotation.proccessor.Services.Type;
 import co.com.arquitectura.annotation.proccessor.Services.kind;
 import co.com.arquitectura.annotation.proccessor.Services.scope;
@@ -30,7 +31,7 @@ import co.com.japl.ea.exceptions.ParametroException;
 import co.com.japl.ea.exceptions.inventario.InventarioException;
 import co.com.japl.ea.exceptions.inventario.MovimientoException;
 import co.com.japl.ea.exceptions.inventario.ResumenProductoException;
-
+@Implements
 public class InventarioSvc extends Services implements IInventarioSvc {
 	@Inject(resource = "com.pyt.service.implement.inventario.MovimientoSvc")
 	private IMovimientoSvc movimientoSvc;
