@@ -45,7 +45,6 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 	 * @param clazz {@link Class}
 	 * @throws {@link Exception}
 	 */
-	@SuppressWarnings("unused")
 	public AGenericInterfacesReflectionBean(Class<T> clazz) throws Exception {
 		super();
 		paginador = new HBox();
@@ -57,7 +56,6 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 		instaceOfGenericDTOAll(this.getClass());
 	}
 
-	@SuppressWarnings("unused")
 	protected void loadTable() {
 		table = new DataTableFXMLUtil<T, T>(paginador, tabla, false) {
 
@@ -100,7 +98,7 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 	 * 
 	 * @throws {@link Exception}
 	 */
-	private final void instaceOfGenericDTOAll(Class clazz) throws Exception {
+	private final void instaceOfGenericDTOAll(Class<?> clazz) throws Exception {
 		if (clazz.equals(Object.class))
 			return;
 		Field[] fields = clazz.getDeclaredFields();

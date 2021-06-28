@@ -22,6 +22,8 @@ import co.com.japl.ea.utls.LoginUtil;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -121,6 +123,15 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		primaryStage.setTitle(i18n().valueBundle(tittleWindowI18n).get());
 		Scene scene = new Scene(panel);
 		scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
+		var keyboard = new KeyCodeCombination(KeyCode.ESCAPE);
+		Runnable runnable = () -> {
+			try {
+				primaryStage.close();
+			} catch (Exception e) {
+
+			}
+		};
+		scene.getAccelerators().put(keyboard, runnable);
 		primaryStage.setScene(scene);
 		primaryStage.hide();
 	}
@@ -172,7 +183,14 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 
 	@SuppressWarnings("unchecked")
 	public <M extends AGenericToBean<T>> M addDefaultValuesToGenericParametrized(String nameEstado, Integer estado) {
-		registro.set(nameEstado, estado);
+		Class<?> field = registro.getType(nameEstado);
+		if (field == ParametroDTO.class) {
+			var parameter = new ParametroDTO();
+			parameter.setEstado(estado.toString());
+			registro.set(nameEstado, parameter);
+		} else {
+			registro.set(nameEstado, estado);
+		}
 		return (M) this;
 	}
 

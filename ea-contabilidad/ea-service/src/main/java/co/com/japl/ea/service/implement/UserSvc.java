@@ -16,7 +16,7 @@ import static org.pyt.common.constants.LanguageConstant.CONST_ERR_USER_NOT_SUBMI
 import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_MACHINE_EMPTY;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_IP_PUBLIC_EMPTY;
 import static org.pyt.common.constants.languages.Login.CONST_ERR_USER_EMPTY;
-
+import static org.pyt.common.common.StringUtils.contentEquals;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -253,10 +253,10 @@ public class UserSvc extends Services implements IUsersSvc {
 	public void passwordChange(String newPassword, String newPassword2, String oldPassword, UsuarioDTO user)
 			throws Exception {
 		user.setPassword(null);
-		if (!newPassword.contentEquals(newPassword2)) {
+		if (!contentEquals(newPassword,newPassword2)) {
 			throw new Exception("err.msn.svc.change.password.new.new2.not.equals");
 		}
-		if (newPassword.contentEquals(oldPassword)) {
+		if (contentEquals(newPassword,oldPassword)) {
 			throw new Exception("err.msn.svc.change.password.new.old.equals");
 		}
 		var foundUser = querySvc.get(user);

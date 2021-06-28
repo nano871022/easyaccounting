@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.Log;
 import org.pyt.common.constants.ConfigServiceConstant;
@@ -284,7 +285,7 @@ public class StatementQuerysUtil {
 			path += ConfigServiceConstant.SEP_DOT + name;
 		}
 		var value = namesSql.getValue(path);
-		if (value == null) {
+		if (value == null && isNotBlank(name)) {
 			value = name.toLowerCase();
 		}
 		return (String) value;

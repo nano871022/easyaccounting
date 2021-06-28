@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,14 +123,14 @@ public class LogWriter implements Runnable {
 			var comp = d.before(now);
 			if (comp) {
 				var sdf = new SimpleDateFormat("yyyyMMdd");
-				file.renameTo(new File(nameLoggerTrace.replace(ext, sdf.format(d) + ext)));
+				file.renameTo(getFileTracer(nameLoggerTrace.replace(ext, sdf.format(d) + ext)));
 			}
 		}
 	}
 
 	private final <T extends Exception> void printTrace(T excepcion) {
 		try {
-			File file = new File(getPath()+nameLoggerTrace);
+			File file = getFileTracer(nameLoggerTrace);
 			copyOldFile(file);
 			OutputStream out = new FileOutputStream(file, file.exists());
 			PrintStream s = new PrintStream(out);
@@ -142,6 +141,11 @@ public class LogWriter implements Runnable {
 		} catch (Exception e) {
 			addImpresion("Error presentado en printTrace::" + e.getMessage());
 		}
+	}
+	
+	private File getFileTracer(String paths) {
+		var path = Paths.get(getPath(),paths).normalize().toAbsolutePath();
+		return path.toFile();
 	}
 
 	@Override

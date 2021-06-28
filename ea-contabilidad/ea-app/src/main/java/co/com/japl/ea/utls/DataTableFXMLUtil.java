@@ -187,4 +187,8 @@ public abstract class DataTableFXMLUtil<S extends Object, T extends ADto> extend
 	public final Integer getPages() {
 		return pages;
 	}
+
+	public final void activeSearch() {
+		firstSearch = true;
+	}
 }

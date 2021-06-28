@@ -198,8 +198,11 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		assingValueAnnotations(typeGeneric);
 		genericFormsUtils.configGridPane(getGridPane(typeGeneric));
 		try {
-			list.sort(
-					(value1, value2) -> ((Integer) value1.get("position")).compareTo((Integer) value2.get("position")));
+			list.sort((value1, value2) -> value1.get("position") != null
+					? ((Integer) value1.get("position")).compareTo((Integer) value2.get("position"))
+					: value1.get("orden") != null
+							? ((Integer) value1.get("orden")).compareTo((Integer) value2.get("orden"))
+							: 0);
 		} catch (Exception e) {
 			logger().DEBUG(e);
 		}
@@ -237,7 +240,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		if (TypeGeneric.FILTER == typeGeneric) {
 			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> {
 				try {
-					((IGenericColumns<L, F>) this).getTable().search();
+					var table = ((IGenericColumns<L, F>) this).getTable();
+					table.activeSearch();
+					table.search();
 				} catch (Exception e) {
 				}
 			}, i18n().valueBundle(CONST_FXML_BTN_SEARCH), Glyph.FONT.SEARCH), 0, ++index.row);
@@ -369,13 +374,17 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private <D extends ADto> List<D> getSelectedListToChoiceBox(TypeGeneric typeGeneric, String nameField,
 			Class typeField, IFieldsCreator factory) throws ParametroException {
-		var list = getMapListToChoiceBox().get(nameField);
+		var choiceBox = getMapListToChoiceBox();
+		if (choiceBox == null) {
+			return new ArrayList<>();
+		}
+		var list = choiceBox.get(nameField);
 		if ((StringUtils.isBlank(factory.getNameFieldToShowInComboBox()) || isParametroDTO(typeField))
 				&& (list == null || list.size() == 0)) {
 			var parametroDto = factory.getParametroDto();
 			var parametrosSearch = getParametersSvc().getAllParametros(parametroDto);
 			if (ListUtils.isNotBlank(parametrosSearch)) {
-				getMapListToChoiceBox().put(nameField, parametrosSearch);
+				choiceBox.put(nameField, parametrosSearch);
 				return (List<D>) parametrosSearch;
 			} else if (StringUtils.isNotBlank(parametroDto.getGrupo())) {
 				var grupoSave = parametroDto.getGrupo();
@@ -384,7 +393,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				}
 				parametroDto = getParametroFromFindGroup(parametroDto, grupoSave);
 				var parametros = getParametersSvc().getAllParametros(parametroDto);
-				getMapListToChoiceBox().put(nameField, parametros);
+				choiceBox.put(nameField, parametros);
 				return (List<D>) parametros;
 			}
 		}

@@ -250,10 +250,6 @@ public final class ValidateValues {
 			if (valueReturn != null) {
 				return (T) valueReturn;
 			}
-			var numberToString = numerToString(value, clase);
-			if (numberToString != null) {
-				return (T) numberToString;
-			}
 
 			valueReturn = convertValueToClassMethodStatic(value, clase, originClass);
 			if (valueReturn != null) {
@@ -268,6 +264,10 @@ public final class ValidateValues {
 				return (T) value;
 			}
 
+			var numberToString = numerToString(value, clase);
+			if (numberToString != null) {
+				return (T) numberToString;
+			}
 		} catch (IllegalArgumentException e) {
 			throw new ValidateValueException("ERR convert " + value + " to " + clase.getSimpleName(), e);
 		} catch(Exception e) {
@@ -323,6 +323,11 @@ public final class ValidateValues {
 				return (T) LocalDateTime.ofInstant(((Timestamp) value).toInstant(), ZoneId.systemDefault());
 			}
 		}
+		if(clazz == String.class) {
+			if (value instanceof Date e) {
+				return (T)e.toString();
+			}
+		}
 		return null;
 	}
 
@@ -367,6 +372,10 @@ public final class ValidateValues {
 		}else if(clazz == String.class) {
 			if(value.getClass() == Boolean.class) {
 				return (T) String.valueOf((Boolean)value);
+			}else if(value instanceof BigDecimal e) {
+				return (T)e.toString();
+			}else if(value instanceof Integer e) {
+				return (T)e.toString();
 			}
 		}
 		return null;
