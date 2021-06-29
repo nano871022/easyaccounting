@@ -70,4 +70,6 @@ public interface IFieldsCreator {
 	Boolean isRequired();
 
 	Integer getOrder();
+
+	String getFormat();
 }

@@ -1,10 +1,13 @@
 package co.com.japl.ea.interfaces;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.pyt.common.constants.AppConstants.CONST_FIELD_ORDEN;
 import static org.pyt.common.constants.AppConstants.CONST_FIELD_ORDER;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_NOT_FOUND_PROCCES;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_FIELD_ORDER_VALIDATION;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,6 +100,12 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 						var result = findParametroGroup(valueField, factory);
 						if (result != null) {
 							sop.setValue(validateValuesUtils.cast(((ParametroDTO) result).getNombre(), String.class));
+						} else if (factory.getFormat() != null && isNotBlank(factory.getFormat())) {
+							if (validateValuesUtils.isNumber(valueField.getClass())) {
+								sop.setValue(new DecimalFormat(factory.getFormat()).format(valueField));
+							} else if (validateValuesUtils.isDate(valueField.getClass())) {
+								sop.setValue(new SimpleDateFormat(factory.getFormat()).format(valueField));
+							}
 						} else {
 							sop.setValue(validateValuesUtils.cast(valueField, String.class));
 						}

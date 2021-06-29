@@ -24,6 +24,10 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 		this.notificationMethods = notificationMethods;
 	}
 
+	public String getFormat() {
+		return field.getFormat();
+	}
+
 	@Override
 	public <D extends ADto> void setFieldGeneric(D field) {
 		this.field = (DocumentosDTO) field;

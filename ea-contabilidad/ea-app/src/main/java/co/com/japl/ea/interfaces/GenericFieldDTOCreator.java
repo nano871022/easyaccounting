@@ -25,6 +25,10 @@ public final class GenericFieldDTOCreator implements IFieldsCreator {
 		this.notificationMethods = notificationMethods;
 	}
 
+	public String getFormat() {
+		return null;
+	}
+
 	@Override
 	public <D extends ADto> void setFieldGeneric(D field) {
 		this.field = (ConfigGenericFieldDTO) field;

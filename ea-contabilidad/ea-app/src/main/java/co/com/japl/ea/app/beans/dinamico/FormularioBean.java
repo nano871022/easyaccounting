@@ -86,6 +86,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	@FXML
 	private TextField fieldLabel;
 	@FXML
+	private TextField fieldFormat;
+	@FXML
 	private TextField fieldDefaultValue;
 	@FXML
 	private TextField position;
@@ -127,6 +129,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private Label labelPosition;
 	@FXML
 	private Label labelCopyTo;
+	@FXML
+	private Label lblFormat;
 	private List<DocumentosDTO> documentos;
 	private List<ParametroDTO> listTipoDocumento;
 	private List<ParametroDTO> listGrupo;
@@ -210,7 +214,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		labelCopyTo.setVisible(false);
 		selectToCopy.setVisible(false);
 		btnCopy.setVisible(false);
-
+		lblFormat.setVisible(false);
+		fieldFormat.setVisible(false);
 	}
 
 	private final void claseControl() {
@@ -243,6 +248,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 			position.setText(docs.getPosition().toString());
 			fieldHasDefaultValue.setSelected(Optional.ofNullable(docs.getFieldHasDefaultValue()).orElse(false));
 			fieldIsVisible.setSelected(Optional.ofNullable(docs.getFieldIsVisible()).orElse(true));
+			fieldFormat.setText(docs.getFormat());
 			SelectList.selectItem(busqueda, mapa_claseBusqueda, docs.getObjectSearchDto());
 			SelectList.selectItem(grupo, listGrupo, FIELD_NAME, docs, "selectNameGroup");
 			SelectList.selectItem(campoMostrar, mapa_campoMostrar, docs.getPutNameShow());
@@ -288,6 +294,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		selectToCopy.setVisible(clase != null);
 		campo();
 		dataTable.search();
+		lblFormat.setVisible(clase != null);
+		fieldFormat.setVisible(clase != null);
 	}
 
 	public final <T extends ADto> void copyTo() {
@@ -517,6 +525,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dto.setNullable(obligatorio.isSelected());
 		dto.setFieldFilter(fieldFilter.isSelected());
 		dto.setFieldColumn(fieldColumn.isSelected());
+		dto.setFormat(fieldFormat.getText());
 		dto.setFieldHasDefaultValue(fieldHasDefaultValue.isSelected());
 		dto.setFieldIsVisible(fieldIsVisible.isSelected());
 		dto.setFieldDefaultValue(fieldDefaultValue.getText());
@@ -624,11 +633,13 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		this.campoMostrar.getSelectionModel().selectFirst();
 		this.fieldLabel.setText("");
 		this.position.setText("");
+		fieldFormat.setText("");
 		fieldFilter.setSelected(false);
 		fieldColumn.setSelected(false);
 		fieldHasDefaultValue.setSelected(false);
 		labelPosition.setVisible(true);
 		position.setVisible(true);
+		fieldFormat.setText("");
 	}
 
 	public void modificarItem() {

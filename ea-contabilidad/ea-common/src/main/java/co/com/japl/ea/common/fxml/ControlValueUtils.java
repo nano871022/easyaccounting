@@ -22,6 +22,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 
 public final class ControlValueUtils {
 	private static ControlValueUtils cvu;

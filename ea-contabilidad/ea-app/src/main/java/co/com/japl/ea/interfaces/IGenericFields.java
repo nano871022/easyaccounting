@@ -198,9 +198,9 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		assingValueAnnotations(typeGeneric);
 		genericFormsUtils.configGridPane(getGridPane(typeGeneric));
 		try {
-			list.sort((value1, value2) -> value1.get("position") != null
+			list.sort((value1, value2) -> value1.get("position") != null && value2 != null
 					? ((Integer) value1.get("position")).compareTo((Integer) value2.get("position"))
-					: value1.get("orden") != null
+					: value1.get("orden") != null && value2 != null
 							? ((Integer) value1.get("orden")).compareTo((Integer) value2.get("orden"))
 							: 0);
 		} catch (Exception e) {
