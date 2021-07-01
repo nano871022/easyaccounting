@@ -102,22 +102,24 @@ public final class UtilControlFieldFX {
 			return (N) new DatePicker();
 		} else {
 			try {
-			if (field.getType().asSubclass(ADto.class) != null ) {
+				if (field.getType().asSubclass(ADto.class) != null) {
+					return (N) Class.forName("co.com.japl.ea.app.custom.PopupParametrizedControl").getConstructor()
+							.newInstance();
+				}
 				return getChoiceBox(field);
+			} catch (Exception e) {
+				logger.DEBUG(e);
 			}
-		} catch (ClassCastException e) {
-			logger.DEBUG(e);
-		}
 		}
 		return null;
 	}
-	
-	public <N extends Node,T> N getChoiceBox(Field field) {
-				var node = new ChoiceBox<T>();
-				node.setId(field.getName());
-				return (N) node;
+
+	public <N extends Node, T> N getChoiceBox(Field field) {
+		var node = new ChoiceBox<T>();
+		node.setId(field.getName());
+		return (N) node;
 	}
-	
+
 	public <N extends Node, T> N getPasswordField(Field field) {
 		var node = new PasswordField();
 		node.setId(field.getName());
@@ -126,6 +128,15 @@ public final class UtilControlFieldFX {
 
 	public <N extends Node> boolean isChoiceBox(N field) {
 		return field instanceof ChoiceBox || field instanceof ComboBox;
+	}
+
+	public <N extends Node> boolean isPopupControl(N field) {
+		try {
+			Class<?> clazz = Class.forName("co.com.japl.ea.app.custom.PopupParametrizedControl");
+			return clazz.isInstance(field);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public <N extends Node> boolean isDatePicker(N field) {
@@ -271,13 +282,13 @@ public final class UtilControlFieldFX {
 			if (node instanceof ChoiceBox && map != null && list == null) {
 				SelectList.selectItem((ChoiceBox) node, map, value);
 			}
-			if(node instanceof ChoiceBox && map == null && list != null && nameShow != null && value instanceof String) {
-				SelectList.selectItem((ChoiceBox)node, list, nameShow,(String)value);
-			}else if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
+			if (node instanceof ChoiceBox && map == null && list != null && nameShow != null
+					&& value instanceof String) {
+				SelectList.selectItem((ChoiceBox) node, list, nameShow, (String) value);
+			} else if (node instanceof ChoiceBox && map == null && list != null && nameShow != null) {
 				SelectList.selectItem((ChoiceBox) node, list, nameShow, (M) value);
 			}
-			
-			
+
 		}
 	}
 
@@ -383,7 +394,7 @@ public final class UtilControlFieldFX {
 		return table;
 	}
 
-	public final void focusOut(TextField field,ICaller caller) {
+	public final void focusOut(TextField field, ICaller caller) {
 		field.focusedProperty().addListener((change, oldval, newval) -> {
 			if (!newval) {
 				caller.caller();

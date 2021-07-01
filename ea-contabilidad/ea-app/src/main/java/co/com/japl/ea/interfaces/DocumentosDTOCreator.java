@@ -80,8 +80,7 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 
 	@Override
 	public Boolean isVisible() {
-		var value = field.getFieldIsVisible();
-		return hasValueDefault() ? value == null || value : true;
+		return Optional.ofNullable(field.getFieldIsVisible()).orElse(false);
 	}
 
 	@Override
@@ -98,5 +97,13 @@ public final class DocumentosDTOCreator implements IFieldsCreator {
 	@Override
 	public Integer getOrder() {
 		return 0;
+	}
+
+	public Boolean isEdit() {
+		return Optional.ofNullable(field.getEdit()).orElse(false);
+	}
+
+	public String getGroup() {
+		return field.getSelectNameGroup();
 	}
 }

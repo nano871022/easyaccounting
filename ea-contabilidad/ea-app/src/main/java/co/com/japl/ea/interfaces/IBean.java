@@ -1,5 +1,7 @@
 package co.com.japl.ea.interfaces;
 
+import java.util.function.Consumer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.constants.AppConstants;
 
@@ -61,6 +63,17 @@ public interface IBean<T extends ADto> extends Reflection, INotificationMethods 
 			throw new Exception("Se suministraron varios objetos, solo se necesita uno.");
 		}
 		return returns;
+	}
+
+	default <T> void caller(Consumer<T> caller, T... value) throws Exception {
+		Class<?> clase = this.getClass();
+		if (value.length == 0) {
+			caller.accept(null);
+		} else if (value.length == 1) {
+			caller.accept(value[0]);
+		} else {
+			throw new Exception("Se suministraron varios objetos, solo se necesita uno.");
+		}
 	}
 
 	default void destroy() {

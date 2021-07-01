@@ -1,5 +1,6 @@
 package co.com.japl.ea.interfaces;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.pyt.common.constants.LanguageConstant.CONST_FXML_BTN_CLEAN;
 import static org.pyt.common.constants.LanguageConstant.CONST_FXML_BTN_SEARCH;
 import static org.pyt.common.constants.languages.DinamicFields.CONST_ERR_CLEAN_FIELDS;
@@ -33,6 +34,8 @@ import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
 
 import co.com.japl.ea.app.beans.languages.LanguageBean;
+import co.com.japl.ea.app.components.PopupGenBean;
+import co.com.japl.ea.app.custom.PopupParametrizedControl;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.validates.ValidFields;
 import co.com.japl.ea.dto.dto.ParametroDTO;
@@ -186,6 +189,19 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		}
 	}
 
+	private int sort(L value1, L value2) {
+		if (value1 == null || value2 == null) {
+			return 0;
+		}
+
+		if (value1.get("position") != null && value2.get("position") != null) {
+			return ((Integer) value1.get("position")).compareTo((Integer) value2.get("position"));
+		} else if (value1.get("orden") != null && value2.get("orden") != null) {
+			return ((Integer) value1.get("orden")).compareTo((Integer) value2.get("orden"));
+		}
+		return 0;
+	}
+
 	/**
 	 * Se encarga de configurar los campos que se mostraran en los filtros y fueron
 	 * configurados como campos genericos, esto se pone el {@link GridPane}
@@ -197,15 +213,7 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 		var index = new Index();
 		assingValueAnnotations(typeGeneric);
 		genericFormsUtils.configGridPane(getGridPane(typeGeneric));
-		try {
-			list.sort((value1, value2) -> value1.get("position") != null && value2 != null
-					? ((Integer) value1.get("position")).compareTo((Integer) value2.get("position"))
-					: value1.get("orden") != null && value2 != null
-							? ((Integer) value1.get("orden")).compareTo((Integer) value2.get("orden"))
-							: 0);
-		} catch (Exception e) {
-			logger().DEBUG(e);
-		}
+		list.sort(this::sort);
 		list.forEach(field -> {
 			try {
 				var factory = LoadFieldsFactory.getInstance(field);
@@ -217,10 +225,12 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					var nameField = factory.getNameField();
 					var typeField = getInstanceDto(typeGeneric).getType(nameField);
 					getMapFields(typeGeneric).put(nameField, fieldControl);
+					loadValuesInPopup(typeGeneric, typeField, factory, fieldControl, nameField);
 					loadValuesInChoiceBox(typeGeneric, typeField, factory, fieldControl, nameField);
 					loadValuesFormToDTO(typeGeneric, fieldControl, typeField, nameField);
 					getGridPane(typeGeneric).add(label, index.column, index.row);
 					getGridPane(typeGeneric).add(fieldControl, ++index.column, index.row);
+					fieldControl.setDisable(!factory.isEdit());
 					Arrays.asList(stylesGrid)
 							.forEach(styleGrid -> getGridPane(typeGeneric).getStyleClass().add(styleGrid));
 					loadValueIntoForm(typeGeneric, typeField, nameField, factory, fieldControl);
@@ -275,6 +285,15 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 				genericFormsUtils.loadValuesInFxmlToChoice(factory.getNameFieldToShowInComboBox(), node,
 						getInstanceDto(typeGeneric).get(fieldName), null, list);
 			}
+		} else if (genericFormsUtils.isPopupControl(node) && isNotBlank(factory.getNameFieldToShowInComboBox())) {
+			var field = ((ADto) getInstanceDto(typeGeneric).get(fieldName));
+			if (field != null) {
+				String value = field.get(factory.getNameFieldToShowInComboBox());
+				((PopupParametrizedControl) node).setText(value);
+			}
+		} else if (genericFormsUtils.isPopupControl(node)) {
+			String value = ((ADto) getInstanceDto(typeGeneric).get(fieldName)).toString();
+			((PopupParametrizedControl) node).setText(value);
 		} else {
 			genericFormsUtils.loadValuesInFxml(node, getInstanceDto(typeGeneric).get(fieldName));
 		}
@@ -316,6 +335,42 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			}
 		});
 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadValuesInPopup(TypeGeneric typeGeneric, Class<?> typeField, IFieldsCreator factory,
+			Node fieldControl, String nameField) {
+		if (genericFormsUtils.isPopupControl(fieldControl)) {
+			((PopupParametrizedControl) fieldControl).setCleanValue(() -> {
+				((PopupParametrizedControl) fieldControl).setText("");
+				getInstanceDto(typeGeneric).set(nameField, null);
+			});
+			((PopupParametrizedControl) fieldControl).setPopupOpenAction(() -> {
+				try {
+					var popupConf = LoadAppFxml.loadBeanFX(new PopupGenBean(typeField));
+					if (isNotBlank(factory.getGroup())) {
+						popupConf.addDefaultValuesToGenericParametrized(ParametroConstants.FIELD_NAME_GROUP,
+								factory.getGroup());
+						popupConf.addDefaultValuesToGenericParametrized("estado", 1);
+
+					}
+					popupConf.load(value -> {
+
+						if (value instanceof ADto) {
+							var fieldName = factory.getNameFieldToShowInComboBox();
+							String name = ((ADto) value).get(fieldName);
+							((PopupParametrizedControl) fieldControl).setText(name);
+						} else {
+							((PopupParametrizedControl) fieldControl)
+									.setText(validateValuesUtils.cast(value, String.class));
+						}
+						getInstanceDto(typeGeneric).set(nameField, validateValuesUtils.cast(value, typeField));
+					});
+				} catch (Exception e) {
+					error(e);
+				}
+			});
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -1,5 +1,8 @@
 package co.com.japl.ea.beans.abstracts;
 
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.annotations.Inject;
@@ -20,6 +23,7 @@ import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
 import co.com.japl.ea.utls.LoginUtil;
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -43,6 +47,7 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 	protected Stage primaryStage;
 	protected Class<T> clazz;
 	protected String caller;
+	protected Consumer<T> sCaller;
 	private Double width;
 	private Double height;
 	protected String tittleWindowI18n;
@@ -114,6 +119,8 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
+		primaryStage.widthProperty().addListener(this::widthChange);
+		primaryStage.heightProperty().addListener(this::heightChange);
 		if (width != null) {
 			primaryStage.setWidth(width);
 		}
@@ -134,6 +141,14 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		scene.getAccelerators().put(keyboard, runnable);
 		primaryStage.setScene(scene);
 		primaryStage.hide();
+	}
+
+	public void widthChange(ObservableValue<?> obs, Number older, Number newer) {
+		logger.DEBUG("Width: " + newer);
+	}
+
+	public void heightChange(ObservableValue<?> obs, Number older, Number newer) {
+		logger.DEBUG("height: " + newer);
 	}
 
 	protected void showWindow() {
@@ -200,7 +215,8 @@ public abstract class AGenericToBean<T extends ADto> extends Application
 		if (registro instanceof ParametroDTO) {
 			try {
 				var value = parametrosSvc.getIdByParametroGroup(valueKeyPrameter);
-				registro.set(nameGroup, value);
+
+				registro.set(nameGroup, Optional.ofNullable(value).orElse(valueKeyPrameter));
 			} catch (ParametroException e) {
 				throw new RuntimeException(e);
 			}

@@ -169,14 +169,14 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 
 	@Override
 	public List<ConfigGenericFieldDTO> getListGenericsFields(TypeGeneric typeGeneric) {
-		switch (typeGeneric) {
-		case FILTER:
-			return listFieldsToFilters;
-		case COLUMN:
-			return listFieldsToColumns;
-		default:
+		if (typeGeneric == null)
 			throw new RuntimeException("Opcion no valida");
-		}
+		if (typeGeneric == TypeGeneric.FILTER)
+			return listFieldsToFilters;
+		if (typeGeneric == TypeGeneric.COLUMN)
+			return listFieldsToColumns;
+
+		throw new RuntimeException("Opcion no valida");
 	}
 
 	@Override

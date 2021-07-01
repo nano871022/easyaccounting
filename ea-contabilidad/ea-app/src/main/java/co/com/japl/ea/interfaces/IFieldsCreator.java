@@ -61,15 +61,59 @@ public interface IFieldsCreator {
 
 	ParametroDTO getParametroDto();
 
+	/**
+	 * Obtiene el valor por defecto a usar
+	 * 
+	 * @return
+	 */
 	String getValueDefault();
 
+	/**
+	 * Indica si el campo se debe mostrar o no
+	 * 
+	 * @return
+	 */
 	Boolean isVisible();
 
+	/**
+	 * indica si el campo tiene un valor por defecto a poner
+	 * 
+	 * @return
+	 */
 	Boolean hasValueDefault();
 
+	/**
+	 * Indica si el campo es requerido
+	 * 
+	 * @return
+	 */
 	Boolean isRequired();
 
+	/**
+	 * Indica el orden del campo
+	 * 
+	 * @return
+	 */
 	Integer getOrder();
 
+	/**
+	 * indica el formato del campo a poner en columnas y en campos
+	 * 
+	 * @return
+	 */
 	String getFormat();
+
+	/**
+	 * Indica si el campo a configurar es editable
+	 * 
+	 * @return
+	 */
+	Boolean isEdit();
+
+	/**
+	 * Indica el grupo que se debe usar para la busqueda de los parametros
+	 * 
+	 * @return
+	 */
+	String getGroup();
 }

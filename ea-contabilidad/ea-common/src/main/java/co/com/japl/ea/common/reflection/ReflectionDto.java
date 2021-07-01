@@ -72,11 +72,13 @@ public abstract class ReflectionDto {
 				}
 			}
 			field = searchField(nombreCampo, this.getClass());
-			nameMethod = ReflectionConstants.SET + field.getName().substring(0, 1).toUpperCase()
-					+ field.getName().substring(1);
-			Method method = clase.getMethod(nameMethod, field.getType());
-			ValidateValues vv = new ValidateValues();
-			method.invoke(this, vv.cast(value, field.getType()));
+			if (field != null) {
+				nameMethod = ReflectionConstants.SET + field.getName().substring(0, 1).toUpperCase()
+						+ field.getName().substring(1);
+				Method method = clase.getMethod(nameMethod, field.getType());
+				ValidateValues vv = new ValidateValues();
+				method.invoke(this, vv.cast(value, field.getType()));
+			}
 		} catch (SecurityException e) {
 			throw new ReflectionException(CONST_ERR_SECURITY, e);
 		} catch (NoSuchMethodException e) {

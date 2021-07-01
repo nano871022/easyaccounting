@@ -192,6 +192,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		SelectList.put(this.tipoDocumento, listTipoDocumento, FIELD_NAME);
 		SelectList.put(controlar, mapa_controlar);
 		SelectList.put(selectToCopy, listTipoDocumento, FIELD_NAME);
+		fieldIsVisible.setSelected(true);
+		editable.setSelected(true);
 		selectToCopy.getSelectionModel().selectFirst();
 		controlar.getSelectionModel().selectFirst();
 		this.grupo.getSelectionModel().selectFirst();
@@ -216,6 +218,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		btnCopy.setVisible(false);
 		lblFormat.setVisible(false);
 		fieldFormat.setVisible(false);
+		editable.setVisible(false);
 	}
 
 	private final void claseControl() {
@@ -296,6 +299,8 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		dataTable.search();
 		lblFormat.setVisible(clase != null);
 		fieldFormat.setVisible(clase != null);
+		fieldIsVisible.setVisible(clase != null);
+		editable.setVisible(clase != null);
 	}
 
 	public final <T extends ADto> void copyTo() {
@@ -393,17 +398,15 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 	private final void showFieldWhenValorDefecto() {
 		if (fieldHasDefaultValue.isSelected()) {
 			fieldDefaultValue.setVisible(true);
-			fieldIsVisible.setVisible(true);
 			labelDefaultValue.setVisible(true);
 		} else {
 			fieldDefaultValue.setVisible(false);
-			fieldIsVisible.setVisible(false);
 			labelDefaultValue.setVisible(false);
 		}
 	}
 
 	private final void hiddenFieldEdited() {
-		editable.setVisible(false);
+//		editable.setVisible(false);
 		obligatorio.setVisible(false);
 		manejaLista.setVisible(false);
 		addItem.setVisible(false);
@@ -414,7 +417,6 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		fieldColumn.setVisible(false);
 		fieldHasDefaultValue.setVisible(false);
 		fieldDefaultValue.setVisible(false);
-		fieldIsVisible.setVisible(false);
 		labelDefaultValue.setVisible(false);
 	}
 
@@ -640,6 +642,7 @@ public class FormularioBean extends ABean<DocumentosDTO> {
 		labelPosition.setVisible(true);
 		position.setVisible(true);
 		fieldFormat.setText("");
+		fieldIsVisible.setSelected(true);
 	}
 
 	public void modificarItem() {

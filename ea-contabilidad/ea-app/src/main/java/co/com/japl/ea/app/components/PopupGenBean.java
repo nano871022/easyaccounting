@@ -1,5 +1,9 @@
 package co.com.japl.ea.app.components;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.function.Consumer;
+
 import org.pyt.common.common.ListUtils;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
@@ -90,12 +94,36 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		}
 	}
 
+	public final void load(Consumer<T> caller) throws Exception {
+		if (ListUtils.isBlank(listFilters, listColumns)) {
+			this.closeWindow();
+			throw new Exception(i18n().valueBundle("err.popupgen.dto.isnt.configured",
+					i18n().get(LanguageConstant.GENERIC_DOT.concat(getClazz().getSimpleName()))).get());
+		}
+		this.sCaller = caller;
+		var cantidad = table.getTotalRows(applyFilterToDataTableSearch());
+		if (cantidad == 1) {
+			this.caller(caller, table.getList(applyFilterToDataTableSearch(), 0, 1).get(0));
+			this.closeWindow();
+		} else if (cantidad == 0) {
+			this.closeWindow();
+			throw new Exception(i18n().valueBundle(LanguageConstant.GENERIC_NO_ROWS_inputText,
+					i18n().get(LanguageConstant.GENERIC_DOT.concat(getClazz().getSimpleName()))).get());
+		} else {
+			showWindow();
+		}
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public void selectedRow(MouseEvent event) {
 		try {
 			if (event.getClickCount() > 0 && table.isSelected()) {
-				this.caller(caller, table.getSelectedRow());
+				if (isNotBlank(caller)) {
+					this.caller(caller, table.getSelectedRow());
+				} else {
+					this.caller(sCaller, table.getSelectedRow());
+				}
 				this.closeWindow();
 			}
 		} catch (Exception e) {
