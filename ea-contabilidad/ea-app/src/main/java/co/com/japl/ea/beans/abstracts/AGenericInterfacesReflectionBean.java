@@ -9,6 +9,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.dto.interfaces.IConfigGenericFieldSvc;
 import co.com.japl.ea.dto.interfaces.IQuerysPopup;
@@ -49,7 +50,7 @@ public abstract class AGenericInterfacesReflectionBean<T extends ADto> extends A
 		super();
 		paginador = new HBox();
 		paginador.getStyleClass().add(StylesPrincipalConstant.CONST_HBOX_PAGINATOR_CUSTOM);
-		gridFilter = new GridPane();
+		gridFilter = new ResponsiveGridPane();
 		tabla = new TableView<T>();
 		tabla.getStyleClass().add(StylesPrincipalConstant.CONST_TABLE_CUSTOM);
 		setClazz(clazz);

@@ -36,6 +36,7 @@ import org.pyt.common.constants.ParametroConstants;
 import co.com.japl.ea.app.beans.languages.LanguageBean;
 import co.com.japl.ea.app.components.PopupGenBean;
 import co.com.japl.ea.app.custom.PopupParametrizedControl;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.validates.ValidFields;
 import co.com.japl.ea.dto.dto.ParametroDTO;
@@ -228,8 +229,13 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 					loadValuesInPopup(typeGeneric, typeField, factory, fieldControl, nameField);
 					loadValuesInChoiceBox(typeGeneric, typeField, factory, fieldControl, nameField);
 					loadValuesFormToDTO(typeGeneric, fieldControl, typeField, nameField);
-					getGridPane(typeGeneric).add(label, index.column, index.row);
-					getGridPane(typeGeneric).add(fieldControl, ++index.column, index.row);
+					if (getGridPane(typeGeneric)instanceof ResponsiveGridPane g) {
+						g.add(label);
+						g.add(fieldControl);
+					} else {
+						getGridPane(typeGeneric).add(label, index.column, index.row);
+						getGridPane(typeGeneric).add(fieldControl, ++index.column, index.row);
+					}
 					fieldControl.setDisable(!factory.isEdit());
 					Arrays.asList(stylesGrid)
 							.forEach(styleGrid -> getGridPane(typeGeneric).getStyleClass().add(styleGrid));
@@ -248,16 +254,24 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 	@SuppressWarnings("unchecked")
 	private void configFieldFilter(TypeGeneric typeGeneric, Index index) {
 		if (TypeGeneric.FILTER == typeGeneric) {
-			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> {
+			var node1 = genericFormsUtils.buttonGenericWithEventClicked(() -> {
 				try {
 					var table = ((IGenericColumns<L, F>) this).getTable();
 					table.activeSearch();
 					table.search();
 				} catch (Exception e) {
 				}
-			}, i18n().valueBundle(CONST_FXML_BTN_SEARCH), Glyph.FONT.SEARCH), 0, ++index.row);
-			getGridPane(typeGeneric).add(genericFormsUtils.buttonGenericWithEventClicked(() -> clearFields(typeGeneric),
-					i18n().valueBundle(CONST_FXML_BTN_CLEAN), Glyph.FONT.GAVEL), 1, index.row);
+			}, i18n().valueBundle(CONST_FXML_BTN_SEARCH), Glyph.FONT.SEARCH);
+			var node2 = genericFormsUtils.buttonGenericWithEventClicked(() -> clearFields(typeGeneric),
+					i18n().valueBundle(CONST_FXML_BTN_CLEAN), Glyph.FONT.GAVEL);
+			if (getGridPane(typeGeneric)instanceof ResponsiveGridPane e) {
+//				e.newRow();
+				e.add(node1);
+				e.add(node2);
+			} else {
+				getGridPane(typeGeneric).add(node1, 0, ++index.row + 1);
+				getGridPane(typeGeneric).add(node2, 1, index.row + 1);
+			}
 
 		}
 	}

@@ -78,6 +78,7 @@ public final class UtilControlFieldFX {
 			toolTip.setText(value[0]);
 			label.setTooltip(toolTip);
 		}
+		label.setWrapText(true);
 		return label;
 	}
 

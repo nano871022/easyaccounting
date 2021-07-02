@@ -119,6 +119,7 @@ public interface IGenericColumns<L extends ADto, F extends ADto> extends IGeneri
 			table.getColumns().add(column);
 		});
 		getTableView().setOnMouseClicked(eventHandler -> selectedRow(eventHandler));
+		getTableView().setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		Arrays.asList(stylesTable).forEach(styleTable -> getTableView().getStyleClass().add(styleTable));
 	}
 

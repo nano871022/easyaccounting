@@ -9,6 +9,7 @@ import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.app.enums.ResponsiveSizeEnum;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesReflectionBean;
 import co.com.japl.ea.common.abstracts.ADto;
 import javafx.fxml.FXML;
@@ -30,7 +31,7 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 	public PopupGenBean(Class<T> clazz) throws Exception {
 		super(clazz);
 		tittleWindowI18n = LanguageConstant.GENERIC_WINDOW_POPUP_TITTLE + clazz.getSimpleName();
-		sizeWindow(750, 500);
+		sizeWindow(ResponsiveSizeEnum.SMALL.getMinWidth(), 500);
 	}
 
 	/**
@@ -94,6 +95,7 @@ public class PopupGenBean<T extends ADto> extends AGenericInterfacesReflectionBe
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void load(Consumer<T> caller) throws Exception {
 		if (ListUtils.isBlank(listFilters, listColumns)) {
 			this.closeWindow();
