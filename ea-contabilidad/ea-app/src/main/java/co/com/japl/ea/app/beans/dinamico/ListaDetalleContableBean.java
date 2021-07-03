@@ -1,5 +1,7 @@
 package co.com.japl.ea.app.beans.dinamico;
 
+import static org.pyt.common.common.InstanceObject.instance;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.pyt.common.constants.StylesPrincipalConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.app.components.ConfirmPopupBean;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
@@ -33,7 +36,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -59,7 +61,7 @@ public class ListaDetalleContableBean
 	@FXML
 	private Label sumatoria;
 	@FXML
-	private GridPane filterTable;
+	private ResponsiveGridPane filterTable;
 	private VBox panelCentral;
 	private DetalleContableDTO filtro;
 	private DetalleContableDTO registro;
@@ -94,7 +96,7 @@ public class ListaDetalleContableBean
 						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
 						if (instance instanceof ADto) {
 							var clazz = ((ADto) instance).getType(row.getFieldName());
-							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							var instanceClass = instance(clazz);
 							if (instanceClass instanceof ConceptoDTO) {
 								loadInMapList(row.getFieldName(), conceptoSvc.getAll(new ConceptoDTO()));
 							} else if (instanceClass instanceof CuentaContableDTO) {
@@ -296,7 +298,7 @@ public class ListaDetalleContableBean
 	}
 
 	@Override
-	public GridPane getGridPane(TypeGeneric typeGeneric) {
+	public ResponsiveGridPane getGridPane(TypeGeneric typeGeneric) {
 		return filterTable;
 	}
 

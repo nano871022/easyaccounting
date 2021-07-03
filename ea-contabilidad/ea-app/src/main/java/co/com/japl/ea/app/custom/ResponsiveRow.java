@@ -45,13 +45,13 @@ public class ResponsiveRow {
 				}
 			} else if (responsiveEnum == ResponsiveSizeEnum.MEDIUMSMALL) {
 				contentWidth = 5;
-				if (currentGridPPaneColumn == 4) {
+				if (currentGridPPaneColumn == 12) {
 					lastGridPaneRow++;
 					currentGridPPaneColumn = 0;
 				}
 			} else if (responsiveEnum == ResponsiveSizeEnum.MEDIUM) {
-				contentWidth = 4;
-				if (currentGridPPaneColumn == 6) {
+				contentWidth = 3;
+				if (currentGridPPaneColumn == 12) {
 					lastGridPaneRow++;
 					currentGridPPaneColumn = 0;
 				}
@@ -63,7 +63,7 @@ public class ResponsiveRow {
 				}
 			} else if (responsiveEnum == ResponsiveSizeEnum.LARGE) {
 				contentWidth = 2;
-				if (currentGridPPaneColumn == 10) {
+				if (currentGridPPaneColumn == 12) {
 					lastGridPaneRow++;
 					currentGridPPaneColumn = 0;
 				}

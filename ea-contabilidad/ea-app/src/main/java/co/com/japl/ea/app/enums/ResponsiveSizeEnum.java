@@ -3,8 +3,8 @@ package co.com.japl.ea.app.enums;
 import java.util.Arrays;
 
 public enum ResponsiveSizeEnum {
-	XSMALL(0, 0, 380), SMALL(1, 380, 576), MEDIUMSMALL(2, 576, 720), MEDIUM(3, 720, 900), MEDIUMLARGE(4, 900, 1000),
-	LARGE(5, 1000, 1200), XLARGE(6, 1200, 1400), XXLARGE(6, 1400, 5000);
+	XSMALL(0, 0, 420), SMALL(1, 420, 700), MEDIUMSMALL(2, 0, 0), MEDIUM(3, 700, 1200), MEDIUMLARGE(4, 0, 0),
+	LARGE(5, 1200, 5000), XLARGE(6, 0, 0), XXLARGE(6, 0, 0);
 
 	private int value;
 	private int minWidth;

@@ -1,5 +1,7 @@
 package co.com.japl.ea.app.beans.dinamico;
 
+import static org.pyt.common.common.InstanceObject.instance;
+
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.SelectList;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.PermissionConstants;
@@ -17,6 +18,7 @@ import org.pyt.common.constants.StylesPrincipalConstant;
 import org.pyt.common.constants.languages.Documento;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.common.validates.ValidateValues;
@@ -33,7 +35,6 @@ import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -58,13 +59,13 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 	private ValidateValues valid;
 	@FXML
 	private HBox buttons;
-	private GridPane gridPane;
+	private ResponsiveGridPane gridPane;
 
 	@FXML
 	public void initialize() {
 		super.initialize();
-		gridPane = new GridPane();
-		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
+		gridPane = new ResponsiveGridPane();
+//		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		valid = new ValidateValues();
 		registro = new DocumentoDTO();
 		tipoDocumento = new ParametroDTO();
@@ -124,9 +125,9 @@ public class DocumentoBean extends DinamicoBean<DocumentosDTO, DocumentoDTO> {
 				.filter(row -> Optional.ofNullable(row.getSelectNameGroup()).isPresent()).forEach(row -> {
 					try {
 						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
-						if (instance instanceof ADto) {
-							var clazz = ((ADto) instance).getType(row.getFieldName());
-							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+						if (instance instanceof ADto e) {
+							var clazz = e.getType(row.getFieldName());
+							var instanceClass = instance(clazz);
 							if (instanceClass instanceof ParametroDTO) {
 								var param = new ParametroDTO();
 								param.setGrupo(row.getSelectNameGroup());

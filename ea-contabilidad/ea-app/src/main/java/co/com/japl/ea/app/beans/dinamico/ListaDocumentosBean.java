@@ -1,5 +1,7 @@
 package co.com.japl.ea.app.beans.dinamico;
 
+import static org.pyt.common.common.InstanceObject.instance;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.pyt.common.constants.StylesPrincipalConstant;
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.app.components.ConfirmPopupBean;
 import co.com.japl.ea.app.components.PopupBean;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.beans.abstracts.AListGenericDinamicBean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
@@ -37,7 +40,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -64,7 +66,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 	private Label lblTitle;
 	private DataTableFXMLUtil<DocumentoDTO, DocumentoDTO> dataTable;
 	@FXML
-	private GridPane filterTable;
+	private ResponsiveGridPane filterTable;
 	protected DocumentoDTO filter;
 	private ParametroDTO tipoDocumento;
 	private MultiValuedMap<String, Object> mapListSelects = new ArrayListValuedHashMap<>();
@@ -96,7 +98,7 @@ public class ListaDocumentosBean extends AListGenericDinamicBean<DocumentoDTO, D
 						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
 						if (instance instanceof ADto) {
 							var clazz = ((ADto) instance).getType(row.getFieldName());
-							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							var instanceClass = instance(clazz);
 							if (instanceClass instanceof ParametroDTO) {
 								var param = new ParametroDTO();
 								param.setGrupo(row.getSelectNameGroup());

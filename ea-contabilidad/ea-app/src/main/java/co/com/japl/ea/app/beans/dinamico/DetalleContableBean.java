@@ -1,5 +1,7 @@
 package co.com.japl.ea.app.beans.dinamico;
 
+import static org.pyt.common.common.InstanceObject.instance;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -8,11 +10,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.dto.ConceptoDTO;
@@ -28,7 +30,6 @@ import co.com.japl.ea.exceptions.GenericServiceException;
 import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -55,7 +56,7 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 	private Label titulo;
 	private ParametroDTO tipoDocumento;
 	private String codigoDocumento;
-	private GridPane gridPane;
+	private ResponsiveGridPane gridPane;
 	@FXML
 	private HBox buttons;
 
@@ -64,8 +65,8 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 		super.initialize();
 		registro = new DetalleContableDTO();
 		tipoDocumento = new ParametroDTO();
-		gridPane = new GridPane();
-		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
+		gridPane = new ResponsiveGridPane();
+//		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.SAVE)
@@ -104,7 +105,7 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 		getListGenericsFields(TypeGeneric.FIELD).stream().filter(row -> {
 			Object instance;
 			try {
-				instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
+				instance = instance(row.getClaseControlar());
 				var clazz = ((ADto) instance).getType(row.getFieldName());
 				clazz.asSubclass(ADto.class);
 				return true;
@@ -190,7 +191,7 @@ public class DetalleContableBean extends DinamicoBean<DocumentosDTO, DetalleCont
 	}
 
 	@Override
-	public GridPane getGridPane(TypeGeneric typeGeneric) {
+	public ResponsiveGridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 

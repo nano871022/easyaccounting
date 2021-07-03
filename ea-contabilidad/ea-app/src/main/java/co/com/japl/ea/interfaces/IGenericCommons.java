@@ -1,8 +1,10 @@
 package co.com.japl.ea.interfaces;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.ParametroConstants;
 
@@ -62,7 +64,7 @@ public interface IGenericCommons<L extends ADto, F extends ADto> extends INotifi
 
 	default ParametroDTO getParametroFromFindGroup(ParametroDTO parametroDto, String nameGroup)
 			throws ParametroException {
-		if (StringUtils.isBlank(parametroDto.getGrupo())) {
+		if (isBlank(parametroDto.getGrupo())) {
 			ParametroDTO parametroDTO = new ParametroDTO();
 			parametroDTO.setNombre(nameGroup);
 			parametroDTO.setGrupo(ParametroConstants.GRUPO_PRINCIPAL);
@@ -71,6 +73,10 @@ public interface IGenericCommons<L extends ADto, F extends ADto> extends INotifi
 			if (listParams.size() > 1) {
 				throw new ParametroException(
 						i18n().valueBundle("err.msn.param.not.unique", parametroDto.getGrupo()).get());
+			}
+			if (listParams.size() == 0 && isNotBlank(nameGroup)) {
+				parametroDto.setGrupo(nameGroup);
+				return parametroDto;
 			}
 			if (listParams.size() == 0) {
 				throw new ParametroException(

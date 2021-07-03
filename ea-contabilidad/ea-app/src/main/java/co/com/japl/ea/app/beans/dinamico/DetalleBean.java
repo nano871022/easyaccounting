@@ -1,5 +1,7 @@
 package co.com.japl.ea.app.beans.dinamico;
 
+import static org.pyt.common.common.InstanceObject.instance;
+
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,12 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.DtoUtils;
-import org.pyt.common.common.UtilControlFieldFX;
 import org.pyt.common.constants.ParametroConstants;
 import org.pyt.common.constants.PermissionConstants;
 import org.pyt.common.constants.StylesPrincipalConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.dto.ActividadIcaDTO;
@@ -36,7 +38,6 @@ import co.com.japl.ea.exceptions.validates.ValidateValueException;
 import co.com.japl.ea.utls.PermissionUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -69,7 +70,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	private ParametroDTO tipoDocumento;
 	private VBox panelCentral;
 	private String codigoDocumento;
-	private GridPane gridPane;
+	private ResponsiveGridPane gridPane;
 	@FXML
 	private HBox buttons;
 
@@ -79,8 +80,8 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 		super.initialize();
 		registro = new DetalleDTO();
 		tipoDocumento = new ParametroDTO();
-		gridPane = new GridPane();
-		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
+		gridPane = new ResponsiveGridPane();
+//		gridPane = new UtilControlFieldFX().configGridPane(gridPane);
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.save").action(this::guardar)
 				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::guardar).icon(Glyph.EDIT)
 				.isVisible(edit).setName("fxml.btn.back").action(this::regresar).icon(Glyph.BACKWARD).build();
@@ -121,7 +122,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 						var instance = row.getClaseControlar().getDeclaredConstructor().newInstance();
 						if (instance instanceof ADto) {
 							var clazz = ((ADto) instance).getType(row.getFieldName());
-							var instanceClass = clazz.getDeclaredConstructor().newInstance();
+							var instanceClass = instance(clazz);
 							if (instanceClass instanceof ParametroDTO) {
 								var param = new ParametroDTO();
 								param.setGrupo(row.getSelectNameGroup());
@@ -270,7 +271,7 @@ public class DetalleBean extends DinamicoBean<DocumentosDTO, DetalleDTO> {
 	}
 
 	@Override
-	public GridPane getGridPane(TypeGeneric typeGeneric) {
+	public ResponsiveGridPane getGridPane(TypeGeneric typeGeneric) {
 		return gridPane;
 	}
 

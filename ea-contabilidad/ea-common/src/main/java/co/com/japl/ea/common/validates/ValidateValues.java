@@ -376,6 +376,8 @@ public final class ValidateValues {
 				return (T)e.toString();
 			}else if(value instanceof Integer e) {
 				return (T)e.toString();
+			}else if(value instanceof Long e) {
+				return (T)e.toString();
 			}
 		}
 		return null;
