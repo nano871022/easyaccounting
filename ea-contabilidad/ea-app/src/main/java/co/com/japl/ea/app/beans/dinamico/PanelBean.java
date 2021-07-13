@@ -131,7 +131,7 @@ public class PanelBean extends ABean<DocumentoDTO> implements IComunicacion {
 				left.getChildren().add(btn);
 			}
 		} // end for
-		Button regresar = new Button(Documento.CONST_RETURN);
+		Button regresar = new Button(i18n().valueBundle(Documento.CONST_RETURN).get());
 		regresar.setGraphic(new Glyph("FontAwesome", org.controlsfx.glyphfont.FontAwesome.Glyph.BACKWARD));
 		regresar.setMaxWidth(Double.MAX_VALUE);
 		regresar.onActionProperty().set(e -> {

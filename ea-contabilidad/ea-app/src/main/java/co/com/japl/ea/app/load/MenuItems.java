@@ -16,6 +16,7 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.PropertiesConstants;
 
 import co.com.japl.ea.app.beans.users.LoginBean;
+import co.com.japl.ea.app.components.ListGenericBeans;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.properties.PropertiesUtils;
@@ -153,12 +154,22 @@ public class MenuItems implements Reflection {
 	}
 
 	@SuppressWarnings("unchecked")
-	private final <B extends ABean<T>, T extends ADto> void onActionProperty(String classString, String nameLabel) {
+	private final <B extends ABean<T>, S extends ADto, T extends ADto, L extends ListGenericBeans<S>> void onActionProperty(
+			String classString, String nameLabel) {
 		try {
-			Class<B> beanToLoad = (Class<B>) Class.forName(classString);
-			var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, beanToLoad);
-			invokeLoadParameters(nameLabel, beanFxml);
+			var beanToLoad = Class.forName(classString);
+			if (beanToLoad == ListGenericBeans.class) {
+				var dtoName = nameLabel.substring(nameLabel.indexOf("?"));
+				dtoName = dtoName.substring(dtoName.indexOf("$") + 1);
+				var dto = Class.forName(dtoName);
+				var beanFxml = LoadAppFxml.beanFxmlGeneric(scroll, (Class<S>) dto, (Class<L>) beanToLoad);
+			} else {
+				var beanFxml = LoadAppFxml.BeanFxmlScroller(scroll, (Class<B>) beanToLoad);
+				invokeLoadParameters(nameLabel, beanFxml);
+			}
 		} catch (LoadAppFxmlException | ClassNotFoundException | SecurityException | IllegalArgumentException e) {
+			logger.logger(e);
+		} catch (Exception e) {
 			logger.logger(e);
 		}
 	}
