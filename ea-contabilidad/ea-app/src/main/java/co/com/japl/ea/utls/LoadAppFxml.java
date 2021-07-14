@@ -8,7 +8,7 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.CSSConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
-import co.com.japl.ea.app.components.ListGenericBeans;
+import co.com.japl.ea.app.components.AGenericsBeans;
 import co.com.japl.ea.app.components.PopupFromBean;
 import co.com.japl.ea.app.components.PopupGenBean;
 import co.com.japl.ea.app.load.Template;
@@ -288,8 +288,8 @@ public final class LoadAppFxml<P extends Pane, C extends Control> extends AppFXM
 		addCommands(keyboard, runnable);
 	}
 
-	public static <S extends ADto, N extends ScrollPane, L extends ListGenericBeans<S>> L beanFxmlGeneric(N layout,
-			Class<S> dto, Class<L> class1) throws Exception {
+	public static <B, S extends ADto, N extends ScrollPane, L extends AGenericsBeans> L beanFxmlGeneric(N layout,
+			Class<S> classDto, Class<L> classBean) throws Exception {
 		String file, title;
 		if (!loadApp().isLastContro()) {
 			loadApp().setLastContro(layout);
@@ -298,9 +298,9 @@ public final class LoadAppFxml<P extends Pane, C extends Control> extends AppFXM
 			throw new LoadAppFxmlException(i18n.valueBundle("err.stage.dont.send.and.dont.found.save").get());
 		}
 		try {
-			L lbean = class1.getDeclaredConstructor().newInstance();
+			L lbean = classBean.getDeclaredConstructor().newInstance();
 			title = lbean.getNombreVentana();
-			Parent root = lbean.load(dto);
+			Parent root = lbean.load(classDto);
 			((ScrollPane) loadApp().getLastContro()).setContent(root);
 			loadApp().currentControlScroller = lbean;
 			lbean.initialize();

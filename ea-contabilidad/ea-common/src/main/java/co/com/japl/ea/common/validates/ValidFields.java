@@ -127,9 +127,9 @@ public final class ValidFields {
 			return false;
 		String value = field.getText();
 		valid &= notEmpty ? StringUtils.isNotBlank(value) : true;
-		if (min != null && min >= 0)
+		if (valid && min != null && min >= 0)
 			valid &= value.length() >= min;
-		if (max != null && max >= 0)
+		if (valid&& max != null && max >= 0)
 			valid &= value.length() <= max;
 		if (!valid)
 			error(field, msnError.get());

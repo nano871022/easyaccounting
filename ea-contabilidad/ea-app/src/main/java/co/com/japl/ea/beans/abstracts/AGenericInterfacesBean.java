@@ -26,7 +26,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
 	protected IGenericServiceSvc<ConfigGenericFieldDTO> configGenericSvc;
 	@Inject(resource = "com.pyt.service.implement.GenericServiceSvc")
-	private IGenericServiceSvc<T> serviceSvc;
+	protected IGenericServiceSvc<T> serviceSvc;
 	protected T filtro;
 	private MultiValuedMap<String, Node> mapFieldUseds;
 	@Inject(resource = "com.pyt.service.implement.ParametrosSvc")
@@ -34,7 +34,7 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 	protected MultiValuedMap<String, Object> toChoiceBox;
 
 	protected void loadDataModel(HBox paginator, TableView<T> tableView) {
-		dataTable = new DataTableFXMLUtil<T, T>(paginator, tableView) {
+		dataTable = new DataTableFXMLUtil<T, T>(paginator, tableView, false) {
 			@Override
 			public Integer getTotalRows(T filter) {
 				try {

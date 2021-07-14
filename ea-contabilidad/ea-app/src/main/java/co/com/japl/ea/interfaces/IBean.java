@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.constants.AppConstants;
 
+import co.com.japl.ea.app.components.AGenericsBeans;
 import co.com.japl.ea.app.components.PopupGenBean;
 import co.com.japl.ea.beans.abstracts.ABean;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesReflectionBean;
@@ -32,10 +33,18 @@ public interface IBean<T extends ADto> extends Reflection, INotificationMethods 
 	 * @param classOfBean {@link Class}
 	 * @return {@link ABean}
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default <L extends ADto, S extends ABean<L>> S getController(Class<S> classOfBean) {
 		try {
+			if (AGenericsBeans.class.isAssignableFrom(classOfBean)) {
+				var clazz = ((AGenericsBeans) this).getClazz();
+				return (S) LoadAppFxml.beanFxmlGeneric(null, (Class) clazz, (Class) classOfBean);
+			}
 			return LoadAppFxml.BeanFxmlScroller(null, classOfBean);
 		} catch (LoadAppFxmlException e) {
+			logger().error("El bean " + classOfBean.getName() + " no puede ser cargado.");
+			error(e);
+		} catch (Exception e) {
 			logger().error("El bean " + classOfBean.getName() + " no puede ser cargado.");
 			error(e);
 		}

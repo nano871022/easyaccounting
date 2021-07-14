@@ -1,95 +1,56 @@
 package co.com.japl.ea.app.components;
 
-import static org.pyt.common.constants.InsertResourceConstants.CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.List;
 
-import org.controlsfx.glyphfont.FontAwesome.Glyph;
-import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.Log;
-import org.pyt.common.constants.PermissionConstants;
+import org.pyt.common.constants.LanguageConstant;
 
-import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
 import co.com.japl.ea.common.abstracts.ADto;
-import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
-import co.com.japl.ea.dto.interfaces.IConfigGenericFieldSvc;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
-import co.com.japl.ea.utls.PermissionUtil;
-import javafx.scene.Parent;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
-public class ListGenericBeans<T extends ADto> extends AGenericInterfacesBean<T> {
+public class ListGenericBeans<T extends ADto> extends AGenericsBeans<T, ListGenericBeans<T>> {
 	protected Log logger = Log.Log(this.getClass());
-	private GridPane gridPane;
+
 	private TableView<T> tableView;
 	private Integer maxColumn;
-	private VBox principal;
-	private Class<T> clazz;
 	private HBox paginator;
-	private HBox buttons;
-	private T filter;
-	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
-	private IConfigGenericFieldSvc configGenericSvc;
+
 	private List<ConfigGenericFieldDTO> listFilters;
 	private List<ConfigGenericFieldDTO> listColumns;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ListGenericBeans() {
-		principal = new VBox();
-		gridPane = new GridPane();
+		super((Class) ListGenericBeans.class);
 		tableView = new TableView<>();
 		paginator = new HBox();
-		buttons = new HBox();
+		maxColumn = 10;
 	}
 
-	public void initialize() throws Exception {
-		this.registro = clazz.getConstructor().newInstance();
+	public void initializeMethod() throws Exception {
 		this.filtro = clazz.getConstructor().newInstance();
-		gridPane.setHgap(10);
-		gridPane.setVgap(10);
 		listFilters = configGenericSvc.getFieldToFilters(this.getClass(), clazz);
 		listColumns = configGenericSvc.getFieldToColumns(this.getClass(), clazz);
 		loadDataModel(paginator, tableView);
 		loadFields(TypeGeneric.FILTER);
 		loadColumns();
-		visibleButtons();
-		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.create").action(this::create)
-				.icon(Glyph.SAVE).isVisible(save).setName("fxml.btn.edit").action(this::edit).icon(Glyph.EDIT)
-				.isVisible(edit).setName("fxml.btn.delete").action(this::remove).icon(Glyph.REMOVE).isVisible(delete)
-				.build();
+		loadNameTitle(clazz.getSimpleName() + ".bean.list.title");
 	}
 
-	public Parent load(Class<T> classDto) throws Exception {
-		clazz = classDto;
-		principal.getChildren().add(gridPane);
+	@Override
+	public void loadMethod() throws Exception {
 		principal.getChildren().add(tableView);
 		principal.getChildren().add(paginator);
-		principal.getChildren().add(buttons);
-		return principal;
-	}
-
-	public void create() {
-
-	}
-
-	public void edit() {
-
-	}
-
-	public void remove() {
 	}
 
 	@Override
 	public void selectedRow(MouseEvent eventHandler) {
-		try {
-			var dto = dataTable.getSelectedRow();
-//			getController(GenerBean.class).load(dto);
-		} catch (Exception e) {
-			error(e);
-		}
+		visibleButtons();
 	}
 
 	@Override
@@ -99,7 +60,7 @@ public class ListGenericBeans<T extends ADto> extends AGenericInterfacesBean<T> 
 
 	@Override
 	public Integer getMaxColumns(TypeGeneric typeGeneric) {
-		return 10;
+		return maxColumn;
 	}
 
 	@Override
@@ -116,34 +77,94 @@ public class ListGenericBeans<T extends ADto> extends AGenericInterfacesBean<T> 
 	}
 
 	@Override
-	public Class<T> getClazz() {
-		return clazz;
-	}
-
-	@Override
-	public GridPane getGridPane(TypeGeneric typeGeneric) {
-		return gridPane;
-	}
-
-	@Override
 	public T getFilterToTable(T filter) {
 		return filter;
 	}
 
-	@Override
-	protected void visibleButtons() {
-		var save = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE, ListGenericBeans.class,
-				getUsuario().getGrupoUser());
-		var edit = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_UPDATE,
-				ListGenericBeans.class, getUsuario().getGrupoUser());
-		var delete = dataTable.isSelected() && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_DELETE,
-				ListGenericBeans.class, getUsuario().getGrupoUser());
-		var view = !save && !edit && PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_READ,
-				ListGenericBeans.class, getUsuario().getGrupoUser());
-		this.save.setValue(save);
-		this.edit.setValue(edit);
-		this.delete.setValue(delete);
-		this.view.setValue(view);
+	@SuppressWarnings("unchecked")
+	public void create() {
+		try {
+			getController(GenericBeans.class).load();
+		} catch (Exception e) {
+			logger().logger(e);
+		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	void update() {
+		try {
+			var registro = dataTable.getSelectedRow();
+			if (registro != null && isNotBlank(registro.getCodigo())) {
+				getController(GenericBeans.class).load(registro);
+			}
+		} catch (Exception e) {
+			logger().logger(e);
+		}
+	}
+
+	@Override
+	void delete() {
+		try {
+			controllerPopup(ConfirmPopupBean.class).load("#{ListGenericBeans.remove}",
+					i18n().valueBundle(LanguageConstant.LANGUAGE_WARNING_DELETE_ROW));
+		} catch (Exception e) {
+			error(e);
+		}
+	}
+
+	public void setRemove(Boolean confirm) {
+		if (confirm) {
+			try {
+				var registro = dataTable.getSelectedRow();
+				if (registro != null && isNotBlank(registro.getCodigo())) {
+					serviceSvc.delete(registro, getUsuario());
+					alertaI18n(String.format(registro.getClass().getSimpleName() + ".with.code.was.removed",
+							registro.getCodigo()));
+					dataTable.search();
+				}
+
+			} catch (Exception e) {
+				error(e);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	void copy() {
+		var registro = dataTable.getSelectedRow();
+		if (registro != null && isNotBlank(registro.getCodigo())) {
+			registro.setCodigo(null);
+			getController(GenericBeans.class).load(registro);
+		}
+
+	}
+
+	@Override
+	void upload() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	void pay() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	void print() {
+		// TODO Auto-generated method stub
+
+	}
+
+	void cancel() {
+
+	}
+
+	void visibleButtonsMethod() {
+		edit.setValue(edit.and(new SimpleBooleanProperty(dataTable.isSelected())).getValue());
+		delete.setValue(delete.and(new SimpleBooleanProperty(dataTable.isSelected())).getValue());
+	}
 }

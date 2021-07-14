@@ -69,6 +69,10 @@ public final class UtilControlFieldFX {
 	 */
 	public final Label createLabel(OptI18n name, EventHandler<? super MouseEvent> event, String... value) {
 		var label = new Label();
+		return assingInLabel(label,name,event,value);
+	}
+	
+	public final Label assingInLabel(Label label,OptI18n name,EventHandler<? super MouseEvent> event,String... value) {
 		if (!name.isFound()) {
 			label.setOnMouseClicked(event);
 		}
