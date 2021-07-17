@@ -25,7 +25,7 @@
     </HBox>
   </bottom>
   <center>
-    <TextArea fx:id="mensaje" disable="false" editable="false" opacity="1.0" prefWidth="200.0" style="-fx-background-color: transparent;" styleClass="null" wrapText="true" />
+    <Label fx:id="mensaje" wrapText="true"  maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
   </center>
   <left>
     <ImageView fx:id="imagen" fitHeight="99.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" x="0.0" />

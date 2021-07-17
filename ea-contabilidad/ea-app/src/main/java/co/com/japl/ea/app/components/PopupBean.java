@@ -4,9 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.common.OptI18n;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
+import co.com.japl.ea.app.beans.languages.LanguageBean;
 import co.com.japl.ea.beans.abstracts.ABean;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -20,7 +22,7 @@ public class PopupBean extends ABean {
 	};
 
 	@FXML
-	private TextArea mensaje;
+	private Label mensaje;
 	@FXML
 	private ImageView imagen;
 	@FXML
@@ -29,6 +31,7 @@ public class PopupBean extends ABean {
 	@FXML
 	public void initialize() {
 		mensaje.setText("");
+		mensaje.setWrapText(true);
 	}
 
 	/**
@@ -36,10 +39,26 @@ public class PopupBean extends ABean {
 	 * 
 	 * @param mensaje {@link String}
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> void load(T mensaje, TIPOS tipo) {
 		var message = "";
-		if (mensaje instanceof OptI18n) {
-			message = ((OptI18n) mensaje).get();
+		if (mensaje instanceof OptI18n e) {
+			if (!e.isFound()) {
+				this.mensaje.setOnMouseClicked(event -> {
+					try {
+						if (event.getClickCount() == 2) {
+							var popup = new PopupFromBean(LanguageBean.class);
+							LoadAppFxml.loadBeanFX(popup);
+							LanguageBean bean = (LanguageBean) popup.getBean();
+							bean.openPopup();
+							bean.addCode(e.get());
+						}
+					} catch (Exception ex) {
+						error(ex);
+					}
+				});
+			}
+			message = e.get();
 		} else {
 			message = (String) mensaje;
 		}

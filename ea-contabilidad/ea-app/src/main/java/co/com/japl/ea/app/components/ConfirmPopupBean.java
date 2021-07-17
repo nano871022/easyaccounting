@@ -7,7 +7,7 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.app.components.PopupBean.TIPOS;
 import co.com.japl.ea.beans.abstracts.ABean;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 public class ConfirmPopupBean extends ABean {
 
 	@FXML
-	private TextArea mensaje;
+	private Label mensaje;
 	@FXML
 	private ImageView imagen;
 	@FXML
@@ -27,6 +27,7 @@ public class ConfirmPopupBean extends ABean {
 	@FXML
 	public void initialize() {
 		mensaje.setText("");
+		mensaje.setWrapText(true);
 	}
 
 	/**

@@ -13,6 +13,7 @@ import org.pyt.common.constants.CSSConstant;
 import co.com.japl.ea.app.enums.ResponsiveSizeEnum;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -35,6 +36,7 @@ public class ResponsiveGridPane extends GridPane {
 		setAlignment(TOP_CENTER);
 		columnConstraints();
 		widthProperty().addListener(this::eventWidthHandler);
+		responsiveEnum = better(widthProperty().getValue().intValue());
 	}
 
 	private final Integer maxColumn = 12;
@@ -80,6 +82,8 @@ public class ResponsiveGridPane extends GridPane {
 			var lengthText = e.getText().length() * 10;
 			var responsive = better(lengthText);
 			columns.setResponsiveEnumColumnWidth(responsive, 2);
+		} else if (node instanceof Button e) {
+			columns.setResponsiveEnumColumnWidth(responsiveEnum, 1);
 		} else {
 			columns.setResponsiveEnumColumnWidth(responsiveEnum, 2);
 		}

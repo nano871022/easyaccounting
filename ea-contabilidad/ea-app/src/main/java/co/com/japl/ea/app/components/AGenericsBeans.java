@@ -15,6 +15,7 @@ import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 
 import co.com.japl.ea.app.beans.languages.LanguageBean;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
@@ -28,16 +29,18 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T, B>> extends AGenericInterfacesBean<T>
 		implements IGenericsBeans<T> {
 	protected Label title;
-	protected GridPane gridPane;
+	protected HBox fieldsLayer;
 	protected VBox principal;
 	protected Class<T> clazz;
 	protected GridPane buttons;
 	protected Class<B> beans;
+	protected ResponsiveGridPane rgridpane;
 	@Inject(resource = CONST_RESOURCE_IMPL_SVC_CONFIG_GENERIC_FIELD)
 	protected IConfigGenericFieldSvc configGenericSvc;
 	protected BooleanProperty copy;
@@ -58,9 +61,10 @@ public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T,
 //		title.setScaleY(1.5);
 //		title.setMinWidth(500);
 		principal = new VBox();
-		gridPane = new GridPane();
+		fieldsLayer = new HBox();
 		buttons = new GridPane();
 		buttons.setAlignment(Pos.CENTER);
+		rgridpane = new ResponsiveGridPane();
 	}
 
 	@Override
@@ -70,8 +74,6 @@ public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T,
 
 	public final void initialize() throws Exception {
 		this.registro = clazz.getConstructor().newInstance();
-		gridPane.setHgap(10);
-		gridPane.setVgap(10);
 		initializeMethod();
 		visibleButtons();
 		ButtonsImpl.Stream(HBox.class).setLayout(buttons).setName("fxml.btn.create").action(this::create)
@@ -119,10 +121,13 @@ public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T,
 
 	abstract void cancel();
 
+	@SuppressWarnings("static-access")
 	public final Parent load(Class<T> classDto) throws Exception {
 		clazz = classDto;
+		fieldsLayer.getChildren().add(rgridpane);
+		fieldsLayer.setHgrow(rgridpane, Priority.ALWAYS);
 		principal.getChildren().add(title);
-		principal.getChildren().add(gridPane);
+		principal.getChildren().add(fieldsLayer);
 		loadMethod();
 		principal.getChildren().add(buttons);
 		return principal;
@@ -155,7 +160,7 @@ public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T,
 
 	@Override
 	public final GridPane getGridPane(TypeGeneric typeGeneric) {
-		return gridPane;
+		return rgridpane;
 	}
 
 }

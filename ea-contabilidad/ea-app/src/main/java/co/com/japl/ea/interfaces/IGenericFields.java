@@ -265,7 +265,6 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 			var node2 = genericFormsUtils.buttonGenericWithEventClicked(() -> clearFields(typeGeneric),
 					i18n().valueBundle(CONST_FXML_BTN_CLEAN), Glyph.FONT.GAVEL);
 			if (getGridPane(typeGeneric)instanceof ResponsiveGridPane e) {
-//				e.newRow();
 				e.add(node1);
 				e.add(node2);
 			} else {

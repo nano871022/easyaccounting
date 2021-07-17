@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.com.japl.ea.app.enums.ResponsiveSizeEnum;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
 public class ResponsiveRow {
@@ -37,6 +38,7 @@ public class ResponsiveRow {
 				contentWidth = maxColumns;
 				lastGridPaneRow++;
 				currentGridPPaneColumn = 0;
+
 			} else if (responsiveEnum == ResponsiveSizeEnum.SMALL) {
 				contentWidth = 6;
 				if (currentGridPPaneColumn == 2) {
@@ -75,6 +77,19 @@ public class ResponsiveRow {
 				}
 			}
 
+			if (column.getContent()instanceof Button e) {
+				if (responsiveEnum == ResponsiveSizeEnum.XSMALL && e.getGraphic() != null) {
+					e.setText("");
+				}
+				var len = e.getText().length();
+				if (len <= 5) {
+					contentWidth = 1;
+				} else if (len > 5) {
+					contentWidth = 2;
+				} else {
+					contentWidth = column.getColumnWidth(responsiveEnum);
+				}
+			}
 			GridPane.setConstraints(column.getContent(), currentGridPPaneColumn, lastGridPaneRow, contentWidth, 1);
 			currentGridPPaneColumn += contentWidth;
 		}

@@ -22,7 +22,9 @@ import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.Mnemonic;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 
 public class ButtonsImpl<P extends Pane> implements Buttons<P> {
 

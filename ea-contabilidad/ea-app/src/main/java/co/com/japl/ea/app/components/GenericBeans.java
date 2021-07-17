@@ -25,7 +25,6 @@ public class GenericBeans<T extends ADto> extends AGenericsBeans<T, GenericBeans
 
 	public void initializeMethod() throws Exception {
 		listFields = configGenericSvc.getFieldToFields(this.getClass(), clazz);
-		loadFields(TypeGeneric.FIELD);
 		loadNameTitle(clazz.getSimpleName() + ".bean.crud.title");
 	}
 
@@ -41,6 +40,7 @@ public class GenericBeans<T extends ADto> extends AGenericsBeans<T, GenericBeans
 
 	public void load() throws Exception {
 		this.registro = clazz.getConstructor().newInstance();
+		loadFields(TypeGeneric.FIELD);
 	}
 
 	@Override

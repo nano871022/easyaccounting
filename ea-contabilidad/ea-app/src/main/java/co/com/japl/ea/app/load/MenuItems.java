@@ -1,5 +1,7 @@
 package co.com.japl.ea.app.load;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -8,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang3.StringUtils;
 import org.pyt.common.annotations.Inject;
 import org.pyt.common.common.I18n;
 import org.pyt.common.common.Log;
@@ -102,9 +103,12 @@ public class MenuItems implements Reflection {
 		var list = getMenusFromDB();
 		if (list != null && list.size() > 0) {
 			list.stream().forEach(menuDto -> {
-				var menus = menuDto.getUrl().split(AppConstants.SLASH);
-				var menu = getMenu(menus[0]);
-				processMenu(menu, menuDto.getClassPath(), menuDto.getShortcut(), 0, menus);//
+				var url = menuDto.getUrl();
+				if (isNotBlank(url)) {
+					var menus = url.split(AppConstants.SLASH);
+					var menu = getMenu(menus[0]);
+					processMenu(menu, menuDto.getClassPath(), menuDto.getShortcut(), 0, menus);//
+				}
 			});
 		} else {
 			propertiesMenu.keySet().forEach(key -> {
@@ -134,7 +138,7 @@ public class MenuItems implements Reflection {
 					var menuItem = new MenuItem(nameLabel2);
 
 					menu.getItems().add(menuItem);
-					if (StringUtils.isNotBlank(shortcut)) {
+					if (isNotBlank(shortcut)) {
 						menuItem.setAccelerator(new KeyCharacterCombination(shortcut, KeyCombination.ALT_DOWN));
 					}
 					menuItem.onActionProperty().set(event -> onActionProperty(classString, nameLabel));
