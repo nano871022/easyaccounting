@@ -7,15 +7,21 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.pyt.common.annotations.Inject;
 
+import co.com.japl.ea.app.components.GenericBeans;
+import co.com.japl.ea.app.components.PopupFromBean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.dto.interfaces.IGenericServiceSvc;
 import co.com.japl.ea.dto.interfaces.IParametrosSvc;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.exceptions.GenericServiceException;
+import co.com.japl.ea.exceptions.LoadAppFxmlException;
 import co.com.japl.ea.interfaces.IGenericColumns;
 import co.com.japl.ea.interfaces.IGenericFields;
 import co.com.japl.ea.utls.DataTableFXMLUtil;
+import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 
@@ -120,6 +126,31 @@ public abstract class AGenericInterfacesBean<T extends ADto> extends ABean<T>
 			toChoiceBox = new ArrayListValuedHashMap<>();
 		}
 		return toChoiceBox;
+	}
+
+	protected void loadNameTitle(String title, Label label) {
+		genericFormsUtils.assingInLabel(label, i18n().valueBundle(title), event -> {
+			if (event.getClickCount() == 2) {
+				loadPopupLanguages(title);
+			}
+		});
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void loadPopupLanguages(String title) {
+		var popup = new PopupFromBean(GenericBeans.class, LanguagesDTO.class);
+		try {
+			LoadAppFxml.loadBeanFX(popup);
+			GenericBeans bean = (GenericBeans) popup.getBean();
+			bean.openPopup();
+			var dto = bean.addValueToField(title, "code");
+			bean.addValueToField("es_ES", "idiom");
+			bean.load(dto);
+		} catch (LoadAppFxmlException | SecurityException e) {
+			logger().logger(e);
+		} catch (Exception e) {
+			logger().logger(e);
+		}
 	}
 
 }

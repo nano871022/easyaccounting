@@ -26,6 +26,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 /**
@@ -288,7 +289,7 @@ public final class LoadAppFxml<P extends Pane, C extends Control> extends AppFXM
 		addCommands(keyboard, runnable);
 	}
 
-	public static <B, S extends ADto, N extends ScrollPane, L extends AGenericsBeans> L beanFxmlGeneric(N layout,
+	public static <B, S extends ADto, C extends Region, L extends AGenericsBeans> L beanFxmlGeneric(C layout,
 			Class<S> classDto, Class<L> classBean) throws Exception {
 		String file, title;
 		if (!loadApp().isLastContro()) {
@@ -301,8 +302,12 @@ public final class LoadAppFxml<P extends Pane, C extends Control> extends AppFXM
 			L lbean = classBean.getDeclaredConstructor().newInstance();
 			title = lbean.getNombreVentana();
 			Parent root = lbean.load(classDto);
-			((ScrollPane) loadApp().getLastContro()).setContent(root);
-			loadApp().currentControlScroller = lbean;
+			if (AGenericsBeans.class.isAssignableFrom(classBean) && layout != null && layout instanceof ScrollPane sp) {
+				sp.setContent(root);
+			} else {
+				((ScrollPane) loadApp().getLastContro()).setContent(root);
+				loadApp().currentControlScroller = lbean;
+			}
 			lbean.initialize();
 			return lbean;
 		} catch (InstantiationException e) {

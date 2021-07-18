@@ -8,18 +8,29 @@ import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.exceptions.LoadAppFxmlException;
 import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class PopupFromBean<D extends ADto, B extends ABean<D>> extends APopupFromBean<D> {
 
 	private BorderPane panel;
+	private ScrollPane scrollPanel;
 	private String tittleWindowI18n;
 	private Object bean;
+	private Class<B> clazzBean;
 
 	public PopupFromBean(Class<D> clazz) {
 		super(clazz);
 		panel = new BorderPane();
+		scrollPanel = new ScrollPane();
+	}
+
+	public PopupFromBean(Class<B> clazz, Class<D> clazzDto) {
+		super(clazzDto);
+		clazzBean = clazz;
+		panel = new BorderPane();
+		scrollPanel = new ScrollPane();
 	}
 
 	public void start(Stage primaryStage) throws Exception {
@@ -32,14 +43,24 @@ public class PopupFromBean<D extends ADto, B extends ABean<D>> extends APopupFro
 		}
 		primaryStage.setTitle(i18n().valueBundle(tittleWindowI18n).get());
 		Scene scene = new Scene(panel);
+		panel.setCenter(scrollPanel);
 		scene.getStylesheets().add(CSSConstant.CONST_PRINCIPAL);
 		primaryStage.setScene(scene);
+		primaryStage.setMinHeight(200);
 		primaryStage.hide();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void load() throws LoadAppFxmlException {
-		bean = LoadAppFxml.loadBeanFxml2(primaryStage, (Class) clazz);
+		if (AGenericsBeans.class.isAssignableFrom(clazzBean)) {
+			try {
+				bean = LoadAppFxml.beanFxmlGeneric(scrollPanel, (Class) clazz, (Class) clazzBean);
+			} catch (Exception e) {
+				logger.logger(e);
+			}
+		} else {
+			bean = LoadAppFxml.loadBeanFxml2(primaryStage, (Class) clazz);
+		}
 		showWindow();
 	}
 

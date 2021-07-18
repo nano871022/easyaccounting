@@ -33,7 +33,8 @@ import org.pyt.common.constants.AppConstants;
 import org.pyt.common.constants.LanguageConstant;
 import org.pyt.common.constants.ParametroConstants;
 
-import co.com.japl.ea.app.beans.languages.LanguageBean;
+import co.com.japl.ea.app.components.GenericBeans;
+import co.com.japl.ea.app.components.PopupFromBean;
 import co.com.japl.ea.app.components.PopupGenBean;
 import co.com.japl.ea.app.custom.PopupParametrizedControl;
 import co.com.japl.ea.app.custom.ResponsiveGridPane;
@@ -41,6 +42,7 @@ import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.validates.ValidFields;
 import co.com.japl.ea.dto.dto.ParametroDTO;
 import co.com.japl.ea.dto.system.ConfigGenericFieldDTO;
+import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.exceptions.LoadAppFxmlException;
 import co.com.japl.ea.exceptions.ParametroException;
 import co.com.japl.ea.exceptions.ReflectionException;
@@ -178,14 +180,17 @@ public interface IGenericFields<L extends ADto, F extends ADto> extends IGeneric
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadPopupLanguages(IFieldsCreator factory) {
-		var popup = new co.com.japl.ea.app.components.PopupFromBean(
-				co.com.japl.ea.app.beans.languages.LanguageBean.class);
+		var popup = new PopupFromBean(GenericBeans.class, LanguagesDTO.class);
 		try {
 			LoadAppFxml.loadBeanFX(popup);
-			LanguageBean bean = (LanguageBean) popup.getBean();
+			GenericBeans bean = (GenericBeans) popup.getBean();
 			bean.openPopup();
-			bean.addCode(factory.getLabelText().get());
-		} catch (LoadAppFxmlException e) {
+			var dto = bean.addValueToField(factory.getLabelText().get(), "code");
+			bean.addValueToField("es_ES", "idiom");
+			bean.load(dto);
+		} catch (LoadAppFxmlException | SecurityException e) {
+			logger().logger(e);
+		} catch (Exception e) {
 			logger().logger(e);
 		}
 	}

@@ -143,7 +143,11 @@ public class GenericBeans<T extends ADto> extends AGenericsBeans<T, GenericBeans
 	@Override
 	void cancel() {
 		try {
-			getController(ListGenericBeans.class);
+			if (openPopup) {
+				this.cancelPopup();
+			} else {
+				getController(ListGenericBeans.class);
+			}
 		} catch (Exception e) {
 			error(e);
 		}

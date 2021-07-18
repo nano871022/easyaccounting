@@ -14,12 +14,12 @@ import static org.pyt.common.constants.PermissionConstants.CONST_PERM_UPDATE;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.pyt.common.annotations.Inject;
 
-import co.com.japl.ea.app.beans.languages.LanguageBean;
 import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
 import co.com.japl.ea.common.abstracts.ADto;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.interfaces.IConfigGenericFieldSvc;
+import co.com.japl.ea.dto.system.LanguagesDTO;
 import co.com.japl.ea.exceptions.LoadAppFxmlException;
 import co.com.japl.ea.utls.LoadAppFxml;
 import javafx.beans.property.BooleanProperty;
@@ -31,6 +31,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T, B>> extends AGenericInterfacesBean<T>
 		implements IGenericsBeans<T> {
@@ -48,8 +49,10 @@ public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T,
 	protected BooleanProperty print;
 	protected BooleanProperty load;
 	protected BooleanProperty cancel;
+	protected Boolean openPopup;
 
 	public AGenericsBeans(Class<B> beans) {
+		openPopup = false;
 		copy = new SimpleBooleanProperty(false);
 		pay = new SimpleBooleanProperty(false);
 		print = new SimpleBooleanProperty(false);
@@ -87,20 +90,42 @@ public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T,
 	}
 
 	protected void loadNameTitle(String title) {
-		genericFormsUtils.assingInLabel(this.title, i18n().valueBundle(title), event -> loadPopupLanguages(title));
+		genericFormsUtils.assingInLabel(this.title, i18n().valueBundle(title), event -> {
+			if (event.getClickCount() == 2) {
+				loadPopupLanguages(title);
+			}
+		});
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void loadPopupLanguages(String title) {
-		var popup = new PopupFromBean(LanguageBean.class);
+		var popup = new PopupFromBean(GenericBeans.class, LanguagesDTO.class);
 		try {
 			LoadAppFxml.loadBeanFX(popup);
-			LanguageBean bean = (LanguageBean) popup.getBean();
+			GenericBeans bean = (GenericBeans) popup.getBean();
 			bean.openPopup();
-			bean.addCode(title);
-		} catch (LoadAppFxmlException e) {
+			var dto = bean.addValueToField(title, "code");
+			bean.addValueToField("es_ES", "idiom");
+			bean.load(dto);
+		} catch (LoadAppFxmlException | SecurityException e) {
+			logger().logger(e);
+		} catch (Exception e) {
 			logger().logger(e);
 		}
+	}
+
+	public <V> T addValueToField(V value, String name) {
+		try {
+			this.getInstanceDto(TypeGeneric.FIELD).set(name, value);
+			return this.getInstanceDto(TypeGeneric.FIELD);
+		} catch (Exception e) {
+			error(e);
+		}
+		return null;
+	}
+
+	public void openPopup() {
+		openPopup = true;
 	}
 
 	abstract void initializeMethod() throws Exception;
@@ -120,6 +145,13 @@ public abstract class AGenericsBeans<T extends ADto, B extends AGenericsBeans<T,
 	abstract void print();
 
 	abstract void cancel();
+
+	protected void cancelPopup() {
+		if (openPopup) {
+			((Stage) principal.getScene().getWindow()).close();
+			destroy();
+		}
+	}
 
 	@SuppressWarnings("static-access")
 	public final Parent load(Class<T> classDto) throws Exception {

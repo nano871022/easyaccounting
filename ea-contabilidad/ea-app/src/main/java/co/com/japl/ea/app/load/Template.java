@@ -12,8 +12,8 @@ import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.app.beans.dinamico.FormularioBean;
 import co.com.japl.ea.app.beans.generic.interfaces.ListGenericInterfacesBean;
 import co.com.japl.ea.app.beans.help.HelpViewBean;
-import co.com.japl.ea.app.beans.languages.LanguageBean;
-import co.com.japl.ea.app.beans.languages.ListLanguagesBean;
+import co.com.japl.ea.app.components.GenericBeans;
+import co.com.japl.ea.app.components.ListGenericBeans;
 import co.com.japl.ea.app.components.PopupBean;
 import co.com.japl.ea.app.components.PopupFromBean;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
@@ -127,12 +127,17 @@ public class Template implements IComunicacion, Reflection {
 		genericBP = new SimpleBooleanProperty(false);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void language() {
+		var popup = new PopupFromBean(GenericBeans.class, LanguagesDTO.class);
 		try {
-			var popup = new PopupFromBean(LanguageBean.class);
 			LoadAppFxml.loadBeanFX(popup);
-			LanguageBean bean = (LanguageBean) popup.getBean();
+			GenericBeans bean = (GenericBeans) popup.getBean();
 			bean.openPopup();
+			var dto = bean.addValueToField("es_ES", "idiom");
+			bean.load(dto);
+		} catch (LoadAppFxmlException | SecurityException e) {
+			logger().logger(e);
 		} catch (Exception e) {
 			logger().logger(e);
 		}
@@ -169,7 +174,7 @@ public class Template implements IComunicacion, Reflection {
 	private void visibleButtons() {
 		try {
 			var language = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
-					ListLanguagesBean.class, LoginUtil.getUsuarioLogin().getGrupoUser());
+					ListGenericBeans.class, LoginUtil.getUsuarioLogin().getGrupoUser());
 			var generic = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,
 					ListGenericInterfacesBean.class, LoginUtil.getUsuarioLogin().getGrupoUser());
 			var formulario = PermissionUtil.INSTANCE().havePerm(PermissionConstants.CONST_PERM_CREATE,

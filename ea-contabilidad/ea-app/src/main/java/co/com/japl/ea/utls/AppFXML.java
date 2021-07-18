@@ -26,10 +26,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 @SuppressWarnings("rawtypes")
-public abstract class AppFXML<P extends Pane, C extends Control> {
+public abstract class AppFXML<P extends Pane, C extends Region> {
 	protected static Log logger = Log.Log(LoadAppFxml.class);
 	protected static I18n i18n = I18n.instance();
 	protected static LoadAppFxml app;
@@ -213,12 +214,12 @@ public abstract class AppFXML<P extends Pane, C extends Control> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <C extends Control> C getLastControl() {
+	public static final <C extends Region> C getLastControl() {
 		return (C) loadApp().lastContro;
 	}
 
-	public final void setLastContro(C lastContro) {
-		this.lastContro = lastContro;
+	public final <N extends Region> void setLastContro(N layout) {
+		this.lastContro = (C) layout;
 	}
 
 	public final Boolean isLastContro() {

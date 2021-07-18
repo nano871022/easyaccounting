@@ -13,6 +13,7 @@ import org.pyt.common.constants.StylesPrincipalConstant;
 
 import co.com.arquitectura.annotation.proccessor.FXMLFile;
 import co.com.japl.ea.app.components.ConfirmPopupBean;
+import co.com.japl.ea.app.custom.ResponsiveGridPane;
 import co.com.japl.ea.beans.abstracts.AGenericInterfacesBean;
 import co.com.japl.ea.common.button.apifluid.ButtonsImpl;
 import co.com.japl.ea.dto.interfaces.IConfigGenericFieldSvc;
@@ -25,6 +26,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 @FXMLFile(file = "list_generic_interfaces.fxml", path = "/view/genericInterfaces", nombreVentana = "Lista Interfaces Genericas")
 public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGenericFieldDTO> {
@@ -36,7 +38,7 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	private HBox filterGeneric;
 	@FXML
 	private Label lblTitle;
-	private GridPane gridPane;
+	private ResponsiveGridPane gridPane;
 
 	private List<ConfigGenericFieldDTO> listFieldsToFilters;
 	private List<ConfigGenericFieldDTO> listFieldsToColumns;
@@ -46,14 +48,16 @@ public class ListGenericInterfacesBean extends AGenericInterfacesBean<ConfigGene
 	@FXML
 	private HBox buttons;
 
+	@SuppressWarnings("static-access")
 	@FXML
 	private void initialize() {
-		gridPane = new GridPane();
+		gridPane = new ResponsiveGridPane();
 		gridPane.setHgap(10);
 		gridPane.setVgap(10);
 		filtro = new ConfigGenericFieldDTO();
 		filterGeneric.getChildren().addAll(gridPane);
-		lblTitle.setText(i18n().valueBundle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES).get());
+		filterGeneric.setHgrow(gridPane, Priority.ALWAYS);
+		loadNameTitle(LanguageConstant.GENERIC_LBL_LIST_GENERIC_INTERFACES, lblTitle);
 		toChoiceBox = new ArrayListValuedHashMap<>();
 		try {
 			listFieldsToFilters = configGenericFieldsSvc.getFieldToFilters(this.getClass(),
